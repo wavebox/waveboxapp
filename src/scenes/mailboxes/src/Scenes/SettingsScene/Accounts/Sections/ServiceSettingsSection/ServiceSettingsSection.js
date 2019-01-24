@@ -18,6 +18,7 @@ import MicrosoftMailServiceSettings from './Microsoft/MicrosoftMailServiceSettin
 import TrelloServiceSettings from './Trello/TrelloServiceSettings'
 import GenericServiceSettings from './Generic/GenericServiceSettings'
 import ContainerServiceSettings from './Container/ContainerServiceSettings'
+import SlackServiceSettings from './Slack/SlackServiceSettings'
 
 const styles = {
   toolbar: {
@@ -155,6 +156,9 @@ class ServiceSettingsSection extends React.Component {
         break
       case SERVICE_TYPES.TRELLO:
         RenderClass = TrelloServiceSettings
+        break
+      case SERVICE_TYPES.SLACK:
+        RenderClass = SlackServiceSettings
         break
       case SERVICE_TYPES.GENERIC:
         RenderClass = GenericServiceSettings

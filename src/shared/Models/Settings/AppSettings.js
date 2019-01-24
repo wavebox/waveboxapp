@@ -108,7 +108,6 @@ class AppSettings extends Model {
   get concurrentServiceLoadLimitIsNone () { return this.concurrentServiceLoadLimit === -1 }
   get rawAppThreadFetchMicrosoftHTTP () { return this._value_('appThreadFetchMicrosoftHTTP', undefined) }
   get forceWindowPaintOnRestore () { return this._value_('forceWindowPaintOnRestore', false) }
-  get rawTickleSlackRTM () { return this._value_('tickleSlackRTM', undefined) }
 
   /* **************************************************************************/
   // Properties: Search

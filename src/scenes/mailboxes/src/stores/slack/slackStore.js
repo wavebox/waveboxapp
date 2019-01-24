@@ -17,7 +17,6 @@ import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import SlackServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/SlackServiceDataReducer'
 import SlackServiceReducer from 'shared/AltStores/Account/ServiceReducers/SlackServiceReducer'
-import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import PowerMonitorService from 'shared/PowerMonitorService'
 
@@ -222,12 +221,14 @@ class SlackStore {
       if (!this.isValidConnection(serviceId, connectionId)) { return }
       const rtm = this.connections.get(serviceId).rtm
       if (!rtm) { return }
+      const service = accountStore.getState().getService(serviceId)
+      if (!service) { return }
 
       if (PowerMonitorService.isSuspended || PowerMonitorService.isScreenLocked) {
         return
       }
 
-      if (!userStore.getState().wceTickleSlackRTM(settingsStore.getState().rawTickleSlackRTM)) {
+      if (!userStore.getState().wceTickleSlackRTM(service.rawTickleRTM)) {
         return
       }
 

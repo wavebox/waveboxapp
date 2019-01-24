@@ -185,14 +185,6 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether to send tickle commands down to slack
-  * @param tickle: true to send
-  */
-  setTickleSlackRTM (tickle) {
-    this.dispatchUpdate('tickleSlackRTM', tickle)
-  }
-
-  /**
   * Sets whether to force a repaint on window restore
   * @param force: true to force
   */

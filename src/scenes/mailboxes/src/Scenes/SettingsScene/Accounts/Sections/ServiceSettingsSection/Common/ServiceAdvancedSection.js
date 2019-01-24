@@ -114,6 +114,7 @@ class ServiceAdvancedSection extends React.Component {
       serviceId,
       classes,
       onRequestEditCustomCode,
+      children,
       ...passProps
     } = this.props
     const {
@@ -172,10 +173,11 @@ class ServiceAdvancedSection extends React.Component {
           checked={sandboxFromMailbox}
           onChange={(evt, toggled) => accountActions.changeServiceSandboxing(serviceId, toggled)} />
         <SettingsListItemSwitch
-          divider={false}
+          divider={!!children}
           label='Prevent tab using low power mode'
           checked={preventLowPowerMode}
           onChange={(evt, toggled) => accountActions.reduceService(serviceId, ServiceReducer.setPreventLowPowerMode, toggled)} />
+        {children}
       </SettingsListSection>
     )
   }

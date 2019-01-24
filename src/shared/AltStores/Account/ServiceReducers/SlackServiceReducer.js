@@ -24,6 +24,15 @@ class SlackServiceReducer extends ServiceReducer {
       authUserId: authUserId
     })
   }
+
+  /**
+  * Sets whether to tickle the slack rtm channels
+  * @param service: the service to change
+  * @param tickle: true to tickle, false otherwise
+  */
+  static setTickleRTM (service, tickle) {
+    return service.changeData({ tickleRTM: tickle })
+  }
 }
 
 export default SlackServiceReducer

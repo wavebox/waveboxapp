@@ -107,6 +107,7 @@ class SlackService extends CoreACService {
   get hasTeamOverview () { return !!this.teamOverview }
   get authTeamName () { return this._value_('authTeamName') }
   get authUserId () { return this._value_('authUserId') }
+  get rawTickleRTM () { return this._value_('tickleRTM', undefined) }
 }
 
 export default SlackService
