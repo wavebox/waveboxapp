@@ -289,6 +289,43 @@ class DebugTests {
   }
 
   /**
+  * Adds a number of accounts
+  * @param count=1: the number of accounts to add
+  * @param sleepable=true: whether to set sleepable on the acconts
+  */
+  addAccounts (count = 1, sleepable = true) {
+    const accountActions = require('stores/account/accountActions').default
+    const uuid = require('uuid')
+    const ACMailbox = require('shared/Models/ACAccounts/ACMailbox').default
+    const CoreACService = require('shared/Models/ACAccounts/CoreACService').default
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
+    const URLS = [
+      'https://wavebox.io',
+      'https://wavebox.io/download',
+      'https://wavebox.io/kb',
+      'https://wavebox.io/why-wavebox',
+      'https://github.com/wavebox',
+      'https://github.com/wavebox/waveboxapp'
+    ]
+
+    for (let i = 0; i < count; i++) {
+      const mailboxId = uuid.v4()
+      accountActions.createMailbox.defer(ACMailbox.createJS(
+        mailboxId,
+        'test',
+        '#FF0000',
+        'test_template'
+      ))
+      const service = {
+        ...CoreACService.createJS(undefined, mailboxId, SERVICE_TYPES.GENERIC),
+        url: URLS[i % URLS.length],
+        sleepable: sleepable
+      }
+      accountActions.createService.defer(mailboxId, ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START, service)
+    }
+  }
+
+  /**
   * Opens all openable dev tools
   */
   allDevTools () {
