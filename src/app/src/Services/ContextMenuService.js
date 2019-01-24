@@ -257,12 +257,13 @@ class ContextMenuService {
           }
         })
       }
+      // Look for a simple mailto url in the format mailto:user@user.com. If this is the
+      // case remove the mailto: prefix
+      const isEmailLink = params.linkURL.startsWith('mailto:') && params.linkURL.indexOf('?') === -1
       template.push({
-        label: 'Copy Link Address',
+        label: isEmailLink ? 'Copy Email Address' : 'Copy Link Address',
         click: () => {
-          // Look for a simple mailto url in the format mailto:user@user.com. If this is the
-          // case remove the mailto: prefix
-          if (params.linkURL.startsWith('mailto:') && params.linkURL.indexOf('?') === -1) {
+          if (isEmailLink) {
             clipboard.writeText(params.linkURL.replace('mailto:', ''))
           } else {
             clipboard.writeText(params.linkURL)
