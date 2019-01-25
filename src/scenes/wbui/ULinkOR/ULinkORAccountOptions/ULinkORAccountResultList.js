@@ -152,32 +152,51 @@ class ULinkORAccountResultList extends React.Component {
     } catch (ex) { }
 
     if (pTargetUrl) {
-      targetHostnames.add(pTargetUrl.hostname)
+      if (pTargetUrl.hostname) {
+        targetHostnames.add(pTargetUrl.hostname)
+      }
       Array.from(pTargetUrl.searchParams.values()).forEach((val) => {
         try {
-          targetHostnames.add(new URL(val).hostname)
+          const qsHostname = new URL(val).hostname
+          if (qsHostname) {
+            targetHostnames.add(qsHostname)
+          }
         } catch (ex) { }
       })
     }
 
+    // Generate some partial hostnames
+    const targetRootHostnames = new Set()
+    targetHostnames.forEach((hostname) => {
+      const root = hostname.split('.').slice(-2, -1)[0]
+      if (root) { targetRootHostnames.add(root) }
+    })
+
     // Sort the services by matched an unmatched
-    const { match, unmatch } = accountState.allServicesOrdered().reduce((acc, service) => {
-      const serviceUrl = service.getUrlWithData(accountState.getServiceData(service.id))
+    const { full, root, none } = accountState.allServicesOrdered().reduce((acc, service) => {
+      const serviceUrl = service.getUrlWithData(
+        accountState.getServiceData(service.id),
+        accountState.getMailboxAuthForServiceId(service.id)
+      )
       let serviceUrlHostname
+      let serviceUrlRootHostname
       try {
         serviceUrlHostname = new URL(serviceUrl).hostname
+        serviceUrlRootHostname = serviceUrlHostname.split('.').slice(-2, -1)[0]
       } catch (ex) { }
 
-      if (targetHostnames.has(serviceUrlHostname)) {
-        acc.match.push(service.id)
+      if (serviceUrlHostname && targetHostnames.has(serviceUrlHostname)) {
+        acc.full.push(service.id)
+      } else if (serviceUrlRootHostname && targetRootHostnames.has(serviceUrlRootHostname)) {
+        acc.root.push(service.id)
       } else {
-        acc.unmatch.push(service.id)
+        acc.none.push(service.id)
       }
 
       return acc
-    }, { match: [], unmatch: [] })
+    }, { full: [], root: [], none: [] })
 
-    return [].concat(match, unmatch)
+    return [].concat(full, root, none)
   }
 
   /* **************************************************************************/
