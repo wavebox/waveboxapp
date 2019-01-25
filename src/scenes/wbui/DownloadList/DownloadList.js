@@ -36,6 +36,8 @@ class DownloadList extends React.Component {
   * @param downloadItem: the download item
   */
   handleOpenExtraOptions = (evt, downloadItem) => {
+    evt.preventDefault()
+    evt.stopPropagation()
     this.setState({
       contextMenu: {
         anchor: evt.target,
