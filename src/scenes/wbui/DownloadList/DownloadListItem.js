@@ -11,6 +11,7 @@ import FolderOpenIcon from '@material-ui/icons/FolderOpen'
 import Timeago from 'react-timeago'
 import ErrorIcon from '@material-ui/icons/Error'
 import { withStyles } from '@material-ui/core/styles'
+import path from 'path'
 
 const styles = {
   secondaryText: {
@@ -93,7 +94,11 @@ class DownloadListItem extends React.Component {
         disableTypography
         primary={(
           <Typography variant='body1' noWrap>
-            {downloadItem.filename || 'Untitled'}
+            {(
+              (typeof (downloadItem.downloadPath) === 'string'
+                ? path.basename(downloadItem.downloadPath)
+                : downloadItem.filename) || 'Untitled'
+            )}
           </Typography>
         )}
         secondary={(
