@@ -405,6 +405,28 @@ class WebView extends React.Component {
     })
   }
 
+  send = (...args) => {
+    //TODO: this is a hack a needs fixing
+    let res
+    try {
+      res = this.getWebviewNode().send(...args)
+    } catch (ex) {
+      console.log('webview.send failed', ex)
+    }
+    return res
+  }
+
+  executeJavaScript = (...args) => {
+    //TODO: this is a hack a needs fixing
+    let res
+    try {
+      res = this.getWebviewNode().executeJavaScript(...args)
+    } catch (ex) {
+      console.log('webview.executeJavaScript failed', ex)
+    }
+    return res
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
