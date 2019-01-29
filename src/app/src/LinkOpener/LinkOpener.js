@@ -120,6 +120,31 @@ class LinkOpener {
     mailboxesWindow.show().focus()
     mailboxesWindow.navigateAndSwitchToService(serviceId, url)
   }
+
+  /**
+  * Opens a url in a new window under the service partition
+  * @param serviceId: the id of the service to open under
+  * @param url: the url to open
+  * @param openerWindow=undefined: the parent electron.BrowserWindow if available/appplicable
+  * @return the created content window
+  */
+  openUrlInServiceWindow (serviceId, url, openerWindow = undefined) {
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return undefined }
+
+    const contentWindow = new ContentWindow({
+      backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
+      mailboxId: service.parentId,
+      serviceId: serviceId
+    })
+    contentWindow.create(
+      url,
+      undefined,
+      openerWindow,
+      { partition: service.partitionId }
+    )
+    return contentWindow
+  }
 }
 
 export default new LinkOpener()

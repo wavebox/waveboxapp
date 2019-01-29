@@ -1,11 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Typography, ListItem, ListItemText } from '@material-ui/core'
+import { Typography, ListItem, ListItemText, ListItemSecondaryAction, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
-import ACAvatarCircle2 from '../../ACAvatarCircle2'
-import MailboxServiceBadge from '../../MailboxServiceBadge'
+import ACAvatarCircle2 from '../ACAvatarCircle2'
+import MailboxServiceBadge from '../MailboxServiceBadge'
 import classNames from 'classnames'
+import TabIcon from '@material-ui/icons/Tab'
+import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 
 const privAccountStore = Symbol('privAccountStore')
 
@@ -13,6 +15,7 @@ const styles = {
   root: {
     paddingTop: 4,
     paddingBottom: 4,
+    paddingRight: 84,
     height: 65,
     '&:hover:not(:focus)': {
       backgroundColor: 'rgba(0, 0, 0, 0.04)'
@@ -58,7 +61,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class ULinkORAccountResultListItem extends React.Component {
+class ULinkORAccountSectionListItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -66,7 +69,9 @@ class ULinkORAccountResultListItem extends React.Component {
   static propTypes = {
     serviceId: PropTypes.string.isRequired,
     accountStore: PropTypes.object.isRequired,
-    avatarResolver: PropTypes.func.isRequired
+    avatarResolver: PropTypes.func.isRequired,
+    onOpenInRunningService: PropTypes.func.isRequired,
+    onOpenInServiceWindow: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -158,14 +163,36 @@ class ULinkORAccountResultListItem extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Handles the click event
+  * Handles a click somewhere in the list item
   * @param evt: the event that fired
   */
-  handleClick = (evt) => {
-    const { serviceId, onClick } = this.props
-    if (onClick) {
-      onClick(evt, serviceId)
-    }
+  handleListItemClick = (evt) => {
+    const { onClick, onOpenInServiceWindow, serviceId } = this.props
+    onOpenInServiceWindow(evt, serviceId)
+
+    if (onClick) { onClick(evt) }
+  }
+
+  /**
+  * Handles the open in account button being clicked
+  * @param evt: the event that fired
+  */
+  handleOpenInAccountClick = (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    const { onOpenInRunningService, serviceId } = this.props
+    onOpenInRunningService(evt, serviceId)
+  }
+
+  /**
+  * Handles the open in window button being clicked
+  * @param evt: the event that fired
+  */
+  handleOpenInWindowClick = (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    const { onOpenInServiceWindow, serviceId } = this.props
+    onOpenInServiceWindow(evt, serviceId)
   }
 
   /* **************************************************************************/
@@ -182,8 +209,10 @@ class ULinkORAccountResultListItem extends React.Component {
       serviceId,
       avatarResolver,
       accountStore,
-      onClick,
+      onOpenInRunningService,
+      onOpenInServiceWindow,
       className,
+      onClick,
       ...passProps
     } = this.props
     const {
@@ -210,7 +239,7 @@ class ULinkORAccountResultListItem extends React.Component {
       <ListItem
         button
         className={classNames(className, classes.root)}
-        onClick={this.handleClick}
+        onClick={this.handleListItemClick}
         {...passProps}>
         <div className={classes.avatarContainer}>
           <MailboxServiceBadge
@@ -258,9 +287,21 @@ class ULinkORAccountResultListItem extends React.Component {
           primaryTypographyProps={{ noWrap: true }}
           secondary={documentTitle && documentTitle !== displayName ? documentTitle : nextUrl}
           secondaryTypographyProps={{ noWrap: true }} />
+        <ListItemSecondaryAction>
+          <Tooltip title='Open in existing account tab'>
+            <IconButton onClick={this.handleOpenInAccountClick}>
+              <TabIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Open in new Window'>
+            <IconButton onClick={this.handleOpenInWindowClick}>
+              <OpenInNewIcon />
+            </IconButton>
+          </Tooltip>
+        </ListItemSecondaryAction>
       </ListItem>
     )
   }
 }
 
-export default ULinkORAccountResultListItem
+export default ULinkORAccountSectionListItem

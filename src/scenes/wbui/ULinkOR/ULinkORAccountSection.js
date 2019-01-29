@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { List } from '@material-ui/core'
+import { ListItem, ListItemText } from '@material-ui/core'
 import Fuse from 'fuse.js'
-import ULinkORAccountResultListItem from './ULinkORAccountResultListItem'
-import classNames from 'classnames'
+import ULinkORAccountSectionListItem from './ULinkORAccountSectionListItem'
 import { withStyles } from '@material-ui/core/styles'
-import StyleMixins from '../../Styles/StyleMixins'
+import StyleMixins from '../Styles/StyleMixins'
 import { URL } from 'url'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 
 const privAccountStore = Symbol('privAccountStore')
 const privFuse = Symbol('privFuse')
@@ -20,17 +20,18 @@ const styles = {
 }
 
 @withStyles(styles)
-class ULinkORAccountResultList extends React.Component {
+class ULinkORAccountSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     targetUrl: PropTypes.string.isRequired,
-    searchTerm: PropTypes.string,
+    searchTerm: PropTypes.string.isRequired,
     accountStore: PropTypes.object.isRequired,
     avatarResolver: PropTypes.func.isRequired,
-    onOpenInService: PropTypes.func.isRequired
+    onOpenInRunningService: PropTypes.func.isRequired,
+    onOpenInServiceWindow: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -145,25 +146,9 @@ class ULinkORAccountResultList extends React.Component {
   generateSuggestedSearchResults (accountState, targetUrl) {
     // Look in the URL for hostnames. Also look through the
     // querystring params for valid urls with hostnames
-    const targetHostnames = new Set()
-    let pTargetUrl
-    try {
-      pTargetUrl = new URL(targetUrl)
-    } catch (ex) { }
-
-    if (pTargetUrl) {
-      if (pTargetUrl.hostname) {
-        targetHostnames.add(pTargetUrl.hostname)
-      }
-      Array.from(pTargetUrl.searchParams.values()).forEach((val) => {
-        try {
-          const qsHostname = new URL(val).hostname
-          if (qsHostname) {
-            targetHostnames.add(qsHostname)
-          }
-        } catch (ex) { }
-      })
-    }
+    const targetHostnames = new Set(
+      ACMailbox.generateAvailableWindowOpenHostnamesForUrl(targetUrl)
+    )
 
     // Generate some partial hostnames
     const targetRootHostnames = new Set()
@@ -200,19 +185,6 @@ class ULinkORAccountResultList extends React.Component {
   }
 
   /* **************************************************************************/
-  // UI Events
-  /* **************************************************************************/
-
-  /**
-  * Handles the account being clicked
-  * @param evt: the event that fired
-  * @param serviceId: the id of the service
-  */
-  handleServiceClick = (evt, serviceId) => {
-    this.props.onOpenInService(evt, serviceId)
-  }
-
-  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -222,14 +194,10 @@ class ULinkORAccountResultList extends React.Component {
 
   render () {
     const {
-      targetUrl,
       searchTerm,
-      accountStore,
       avatarResolver,
-      className,
-      classes,
-      onOpenInService,
-      ...passProps
+      onOpenInRunningService,
+      onOpenInServiceWindow
     } = this.props
     const {
       searchResults,
@@ -238,20 +206,29 @@ class ULinkORAccountResultList extends React.Component {
 
     const renderResults = searchTerm ? searchResults : suggestedResults
     return (
-      <List dense className={classNames(classes.root, className)} {...passProps}>
-        {renderResults.map((serviceId) => {
-          return (
-            <ULinkORAccountResultListItem
-              key={serviceId}
-              serviceId={serviceId}
-              accountStore={this[privAccountStore]}
-              avatarResolver={avatarResolver}
-              onClick={this.handleServiceClick} />
-          )
-        })}
-      </List>
+      <React.Fragment>
+        {renderResults.length ? (
+          renderResults.map((serviceId) => {
+            return (
+              <ULinkORAccountSectionListItem
+                key={serviceId}
+                serviceId={serviceId}
+                accountStore={this[privAccountStore]}
+                avatarResolver={avatarResolver}
+                onOpenInRunningService={onOpenInRunningService}
+                onOpenInServiceWindow={onOpenInServiceWindow} />
+            )
+          })
+        ) : (
+          <ListItem>
+            <ListItemText
+              primary={`Couldn't find anything for "${searchTerm}"`}
+              primaryTypographyProps={{ align: 'center' }} />
+          </ListItem>
+        )}
+      </React.Fragment>
     )
   }
 }
 
-export default ULinkORAccountResultList
+export default ULinkORAccountSection

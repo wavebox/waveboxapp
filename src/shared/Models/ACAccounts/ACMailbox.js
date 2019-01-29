@@ -1,9 +1,12 @@
 import CoreACModel from './CoreACModel'
 import uuid from 'uuid'
+import { URL } from 'url'
 
-const DEFAULT_WINDOW_OPEN_MODES = Object.freeze({
+const USER_WINDOW_OPEN_MODES = Object.freeze({
   BROWSER: 'BROWSER',
   WAVEBOX: 'WAVEBOX',
+  WAVEBOX_SERVICE_WINDOW: 'WAVEBOX_SERVICE_WINDOW',
+  WAVEBOX_SERVICE_RUNNING_TAB: 'WAVEBOX_SERVICE_RUNNING_TAB',
   ASK: 'ASK'
 })
 
@@ -36,7 +39,7 @@ class ACMailbox extends CoreACModel {
   // Class : Types
   /* **************************************************************************/
 
-  static get DEFAULT_WINDOW_OPEN_MODES () { return DEFAULT_WINDOW_OPEN_MODES }
+  static get USER_WINDOW_OPEN_MODES () { return USER_WINDOW_OPEN_MODES }
   static get SERVICE_UI_LOCATIONS () { return SERVICE_UI_LOCATIONS }
   static get NAVIGATION_BAR_UI_LOCATIONS () { return NAVIGATION_BAR_UI_LOCATIONS }
   static get SERVICE_UI_PRIORITY () { return SERVICE_UI_PRIORITY }
@@ -62,6 +65,85 @@ class ACMailbox extends CoreACModel {
       color: color,
       templateType: templateType
     }
+  }
+
+  /* **************************************************************************/
+  // Class : Window opening
+  /* **************************************************************************/
+
+  /**
+  * Standardizes a window open hostname
+  * @param hostname: the hostname to Standardiz
+  * @return the new hostname
+  */
+  static _standardizeWindowOpenHostname (hostname) {
+    return hostname && hostname.startsWith('www.')
+      ? hostname.replace('www.', '')
+      : hostname
+  }
+
+  /**
+  * Finds a all the window open querystring hostnames in a url
+  * @param targetUrl: the parsed target url or raw url
+  * @return a map of key to hostname
+  */
+  static _findWindowOpenQueryStringHostnames (targetUrl) {
+    let pTargetUrl
+    if (typeof (targetUrl) === 'object') {
+      pTargetUrl = targetUrl
+    } else {
+      try {
+        pTargetUrl = new URL(targetUrl)
+      } catch (ex) {
+        return new Map()
+      }
+    }
+
+    return Array.from(pTargetUrl.searchParams.entries()).reduce((acc, [key, val]) => {
+      try {
+        acc.set(key, this._standardizeWindowOpenHostname(new URL(val).hostname))
+      } catch (ex) { }
+      return acc
+    }, new Map())
+  }
+
+  /**
+  * Generates a set of available match rules for a given url
+  * @param targetUrl: the url to generate the rules for
+  * @return an array of rules
+  */
+  static generateAvailableWindowOpenRulesForUrl (targetUrl) {
+    let pRootUrl
+    try {
+      pRootUrl = new URL(targetUrl)
+    } catch (ex) { return [] }
+
+    // Match the root
+    const rootHostname = this._standardizeWindowOpenHostname(pRootUrl.hostname)
+    const matchRules = []
+    matchRules.push({ hostname: rootHostname })
+
+    // Look for query string arguments
+    Array.from(this._findWindowOpenQueryStringHostnames(pRootUrl).entries()).forEach(([key, hostname]) => {
+      matchRules.push({
+        hostname: rootHostname,
+        queryKey: key,
+        queryHostname: hostname
+      })
+    })
+
+    return matchRules
+  }
+
+  /**
+  * Generates a set of available hostnames for a given url
+  * @param targetUrl: the url to generate the hostnames for
+  * @return an array of just hostnames
+  */
+  static generateAvailableWindowOpenHostnamesForUrl (targetUrl) {
+    return this.generateAvailableWindowOpenRulesForUrl(targetUrl).map((rule) => {
+      return rule.queryHostname || rule.hostname
+    })
   }
 
   /* **************************************************************************/
@@ -223,8 +305,41 @@ class ACMailbox extends CoreACModel {
   // Window opening
   /* **************************************************************************/
 
-  get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.ASK) }
   get openDriveLinksWithExternalBrowser () { return this._value_('openGoogleDriveLinksWithExternalBrowser', false) }
+  get userWindowOpenRules () { return this._value_('userWindowOpenRules', []) }
+
+  get userNoMatchWindowOpenRule () {
+    const val = this._value_('userNoMatchWindowOpenRule', undefined)
+    if (val !== undefined) { return val }
+
+    // Depricated value used to be one of BROWSER, WAVEBOX, ASK which map onto new values
+    const depricated = this._value_('defaultWindowOpenMode', undefined)
+    if (depricated && USER_WINDOW_OPEN_MODES[depricated]) { return { mode: depricated } }
+
+    return { mode: USER_WINDOW_OPEN_MODES.ASK }
+  }
+
+  /**
+  * Finds a matching window open rule for a given url
+  * @param targetUrl: the url to find a match for
+  * @return the match or undefined
+  */
+  findMatchingWindowOpenRule (targetUrl) {
+    if (this.userWindowOpenRules.length === 0) { return undefined }
+
+    let pTargetUrl
+    try {
+      pTargetUrl = new URL(targetUrl)
+    } catch (ex) { return undefined }
+    const rootHostname = this.constructor._standardizeWindowOpenHostname(pTargetUrl.hostname)
+    const qsHostnames = this.constructor._findWindowOpenQueryStringHostnames(pTargetUrl)
+
+    return this.userWindowOpenRules.find(({ rule }) => {
+      if (rule.hostname !== rootHostname) { return false }
+      if (rule.queryKey && qsHostnames.get(rule.queryKey) !== rule.queryHostname) { return false }
+      return true
+    })
+  }
 
   get windowOpenModeOverrideRulesets () {
     if (this.openDriveLinksWithExternalBrowser) {

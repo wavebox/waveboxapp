@@ -307,21 +307,61 @@ class MailboxReducer {
   /* **************************************************************************/
 
   /**
-  * Sets the default window open mode
-  * @param mailbox: the mailbox that contains the service
-  * @param mode: the new mode
-  */
-  static setDefaultWindowOpenMode (mailbox, mode) {
-    return mailbox.changeData({ defaultWindowOpenMode: mode })
-  }
-
-  /**
   * Sets whether to open drive links in the default browser
-  * @param mailbox: the mailbox that contains the service
-  * @param mode: the new mode
+  * @param mailbox: the mailbox to update
+  * @param open: true to open links, false otherwise
   */
   static setOpenDriveLinksWithExternalBrowser (mailbox, open) {
     return mailbox.changeData({ openGoogleDriveLinksWithExternalBrowser: open })
+  }
+
+  /**
+  * Sets the no match window open rule
+  * @param mailbox: the mailbox to update
+  * @param mode: the new mode to use
+  * @param serviceId: an optional service id to accompany the mode
+  */
+  static setUserNoMatchWindowOpenRule (mailbox, mode, serviceId) {
+    return mailbox.changeData({ userNoMatchWindowOpenRule: { mode, serviceId } })
+  }
+
+  /**
+  * Adds a new window open rule
+  * @param mailbox: the mailbox to update
+  * @param rule: the rule to add
+  * @param mode: the mode to use
+  * @param serviceId: an optional service id accompanying the rule
+  */
+  static addUserWindowOpenRule (mailbox, rule, mode, serviceId) {
+    return mailbox.changeData({
+      userWindowOpenRules: mailbox.userWindowOpenRules.concat({
+        rule,
+        mode,
+        serviceId
+      })
+    })
+  }
+
+  /**
+  * Removes a single window open rule
+  * @param mailbox: the mailbox to update
+  * @param ruleIndex: the index of the rule
+  */
+  static removeUserWindowOpenRule (mailbox, ruleIndex) {
+    return mailbox.changeData({
+      userWindowOpenRules: [].concat(
+        mailbox.userWindowOpenRules.slice(0, ruleIndex),
+        mailbox.userWindowOpenRules.slice(ruleIndex + 1)
+      )
+    })
+  }
+
+  /**
+  * Clears all the window open rules
+  * @param mailbox: the mailbox to update
+  */
+  static clearAllUserWindowOpenRules (mailbox) {
+    return mailbox.changeData({ userWindowOpenRules: [] })
   }
 
   /* **************************************************************************/

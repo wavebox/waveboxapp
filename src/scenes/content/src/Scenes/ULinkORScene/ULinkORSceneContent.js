@@ -2,18 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
-import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import { ipcRenderer } from 'electron'
 import Resolver from 'Runtime/Resolver'
-import {
-  WB_ULINKOR_SYSTEM_BROWSER,
-  WB_ULINKOR_WAVEBOX_WINDOW,
-  WB_ULINKOR_CANCEL
-} from 'shared/ipcEvents'
-import {
-  WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE
-} from 'shared/webContentsRPC'
+import { WB_ULINKOR_OPEN } from 'shared/ipcEvents'
 import {
   ULinkORDialogTitle,
   ULinkORDialogContent
@@ -29,7 +21,8 @@ class ULinkORSceneContent extends React.Component {
     webContentsId: PropTypes.number.isRequired,
     serviceId: PropTypes.string,
     targetUrl: PropTypes.string.isRequired,
-    onRequestClose: PropTypes.func.isRequired
+    onRequestClose: PropTypes.func.isRequired,
+    isCommandTrigger: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -40,58 +33,53 @@ class ULinkORSceneContent extends React.Component {
   * Closes the dialog
   */
   handleClose = () => {
-    this.props.onRequestClose()
+    window.location.hash = '/'
   }
 
   /**
-  * Opens the link in a Wavebox window
-  * @param evt: the event that fired
-  * @param always: true to make this the default option
+  * Handles the opening of the link
+  * @param mode: the mode to open the link with
+  * @param serviceTarget: the optional service id to open the link with
   */
-  handleOpenInWaveboxWindow = (evt, always) => {
-    ipcRenderer.send(WB_ULINKOR_WAVEBOX_WINDOW, this.props.requestId)
-    if (always) {
-      this.handlePersistOpenerMode(ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX)
-    }
-    this.handleClose()
+  handleOpenLink = (mode, serviceTarget) => {
+    ipcRenderer.send(WB_ULINKOR_OPEN, this.props.match.params.requestId, mode, serviceTarget)
   }
 
   /**
-  * Opens the link in the system browser
-  * @param evt: the event that fired
-  * @param always: true to make this the default option
+  * Handles changing the no match rule
+  * @param mode: the mode to open the link with
+  * @param serviceTarget: the optional service id to open the link with
   */
-  handleOpenInSystemBrowser = (evt, always) => {
-    ipcRenderer.send(WB_ULINKOR_SYSTEM_BROWSER, this.props.requestId)
-    if (always) {
-      this.handlePersistOpenerMode(ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER)
-    }
-    this.handleClose()
-  }
-
-  /**
-  * Opens in a service
-  * @param evt: the event that fired
-  * @param serviceId: the id of the service
-  */
-  handleOpenInService = (evt, serviceId) => {
-    ipcRenderer.send(WB_ULINKOR_CANCEL, this.props.requestId)
-    ipcRenderer.send(WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE, serviceId, this.props.targetUrl)
-    this.handleClose()
-  }
-
-  /**
-  * Persists the given mode to the account
-  * @param mode: the mode to use
-  */
-  handlePersistOpenerMode = (mode) => {
+  handleChangeMailboxNoMatchRule = (mode, serviceTarget) => {
     const { serviceId } = this.props
     const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
+
     accountActions.reduceMailbox(
       service.parentId,
-      MailboxReducer.setDefaultWindowOpenMode,
-      mode
+      MailboxReducer.setUserNoMatchWindowOpenRule,
+      mode,
+      serviceTarget
+    )
+  }
+
+  /**
+  * Handles adding a match rule
+  * @param mode: the mode to open the link with
+  * @param serviceTarget: the optional service id to open the link with
+  * @param match: the match rule
+  */
+  handleAddMailboxMatchRule = (mode, serviceTarget, match) => {
+    const { serviceId } = this.props
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return }
+
+    accountActions.reduceMailbox(
+      service.parentId,
+      MailboxReducer.addUserWindowOpenRule,
+      match,
+      mode,
+      serviceTarget
     )
   }
 
@@ -107,7 +95,8 @@ class ULinkORSceneContent extends React.Component {
     const {
       webContentsId,
       serviceId,
-      targetUrl
+      targetUrl,
+      isCommandTrigger
     } = this.props
 
     return (
@@ -117,10 +106,15 @@ class ULinkORSceneContent extends React.Component {
           serviceId={serviceId}
           webContentsId={webContentsId}
           targetUrl={targetUrl}
+          isCommandTrigger={isCommandTrigger}
           onRequestClose={this.handleClose}
+          onOpenLink={this.handleOpenLink}
+          onChangeMailboxNoMatchWindowOpenRule={this.handleChangeMailboxNoMatchRule}
+          onAddMailboxWindowOpenRule={this.handleAddMailboxMatchRule}
           onOpenInWaveboxWindow={this.handleOpenInWaveboxWindow}
           onOpenInSystemBrowser={this.handleOpenInSystemBrowser}
-          onOpenInService={this.handleOpenInService}
+          onOpenInRunningService={this.handleOpenInRunningService}
+          onOpenInServiceWindow={this.handleOpenInServiceWindow}
           accountStore={accountStore}
           avatarResolver={(i) => Resolver.image(i)}
           iconResolver={(i) => Resolver.icon(i)} />

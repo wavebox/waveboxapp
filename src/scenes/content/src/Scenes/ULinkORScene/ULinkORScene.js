@@ -53,16 +53,18 @@ class ULinkORScene extends React.Component {
   * @param webContentsId: the id of the webcontents
   * @param serviceId: the id of the service
   * @param targetUrl: the url we're trying to open
+  * @param isCommandTrigger: true if this was triggered from a command
   * @param maxAge: the max age of the request
   */
-  _handleIPCAskUser = (evt, requestId, webContentsId, serviceId, targetUrl, maxAge) => {
+  _handleIPCAskUser = (evt, requestId, webContentsId, serviceId, targetUrl, isCommandTrigger, maxAge) => {
     clearTimeout(this.maxAgeTO)
     this.setState({
       requestId,
       componentProps: {
         webContentsId,
         serviceId,
-        targetUrl
+        targetUrl,
+        isCommandTrigger
       }
     }, () => {
       this.setState({ open: true })
