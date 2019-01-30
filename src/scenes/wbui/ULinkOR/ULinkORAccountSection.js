@@ -31,7 +31,8 @@ class ULinkORAccountSection extends React.Component {
     accountStore: PropTypes.object.isRequired,
     avatarResolver: PropTypes.func.isRequired,
     onOpenInRunningService: PropTypes.func.isRequired,
-    onOpenInServiceWindow: PropTypes.func.isRequired
+    onOpenInServiceWindow: PropTypes.func.isRequired,
+    onItemKeyDown: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -197,7 +198,8 @@ class ULinkORAccountSection extends React.Component {
       searchTerm,
       avatarResolver,
       onOpenInRunningService,
-      onOpenInServiceWindow
+      onOpenInServiceWindow,
+      onItemKeyDown
     } = this.props
     const {
       searchResults,
@@ -216,7 +218,8 @@ class ULinkORAccountSection extends React.Component {
                 accountStore={this[privAccountStore]}
                 avatarResolver={avatarResolver}
                 onOpenInRunningService={onOpenInRunningService}
-                onOpenInServiceWindow={onOpenInServiceWindow} />
+                onOpenInServiceWindow={onOpenInServiceWindow}
+                onKeyDown={onItemKeyDown} />
             )
           })
         ) : (

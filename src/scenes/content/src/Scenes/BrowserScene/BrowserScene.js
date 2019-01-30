@@ -60,8 +60,8 @@ class BrowserScene extends React.Component {
 
     // Handle a case where the webview wont immediately take focus.
     // Hack around a little bit to get it to focus
-    setTimeout(() => { this.focusWebView() }, 1)
-    remote.getCurrentWindow().on('focus', this.focusWebView)
+    setTimeout(() => { this.handleWindowFocused() }, 1)
+    remote.getCurrentWindow().on('focus', this.handleWindowFocused)
   }
 
   componentWillUnmount () {
@@ -69,7 +69,7 @@ class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
-    remote.getCurrentWindow().removeListener('focus', this.focusWebView)
+    remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
   }
 
   /* **************************************************************************/
@@ -157,14 +157,16 @@ class BrowserScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // UI Tools
+  // Window events
   /* **************************************************************************/
 
   /**
-  * Pulls the webview into focus
+  * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
-  focusWebView = () => {
-    this.refs[BROWSER_REF].focus()
+  handleWindowFocused = () => {
+    if (window.location.hash.length < 2) {
+      this.refs[BROWSER_REF].focus()
+    }
   }
 
   /* **************************************************************************/

@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
@@ -65,6 +66,7 @@ class ULinkORDialogContent extends React.Component {
     super(props)
 
     this.rememberInputRef = React.createRef()
+    this.searchResultsRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -158,6 +160,78 @@ class ULinkORDialogContent extends React.Component {
   }
 
   /* **************************************************************************/
+  // UI Events: Keyboard navigation
+  /* **************************************************************************/
+
+  /**
+  * Handles the key down event in the search input
+  * @param evt: the event that fired
+  */
+  handleSearchInputKeydown = (evt) => {
+    if (evt.keyCode === 13) {
+      evt.preventDefault()
+      evt.stopPropagation()
+      const targets = this._getResultTargetElements()
+      if (!targets[0]) { return }
+      targets[0].click()
+    } else if (evt.keyCode === 38 || evt.keyCode === 40) {
+      evt.preventDefault()
+      evt.stopPropagation()
+      this._focusKeyboardNextResult(evt.keyCode)
+    }
+  }
+
+  /**
+  * Handles the keydown event in a result
+  * @param evt: the event that fired
+  */
+  handleSearchResultKeydown = (evt) => {
+    if (evt.keyCode === 38 || evt.keyCode === 40) {
+      evt.preventDefault()
+      evt.stopPropagation()
+      this._focusKeyboardNextResult(evt.keyCode, evt.target)
+    } else if (evt.keyCode !== 13 && evt.keyCode !== 9) { // No control keys
+      const inputEl = ReactDOM.findDOMNode(this.searchInputRef.current)
+      if (inputEl) {
+        inputEl.focus()
+      }
+    }
+  }
+
+  /**
+  * @return the dom search result dom targets
+  */
+  _getResultTargetElements () {
+    const resultsEl = ReactDOM.findDOMNode(this.searchResultsRef.current)
+    return resultsEl
+      ? Array.from(resultsEl.querySelectorAll(':scope > * > [role="button"], :scope > [role="button"]'))
+      : []
+  }
+
+  /**
+  * Focuses the next result
+  * @param keyCode: 38 and 40 keycodes to correct 1 and -1
+  * @param current=undefined: the current dom element to move from. If undefined assumed search
+  */
+  _focusKeyboardNextResult (keyCode, current = undefined) {
+    const direction = keyCode === 38 ? -1 : 1
+    const targets = this._getResultTargetElements()
+    if (!targets.length) { return }
+
+    if (current) {
+      const currentIndex = targets.findIndex((t) => t === current)
+      if (currentIndex === -1) { return }
+      const target = targets[currentIndex + direction]
+      if (!target) { return }
+      target.focus()
+    } else {
+      const target = (direction === 1 ? targets.slice(0, 1) : targets.slice(-1))[0]
+      if (!target) { return }
+      target.focus()
+    }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -184,6 +258,7 @@ class ULinkORDialogContent extends React.Component {
           <TextField
             value={searchTerm}
             onChange={this.handleSearchTermChange}
+            onKeyDown={this.handleSearchInputKeydown}
             margin='dense'
             variant='outlined'
             autoFocus
@@ -204,12 +279,13 @@ class ULinkORDialogContent extends React.Component {
           />
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
-          <List dense>
+          <List dense ref={this.searchResultsRef}>
             {searchTerm ? undefined : (
               <ULinkORPrimarySection
                 onOpenInWaveboxWindow={this.handleOpenInWaveboxWindow}
                 onOpenInSystemBrowser={this.handleOpenInSystemBrowser}
-                iconResolver={iconResolver} />
+                iconResolver={iconResolver}
+                onItemKeyDown={this.handleSearchResultKeydown} />
             )}
             <ULinkORAccountSection
               searchTerm={searchTerm}
@@ -217,7 +293,8 @@ class ULinkORDialogContent extends React.Component {
               accountStore={accountStore}
               avatarResolver={avatarResolver}
               onOpenInRunningService={this.handleOpenInRunningService}
-              onOpenInServiceWindow={this.handleOpenInServiceWindow} />
+              onOpenInServiceWindow={this.handleOpenInServiceWindow}
+              onItemKeyDown={this.handleSearchResultKeydown} />
           </List>
         </DialogContent>
         {serviceId && !isCommandTrigger ? (

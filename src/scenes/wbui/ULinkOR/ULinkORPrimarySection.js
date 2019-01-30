@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { ListItem, ListItemText, ListItemAvatar, Avatar, Divider } from '@material-ui/core'
+import { ListItemText, ListItemAvatar, Avatar, Divider } from '@material-ui/core'
 import FABLinuxIcon from 'wbfa/FABLinux'
 import FABAppleIcon from 'wbfa/FABApple'
 import FABWindowsIcon from 'wbfa/FABWindows'
+import ULinkORListItem from './ULinkORListItem'
 
 class ULinkORDialogPrimarySection extends React.Component {
   /* **************************************************************************/
@@ -14,7 +15,8 @@ class ULinkORDialogPrimarySection extends React.Component {
   static propTypes = {
     onOpenInWaveboxWindow: PropTypes.func.isRequired,
     onOpenInSystemBrowser: PropTypes.func.isRequired,
-    iconResolver: PropTypes.func.isRequired
+    iconResolver: PropTypes.func.isRequired,
+    onItemKeyDown: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -40,22 +42,23 @@ class ULinkORDialogPrimarySection extends React.Component {
     const {
       onOpenInWaveboxWindow,
       onOpenInSystemBrowser,
-      iconResolver
+      iconResolver,
+      onItemKeyDown
     } = this.props
 
     const OSIconComponent = this.getOSIconComponent()
 
     return (
       <React.Fragment>
-        <ListItem button onClick={onOpenInWaveboxWindow}>
+        <ULinkORListItem onClick={onOpenInWaveboxWindow} onKeyDown={onItemKeyDown}>
           <ListItemAvatar>
             <Avatar src={iconResolver('app.svg')} />
           </ListItemAvatar>
           <ListItemText
             primary={(<strong>Wavebox Window</strong>)}
             secondary='Use your current session & stay logged in' />
-        </ListItem>
-        <ListItem button onClick={onOpenInSystemBrowser}>
+        </ULinkORListItem>
+        <ULinkORListItem onClick={onOpenInSystemBrowser} onKeyDown={onItemKeyDown}>
           <ListItemAvatar>
             <Avatar>
               <OSIconComponent />
@@ -64,7 +67,7 @@ class ULinkORDialogPrimarySection extends React.Component {
           <ListItemText
             primary={(<strong>Default Browser</strong>)}
             secondary='Use the default browser on your machine' />
-        </ListItem>
+        </ULinkORListItem>
         <Divider />
       </React.Fragment>
     )

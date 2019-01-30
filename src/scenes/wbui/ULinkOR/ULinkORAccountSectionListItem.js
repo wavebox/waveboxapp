@@ -1,13 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Typography, ListItem, ListItemText, ListItemSecondaryAction, Tooltip, IconButton } from '@material-ui/core'
+import { Typography, ListItemText, ListItemSecondaryAction, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import ACAvatarCircle2 from '../ACAvatarCircle2'
 import MailboxServiceBadge from '../MailboxServiceBadge'
 import classNames from 'classnames'
 import TabIcon from '@material-ui/icons/Tab'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
+import ULinkORListItem from './ULinkORListItem'
 
 const privAccountStore = Symbol('privAccountStore')
 
@@ -16,10 +17,7 @@ const styles = {
     paddingTop: 4,
     paddingBottom: 4,
     paddingRight: 84,
-    height: 65,
-    '&:hover:not(:focus)': {
-      backgroundColor: 'rgba(0, 0, 0, 0.04)'
-    }
+    height: 65
   },
   avatarContainer: {
     position: 'relative',
@@ -236,8 +234,7 @@ class ULinkORAccountSectionListItem extends React.Component {
     if (!membersAvailable) { return false }
 
     return (
-      <ListItem
-        button
+      <ULinkORListItem
         className={classNames(className, classes.root)}
         onClick={this.handleListItemClick}
         {...passProps}>
@@ -299,7 +296,7 @@ class ULinkORAccountSectionListItem extends React.Component {
             </IconButton>
           </Tooltip>
         </ListItemSecondaryAction>
-      </ListItem>
+      </ULinkORListItem>
     )
   }
 }

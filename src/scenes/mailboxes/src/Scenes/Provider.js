@@ -162,7 +162,9 @@ export default class Provider extends React.Component {
   * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
   handleWindowFocused = () => {
-    accountDispatch.refocus()
+    if (window.location.hash.length < 2) {
+      accountDispatch.refocus()
+    }
   }
 
   /* **************************************************************************/
