@@ -122,6 +122,19 @@ class LinkOpener {
   }
 
   /**
+  * Opens a url in a new window under the mailbox, but shimming the first service as the opener
+  * @param serviceId: the id of the service to open under
+  * @param url: the url to open
+  * @param openerWindow=undefined: the parent electron.BrowserWindow if available/appplicable
+  * @return the created content window
+  */
+  openUrlInMailboxWindow (mailboxId, url, openerWindow = undefined) {
+    const mailbox = accountStore.getState().getMailbox(mailboxId)
+    if (!mailbox) { return undefined }
+    return this.openUrlInServiceWindow(mailbox.allServices[0], url, openerWindow)
+  }
+
+  /**
   * Opens a url in a new window under the service partition
   * @param serviceId: the id of the service to open under
   * @param url: the url to open
