@@ -4,7 +4,6 @@ const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
 const ProgressBarPlugin = devRequire('progress-bar-webpack-plugin')
-const NyanProgressPlugin = require('nyan-progress-webpack-plugin')
 const BuildDonePlugin = require('./BuildDonePlugin')
 const Colors = devRequire('colors')
 const {
@@ -44,18 +43,12 @@ module.exports = function (name, env, config) {
   }
 
   if (isSingleTask(env)) {
-    if (env.meow) {
-      config.plugins.push(new NyanProgressPlugin({
-        debounceInterval: 1000
-      }))
-    } else {
-      config.plugins.push(new ProgressBarPlugin({
-        format: `${Colors.inverse(name)} [:bar] ${Colors.green(':percent')} :msg`,
-        callback: () => {
-          console.log(`${Colors.inverse('[Build Complete]')} ${name}`)
-        }
-      }))
-    }
+    config.plugins.push(new ProgressBarPlugin({
+      format: `${Colors.inverse(name)} [:bar] ${Colors.green(':percent')} :msg`,
+      callback: () => {
+        console.log(`${Colors.inverse('[Build Complete]')} ${name}`)
+      }
+    }))
   } else {
     config.plugins.push(new BuildDonePlugin((stats) => {
       console.log(`${Colors.inverse('[Build Complete]')} ${name}`)
