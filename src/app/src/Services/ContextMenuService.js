@@ -507,7 +507,7 @@ class ContextMenuService {
           },
           {
             label: 'Open Page in Wavebox',
-            click: () => { this.openLinkInWaveboxWindow(contents, params.pageURL, accountInfo.mailbox.id) }
+            click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.pageURL, accountInfo.mailbox.id) }
           },
           (accountInfo.has ? {
             label: 'Open Page as New Service',

@@ -6,10 +6,7 @@ import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxRedu
 import { ipcRenderer } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import { WB_ULINKOR_OPEN } from 'shared/ipcEvents'
-import {
-  ULinkORDialogTitle,
-  ULinkORDialogContent
-} from 'wbui/ULinkOR'
+import ULinkORDialogContent from 'wbui/ULinkOR'
 
 class ULinkORSceneContent extends React.Component {
   /* **************************************************************************/
@@ -30,19 +27,12 @@ class ULinkORSceneContent extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Closes the dialog
-  */
-  handleClose = () => {
-    window.location.hash = '/'
-  }
-
-  /**
   * Handles the opening of the link
   * @param mode: the mode to open the link with
   * @param serviceTarget: the optional service id to open the link with
   */
   handleOpenLink = (mode, serviceTarget) => {
-    ipcRenderer.send(WB_ULINKOR_OPEN, this.props.match.params.requestId, mode, serviceTarget)
+    ipcRenderer.send(WB_ULINKOR_OPEN, this.props.requestId, mode, serviceTarget)
   }
 
   /**
@@ -96,29 +86,27 @@ class ULinkORSceneContent extends React.Component {
       webContentsId,
       serviceId,
       targetUrl,
-      isCommandTrigger
+      isCommandTrigger,
+      onRequestClose
     } = this.props
 
     return (
-      <React.Fragment>
-        <ULinkORDialogTitle targetUrl={targetUrl} />
-        <ULinkORDialogContent
-          serviceId={serviceId}
-          webContentsId={webContentsId}
-          targetUrl={targetUrl}
-          isCommandTrigger={isCommandTrigger}
-          onRequestClose={this.handleClose}
-          onOpenLink={this.handleOpenLink}
-          onChangeMailboxNoMatchWindowOpenRule={this.handleChangeMailboxNoMatchRule}
-          onAddMailboxWindowOpenRule={this.handleAddMailboxMatchRule}
-          onOpenInWaveboxWindow={this.handleOpenInWaveboxWindow}
-          onOpenInSystemBrowser={this.handleOpenInSystemBrowser}
-          onOpenInRunningService={this.handleOpenInRunningService}
-          onOpenInServiceWindow={this.handleOpenInServiceWindow}
-          accountStore={accountStore}
-          avatarResolver={(i) => Resolver.image(i)}
-          iconResolver={(i) => Resolver.icon(i)} />
-      </React.Fragment>
+      <ULinkORDialogContent
+        serviceId={serviceId}
+        webContentsId={webContentsId}
+        targetUrl={targetUrl}
+        isCommandTrigger={isCommandTrigger}
+        onRequestClose={onRequestClose}
+        onOpenLink={this.handleOpenLink}
+        onChangeMailboxNoMatchWindowOpenRule={this.handleChangeMailboxNoMatchRule}
+        onAddMailboxWindowOpenRule={this.handleAddMailboxMatchRule}
+        onOpenInWaveboxWindow={this.handleOpenInWaveboxWindow}
+        onOpenInSystemBrowser={this.handleOpenInSystemBrowser}
+        onOpenInRunningService={this.handleOpenInRunningService}
+        onOpenInServiceWindow={this.handleOpenInServiceWindow}
+        accountStore={accountStore}
+        avatarResolver={(i) => Resolver.image(i)}
+        iconResolver={(i) => Resolver.icon(i)} />
     )
   }
 }
