@@ -2,7 +2,6 @@ import appStorage from './appStorage'
 import avatarStorage from './avatarStorage'
 import containerStorage from './containerStorage'
 import extensionStoreStorage from './extensionStoreStorage'
-import mailboxStorage from './mailboxStorage'
 import notifhistStorage from './notifhistStorage'
 import localHistoryStorage from './localHistoryStorage'
 import settingStorage from './settingStorage'
@@ -14,7 +13,6 @@ export {
   avatarStorage,
   containerStorage,
   extensionStoreStorage,
-  mailboxStorage,
   notifhistStorage,
   localHistoryStorage,
   settingStorage,
