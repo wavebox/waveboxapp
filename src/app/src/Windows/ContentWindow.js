@@ -8,6 +8,7 @@ import querystring from 'querystring'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL } from 'shared/ipcEvents'
+import { settingsStore } from 'stores/settings'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
 const privGuestWebPreferences = Symbol('privGuestWebPreferences')
@@ -252,7 +253,7 @@ class ContentWindow extends WaveboxWindow {
   * @return true to prevent behaviour
   */
   onBeforeFullQuit (accelerator) {
-    if (WaveboxAppCommandKeyTracker.anyModifierPressed) {
+    if (WaveboxAppCommandKeyTracker.anyModifierPressed && settingsStore.getState().ui.warnBeforeKeyboardQuitting) {
       this.window.webContents.send(WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL, accelerator)
       return true
     } else {

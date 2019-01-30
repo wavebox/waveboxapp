@@ -80,6 +80,7 @@ class UISettings extends Model {
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
   get vibrancyMode () { return this._value_('vibrancyMode', VIBRANCY_MODES.NONE) }
   get electronVibrancyMode () { return ELECTRON_VIBRANCY_MODES[this.vibrancyMode] }
+  get warnBeforeKeyboardQuitting () { return this._value_('warnBeforeKeyboardQuitting', true) }
 
   /* **************************************************************************/
   // Sidebar

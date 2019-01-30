@@ -48,9 +48,14 @@ export default class UISettingsSection extends React.Component {
         'showTitlebarAccount',
         'theme',
         'sidebarSize',
-        'showSidebarScrollbars'
+        'showSidebarScrollbars',
+        'warnBeforeKeyboardQuitting'
       ]) ||
-      modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
+      modelCompare(this.props.accelerators, nextProps.accelerators, [
+        'toggleSidebar',
+        'toggleMenu',
+        'quit'
+      ]) ||
       modelCompare(this.props.extension, nextProps.extension, ['showBrowserActionsInToolbar', 'toolbarBrowserActionLayout']) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
@@ -85,6 +90,15 @@ export default class UISettingsSection extends React.Component {
             label='Show sleeping account icons in grey'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)}
             checked={ui.showSleepableServiceIndicator} />
+          <SettingsListItemSwitch
+            label={(
+              <span>
+                <span>Warn before quitting with </span>
+                <SettingsListKeyboardShortcutText shortcut={accelerators.quit} />
+              </span>
+            )}
+            onChange={(evt, toggled) => settingsActions.sub.ui.setWarnBeforeKeyboardQuitting(toggled)}
+            checked={ui.warnBeforeKeyboardQuitting} />
           <SettingsListItemSelectInline
             label='App theme'
             divider={process.platform === 'darwin'}
