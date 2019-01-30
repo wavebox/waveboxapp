@@ -117,6 +117,19 @@ class CoreAccountActions extends RemoteActions {
     }
   }
 
+  /**
+  * Cleans the window open rules on a mailbox
+  * @param id: the id of the mailbox
+  */
+  cleanMailboxWindowOpenRules (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('cleanMailboxWindowOpenRules', args)
+    }
+  }
+
   /* **************************************************************************/
   // Auth
   /* **************************************************************************/

@@ -320,25 +320,49 @@ class ACMailbox extends CoreACModel {
   }
 
   /**
-  * Finds a matching window open rule for a given url
+  * Finds matching user window open rules for a given url
   * @param targetUrl: the url to find a match for
-  * @return the match or undefined
+  * @return an array of matching rules
   */
-  findMatchingWindowOpenRule (targetUrl) {
-    if (this.userWindowOpenRules.length === 0) { return undefined }
+  findMatchingUserWindowOpenRules (targetUrl) {
+    if (this.userWindowOpenRules.length === 0) { return [] }
 
     let pTargetUrl
     try {
       pTargetUrl = new URL(targetUrl)
-    } catch (ex) { return undefined }
+    } catch (ex) { return [] }
     const rootHostname = this.constructor._standardizeWindowOpenHostname(pTargetUrl.hostname)
     const qsHostnames = this.constructor._findWindowOpenQueryStringHostnames(pTargetUrl)
 
-    return this.userWindowOpenRules.find(({ rule }) => {
+    return this.userWindowOpenRules.filter(({ rule }) => {
       if (rule.hostname !== rootHostname) { return false }
       if (rule.queryKey && qsHostnames.get(rule.queryKey) !== rule.queryHostname) { return false }
       return true
     })
+  }
+
+  /**
+  * Finds matching window open rules for a given url within a subset of valid ids
+  * @param targetUrl: the url to find a match for
+  * @param validServiceIds: an array of valid service ids
+  * @return a valid rule, either from the user rules or the no match rule
+  */
+  resolveWindowOpenRule (targetUrl, validServiceIds) {
+    const serviceIds = new Set(validServiceIds)
+    const rule = this.findMatchingUserWindowOpenRules(targetUrl)
+      .find(({ serviceId }) => {
+        return serviceId ? serviceIds.has(serviceId) : true
+      })
+
+    if (rule) {
+      return rule
+    } else {
+      if (!this.userNoMatchWindowOpenRule.serviceId || serviceIds.has(this.userNoMatchWindowOpenRule.serviceId)) {
+        return this.userNoMatchWindowOpenRule
+      } else {
+        return { mode: USER_WINDOW_OPEN_MODES.ASK }
+      }
+    }
   }
 
   get windowOpenModeOverrideRulesets () {

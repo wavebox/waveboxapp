@@ -2,6 +2,7 @@ import { shell, BrowserWindow, ipcMain } from 'electron'
 import ContentWindow from 'Windows/ContentWindow'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
+import { accountStore, accountActions } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import uuid from 'uuid'
@@ -47,8 +48,17 @@ class WindowOpeningOpeners {
     if (!mailbox) {
       return this.askUserForWindowOpenTarget(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
     } else {
-      const rulesetMatch = mailbox.findMatchingWindowOpenRule(targetUrl)
-      const match = rulesetMatch || mailbox.userNoMatchWindowOpenRule || {}
+      let match
+      try {
+        const allServiceIds = accountStore.getState().serviceIds()
+        match = mailbox.resolveWindowOpenRule(targetUrl, allServiceIds)
+
+        // Run a late cleanup on this in case services have been removed
+        accountActions.cleanMailboxWindowOpenRules.defer(mailbox.id)
+      } catch (ex) {
+        match = { mode: ACMailbox.USER_WINDOW_OPEN_MODES.ASK }
+        console.error(`Failed to process user window rules. Continuing with "${ACMailbox.USER_WINDOW_OPEN_MODES.ASK}" behaviour...`, ex)
+      }
 
       if (match.mode === ACMailbox.USER_WINDOW_OPEN_MODES.BROWSER) {
         return this.openWindowExternal(openingBrowserWindow, targetUrl)

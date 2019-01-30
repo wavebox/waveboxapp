@@ -49,6 +49,7 @@ class AccountStore extends CoreAccountStore {
       handleRemoveMailbox: actions.REMOVE_MAILBOX,
       handleReduceMailbox: actions.REDUCE_MAILBOX,
       handleSetCustomAvatarOnMailbox: actions.SET_CUSTOM_AVATAR_ON_MAILBOX,
+      handleCleanMailboxWindowOpenRules: actions.CLEAN_MAILBOX_WINDOW_OPEN_RULES,
 
       // Auth
       handleCreateAuth: actions.CREATE_AUTH,
@@ -424,6 +425,42 @@ class AccountStore extends CoreAccountStore {
       if (!prevAvatarId) { this.preventDefault(); return }
       this.saveMailbox(id, mailbox.changeData({ avatarId: undefined }))
       this.saveAvatar(prevAvatarId, null)
+    }
+  }
+
+  handleCleanMailboxWindowOpenRules ({ id }) {
+    const mailbox = this.getMailbox(id)
+    if (!mailbox) { this.preventDefault(); return }
+
+    const serviceIds = new Set(this.serviceIds())
+    let dirty = false
+
+    // User rules
+    const cleanedUserRules = mailbox.userWindowOpenRules.filter(({ serviceId }) => {
+      if (!serviceId || serviceIds.has(serviceId)) {
+        return true
+      } else {
+        dirty = true
+        return false
+      }
+    })
+
+    // No match
+    let cleanedNoMatchRule
+    if (mailbox.userNoMatchWindowOpenRule.serviceId && !serviceIds.has(mailbox.userNoMatchWindowOpenRule.serviceId)) {
+      dirty = true
+      cleanedNoMatchRule = { mode: ACMailbox.USER_WINDOW_OPEN_MODES.ASK }
+    } else {
+      cleanedNoMatchRule = mailbox.userNoMatchWindowOpenRule
+    }
+
+    if (dirty) {
+      this.saveMailbox(id, mailbox.changeData({
+        userWindowOpenRules: cleanedUserRules,
+        userNoMatchWindowOpenRule: cleanedNoMatchRule
+      }))
+    } else {
+      this.preventDefault()
     }
   }
 

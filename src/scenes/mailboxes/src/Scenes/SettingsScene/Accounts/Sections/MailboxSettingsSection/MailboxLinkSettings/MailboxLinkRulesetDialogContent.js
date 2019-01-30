@@ -147,7 +147,7 @@ class MailboxLinkRuleset extends React.Component {
           ].filter((i) => !!i).join(' ')}
           secondary={[
             humanizedModes[mode],
-            serviceId ? `(${serviceNames[serviceId] || serviceId})` : undefined
+            serviceId ? `(${serviceNames[serviceId] || 'Deleted Service'})` : undefined
           ].filter((i) => !!i).join(' ')} />
         <ListItemSecondaryAction>
           <IconButton onClick={() => this.handleDeleteRule(index)}>

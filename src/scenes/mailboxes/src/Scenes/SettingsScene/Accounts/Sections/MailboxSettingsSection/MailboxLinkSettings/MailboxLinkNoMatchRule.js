@@ -145,13 +145,13 @@ class MailboxLinkNoMatchRule extends React.Component {
               <FormControlLabel
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Service Window (${valueServiceName})`} />
+                label={`Service Window (${valueServiceName || 'Deleted Service'})`} />
             ) : undefined}
             {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB ? (
               <FormControlLabel
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Running Service Tab (${valueServiceName})`} />
+                label={`Running Service Tab (${valueServiceName || 'Deleted Service'})`} />
             ) : undefined}
           </RadioGroup>
         </FormControl>
