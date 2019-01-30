@@ -1,14 +1,32 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog } from '@material-ui/core'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import ULinkORSceneContent from './ULinkORSceneContent'
+import { withStyles } from '@material-ui/core/styles'
 import {
   WB_ULINKOR_ASK,
   WB_ULINKOR_CANCEL
 } from 'shared/ipcEvents'
 
+const styles = {
+  root: {
+    height: '100%',
+    width: 600
+  }
+}
+
+@withStyles(styles)
 class ULinkORScene extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    routeName: PropTypes.string.isRequired
+  }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -38,8 +56,7 @@ class ULinkORScene extends React.Component {
 
   state = {
     requestId: undefined,
-    componentProps: undefined,
-    open: false
+    componentProps: undefined
   }
 
   /* **************************************************************************/
@@ -59,7 +76,7 @@ class ULinkORScene extends React.Component {
   _handleIPCAskUser = (evt, requestId, webContentsId, serviceId, targetUrl, isCommandTrigger, maxAge) => {
     clearTimeout(this.maxAgeTO)
     this.setState({
-      requestId,
+      requestId: requestId,
       componentProps: {
         webContentsId,
         serviceId,
@@ -67,7 +84,7 @@ class ULinkORScene extends React.Component {
         isCommandTrigger
       }
     }, () => {
-      this.setState({ open: true })
+      window.location.hash = `/link/open/${requestId}`
       clearTimeout(this.maxAgeTO)
       this.maxAgeTO = setTimeout(this.handleClose, maxAge)
     })
@@ -81,7 +98,7 @@ class ULinkORScene extends React.Component {
   * Closes the modal
   */
   handleClose = () => {
-    this.setState({ open: false })
+    window.location.hash = '/'
   }
 
   /**
@@ -104,26 +121,23 @@ class ULinkORScene extends React.Component {
   }
 
   render () {
-    const {
-      componentProps,
-      requestId,
-      open
-    } = this.state
+    const { routeName, classes } = this.props
+    const { componentProps } = this.state
 
     return (
-      <Dialog
+      <RouterDialog
+        routeName={routeName}
         disableEnforceFocus
         disableRestoreFocus
-        open={open}
         onExited={this.handleExited}
-        onClose={this.handleClose}>
-        {componentProps ? (
-          <ULinkORSceneContent
-            requestId={requestId}
-            onRequestClose={this.handleClose}
-            {...componentProps} />
-        ) : <div />}
-      </Dialog>
+        onClose={this.handleClose}
+        classes={{ paper: classes.root }}>
+        <RouterDialogStateProvider
+          routeName={routeName}
+          match
+          Component={ULinkORSceneContent}
+          {...componentProps} />
+      </RouterDialog>
     )
   }
 }

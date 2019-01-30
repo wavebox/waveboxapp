@@ -2,7 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import MailboxDeleteSceneContent from './MailboxDeleteSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 
 class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/

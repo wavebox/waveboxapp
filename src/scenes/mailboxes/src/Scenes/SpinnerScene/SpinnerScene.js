@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import SpinnerSceneContent from './SpinnerSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 class SpinnerScene extends React.Component {
   /* **************************************************************************/

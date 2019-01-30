@@ -2,7 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import ProfileRestoreSceneContent from './ProfileRestoreSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 class ProfileRestoreScene extends React.Component {
   /* **************************************************************************/

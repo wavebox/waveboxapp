@@ -14,11 +14,14 @@ class ULinkORSceneContent extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    requestId: PropTypes.string.isRequired,
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        requestId: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired,
     webContentsId: PropTypes.number.isRequired,
     serviceId: PropTypes.string,
     targetUrl: PropTypes.string.isRequired,
-    onRequestClose: PropTypes.func.isRequired,
     isCommandTrigger: PropTypes.bool.isRequired
   }
 
@@ -27,12 +30,19 @@ class ULinkORSceneContent extends React.Component {
   /* **************************************************************************/
 
   /**
+  * Closes the dialog
+  */
+  handleClose = () => {
+    window.location.hash = '/'
+  }
+
+  /**
   * Handles the opening of the link
   * @param mode: the mode to open the link with
   * @param serviceTarget: the optional service id to open the link with
   */
   handleOpenLink = (mode, serviceTarget) => {
-    ipcRenderer.send(WB_ULINKOR_OPEN, this.props.requestId, mode, serviceTarget)
+    ipcRenderer.send(WB_ULINKOR_OPEN, this.props.match.params.requestId, mode, serviceTarget)
   }
 
   /**
@@ -86,8 +96,7 @@ class ULinkORSceneContent extends React.Component {
       webContentsId,
       serviceId,
       targetUrl,
-      isCommandTrigger,
-      onRequestClose
+      isCommandTrigger
     } = this.props
 
     return (
@@ -96,7 +105,7 @@ class ULinkORSceneContent extends React.Component {
         webContentsId={webContentsId}
         targetUrl={targetUrl}
         isCommandTrigger={isCommandTrigger}
-        onRequestClose={onRequestClose}
+        onRequestClose={this.handleClose}
         onOpenLink={this.handleOpenLink}
         onChangeMailboxNoMatchWindowOpenRule={this.handleChangeMailboxNoMatchRule}
         onAddMailboxWindowOpenRule={this.handleAddMailboxMatchRule}

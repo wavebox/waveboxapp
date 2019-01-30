@@ -1,6 +1,6 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import PropTypes from 'prop-types'
 import MailboxServiceDeleteSceneContent from './MailboxServiceDeleteSceneContent'
 

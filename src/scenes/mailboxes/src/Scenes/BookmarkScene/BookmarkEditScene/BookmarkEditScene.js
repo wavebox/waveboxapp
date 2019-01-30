@@ -1,6 +1,6 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import BookmarkEditSceneContent from './BookmarkEditSceneContent'
 
 class BookmarkEditScene extends React.Component {

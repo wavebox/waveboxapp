@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import AccountWizardAddSceneContent from './AccountWizardAddSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import { ipcRenderer } from 'electron'
 import { WB_MAILBOXES_WINDOW_ADD_ACCOUNT } from 'shared/ipcEvents'
 

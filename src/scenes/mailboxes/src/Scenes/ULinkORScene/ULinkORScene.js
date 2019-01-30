@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import ULinkORSceneContent from './ULinkORSceneContent'
 import { withStyles } from '@material-ui/core/styles'
 import {

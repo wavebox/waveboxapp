@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import BrowserScene from './BrowserScene'
 import { settingsStore } from 'stores/settings'
-import KeyboardQuitSnackbarHelper from 'wbui/KeyboardQuitSnackbarHelper'
-import ErrorBoundary from 'wbui/ErrorBoundary'
-import ULinkORScene from './ULinkORScene'
+import WaveboxRouter from './WaveboxRouter'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -59,13 +56,7 @@ export default class Provider extends React.Component {
 
     return (
       <MuiThemeProvider theme={THEME_MAPPING[theme]}>
-        <BrowserScene url={url} partition={partition} />
-        <ErrorBoundary>
-          <ULinkORScene />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <KeyboardQuitSnackbarHelper />
-        </ErrorBoundary>
+        <WaveboxRouter url={url} partition={partition} />
       </MuiThemeProvider>
     )
   }

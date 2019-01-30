@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { settingsActions } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 import AccountMessageSceneContent from './AccountMessageSceneContent'
 
 const styles = {

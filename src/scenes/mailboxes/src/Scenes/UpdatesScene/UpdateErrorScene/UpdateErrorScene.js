@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import UpdateErrorSceneContent from './UpdateErrorSceneContent'
 
 class UpdateErrorScene extends React.Component {
