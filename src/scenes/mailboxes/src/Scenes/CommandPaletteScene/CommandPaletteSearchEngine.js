@@ -82,6 +82,26 @@ class CommandPaletteSearchEngine extends EventEmitter {
     this[privSearchable].accountsDirty = true
   }
 
+  /**
+  * Generates a set of recent services
+  * @param accountState=autoget: the current account state
+  */
+  generateRecentServiceResults (accountState = accountStore.getState()) {
+    return accountState.lastAccessedServiceIds(false)
+      .map((serviceId) => {
+        const service = accountState.getService(serviceId)
+        if (!service) { return undefined }
+        return {
+          item: {
+            target: SEARCH_TARGETS.SERVICE,
+            id: serviceId,
+            parentId: service.parentId
+          }
+        }
+      })
+      .filter((rec) => !!rec)
+  }
+
   /* **************************************************************************/
   // Searching: Heavy lifting
   /* **************************************************************************/
@@ -230,7 +250,7 @@ class CommandPaletteSearchEngine extends EventEmitter {
 
     // Look for low-cost escapes (part 1)
     if (!this[privTerm]) {
-      this.emit('results-updated', { sender: this }, [], {})
+      this.emit('results-updated', { sender: this }, [], {}, this[privTerm])
       return
     }
 
@@ -241,13 +261,13 @@ class CommandPaletteSearchEngine extends EventEmitter {
     // Look for low-cost excapes (part 2)
     if (this[privTerm] === ALL_TERM) {
       const all = this[privFuse].list.map((item) => { return { score: 1.0, item: item } })
-      this.emit('results-updated', { sender: this }, all, this._sortResultsToTargets(all))
+      this.emit('results-updated', { sender: this }, all, this._sortResultsToTargets(all), this[privTerm])
       return
     }
 
     // Perform the search
     const results = this[privFuse].search(this[privTerm])
-    this.emit('results-updated', { sender: this }, results, this._sortResultsToTargets(results))
+    this.emit('results-updated', { sender: this }, results, this._sortResultsToTargets(results), this[privTerm])
   }
 }
 
