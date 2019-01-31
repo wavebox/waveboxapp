@@ -51,6 +51,15 @@ class WizardPersonaliseGeneric extends React.Component {
   /* **************************************************************************/
 
   /**
+  * Auto-prefix the url with https:// if the user hasn't
+  * @param url: the url to autoprefix
+  * @return an autoprefixed url
+  */
+  autoPrefixUrl (url) {
+    return url.indexOf('://') === -1 ? `https://${url}` : url
+  }
+
+  /**
   * Validates and updates the current state
   * @return true if validation is okay, false otherwise
   */
@@ -61,7 +70,7 @@ class WizardPersonaliseGeneric extends React.Component {
     if (!serviceUrl) {
       this.setState({ serviceUrlError: 'Website url is required' })
       return false
-    } else if (!validUrl.isUri(serviceUrl)) {
+    } else if (!validUrl.isUri(this.autoPrefixUrl(serviceUrl))) {
       this.setState({ serviceUrlError: 'Website url is not valid' })
       return false
     } else {
@@ -87,7 +96,7 @@ class WizardPersonaliseGeneric extends React.Component {
       return {
         ok: true,
         account: new ACTemplatedAccount(account.changeDataWithChangeset({
-          expando: { url: this.state.serviceUrl }
+          expando: { url: this.autoPrefixUrl(this.state.serviceUrl) }
         }))
       }
     } else {
@@ -109,7 +118,7 @@ class WizardPersonaliseGeneric extends React.Component {
         ok: true,
         serviceJS: {
           ...serviceJS,
-          url: this.state.serviceUrl
+          url: this.autoPrefixUrl(this.state.serviceUrl)
         }
       }
     } else {
