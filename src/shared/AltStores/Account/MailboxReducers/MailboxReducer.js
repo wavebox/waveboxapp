@@ -319,10 +319,19 @@ class MailboxReducer {
   * Sets the no match window open rule
   * @param mailbox: the mailbox to update
   * @param mode: the new mode to use
-  * @param serviceId: an optional service id to accompany the mode
+  * @param targetId: an optional target id to accompany the mode
   */
-  static setUserNoMatchWindowOpenRule (mailbox, mode, serviceId) {
-    return mailbox.changeData({ userNoMatchWindowOpenRule: { mode, serviceId } })
+  static setUserNoMatchWindowOpenRule (mailbox, mode, targetId) {
+    const rule = { mode: mode }
+    if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB) {
+      rule.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW) {
+      rule.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
+      rule.providerId = targetId
+    }
+
+    return mailbox.changeData({ userNoMatchWindowOpenRule: rule })
   }
 
   /**
@@ -330,15 +339,20 @@ class MailboxReducer {
   * @param mailbox: the mailbox to update
   * @param rule: the rule to add
   * @param mode: the mode to use
-  * @param serviceId: an optional service id accompanying the rule
+  * @param serviceId: an optional target id accompanying the rule
   */
-  static addUserWindowOpenRule (mailbox, rule, mode, serviceId) {
+  static addUserWindowOpenRule (mailbox, rule, mode, targetId) {
+    const ruledef = { mode: mode, rule: rule }
+    if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB) {
+      ruledef.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW) {
+      ruledef.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
+      ruledef.providerId = targetId
+    }
+
     return mailbox.changeData({
-      userWindowOpenRules: mailbox.userWindowOpenRules.concat({
-        rule,
-        mode,
-        serviceId
-      })
+      userWindowOpenRules: mailbox.userWindowOpenRules.concat(ruledef)
     })
   }
 

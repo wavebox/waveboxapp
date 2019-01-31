@@ -53,6 +53,7 @@ class ULinkORDialogContent extends React.Component {
     onChangeMailboxNoMatchWindowOpenRule: PropTypes.func.isRequired,
     onAddMailboxWindowOpenRule: PropTypes.func.isRequired,
     accountStore: PropTypes.object.isRequired,
+    settingsStore: PropTypes.object.isRequired,
     avatarResolver: PropTypes.func.isRequired,
     iconResolver: PropTypes.func.isRequired,
     isCommandTrigger: PropTypes.bool.isRequired
@@ -121,6 +122,17 @@ class ULinkORDialogContent extends React.Component {
   }
 
   /**
+  * Handles opening in a custom link provider
+  * @param evt: the event that fired
+  * @param linkProviderId: the id of the link provider
+  */
+  handleOpenInCustomLinkProvider = (evt, linkProviderId) => {
+    this.handleSendRememberCallbacks(ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER, linkProviderId)
+    this.props.onOpenLink(ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER, linkProviderId)
+    this.props.onRequestClose()
+  }
+
+  /**
   * Handles opening in a running service
   * @param evt: the event that fired
   * @param serviceId: the id of the service
@@ -145,16 +157,16 @@ class ULinkORDialogContent extends React.Component {
   /**
   * Sends the remember callbacks to the parent
   * @param windowOpenMode: the window open mode to change to
-  * @param windowOpenServiceTarget = undefined: additional service id target that the opener provides
+  * @param windowOpenTarget = undefined: additional target that the opener provides
   */
-  handleSendRememberCallbacks = (windowOpenMode, windowOpenServiceTarget = undefined) => {
+  handleSendRememberCallbacks = (windowOpenMode, windowOpenTarget = undefined) => {
     if (this.rememberInputRef && this.rememberInputRef.current) {
       const type = this.rememberInputRef.current.getType()
       if (type === ULinkORRememberInput.ACTION_TYPES.ACCOUNT) {
-        this.props.onChangeMailboxNoMatchWindowOpenRule(windowOpenMode, windowOpenServiceTarget)
+        this.props.onChangeMailboxNoMatchWindowOpenRule(windowOpenMode, windowOpenTarget)
       } else if (type === ULinkORRememberInput.ACTION_TYPES.DOMAIN) {
         const match = this.rememberInputRef.current.getMatch()
-        this.props.onAddMailboxWindowOpenRule(windowOpenMode, windowOpenServiceTarget, match)
+        this.props.onAddMailboxWindowOpenRule(windowOpenMode, windowOpenTarget, match)
       }
     }
   }
@@ -247,6 +259,7 @@ class ULinkORDialogContent extends React.Component {
       iconResolver,
       classes,
       accountStore,
+      settingsStore,
       avatarResolver
     } = this.props
     const { searchTerm } = this.state
@@ -284,6 +297,8 @@ class ULinkORDialogContent extends React.Component {
               <ULinkORPrimarySection
                 onOpenInWaveboxWindow={this.handleOpenInWaveboxWindow}
                 onOpenInSystemBrowser={this.handleOpenInSystemBrowser}
+                onOpenInCustomLinkProvider={this.handleOpenInCustomLinkProvider}
+                settingsStore={settingsStore}
                 iconResolver={iconResolver}
                 onItemKeyDown={this.handleSearchResultKeydown} />
             )}

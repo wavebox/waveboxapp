@@ -1,4 +1,5 @@
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import WINDOW_TYPES from 'Windows/WindowTypes'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
@@ -8,6 +9,7 @@ import {
   WB_READING_QUEUE_OPEN_URL,
   WB_READING_QUEUE_OPEN_URL_EMPTY
 } from 'shared/ipcEvents'
+import { spawn } from 'child_process'
 
 class LinkOpener {
   /* **************************************************************************/
@@ -157,6 +159,38 @@ class LinkOpener {
       { partition: service.partitionId }
     )
     return contentWindow
+  }
+
+  /**
+  * Opens a url in a custom link provider
+  * @param linkProviderId: the id of the link provider
+  * @param targetUrl: the url to open
+  */
+  openUrlInCustomLinkProvider (linkProviderId, targetUrl) {
+    const linkProvider = settingsStore.getState().os.getCustomLinkProvider(linkProviderId)
+    if (!linkProvider) { return }
+
+    const args = (linkProvider.args || [])
+      .map((arg) => {
+        if (typeof (arg) === 'string') {
+          return arg
+        } else if (typeof (arg) === 'object') {
+          if (arg.type === 'url') {
+            return targetUrl
+          } else {
+            return undefined
+          }
+        } else {
+          return undefined
+        }
+      })
+      .filter((arg) => !!arg)
+
+    spawn(
+      linkProvider.cmd,
+      args,
+      { detached: true, windowsHide: true }
+    )
   }
 }
 

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import { withStyles } from '@material-ui/core/styles'
@@ -19,7 +20,8 @@ const humanizedModes = {
   [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX]: 'In wavebox window',
   [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW]: 'In service window',
   [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB]: 'In running service tab',
-  [ACMailbox.USER_WINDOW_OPEN_MODES.ASK]: 'Ask what to do'
+  [ACMailbox.USER_WINDOW_OPEN_MODES.ASK]: 'Ask what to do',
+  [ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER]: 'Custom'
 }
 
 const styles = {
@@ -32,7 +34,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class MailboxLinkRuleset extends React.Component {
+class MailboxLinkRulesetDialogContent extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -48,10 +50,12 @@ class MailboxLinkRuleset extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -68,6 +72,7 @@ class MailboxLinkRuleset extends React.Component {
 
   state = (() => {
     return {
+      providerNames: settingsStore.getState().os.customLinkProviderNames,
       ...this.extractStateForMailbox(this.props.mailboxId, accountStore.getState())
     }
   })()
@@ -76,6 +81,12 @@ class MailboxLinkRuleset extends React.Component {
     this.setState(
       this.extractStateForMailbox(this.props.mailboxId, accountState)
     )
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      providerNames: settingsState.os.customLinkProviderNames
+    })
   }
 
   /**
@@ -137,7 +148,7 @@ class MailboxLinkRuleset extends React.Component {
   * @param divider: whether to render the divider
   * @return jsx
   */
-  renderRule ({ rule, serviceId, mode }, index, divider, serviceNames) {
+  renderRule ({ rule, serviceId, providerId, mode }, index, divider, serviceNames, providerNames) {
     return (
       <ListItem key={`${index}`} divider={divider} disableGutters>
         <ListItemText
@@ -147,7 +158,8 @@ class MailboxLinkRuleset extends React.Component {
           ].filter((i) => !!i).join(' ')}
           secondary={[
             humanizedModes[mode],
-            serviceId ? `(${serviceNames[serviceId] || 'Deleted Service'})` : undefined
+            serviceId ? `(${serviceNames[serviceId] || 'Deleted Service'})` : undefined,
+            providerId ? `(${providerNames[providerId] || 'Deleted Provider'})` : undefined
           ].filter((i) => !!i).join(' ')} />
         <ListItemSecondaryAction>
           <IconButton onClick={() => this.handleDeleteRule(index)}>
@@ -165,7 +177,8 @@ class MailboxLinkRuleset extends React.Component {
     } = this.props
     const {
       userWindowOpenRules,
-      serviceNames
+      serviceNames,
+      providerNames
     } = this.state
 
     return (
@@ -182,7 +195,7 @@ class MailboxLinkRuleset extends React.Component {
           <List dense>
             {userWindowOpenRules.length ? (
               userWindowOpenRules.map((rule, index, arr) => (
-                this.renderRule(rule, index, index !== arr.length - 1, serviceNames)
+                this.renderRule(rule, index, index !== arr.length - 1, serviceNames, providerNames)
               ))
             ) : (
               <ListItem>
@@ -209,4 +222,4 @@ class MailboxLinkRuleset extends React.Component {
   }
 }
 
-export default MailboxLinkRuleset
+export default MailboxLinkRulesetDialogContent

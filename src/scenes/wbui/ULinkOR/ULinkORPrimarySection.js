@@ -5,7 +5,10 @@ import { ListItemText, ListItemAvatar, Avatar, Divider } from '@material-ui/core
 import FABLinuxIcon from 'wbfa/FABLinux'
 import FABAppleIcon from 'wbfa/FABApple'
 import FABWindowsIcon from 'wbfa/FABWindows'
+import FARBolt from 'wbfa/FARBolt'
 import ULinkORListItem from './ULinkORListItem'
+
+const privSettingsStore = Symbol('privSettingsStore')
 
 class ULinkORDialogPrimarySection extends React.Component {
   /* **************************************************************************/
@@ -15,8 +18,54 @@ class ULinkORDialogPrimarySection extends React.Component {
   static propTypes = {
     onOpenInWaveboxWindow: PropTypes.func.isRequired,
     onOpenInSystemBrowser: PropTypes.func.isRequired,
+    onOpenInCustomLinkProvider: PropTypes.func.isRequired,
     iconResolver: PropTypes.func.isRequired,
-    onItemKeyDown: PropTypes.func
+    onItemKeyDown: PropTypes.func,
+    settingsStore: PropTypes.object.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this[privSettingsStore] = this.props.settingsStore
+
+    // Generate state
+    const settingsState = this[privSettingsStore].getState()
+    this.state = {
+      customLinkProviders: settingsState.os.customLinkProviders
+    }
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    this[privSettingsStore].listen(this.settingsChanged)
+  }
+
+  componentWillUnmount () {
+    this[privSettingsStore].unlisten(this.settingsChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.settingsStore !== nextProps.settingsStore) {
+      console.warn('Changing props.settingsStore is not supported in ULinkORDialogPrimarySection and will be ignored')
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      customLinkProviders: settingsState.os.customLinkProviders
+    })
   }
 
   /* **************************************************************************/
@@ -43,8 +92,12 @@ class ULinkORDialogPrimarySection extends React.Component {
       onOpenInWaveboxWindow,
       onOpenInSystemBrowser,
       iconResolver,
-      onItemKeyDown
+      onItemKeyDown,
+      onOpenInCustomLinkProvider
     } = this.props
+    const {
+      customLinkProviders
+    } = this.state
 
     const OSIconComponent = this.getOSIconComponent()
 
@@ -68,6 +121,22 @@ class ULinkORDialogPrimarySection extends React.Component {
             primary={(<strong>Default Browser</strong>)}
             secondary='Use the default browser on your machine' />
         </ULinkORListItem>
+        {Object.keys(customLinkProviders).map((id) => {
+          return (
+            <ULinkORListItem
+              key={id}
+              onClick={(evt) => onOpenInCustomLinkProvider(evt, id)}
+              onKeyDown={onItemKeyDown}>
+              <ListItemAvatar>
+                <Avatar>
+                  <FARBolt />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={(<strong>{customLinkProviders[id].name}</strong>)} />
+            </ULinkORListItem>
+          )
+        })}
         <Divider />
       </React.Fragment>
     )

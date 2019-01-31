@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import SettingsListItem from 'wbui/SettingsListItem'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
@@ -36,10 +37,12 @@ class MailboxLinkNoMatchRule extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -58,7 +61,8 @@ class MailboxLinkNoMatchRule extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     return {
-      ...this.extractStateForMailbox(this.props.mailboxId, accountState)
+      ...this.extractStateForMailbox(this.props.mailboxId, accountState),
+      providerNames: settingsStore.getState().os.customLinkProviderNames
     }
   })()
 
@@ -66,6 +70,12 @@ class MailboxLinkNoMatchRule extends React.Component {
     this.setState(
       this.extractStateForMailbox(this.props.mailboxId, accountState)
     )
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      providerNames: settingsState.os.customLinkProviderNames
+    })
   }
 
   /**
@@ -118,7 +128,8 @@ class MailboxLinkNoMatchRule extends React.Component {
     } = this.props
     const {
       value,
-      valueServiceName
+      valueServiceName,
+      providerNames
     } = this.state
 
     return (
@@ -152,6 +163,12 @@ class MailboxLinkNoMatchRule extends React.Component {
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB}
                 control={<Radio color='primary' className={classes.radio} />}
                 label={`Running Service Tab (${valueServiceName || 'Deleted Service'})`} />
+            ) : undefined}
+            {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER ? (
+              <FormControlLabel
+                value={ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}
+                control={<Radio color='primary' className={classes.radio} />}
+                label={`Custom (${providerNames[value.providerId] || 'Deleted Provider'})`} />
             ) : undefined}
           </RadioGroup>
         </FormControl>

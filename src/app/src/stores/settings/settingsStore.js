@@ -7,6 +7,7 @@ import actions from './settingsActions'
 import dictionaries from 'shared/SpellcheckProvider/dictionaries.js'
 import pkg from 'package.json'
 import { systemPreferences } from 'electron'
+import uuid from 'uuid'
 
 const privCachedLaunchDataJS = Symbol('privCachedLaunchDataJS')
 
@@ -50,7 +51,10 @@ class SettingsStore extends CoreSettingsStore {
       handleSetSpellcheckerLanguage: actions.SET_SPELLCHECKER_LANGUAGE,
       handleSetSecondarySpellcheckerLanguage: actions.SET_SECONDARY_SPELLCHECKER_LANGUAGE,
 
-      handleGlueCurrentUpdateChannel: actions.GLUE_CURRENT_UPDATE_CHANNEL
+      handleGlueCurrentUpdateChannel: actions.GLUE_CURRENT_UPDATE_CHANNEL,
+
+      handleSetCustomLinkProvider: actions.SET_CUSTOM_LINK_PROVIDER,
+      handleRemoveCustomLinkProvider: actions.REMOVE_CUSTOM_LINK_PROVIDER
     })
   }
 
@@ -181,6 +185,28 @@ class SettingsStore extends CoreSettingsStore {
         updateChannel: pkg.releaseChannel
       }))
     }
+  }
+
+  /* **************************************************************************/
+  // Updating : OS
+  /* **************************************************************************/
+
+  handleSetCustomLinkProvider ({ providerId, provider }) {
+    providerId = providerId || uuid.v4()
+    this.saveSettingsModel(SettingsIdent.SEGMENTS.OS, this.os.changeDataWithChangeset({
+      customLinkProviders: {
+        [providerId]: provider
+      }
+    }))
+  }
+
+  handleRemoveCustomLinkProvider ({ providerId }) {
+    if (!providerId) { this.preventDefault(); return }
+    this.saveSettingsModel(SettingsIdent.SEGMENTS.OS, this.os.changeDataWithChangeset({
+      customLinkProviders: {
+        [providerId]: undefined
+      }
+    }))
   }
 }
 

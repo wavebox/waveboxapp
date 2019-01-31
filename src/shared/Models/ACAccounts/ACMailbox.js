@@ -7,7 +7,8 @@ const USER_WINDOW_OPEN_MODES = Object.freeze({
   WAVEBOX: 'WAVEBOX',
   WAVEBOX_SERVICE_WINDOW: 'WAVEBOX_SERVICE_WINDOW',
   WAVEBOX_SERVICE_RUNNING_TAB: 'WAVEBOX_SERVICE_RUNNING_TAB',
-  ASK: 'ASK'
+  ASK: 'ASK',
+  CUSTOM_PROVIDER: 'CUSTOM_PROVIDER'
 })
 
 const SERVICE_UI_LOCATIONS = Object.freeze({
@@ -345,22 +346,32 @@ class ACMailbox extends CoreACModel {
   * Finds matching window open rules for a given url within a subset of valid ids
   * @param targetUrl: the url to find a match for
   * @param validServiceIds: an array of valid service ids
+  * @param validProviderIds: an array of valid provider ids
   * @return a valid rule, either from the user rules or the no match rule
   */
-  resolveWindowOpenRule (targetUrl, validServiceIds) {
+  resolveWindowOpenRule (targetUrl, validServiceIds, validProviderIds) {
     const serviceIds = new Set(validServiceIds)
+    const providerIds = new Set(validProviderIds)
     const rule = this.findMatchingUserWindowOpenRules(targetUrl)
-      .find(({ serviceId }) => {
-        return serviceId ? serviceIds.has(serviceId) : true
+      .find(({ serviceId, providerId }) => {
+        if (serviceId && !serviceIds.has(serviceId)) {
+          return false
+        } else if (providerId && !providerIds.has(providerId)) {
+          return false
+        } else {
+          return true
+        }
       })
 
     if (rule) {
       return rule
     } else {
-      if (!this.userNoMatchWindowOpenRule.serviceId || serviceIds.has(this.userNoMatchWindowOpenRule.serviceId)) {
-        return this.userNoMatchWindowOpenRule
-      } else {
+      if (this.userNoMatchWindowOpenRule.serviceId && !serviceIds.has(this.userNoMatchWindowOpenRule.serviceId)) {
         return { mode: USER_WINDOW_OPEN_MODES.ASK }
+      } else if (this.userNoMatchWindowOpenRule.providerId && !providerIds.has(this.userNoMatchWindowOpenRule.providerId)) {
+        return { mode: USER_WINDOW_OPEN_MODES.ASK }
+      } else {
+        return this.userNoMatchWindowOpenRule
       }
     }
   }

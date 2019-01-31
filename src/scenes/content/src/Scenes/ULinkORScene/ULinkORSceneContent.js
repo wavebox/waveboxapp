@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import { ipcRenderer } from 'electron'
 import Resolver from 'Runtime/Resolver'
@@ -48,9 +49,9 @@ class ULinkORSceneContent extends React.Component {
   /**
   * Handles changing the no match rule
   * @param mode: the mode to open the link with
-  * @param serviceTarget: the optional service id to open the link with
+  * @param target: the optional target to open the link with
   */
-  handleChangeMailboxNoMatchRule = (mode, serviceTarget) => {
+  handleChangeMailboxNoMatchRule = (mode, target) => {
     const { serviceId } = this.props
     const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
@@ -59,17 +60,17 @@ class ULinkORSceneContent extends React.Component {
       service.parentId,
       MailboxReducer.setUserNoMatchWindowOpenRule,
       mode,
-      serviceTarget
+      target
     )
   }
 
   /**
   * Handles adding a match rule
   * @param mode: the mode to open the link with
-  * @param serviceTarget: the optional service id to open the link with
+  * @param target: the optional target to open the link with
   * @param match: the match rule
   */
-  handleAddMailboxMatchRule = (mode, serviceTarget, match) => {
+  handleAddMailboxMatchRule = (mode, target, match) => {
     const { serviceId } = this.props
     const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
@@ -79,7 +80,7 @@ class ULinkORSceneContent extends React.Component {
       MailboxReducer.addUserWindowOpenRule,
       match,
       mode,
-      serviceTarget
+      target
     )
   }
 
@@ -114,6 +115,7 @@ class ULinkORSceneContent extends React.Component {
         onOpenInRunningService={this.handleOpenInRunningService}
         onOpenInServiceWindow={this.handleOpenInServiceWindow}
         accountStore={accountStore}
+        settingsStore={settingsStore}
         avatarResolver={(i) => Resolver.image(i)}
         iconResolver={(i) => Resolver.icon(i)} />
     )

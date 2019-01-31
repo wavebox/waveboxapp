@@ -50,12 +50,33 @@ class OSSettings extends Model {
   get rawNotificationsMutedWhenSuspended () { return this._value_('notificationsMutedWhenSuspended', undefined) }
 
   /* ****************************************************************************/
-  // Misc
+  // Links
   /* ****************************************************************************/
 
   get openLinksInBackground () { return this._value_('openLinksInBackground', false) }
   get linkBehaviourWithShift () { return this._value_('linkBehaviourWithShift', COMMAND_LINK_BEHAVIOUR.DEFAULT) }
   get linkBehaviourWithCmdOrCtrl () { return this._value_('linkBehaviourWithCmdOrCtrl', COMMAND_LINK_BEHAVIOUR.BROWSER_OPEN) }
+  get customLinkProviders () { return this._value_('customLinkProviders', {}) }
+  get customLinkProviderIds () { return Object.keys(this.customLinkProviders) }
+  get customLinkProviderNames () {
+    const val = this.customLinkProviders
+    return Object.keys(val).reduce((acc, k) => {
+      acc[k] = val[k].name
+      return acc
+    }, {})
+  }
+
+  /**
+  * @param providerId: the id of the link provider
+  * @return the provider or undefined
+  */
+  getCustomLinkProvider (providerId) { return this.customLinkProviders[providerId] }
+
+  /**
+  * @param providerId: the id of the link provider
+  * @return true if there is a provider with this id, false otherwise
+  */
+  hasCustomLinkProvider (providerId) { return !!this.getCustomLinkProvider(providerId) }
 }
 
 module.exports = OSSettings

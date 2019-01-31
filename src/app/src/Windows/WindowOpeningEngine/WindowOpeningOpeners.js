@@ -51,10 +51,11 @@ class WindowOpeningOpeners {
       let match
       try {
         const allServiceIds = accountStore.getState().serviceIds()
-        match = mailbox.resolveWindowOpenRule(targetUrl, allServiceIds)
+        const customProviderIds = settingsStore.getState().os.customLinkProviderIds
+        match = mailbox.resolveWindowOpenRule(targetUrl, allServiceIds, customProviderIds)
 
         // Run a late cleanup on this in case services have been removed
-        accountActions.cleanMailboxWindowOpenRules.defer(mailbox.id)
+        accountActions.cleanMailboxWindowOpenRules.defer(mailbox.id, customProviderIds)
       } catch (ex) {
         match = { mode: ACMailbox.USER_WINDOW_OPEN_MODES.ASK }
         console.error(`Failed to process user window rules. Continuing with "${ACMailbox.USER_WINDOW_OPEN_MODES.ASK}" behaviour...`, ex)
@@ -68,6 +69,8 @@ class WindowOpeningOpeners {
         return LinkOpener.openUrlInServiceWindow(match.serviceId, targetUrl)
       } else if (match.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB) {
         return LinkOpener.openUrlInTopLevelService(match.serviceId, targetUrl)
+      } else if (match.mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
+        return LinkOpener.openUrlInCustomLinkProvider(match.providerId, targetUrl)
       } else if (match.mode === ACMailbox.USER_WINDOW_OPEN_MODES.ASK) {
         return this.askUserForWindowOpenTarget(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
       } else {
@@ -260,6 +263,14 @@ class WindowOpeningOpeners {
       teardownFn()
     }
 
+    /* ******************* */
+    // Custom link target
+    /* ******************* */
+    const customLinkTargetFn = (linkProviderId) => {
+      LinkOpener.openUrlInCustomLinkProvider(linkProviderId, targetUrl)
+      teardownFn()
+    }
+
     // Bind to window close events
     const boundWindow = BrowserWindow.fromId(openingBrowserWindowId)
     if (boundWindow && !boundWindow.isDestroyed()) {
@@ -273,7 +284,8 @@ class WindowOpeningOpeners {
       defaultBrowserFn: defaultBrowserFn,
       waveboxWindowFn: waveboxWindowFn,
       runningServiceTabFn: runningServiceTabFn,
-      serviceWindowFn: serviceWindowFn
+      serviceWindowFn: serviceWindowFn,
+      customLinkTargetFn: customLinkTargetFn
     })
 
     return requestId
@@ -288,9 +300,9 @@ class WindowOpeningOpeners {
   * @param evt: the event that fired
   * @param requestId: the id of the request
   * @param openMode: the open mode to use
-  * @param targetServiceId: the optional target service id to use
+  * @param target: the optional target to use
   */
-  _handleULinkOROpen = (evt, requestId, openMode, targetServiceId) => {
+  _handleULinkOROpen = (evt, requestId, openMode, target) => {
     const req = this[privPendingULinkOR].get(requestId)
     if (req) {
       switch (openMode) {
@@ -301,10 +313,13 @@ class WindowOpeningOpeners {
           req.waveboxWindowFn()
           break
         case ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW:
-          req.serviceWindowFn(targetServiceId)
+          req.serviceWindowFn(target)
           break
         case ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB:
-          req.runningServiceTabFn(targetServiceId)
+          req.runningServiceTabFn(target)
+          break
+        case ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER:
+          req.customLinkTargetFn(target)
           break
       }
     }
