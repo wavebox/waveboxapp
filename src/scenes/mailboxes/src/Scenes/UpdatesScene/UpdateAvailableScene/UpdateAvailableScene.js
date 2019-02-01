@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
 import UpdateAvailableSceneContent from './UpdateAvailableSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 
 class UpdateAvailableScene extends React.Component {
   /* **************************************************************************/

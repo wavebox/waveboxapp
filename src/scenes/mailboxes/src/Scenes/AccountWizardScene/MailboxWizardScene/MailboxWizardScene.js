@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxWizardSceneContent from './MailboxWizardSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {

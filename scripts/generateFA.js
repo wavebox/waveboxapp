@@ -40,6 +40,7 @@ const MAPPING = [
   ['farDesktop', 'fasDesktop'],
   ['farPenSquare', 'fasPenSquare'],
   ['farClone', 'farClone'],
+  ['farFrown', 'farFrown'],
 
   ['falWindowClose', 'farWindowClose'],
   ['falWindowMaximize', 'farWindowMaximize'],

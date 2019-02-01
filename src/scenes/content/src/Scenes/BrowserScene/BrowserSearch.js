@@ -7,25 +7,35 @@ import { WB_WINDOW_FIND_START } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import grey from '@material-ui/core/colors/grey'
 
+const SEARCH_HEIGHT = 48
 const styles = {
-  search: {
+  container: {
+    display: 'flex',
+    alignItems: 'center',
     position: 'absolute',
-    bottom: -48,
+    bottom: -SEARCH_HEIGHT - 5,
     left: 0,
     minWidth: 300,
-    height: 48,
+    height: SEARCH_HEIGHT,
     backgroundColor: 'white',
     transition: 'none !important',
     zIndex: 10,
-    overflow: 'hidden'
+    overflow: 'hidden',
+
+    '&.active': {
+      bottom: 0
+    }
   },
-  searchActive: {
-    bottom: 0
+  icon: {
+    bottom: -7,
+    color: grey[600],
+    zIndex: 1
   },
-  searchField: {
+  input: {
     marginLeft: 15,
-    width: 300
+    width: 200
   }
 }
 
@@ -140,21 +150,21 @@ class BrowserSearch extends React.Component {
     const { isSearching, searchTerm } = this.state
 
     return (
-      <Paper {...passProps} className={classNames(classes.search, isSearching ? classes.searchActive : undefined, className)}>
+      <Paper {...passProps} className={classNames(classes.container, isSearching ? 'active' : undefined, className)}>
         <TextField
           inputRef={(n) => { this.searchInputRef = n }}
           placeholder='Search'
           tabIndex={-1}
           inputProps={{ tabIndex: -1 }}
-          className={classes.searchField}
+          className={classes.input}
           value={searchTerm}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
         <IconButton tabIndex={-1} onClick={this.handleFindNext}>
-          <SearchIcon />
+          <SearchIcon className={classes.icon} />
         </IconButton>
         <IconButton tabIndex={-1} onClick={this.handleStopSearch}>
-          <CloseIcon />
+          <CloseIcon className={classes.icon} />
         </IconButton>
       </Paper>
     )

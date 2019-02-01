@@ -175,6 +175,13 @@ class AdvancedSettingsSection extends React.Component {
             <SettingsListTypography type='warning' icon={<WarningIcon />}>
               All links will open in your default browser. You may experience
               broken links and blank windows with this setting
+              <p>
+                Other link tools (e.g. changeable behaviour with Shift+Click) are
+                not available with this option disabled
+              </p>
+              <p>
+                It's highly recommended keeping this setting enabled
+              </p>
             </SettingsListTypography>
           ) : (
             <SettingsListTypography>

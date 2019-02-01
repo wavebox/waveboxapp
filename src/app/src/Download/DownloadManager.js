@@ -111,10 +111,27 @@ class DownloadManager extends EventEmitter {
       // to work around this, use the default download hanlder silently in the background
       // and whilst the download is in progress prompt the user to download etc
       item = new AsyncDownloadItem(item)
+      let downloadPath
 
-      const itemFilename = item.getFilename()
+      // Report the progress to the window to display it
+      this._handleUserDownloadStarted(item.downloadId, item, downloadPath)
+      item.on('updated', () => {
+        if (item.isWaitingSetup()) { return }
+        this._handleUserDownloadUpdated(item.downloadId, item, downloadPath)
+      })
+      item.on('done', (e, state) => {
+        if (item.isWaitingSetup()) { return }
+        if (state === 'completed') {
+          this._handleUserDownloadFinished(item.downloadId, item, downloadPath)
+        } else {
+          this._handleUserDownloadFailed(item.downloadId, item, downloadPath)
+        }
+      })
+
+      // Prompt the user for the save location
       Promise.resolve()
         .then(() => {
+          const itemFilename = item.getFilename()
           // Download target picking
           if (!settingsState.os.alwaysAskDownloadLocation && settingsState.os.defaultDownloadLocation) {
             const folderLocation = settingsState.os.defaultDownloadLocation
@@ -156,21 +173,21 @@ class DownloadManager extends EventEmitter {
           }
         })
         .then((pickedSavePath) => {
-          const downloadPath = unusedFilename.sync(pickedSavePath)
-          item.setSavePath(downloadPath)
-          this._handleUserDownloadStarted(item.downloadId, item, downloadPath)
+          // This means we finished the download before we could pick the save path.
+          // Artificually fire the finish event
+          const didFinishBeforePicked = item.isFinished()
 
-          // Report the progress to the window to display it
-          item.on('updated', () => {
-            this._handleUserDownloadUpdated(item.downloadId, item, downloadPath)
-          })
-          item.on('done', (e, state) => {
-            if (state === 'completed') {
+          downloadPath = unusedFilename.sync(pickedSavePath)
+          this[privUser].lastPath = path.dirname(downloadPath)
+          item.setSavePath(downloadPath)
+
+          if (didFinishBeforePicked) {
+            if (item.finishedState() === 'completed') {
               this._handleUserDownloadFinished(item.downloadId, item, downloadPath)
             } else {
               this._handleUserDownloadFailed(item.downloadId, item, downloadPath)
             }
-          })
+          }
         })
         .catch((ex) => { /* no-op */ })
     } else {
@@ -217,6 +234,7 @@ class DownloadManager extends EventEmitter {
 
       // Set the save - will prevent dialog showing up
       const downloadPath = unusedFilename.sync(savePath) // just-in-case
+      this[privUser].lastPath = path.dirname(downloadPath)
       item.setSavePath(downloadPath)
 
       // Save some variables for later re-use
@@ -270,7 +288,6 @@ class DownloadManager extends EventEmitter {
   * @param downloadPath: the path to download to
   */
   _handleUserDownloadStarted (id, item, downloadPath) {
-    this[privUser].lastPath = path.dirname(downloadPath)
     this[privUser].inProgress.set(id, {
       item: item,
       received: item.getReceivedBytes(),

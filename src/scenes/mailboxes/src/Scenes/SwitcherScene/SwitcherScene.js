@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import Zoom from '@material-ui/core/Zoom'
 import SwitcherSceneContent from './SwitcherSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import {
   WB_QUICK_SWITCH_NEXT,
   WB_QUICK_SWITCH_PREV,

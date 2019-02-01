@@ -36,6 +36,8 @@ class DownloadList extends React.Component {
   * @param downloadItem: the download item
   */
   handleOpenExtraOptions = (evt, downloadItem) => {
+    evt.preventDefault()
+    evt.stopPropagation()
     this.setState({
       contextMenu: {
         anchor: evt.target,
@@ -133,10 +135,11 @@ class DownloadList extends React.Component {
       <React.Fragment>
         <List dense {...passProps}>
           {downloads.length ? (
-            downloads.map((dl) => {
+            downloads.map((dl, i) => {
               return (
                 <DownloadListItem
                   key={dl.id}
+                  divider={i !== downloads.length - 1}
                   downloadItem={dl}
                   onRequestExtraOptions={this.handleOpenExtraOptions}
                   onRequestClearFailedDownload={this.handleClearFailedDownload}

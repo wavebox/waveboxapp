@@ -1,19 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Switch, Select, MenuItem, TextField, FormControlLabel, FormControl, InputLabel } from '@material-ui/core'
+import { Button, Switch, TextField, FormControlLabel, FormControl } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountActions, accountStore } from 'stores/account'
-import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import { withStyles } from '@material-ui/core/styles'
 import GenericServiceReducer from 'shared/AltStores/Account/ServiceReducers/GenericServiceReducer'
-import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
-
-const humanizedOpenModes = {
-  [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',
-  [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser',
-  [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK]: 'Ask'
-}
 
 const styles = {
   // Typography
@@ -88,7 +80,6 @@ class WizardConfigureGeneric extends React.Component {
       mailboxId: mailboxId,
       serviceCount: mailbox ? mailbox.allServiceCount : 0,
       configureDisplayFromPage: true,
-      defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK,
       hasNavigationToolbar: true,
       restoreLastUrl: true,
       displayNameError: null,
@@ -143,7 +134,6 @@ class WizardConfigureGeneric extends React.Component {
     const {
       displayName,
       configureDisplayFromPage,
-      defaultWindowOpenMode,
       hasNavigationToolbar,
       restoreLastUrl,
       mailboxId
@@ -154,8 +144,6 @@ class WizardConfigureGeneric extends React.Component {
     accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, configureDisplayFromPage)
     accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
     accountActions.reduceService(serviceId, GenericServiceReducer.setRestoreLastUrl, restoreLastUrl)
-
-    accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
 
     if (openSettings) {
       onRequestCancel(evt, `/settings/accounts/${mailboxId}`)
@@ -177,7 +165,6 @@ class WizardConfigureGeneric extends React.Component {
     const { serviceId, onRequestCancel, classes, ...passProps } = this.props
     const {
       configureDisplayFromPage,
-      defaultWindowOpenMode,
       hasNavigationToolbar,
       restoreLastUrl,
       displayName,
@@ -223,20 +210,6 @@ class WizardConfigureGeneric extends React.Component {
           error={!!displayNameError}
           helperText={displayNameError}
           onChange={(evt) => this.setState({ displayName: evt.target.value })} />
-        <FormControl fullWidth margin='normal'>
-          <InputLabel>Open new windows in which Browser</InputLabel>
-          <Select
-            MenuProps={{ disableEnforceFocus: true }}
-            value={defaultWindowOpenMode}
-            fullWidth
-            onChange={(evt) => {
-              this.setState({ defaultWindowOpenMode: evt.target.value })
-            }}>
-            {Object.keys(ACMailbox.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
-              return (<MenuItem key={mode} value={mode}>{humanizedOpenModes[mode]}</MenuItem>)
-            })}
-          </Select>
-        </FormControl>
         <FormControl fullWidth>
           <FormControlLabel
             label='Restore last page on load'

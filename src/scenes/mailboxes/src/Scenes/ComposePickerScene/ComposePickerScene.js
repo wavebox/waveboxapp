@@ -3,7 +3,7 @@ import { emblinkActions } from 'stores/emblink'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import ComposePickerSceneContent from './ComposePickerSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 class ComposePickerScene extends React.Component {
   /* **************************************************************************/

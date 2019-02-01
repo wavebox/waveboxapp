@@ -11,12 +11,9 @@ import FolderOpenIcon from '@material-ui/icons/FolderOpen'
 import Timeago from 'react-timeago'
 import ErrorIcon from '@material-ui/icons/Error'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
+import path from 'path'
 
 const styles = {
-  root: {
-    borderBottom: '1px solid rgb(224, 224, 224)'
-  },
   secondaryText: {
     fontSize: '12px'
   }
@@ -97,7 +94,11 @@ class DownloadListItem extends React.Component {
         disableTypography
         primary={(
           <Typography variant='body1' noWrap>
-            {downloadItem.filename || 'Untitled'}
+            {(
+              (typeof (downloadItem.downloadPath) === 'string'
+                ? path.basename(downloadItem.downloadPath)
+                : downloadItem.filename) || 'Untitled'
+            )}
           </Typography>
         )}
         secondary={(
@@ -169,7 +170,6 @@ class DownloadListItem extends React.Component {
   render () {
     const {
       classes,
-      className,
       downloadItem,
       onRequestExtraOptions,
       onContextMenu,
@@ -182,7 +182,6 @@ class DownloadListItem extends React.Component {
     return (
       <ListItem
         onContextMenu={this.handleContextMenu}
-        className={classNames(classes.root, className)}
         {...passProps}>
         {this.renderText(classes, downloadItem)}
         {this.renderSecondaryAction(downloadItem)}

@@ -1,4 +1,5 @@
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import WINDOW_TYPES from 'Windows/WindowTypes'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
@@ -8,6 +9,7 @@ import {
   WB_READING_QUEUE_OPEN_URL,
   WB_READING_QUEUE_OPEN_URL_EMPTY
 } from 'shared/ipcEvents'
+import { spawn } from 'child_process'
 
 class LinkOpener {
   /* **************************************************************************/
@@ -119,6 +121,76 @@ class LinkOpener {
     if (!mailboxesWindow) { return }
     mailboxesWindow.show().focus()
     mailboxesWindow.navigateAndSwitchToService(serviceId, url)
+  }
+
+  /**
+  * Opens a url in a new window under the mailbox, but shimming the first service as the opener
+  * @param serviceId: the id of the service to open under
+  * @param url: the url to open
+  * @param openerWindow=undefined: the parent electron.BrowserWindow if available/appplicable
+  * @return the created content window
+  */
+  openUrlInMailboxWindow (mailboxId, url, openerWindow = undefined) {
+    const mailbox = accountStore.getState().getMailbox(mailboxId)
+    if (!mailbox) { return undefined }
+    return this.openUrlInServiceWindow(mailbox.allServices[0], url, openerWindow)
+  }
+
+  /**
+  * Opens a url in a new window under the service partition
+  * @param serviceId: the id of the service to open under
+  * @param url: the url to open
+  * @param openerWindow=undefined: the parent electron.BrowserWindow if available/appplicable
+  * @return the created content window
+  */
+  openUrlInServiceWindow (serviceId, url, openerWindow = undefined) {
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return undefined }
+
+    const contentWindow = new ContentWindow({
+      backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
+      mailboxId: service.parentId,
+      serviceId: serviceId
+    })
+    contentWindow.create(
+      url,
+      undefined,
+      openerWindow,
+      { partition: service.partitionId }
+    )
+    return contentWindow
+  }
+
+  /**
+  * Opens a url in a custom link provider
+  * @param linkProviderId: the id of the link provider
+  * @param targetUrl: the url to open
+  */
+  openUrlInCustomLinkProvider (linkProviderId, targetUrl) {
+    const linkProvider = settingsStore.getState().os.getCustomLinkProvider(linkProviderId)
+    if (!linkProvider) { return }
+
+    const args = (linkProvider.args || [])
+      .map((arg) => {
+        if (typeof (arg) === 'string') {
+          return arg
+        } else if (typeof (arg) === 'object') {
+          if (arg.type === 'url') {
+            return targetUrl
+          } else {
+            return undefined
+          }
+        } else {
+          return undefined
+        }
+      })
+      .filter((arg) => !!arg)
+
+    spawn(
+      linkProvider.cmd,
+      args,
+      { detached: true, windowsHide: true }
+    )
   }
 }
 

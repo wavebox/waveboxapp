@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ProfileRestoreRestartingSceneContent from './ProfileRestoreRestartingSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 class ProfileRestoreRestartingScene extends React.Component {
   /* **************************************************************************/

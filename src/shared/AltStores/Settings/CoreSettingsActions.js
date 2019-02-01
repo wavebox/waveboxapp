@@ -133,6 +133,37 @@ class CoreSettingsActions extends RemoteActions {
       return this.remoteDispatch('glueCurrentUpdateChannel', args)
     }
   }
+
+  /* **************************************************************************/
+  // Updates: OS
+  /* **************************************************************************/
+
+  /**
+  * Sets a custom link provider
+  * @param providerId: the id of the provider, or undefined to create a new one
+  * @param provider: the provider config
+  */
+  setCustomLinkProvider (...args) {
+    if (process.type === 'browser') {
+      const [ providerId, provider ] = args
+      return { providerId, provider }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setCustomLinkProvider', args)
+    }
+  }
+
+  /**
+  * Removes a custom link provider
+  * @param providerId: the id of the provider to remove
+  */
+  removeCustomLinkProvider (...args) {
+    if (process.type === 'browser') {
+      const [ providerId ] = args
+      return { providerId }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('removeCustomLinkProvider', args)
+    }
+  }
 }
 
 export default CoreSettingsActions

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxReauthenticatingSceneContent from './MailboxReauthenticatingSceneContent'
 import { withStyles } from '@material-ui/core/styles'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 const styles = {
   root: {

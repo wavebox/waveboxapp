@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 import UpdateNoneSceneContent from './UpdateNoneSceneContent'
 
 class UpdateNoneScene extends React.Component {

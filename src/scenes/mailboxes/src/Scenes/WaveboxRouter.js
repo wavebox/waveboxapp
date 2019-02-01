@@ -1,6 +1,6 @@
 import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
-import { RouterDialogRoute } from 'Components/RouterDialog'
+import { RouterDialogRoute } from 'wbui/RouterDialog'
 import AppScene from './AppScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import PrivacyDialog from './PrivacyDialog'
@@ -32,8 +32,8 @@ import {
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } from './AccountScene'
-import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
-import WaveboxRouterNoMatch from './WaveboxRouterNoMatch'
+import WaveboxRouterErrorBoundary from 'wbui/WaveboxRouter/WaveboxRouterErrorBoundary'
+import WaveboxRouterNoMatch from 'wbui/WaveboxRouter/WaveboxRouterNoMatch'
 import {
   ProfileRestoreScene,
   ProfileRestoreFetchingScene,

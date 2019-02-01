@@ -99,6 +99,16 @@ class CommandPaletteSceneContent extends React.Component {
     this.searchInputRef = React.createRef()
     this.searchResultsRef = React.createRef()
     this.search = new CommandPaletteSearchEngine()
+
+    // State
+    const accountState = accountStore.getState()
+    this.state = {
+      searchTerm: '',
+      searchResults: [],
+      searchResultsByTarget: {},
+      searchResultsTerm: '',
+      recentServiceRecords: this.search.generateRecentServiceResults(accountState)
+    }
   }
 
   /* **************************************************************************/
@@ -121,22 +131,18 @@ class CommandPaletteSceneContent extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return {
-      searchTerm: '',
-      searchResults: [],
-      searchResultsByTarget: {}
-    }
-  })()
-
   accountsChanged = (accountState) => {
+    this.setState({
+      recentServiceRecords: this.search.generateRecentServiceResults(accountState)
+    })
     this.search.reloadAccounts()
   }
 
-  resultsUpdated = (evt, results, resultsByTarget) => {
+  resultsUpdated = (evt, results, resultsByTarget, resultsTerm) => {
     this.setState({
       searchResults: results,
-      searchResultsByTarget: resultsByTarget
+      searchResultsByTarget: resultsByTarget,
+      searchResultsTerm: resultsTerm
     })
   }
 
@@ -281,16 +287,26 @@ class CommandPaletteSceneContent extends React.Component {
   * @param searchTerm: the search term that's in use
   * @param searchResults: the full array of search results
   * @param searchResultsByTarget: the results listed by target
+  * @param searchResultsTerm: the term that was used to generate the search results
+  * @param recentServiceRecords: the recent service records
   * @return jsx
   */
-  renderSearchResults (classes, searchTerm, searchResults, searchResultsByTarget) {
-    if (!searchTerm) {
-      return (
-        <div className={classes.fullDialogHelper}>
-          <SearchIcon className={classes.fullDialogHelperIcon} />
-          Type to start searching
-        </div>
-      )
+  renderSearchResults (classes, searchTerm, searchResults, searchResultsByTarget, searchResultsTerm, recentServiceRecords) {
+    if (!searchResultsTerm) {
+      if (recentServiceRecords.length) {
+        return (
+          <React.Fragment>
+            {recentServiceRecords.map((res) => this.renderSearchResultItem(res))}
+          </React.Fragment>
+        )
+      } else {
+        return (
+          <div className={classes.fullDialogHelper}>
+            <SearchIcon className={classes.fullDialogHelperIcon} />
+            Type to start searching
+          </div>
+        )
+      }
     }
 
     if (!searchResults.length) {
@@ -340,7 +356,9 @@ class CommandPaletteSceneContent extends React.Component {
     const {
       searchTerm,
       searchResults,
-      searchResultsByTarget
+      searchResultsByTarget,
+      searchResultsTerm,
+      recentServiceRecords
     } = this.state
 
     return (
@@ -362,7 +380,14 @@ class CommandPaletteSceneContent extends React.Component {
             ref={this.searchResultsRef}
             className={classes.searchResults}
             dense>
-            {this.renderSearchResults(classes, searchTerm, searchResults, searchResultsByTarget)}
+            {this.renderSearchResults(
+              classes,
+              searchTerm,
+              searchResults,
+              searchResultsByTarget,
+              searchResultsTerm,
+              recentServiceRecords
+            )}
           </List>
         </DialogContent>
       </React.Fragment>

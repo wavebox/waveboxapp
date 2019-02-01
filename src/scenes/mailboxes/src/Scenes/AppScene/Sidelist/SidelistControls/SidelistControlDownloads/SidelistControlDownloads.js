@@ -274,7 +274,7 @@ class SidelistControlDownloads extends React.Component {
           anchorEl={popoutAnchor}
           anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
           BackdropProps={{
-            classes: classes.popoutBackdrop
+            classes: { root: classes.popoutBackdrop }
           }}
           disableEnforceFocus
           open={!!popoutAnchor}

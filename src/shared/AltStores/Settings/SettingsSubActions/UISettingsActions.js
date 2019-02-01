@@ -147,6 +147,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param warn: true to warn, false to not
+  */
+  setWarnBeforeKeyboardQuitting (warn) {
+    this.dispatchUpdate('warnBeforeKeyboardQuitting', warn)
+  }
+
+  /**
   * @param theme: the theme to set
   */
   setTheme (theme) {

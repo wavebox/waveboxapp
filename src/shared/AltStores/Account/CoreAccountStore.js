@@ -434,6 +434,33 @@ class CoreAccountStore extends RemoteStore {
       return service.getUrlWithData(serviceData, serviceAuth) || defaultValue
     }
 
+    /**
+    * @return all the services names, fully resolved for maximum usability in an object
+    */
+    this.allResolvedFullServiceNames = () => {
+      return this.serviceIds().reduce((acc, serviceId) => {
+        acc[serviceId] = this.resolvedFullServiceName(serviceId)
+        return acc
+      }, {})
+    }
+
+    /**
+    * @param serviceId: the id of the service
+    * @return A fully resolved service id which includes mailbox info
+    */
+    this.resolvedFullServiceName = (serviceId) => {
+      const service = this.getService(serviceId)
+      if (service) {
+        const displayName = this.resolvedServiceDisplayName(serviceId)
+        const mailboxHelper = this.resolvedMailboxExplicitServiceDisplayName(service.parentId, undefined)
+
+        return mailboxHelper && mailboxHelper !== displayName
+          ? `${displayName} ${mailboxHelper}`
+          : displayName
+      }
+      return undefined
+    }
+
     /* ****************************************/
     // Service data
     /* ****************************************/

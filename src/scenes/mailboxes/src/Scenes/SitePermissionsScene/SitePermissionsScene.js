@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import SitePermissionsSceneContent from './SitePermissionsSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 const styles = {
   dialog: {

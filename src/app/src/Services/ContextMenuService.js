@@ -1,7 +1,6 @@
 import { app, BrowserWindow, Menu, shell, clipboard, nativeImage, session } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import WaveboxWindow from 'Windows/WaveboxWindow'
-import ContentWindow from 'Windows/ContentWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import { CRExtensionManager } from 'Extensions/Chrome'
@@ -277,7 +276,7 @@ class ContextMenuService {
           submenu: [
             {
               label: 'Open Link in New Window',
-              click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
+              click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, accountInfo.mailbox.id) }
             },
             (accountInfo.has ? {
               label: 'Open Link as New Service',
@@ -305,11 +304,7 @@ class ContextMenuService {
                   {
                     label: 'New Window',
                     click: () => {
-                      this.openLinkInWaveboxWindowForAccount(
-                        contents,
-                        params.linkURL,
-                        accountStore.getState().getMailbox(mailboxId)
-                      )
+                      this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailboxId)
                     }
                   },
                   { type: 'separator' }
@@ -333,11 +328,7 @@ class ContextMenuService {
               return {
                 label: accountState.resolvedMailboxDisplayName(mailboxId),
                 click: () => {
-                  this.openLinkInWaveboxWindowForAccount(
-                    contents,
-                    params.linkURL,
-                    accountStore.getState().getMailbox(mailboxId)
-                  )
+                  this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailboxId)
                 }
               }
             })
@@ -376,7 +367,7 @@ class ContextMenuService {
           const targetUrl = AppSettings.generateSearchProviderUrl(searchProvider, params.selectionText)
           const openInWavebox = AppSettings.searchProviderOpensInWavebox(searchProvider)
           if (openInWavebox && accountInfo.has) {
-            this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox)
+            this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox.id)
           } else {
             shell.openExternal(targetUrl)
           }
@@ -516,7 +507,7 @@ class ContextMenuService {
           },
           {
             label: 'Open Page in Wavebox',
-            click: () => { this.openLinkInWaveboxWindow(contents, params.pageURL) }
+            click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.pageURL, accountInfo.mailbox.id) }
           },
           (accountInfo.has ? {
             label: 'Open Page as New Service',
@@ -816,43 +807,15 @@ class ContextMenuService {
   /* **************************************************************************/
 
   /**
-  * Opens a link in a Wavebox popup window
-  * @param contents: the contents to open for
-  * @param url: the url to open
-  */
-  openLinkInWaveboxWindow (contents, url) {
-    const rootContents = ElectronWebContents.rootWebContents(contents)
-    const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
-    const waveboxWindow = WaveboxWindow.fromBrowserWindow(openerWindow)
-
-    const openerWebPreferences = contents.getWebPreferences()
-    const contentWindow = new ContentWindow(waveboxWindow ? waveboxWindow.tabMetaInfo(contents.id) : undefined)
-    contentWindow.create(
-      url,
-      undefined,
-      openerWindow,
-      { partition: openerWebPreferences.partition }
-    )
-  }
-
-  /**
   *  Opens a link in a Wavebox popup window, backed for a different account type
   * @param contents: the contents to open for
   * @param url: the url to open
-  * @param mailbox: the mailbox to open for
+  * @param mailboxId: the id of the mailbox to open for
   */
-  openLinkInWaveboxWindowForAccount (contents, url, mailbox) {
+  openLinkInWaveboxWindowForAccount (contents, url, mailboxId) {
     const rootContents = ElectronWebContents.rootWebContents(contents)
     const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
-    const contentWindow = new ContentWindow(
-      undefined // This is a hived window, so don't pass any meta info into it
-    )
-    contentWindow.create(
-      url,
-      undefined,
-      openerWindow,
-      { partition: mailbox.partitionId }
-    )
+    LinkOpener.openUrlInMailboxWindow(mailboxId, url, openerWindow)
   }
 
   /**

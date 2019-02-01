@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 import AccountAuthenticatingSceneContent from './AccountAuthenticatingSceneContent'
 
 class AccountAuthenticatingScene extends React.Component {

@@ -15,6 +15,7 @@ import ServiceSettingsSection from './Sections/ServiceSettingsSection'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import BuildIcon from '@material-ui/icons/Build'
 import TuneIcon from '@material-ui/icons/Tune'
+import LinkIcon from '@material-ui/icons/Link'
 import FingerprintIcon from '@material-ui/icons/Fingerprint'
 import AccountServicesHeading from './AccountServicesHeading'
 import ServiceAvatar from 'Components/Backed/ServiceAvatar'
@@ -213,6 +214,7 @@ class AccountSettingsScroller extends React.Component {
     const scrollspyIds = [
       `mailbox-appearance-${mailboxId}`,
       `mailbox-credentials-$${mailboxId}`,
+      `mailbox-links-${mailboxId}`,
       `mailbox-advanced-${mailboxId}`,
       `mailbox-tools-${mailboxId}`,
       `mailbox-services-heading-1-${mailboxId}`
@@ -278,6 +280,15 @@ class AccountSettingsScroller extends React.Component {
                 onClick={(evt) => this.scrollToSection(evt, `mailbox-credentials-${mailboxId}`)}>
                 <FingerprintIcon className={classes.scrollspyIcon} />
                 Credentials
+              </ListItem>
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, `mailbox-links-${mailboxId}`)}>
+                <LinkIcon className={classes.scrollspyIcon} />
+                Links
               </ListItem>
               <ListItem
                 divider
