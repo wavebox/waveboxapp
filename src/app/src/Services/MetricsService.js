@@ -187,6 +187,14 @@ class MetricsService {
     // Build the final metrics
     const metrics = app.getAppMetrics().map((metric) => {
       return {
+        //TODO: electron4 deprication
+        memory: {
+          pid: metric.pid,
+          workingSetSize: 0,
+          peakWorkingSetSize: 0,
+          privateBytes: 0,
+          sharedBytes: 0
+        },
         ...metric,
         webContentsInfo: webContentsByPid.get(metric.pid)
       }
