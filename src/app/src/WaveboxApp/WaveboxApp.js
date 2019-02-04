@@ -198,6 +198,9 @@ class WaveboxApp {
     if (launchSettings.app.disableHardwareAcceleration || this[privArgv].safemode === true) {
       app.disableHardwareAcceleration()
     }
+    if (launchSettings.app.disableProxyDetection) {
+      app.commandLine.appendSwitch('no-proxy-server', 'true')
+    }
     app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
