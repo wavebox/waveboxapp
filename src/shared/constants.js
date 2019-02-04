@@ -67,6 +67,8 @@ module.exports = Object.freeze({
   SYNC_SOCKET_RECONNECT_RANGE: seconds(4.5),
   USER_PROFILE_SYNC_INTERVAL: hours(6),
   USER_PROFILE_DEFERED_SYNC_ON_CREATE: minutes(15),
+  USER_PROFILE_SYNC_THROTTLE: seconds(30),
+  USER_PROFILE_SYNC_RETRY: minutes(3),
 
   // Dictionaries
   PREINSTALLED_DICTIONARIES: ['en_US'],
