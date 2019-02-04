@@ -36,12 +36,21 @@ const styles = {
   },
 
   kbIcon: {
-    marginRight: 6
+    marginRight: 6,
+    verticalAlign: 'sub',
+    fontSize: '20px'
   },
   link: {
     textDecoration: 'underline',
     cursor: 'pointer',
-    color: blue[800]
+    color: blue[600]
+  },
+  linkPara: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: blue[600],
+    marginTop: 0,
+    marginBottom: 0
   }
 }
 
@@ -114,13 +123,14 @@ class GoogleMailUnreadSettings extends React.Component {
     const service = accountState.getService(serviceId)
     return service ? {
       hasService: true,
+      serviceType: service.type,
       customUnreadQuery: service.customUnreadQuery,
       customUnreadLabelWatchString: service.customUnreadLabelWatchString,
       customUnreadCountFromLabel: service.customUnreadCountFromLabel,
       customUnreadCountLabel: service.customUnreadCountLabel,
       customUnreadCountLabelField: service.customUnreadCountLabelField,
-      unreadMode: service.unreadMode,
-      supportedUnreadModes: Array.from(service.supportedUnreadModes)
+      inboxType: service.inboxType,
+      supportedInboxTypes: Array.from(service.supportedInboxTypes)
     } : {
       hasService: false
     }
@@ -152,6 +162,16 @@ class GoogleMailUnreadSettings extends React.Component {
     }, 500)
   }
 
+  /**
+  * Opens the inbox type KB
+  * @param evt: the event that fired
+  */
+  handleOpenInboxTypeKB = (evt) => {
+    evt.preventDefault()
+
+    remote.shell.openExternal('https://wavebox.io/kb/gmail-inbox-type')
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -162,27 +182,64 @@ class GoogleMailUnreadSettings extends React.Component {
 
   /**
   * Turns an unread mode into a friendlier string
-  * @param mode: the unread mode
+  * @param type: the inbox type
+  * @param serviceType: the type of service
   * @return the humanized version
   */
-  humanizeUnreadMode (mode) {
-    switch (mode) {
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
-        return 'All Messages'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
-        return 'Unread Messages'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
-        return 'Unread Important Messages'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-        return 'Unread Messages in Primary Category'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
-        return '(Experimental) Unread Messages'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
-        return '(Experimental) Unread Important Messages'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
-        return '(Experimental) Unread Messages in Primary Category'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
-        return 'Unread Unbundled Messages'
+  humanizeInboxType (type, serviceType) {
+    switch (type) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT: return 'Default (Categories or tabs)'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT: return 'Important first'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
+        return serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_INBOX
+          ? 'All unread messages'
+          : 'Unread first'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED: return 'Starred first'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY: return 'Priority Inbox'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM: return 'Default (Categories or tabs) (Experimental counts)'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM: return 'Important first (Experimental counts)'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM: return 'Unread first (Experimental counts)'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM: return 'Starred first (Experimental counts)'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM: return 'Priority Inbox (Experimental counts)'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL__ALL: return 'All messages (Read & Unread)'
+      case CoreGoogleMailService.INBOX_TYPES.GINBOX_UNBUNDLED: return 'Unread Unbundled Messages'
+    }
+  }
+
+  /**
+  * Renders the inbox type settings. This is basically a shim around supportedInboxTypes so we can have
+  * dividers within the list. Once Google Inbox has been turned off by Google and we've removed it from
+  * the Wavebox codebase, we can look to simplify this
+  * @param serviceType: the service type to render for
+  * @param supportedInboxTypes: the list of supported inbox type from the model
+  * @return an array that can be passed to the list
+  */
+  renderInboxTypeSettings (serviceType, supportedInboxTypes) {
+    if (serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL) {
+      const userCommon = new Set([
+        CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT,
+        CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT,
+        CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD,
+        CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED,
+        CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY
+      ])
+
+      return [].concat(
+        Array.from(userCommon).map((type) => {
+          return { value: type, label: this.humanizeInboxType(type, serviceType) }
+        }),
+        [{ divider: true }],
+        supportedInboxTypes
+          .filter((type) => !userCommon.has(type))
+          .map((type) => {
+            return { value: type, label: this.humanizeInboxType(type, serviceType) }
+          })
+      )
+    } else {
+      // Depricated Google Inbox types
+      return supportedInboxTypes.map((type) => {
+        return { value: type, label: this.humanizeInboxType(type, serviceType) }
+      })
     }
   }
 
@@ -200,8 +257,9 @@ class GoogleMailUnreadSettings extends React.Component {
       customUnreadCountLabel,
       customUnreadCountLabelField,
       showCustomUnreadSettings,
-      unreadMode,
-      supportedUnreadModes
+      inboxType,
+      supportedInboxTypes,
+      serviceType
     } = this.state
     if (!hasService) { return false }
     const hasCustomQueryConfiguration = !!customUnreadQuery || !!customUnreadLabelWatchString
@@ -209,14 +267,16 @@ class GoogleMailUnreadSettings extends React.Component {
     return (
       <SettingsListSection title='Unread & Sync' {...passProps}>
         <SettingsListItemSelect
-          label='Unread Mode'
+          label={serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL ? (
+            <React.Fragment>
+              Inbox Type <a href='#' className={classes.link} onClick={this.handleOpenInboxTypeKB}>Need some help?</a>
+            </React.Fragment>
+          ) : ('Inbox Type')}
           disabled={hasCustomQueryConfiguration}
-          value={unreadMode}
-          options={supportedUnreadModes.map((mode) => {
-            return { value: mode, label: this.humanizeUnreadMode(mode) }
-          })}
+          value={inboxType}
+          options={this.renderInboxTypeSettings(serviceType, supportedInboxTypes)}
           onChange={(evt, value) => {
-            accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setUnreadMode, value)
+            accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setInboxType, value)
           }} />
         <SettingsListItem className={classes.customUnreadModeListItem} divider={false}>
           <ListItemText
@@ -248,7 +308,7 @@ class GoogleMailUnreadSettings extends React.Component {
           onClose={() => this.setState({ showCustomUnreadSettings: false })}>
           <DialogTitle>Advanced unread options</DialogTitle>
           <DialogContent>
-            <p style={styles.link} onClick={this.handleOpenKBArticle}>
+            <p className={classes.linkPara} onClick={this.handleOpenKBArticle}>
               <HelpOutlineIcon className={classes.kbIcon} />
               Find out how to configure a custom unread in the Knowledge Base
             </p>

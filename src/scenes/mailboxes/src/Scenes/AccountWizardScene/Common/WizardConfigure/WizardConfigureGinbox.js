@@ -74,10 +74,10 @@ class WizardConfigureGinbox extends React.Component {
       const accountState = accountStore.getState()
       const service = accountState.getService(nextProps.serviceId)
       this.setState(service ? {
-        unreadMode: service.unreadMode,
+        inboxType: service.inboxType,
         serviceId: service.id
       } : {
-        unreadMode: undefined,
+        inboxType: undefined,
         serviceId: undefined
       })
     }
@@ -92,10 +92,10 @@ class WizardConfigureGinbox extends React.Component {
     const service = accountState.getService(this.props.serviceId)
 
     return service ? {
-      unreadMode: service.unreadMode,
+      inboxType: service.inboxType,
       serviceId: service.id
     } : {
-      unreadMode: undefined,
+      inboxType: undefined,
       serviceId: undefined
     }
   })()
@@ -104,10 +104,10 @@ class WizardConfigureGinbox extends React.Component {
     const service = accountState.getService(this.props.serviceId)
 
     this.setState(service ? {
-      unreadMode: service.unreadMode,
+      inboxType: service.inboxType,
       serviceId: service.id
     } : {
-      unreadMode: undefined,
+      inboxType: undefined,
       serviceId: undefined
     })
   }
@@ -118,11 +118,11 @@ class WizardConfigureGinbox extends React.Component {
 
   /**
   * Handles a mode being picked by updating the mailbox
-  * @param unreadMode: the picked unread mode
+  * @param inboxType: the picked unread mode
   */
-  handleModePicked = (unreadMode) => {
+  handleModePicked = (inboxType) => {
     const { serviceId } = this.state
-    accountActions.reduceService(serviceId, GoogleInboxServiceReducer.setUnreadMode, unreadMode)
+    accountActions.reduceService(serviceId, GoogleInboxServiceReducer.setInboxType, inboxType)
   }
 
   /* **************************************************************************/
@@ -136,7 +136,7 @@ class WizardConfigureGinbox extends React.Component {
       classes,
       ...passProps
     } = this.props
-    const { unreadMode } = this.state
+    const { inboxType } = this.state
 
     return (
       <WizardConfigureDefaultLayout
@@ -153,8 +153,8 @@ class WizardConfigureGinbox extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={yellow[700]}
-            selected={unreadMode === GoogleInboxService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED}
-            onSelected={() => this.handleModePicked(GoogleInboxService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED)}
+            selected={inboxType === GoogleInboxService.INBOX_TYPES.GINBOX_UNBUNDLED}
+            onSelected={() => this.handleModePicked(GoogleInboxService.INBOX_TYPES.GINBOX_UNBUNDLED)}
             name='Unread Unbundled Messages'
             popoverContent={(
               <div className={classes.popoverContainer}>
@@ -171,8 +171,8 @@ class WizardConfigureGinbox extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={lightBlue[700]}
-            selected={unreadMode === GoogleInboxService.UNREAD_MODES.INBOX_UNREAD}
-            onSelected={() => this.handleModePicked(GoogleInboxService.UNREAD_MODES.INBOX_UNREAD)}
+            selected={inboxType === GoogleInboxService.INBOX_TYPES.GMAIL_UNREAD}
+            onSelected={() => this.handleModePicked(GoogleInboxService.INBOX_TYPES.GMAIL_UNREAD)}
             name='Unread Inbox'
             popoverContent={(
               <div className={classes.popoverContainer}>

@@ -8,6 +8,24 @@ class GoogleMailService extends CoreGoogleMailService {
   static get type () { return CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL }
 
   /* **************************************************************************/
+  // Class : Creating
+  /* **************************************************************************/
+
+  /**
+  * @override
+  */
+  static createJS (...args) {
+    return {
+      ...super.createJS(...args),
+
+      // This is default Google offers on new accounts. Historically the default
+      // set by Wavebox is UNREAD. Keep this historic default in the model, but
+      // new accounts should match what Google sets with DEFAULT.
+      inboxType: this.INBOX_TYPES.GMAIL_DEFAULT
+    }
+  }
+
+  /* **************************************************************************/
   // Class: Humanized
   /* **************************************************************************/
 
@@ -34,16 +52,31 @@ class GoogleMailService extends CoreGoogleMailService {
   // Properties: Mail
   /* **************************************************************************/
 
-  get unreadMode () { return this._value_('unreadMode', this.constructor.UNREAD_MODES.INBOX_UNREAD) }
-  get supportedUnreadModes () {
+  get inboxType () {
+    const val = this._value_('inboxType', undefined)
+    if (val !== undefined) { return val }
+
+    const depricatedVal = this._value_('unreadMode', undefined)
+    if (depricatedVal !== undefined) {
+      const convertedVal = this.constructor.depricatedUnreadModeToInboxType(depricatedVal)
+      if (convertedVal) { return convertedVal }
+    }
+
+    return this.constructor.INBOX_TYPES.GMAIL_UNREAD
+  }
+  get supportedInboxTypes () {
     return new Set([
-      this.constructor.UNREAD_MODES.INBOX_ALL,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD_IMPORTANT,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD_PERSONAL,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD_ATOM,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM
+      this.constructor.INBOX_TYPES.GMAIL_DEFAULT,
+      this.constructor.INBOX_TYPES.GMAIL_IMPORTANT,
+      this.constructor.INBOX_TYPES.GMAIL_UNREAD,
+      this.constructor.INBOX_TYPES.GMAIL_STARRED,
+      this.constructor.INBOX_TYPES.GMAIL_PRIORITY,
+      this.constructor.INBOX_TYPES.GMAIL_DEFAULT_ATOM,
+      this.constructor.INBOX_TYPES.GMAIL_IMPORTANT_ATOM,
+      this.constructor.INBOX_TYPES.GMAIL_UNREAD_ATOM,
+      this.constructor.INBOX_TYPES.GMAIL_STARRED_ATOM,
+      this.constructor.INBOX_TYPES.GMAIL_PRIORITY_ATOM,
+      this.constructor.INBOX_TYPES.GMAIL__ALL
     ])
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
