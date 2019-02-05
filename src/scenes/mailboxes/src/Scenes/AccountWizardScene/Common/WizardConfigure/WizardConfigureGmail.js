@@ -211,7 +211,7 @@ class WizardConfigureGmail extends React.Component {
                 <img className={classes.popoverPreviewImage} src='../../images/gmail_inboxtype_unread.png' />
                 <p>
                   Your new emails are sent directly to your Inbox and those that have not been read are placed
-                  at the top. Typically you'll see a <em>Unread</em> and <em>Everything else</em> title in your inbox.
+                  at the top. Typically you'll see an <em>Unread</em> and <em>Everything else</em> title in your inbox.
                 </p>
               </div>
             )} />
@@ -228,7 +228,7 @@ class WizardConfigureGmail extends React.Component {
                 <p>
                   Your new emails are sent directly to your Inbox and appear in time order. Those that you've
                   starred will appear at the top. Typically you'll see
-                  an <em>Starred</em> and <em>Everything else</em> section in your inbox.
+                  a <em>Starred</em> and <em>Everything else</em> section in your inbox.
                 </p>
               </div>
             )} />

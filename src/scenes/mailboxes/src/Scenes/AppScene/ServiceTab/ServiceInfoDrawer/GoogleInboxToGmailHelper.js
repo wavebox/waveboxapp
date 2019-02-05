@@ -206,13 +206,13 @@ class GoogleInboxToGmailHelper extends React.Component {
               <li>
                 <strong>Unread First: </strong>
                 Your new emails are sent directly to your Inbox and those that have not been read are placed
-                at the top. Typically you'll see a <em>Unread</em> and <em>Everything else</em> title in your inbox.
+                at the top. Typically you'll see an <em>Unread</em> and <em>Everything else</em> title in your inbox.
               </li>
               <li>
                 <strong>Starred First: </strong>
                 Your new emails are sent directly to your Inbox and appear in time order. Those that you've
                 starred will appear at the top. Typically you'll see
-                an <em>Starred</em> and <em>Everything else</em> section in your inbox.
+                a <em>Starred</em> and <em>Everything else</em> section in your inbox.
               </li>
               <li>
                 <strong>Priority Inbox: </strong>
