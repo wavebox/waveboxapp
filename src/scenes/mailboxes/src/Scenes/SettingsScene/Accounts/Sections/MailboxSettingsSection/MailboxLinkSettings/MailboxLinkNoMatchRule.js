@@ -131,7 +131,6 @@ class MailboxLinkNoMatchRule extends React.Component {
   */
   handleChange = (evt) => {
     const rule = this.stringToRule(evt.target.value)
-    console.log(">>>>",evt.target.value, rule)
     accountActions.reduceMailbox(
       this.props.mailboxId,
       MailboxReducer.setUserNoMatchWindowOpenRule,
