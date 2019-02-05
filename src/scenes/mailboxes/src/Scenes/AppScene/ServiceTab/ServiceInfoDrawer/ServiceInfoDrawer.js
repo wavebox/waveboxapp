@@ -1,12 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
+import { userStore } from 'stores/user'
 import ACCOUNT_WARNING_TYPES from 'shared/Models/ACAccounts/AccountWarningTypes'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Slide } from '@material-ui/core'
 import ServiceInfoPanel from 'wbui/ServiceInfoPanel'
 import ServiceNamespaceClash from './ServiceNamespaceClash'
 import ServiceInstallInfo from './ServiceInstallInfo'
+import GoogleInboxRetirement from './GoogleInboxRetirement'
+import GoogleInboxToGmailHelper from './GoogleInboxToGmailHelper'
+import GoogleInboxService from 'shared/Models/ACAccounts/Google/GoogleInboxService'
+import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 
 class ServiceInfoDrawer extends React.Component {
   /* **************************************************************************/
@@ -23,17 +28,23 @@ class ServiceInfoDrawer extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountUpdated)
+    userStore.listen(this.userUpdated)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountUpdated)
+    userStore.unlisten(this.userUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.serviceId !== nextProps.serviceId) {
+      const accountState = accountStore.getState()
+      const userState = userStore.getState()
       this.setState({
-        ...this.deriveWarningsFromAccount(nextProps.serviceId, accountStore.getState()),
-        ...this.deriveServiceInfo(nextProps.serviceId, accountStore.getState())
+        ...this.deriveWarningsFromAccount(nextProps.serviceId, accountState),
+        ...this.deriveServiceInfo(nextProps.serviceId, accountState),
+        ...this.deriveShowGoogleInboxRetirementForService(nextProps.serviceId, accountState, userState),
+        ...this.deriveShowGoogleInboxToGmailHelperForService(nextProps.serviceId, accountState)
       })
     }
   }
@@ -43,16 +54,30 @@ class ServiceInfoDrawer extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const accountState = accountStore.getState()
+    const userState = userStore.getState()
     return {
-      ...this.deriveWarningsFromAccount(this.props.serviceId, accountStore.getState()),
-      ...this.deriveServiceInfo(this.props.serviceId, accountStore.getState())
+      ...this.deriveWarningsFromAccount(this.props.serviceId, accountState),
+      ...this.deriveServiceInfo(this.props.serviceId, accountState),
+      ...this.deriveShowGoogleInboxRetirementForService(this.props.serviceId, accountState, userState),
+      ...this.deriveShowGoogleInboxToGmailHelperForService(this.props.serviceId, accountState)
     }
   })()
 
   accountUpdated = (accountState) => {
+    const userState = userStore.getState()
     this.setState({
       ...this.deriveWarningsFromAccount(this.props.serviceId, accountState),
-      ...this.deriveServiceInfo(this.props.serviceId, accountState)
+      ...this.deriveServiceInfo(this.props.serviceId, accountState),
+      ...this.deriveShowGoogleInboxRetirementForService(this.props.serviceId, accountState, userState),
+      ...this.deriveShowGoogleInboxToGmailHelperForService(this.props.serviceId, accountState)
+    })
+  }
+
+  userUpdated = (userState) => {
+    const accountState = accountStore.getState()
+    this.setState({
+      ...this.deriveShowGoogleInboxRetirementForService(this.props.serviceId, accountState, userState)
     })
   }
 
@@ -92,6 +117,44 @@ class ServiceInfoDrawer extends React.Component {
     }
   }
 
+  /**
+  * Checks to see if we should show the google inbox retirement info
+  * @param serviceId: the id of the service
+  * @param accountState: the current account state
+  * @param userState: the current user state
+  * @return a state update object
+  */
+  deriveShowGoogleInboxRetirementForService (serviceId, accountState, userState) {
+    const service = accountState.getService(serviceId)
+    if (!service) { return }
+
+    return {
+      showGoogleInboxRetirement: (
+        service.type === GoogleInboxService.type &&
+        service.ginboxSeenRetirementVersion < userState.wireConfigGoogleInboxRetirementVersion()
+      )
+    }
+  }
+
+  /**
+  * Checks to see if we should show the google inbox -> gmail helper info
+  * @param serviceId: the id of the service
+  * @param accountState: the current account state
+  * @return a state update object
+  */
+  deriveShowGoogleInboxToGmailHelperForService (serviceId, accountState) {
+    const service = accountState.getService(serviceId)
+    if (!service) { return }
+
+    return {
+      showGoogleInboxToGmailHelper: (
+        service.type === GoogleMailService.type &&
+        service.wasGoogleInboxService &&
+        !service.hasSeenGoogleInboxToGmailHelper
+      )
+    }
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -108,22 +171,26 @@ class ServiceInfoDrawer extends React.Component {
     } = this.props
     const {
       hasNamespaceClashWarning,
-      hasWarnings,
-      showInstallInfo
+      showInstallInfo,
+      showGoogleInboxRetirement,
+      showGoogleInboxToGmailHelper
     } = this.state
-    const showPanel = hasWarnings || showInstallInfo
 
     let content
     if (showInstallInfo) {
       content = (<ServiceInstallInfo serviceId={serviceId} />)
     } else if (hasNamespaceClashWarning) {
       content = (<ServiceNamespaceClash serviceId={serviceId} />)
+    } else if (showGoogleInboxRetirement) {
+      content = (<GoogleInboxRetirement serviceId={serviceId} />)
+    } else if (showGoogleInboxToGmailHelper) {
+      content = (<GoogleInboxToGmailHelper serviceId={serviceId} />)
     }
 
     return (
       <Slide
         direction='left'
-        in={showPanel}
+        in={!!content}
         mountOnEnter
         unmountOnExit>
         <ServiceInfoPanel {...passProps}>

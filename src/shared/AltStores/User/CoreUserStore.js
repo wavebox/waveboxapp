@@ -167,6 +167,14 @@ class CoreUserStore extends RemoteStore {
       return (this.wireConfig || {}).navigate || defaultVal
     }
 
+    /**
+    * Returns the retirement version for google inbox
+    * @return the retirement version
+    */
+    this.wireConfigGoogleInboxRetirementVersion = () => {
+      return this.wireConfigExperiments().googleInboxRetirementVersion || 1
+    }
+
     /* ****************************************/
     // Containers
     /* ****************************************/

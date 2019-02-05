@@ -6,6 +6,7 @@ import { settingsStore, settingsActions } from 'stores/settings'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import red from '@material-ui/core/colors/red'
+import green from '@material-ui/core/colors/green'
 import SleepAllIcon from './SleepAllIcon'
 import DeleteAllIcon from './DeleteAllIcon'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
@@ -26,6 +27,8 @@ import ServiceSidebarIcon from './ServiceSidebarIcon'
 import ServiceToolbarStartIcon from './ServiceToolbarStartIcon'
 import ServiceToolbarEndIcon from './ServiceToolbarEndIcon'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 
 const ITEM_TYPES = Object.freeze({
   DIVIDER: 'DIVIDER',
@@ -46,7 +49,8 @@ const ITEM_TYPES = Object.freeze({
   MAILBOX_ADD_SERVICE: 'MAILBOX_ADD_SERVICE',
   DELETE_MAILBOX: 'DELETE_MAILBOX',
   DELETE_SERVICE: 'DELETE_SERVICE',
-  BAR_LOCK: 'BAR_LOCK'
+  BAR_LOCK: 'BAR_LOCK',
+  GOOGLE_INBOX_CONVERT: 'GOOGLE_INBOX_CONVERT'
 })
 
 export default class MailboxAndServiceContextMenu extends React.Component {
@@ -67,14 +71,12 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    this.renderTO = null
     accountStore.listen(this.accountChanged)
     userStore.listen(this.userChanged)
     settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
-    clearTimeout(this.renderTO)
     accountStore.unlisten(this.accountChanged)
     userStore.unlisten(this.userChanged)
     settingsStore.unlisten(this.settingsChanged)
@@ -84,17 +86,6 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateAccountState(nextProps))
     }
-    if (this.props.isOpen !== nextProps.isOpen) {
-      if (nextProps.isOpen) {
-        clearTimeout(this.renderTO)
-        this.setState({ rendering: true })
-      } else {
-        clearTimeout(this.renderTO)
-        this.renderTO = setTimeout(() => {
-          this.setState({ rendering: false })
-        }, 500)
-      }
-    }
   }
 
   /* **************************************************************************/
@@ -103,7 +94,6 @@ export default class MailboxAndServiceContextMenu extends React.Component {
 
   state = {
     ...this.generateAccountState(this.props),
-    rendering: this.props.isOpen,
     userHasSleepable: userStore.getState().user.hasSleepable,
     lockSidebarsAndToolbars: settingsStore.getState().ui.lockSidebarsAndToolbars
   }
@@ -117,6 +107,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     const { mailboxId, serviceId } = props
     const mailbox = accountState.getMailbox(mailboxId)
     const mailboxActiveServiceId = accountState.activeServiceIdInMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
 
     return {
       mailbox: mailbox,
@@ -136,13 +127,15 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
         isServiceSleeping: accountState.isServiceSleeping(serviceId),
         isServiceActive: accountState.isServiceActive(serviceId),
-        isServiceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId)
+        isServiceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
+        serviceType: service.type
       } : {
         service: null,
         serviceDisplayName: 'Untitled',
         isServiceSleeping: false,
         isServiceActive: false,
-        isServiceAuthInvalid: false
+        isServiceAuthInvalid: false,
+        serviceType: null
       })
     }
   }
@@ -386,6 +379,13 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     })
   }
 
+  handleConvertGoogleInboxToGmail = (evt, duplicateFirst) => {
+    const { serviceId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.convertGoogleInboxToGmail(serviceId, duplicateFirst)
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -588,6 +588,17 @@ export default class MailboxAndServiceContextMenu extends React.Component {
               primary={`${lockSidebarsAndToolbars ? 'Unlock' : 'Lock'} sidebar & toolbars`} />
           </MenuItem>
         )
+      case ITEM_TYPES.GOOGLE_INBOX_CONVERT:
+        return (
+          <MenuItem onClick={(evt) => this.handleConvertGoogleInboxToGmail(evt, false)}>
+            <ListItemIcon>
+              <CompareArrowsIcon style={{ color: green[700] }} />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={(<span style={{ color: green[700] }}>Convert to Gmail</span>)} />
+          </MenuItem>
+        )
     }
   }
 
@@ -610,14 +621,14 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     const {
       mailbox,
       service,
-      rendering,
       serviceCount,
       userHasSleepable,
       isServiceSleeping,
       mailboxActiveServiceId,
-      mailboxActiveServiceIsSleeping
+      mailboxActiveServiceIsSleeping,
+      serviceType
     } = this.state
-    if (!mailbox || !rendering) { return false }
+    if (!mailbox) { return false }
 
     const serviceIsPriority = this.isServicePriority(mailbox, service)
 
@@ -630,6 +641,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         onClose={this.closePopover}>
         {/* Info & Util */}
         {this.renderItem(ITEM_TYPES.INFO)}
+        {serviceType === SERVICE_TYPES.GOOGLE_INBOX ? this.renderItem(ITEM_TYPES.GOOGLE_INBOX_CONVERT) : undefined}
         {service ? this.renderItem(ITEM_TYPES.SERVICE_OPEN_NEW) : undefined}
 
         {/* Sleep */}

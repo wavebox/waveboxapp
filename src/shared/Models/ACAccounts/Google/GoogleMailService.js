@@ -80,6 +80,13 @@ class GoogleMailService extends CoreGoogleMailService {
     ])
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
+
+  /* **************************************************************************/
+  // Google Inbox conversion
+  /* **************************************************************************/
+
+  get wasGoogleInboxService () { return this._value_('wasGoogleInboxService', false) }
+  get hasSeenGoogleInboxToGmailHelper () { return this._value_('hasSeenGoogleInboxToGmailHelper', false) }
 }
 
 export default GoogleMailService

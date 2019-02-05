@@ -28,6 +28,7 @@ import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import GenericService from 'shared/Models/ACAccounts/Generic/GenericService'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import HtmlMetaService from 'HTTP/HtmlMetaService'
+import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -105,7 +106,10 @@ class AccountStore extends CoreAccountStore {
 
       // Reading queue
       handleAddToReadingQueue: actions.ADD_TO_READING_QUEUE,
-      handleRemoveFromReadingQueue: actions.REMOVE_FROM_READING_QUEUE
+      handleRemoveFromReadingQueue: actions.REMOVE_FROM_READING_QUEUE,
+
+      // Google Inbox
+      handleConvertGoogleInboxToGmail: actions.CONVERT_GOOGLE_INBOX_TO_GMAIL
     })
   }
 
@@ -1328,6 +1332,33 @@ class AccountStore extends CoreAccountStore {
     this.saveService(serviceId, service.changeData({
       readingQueue: service.readingQueue.filter((b) => b.id !== id)
     }))
+  }
+
+  /* **************************************************************************/
+  // Handlers: Google Inbox
+  /* **************************************************************************/
+
+  handleConvertGoogleInboxToGmail ({ serviceId, duplicateFirst }) {
+    const service = this.getService(serviceId)
+    if (!service) { this.preventDefault(); return }
+    if (service.type !== SERVICE_TYPES.GOOGLE_INBOX) { this.preventDefault(); return }
+
+    if (duplicateFirst) {
+      this.preventDefault()
+      const mailbox = this.getMailbox(service.parentId)
+      actions.createService.defer(service.parentId, mailbox.suggestedServiceUILocation, service.changeData({
+        type: SERVICE_TYPES.GOOGLE_MAIL,
+        inboxType: GoogleMailService.INBOX_TYPES.GMAIL_DEFAULT,
+        wasGoogleInboxService: true,
+        id: uuid.v4()
+      }))
+    } else {
+      this.saveService(serviceId, service.changeData({
+        type: SERVICE_TYPES.GOOGLE_MAIL,
+        inboxType: GoogleMailService.INBOX_TYPES.GMAIL_DEFAULT,
+        wasGoogleInboxService: true
+      }))
+    }
   }
 }
 

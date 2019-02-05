@@ -54,6 +54,12 @@ class GoogleInboxService extends CoreGoogleMailService {
     ])
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RELOAD }
+
+  /* **************************************************************************/
+  // Properties: Deprication
+  /* **************************************************************************/
+
+  get ginboxSeenRetirementVersion () { return this._value_('ginboxSeenRetirementVersion', 0) }
 }
 
 export default GoogleInboxService

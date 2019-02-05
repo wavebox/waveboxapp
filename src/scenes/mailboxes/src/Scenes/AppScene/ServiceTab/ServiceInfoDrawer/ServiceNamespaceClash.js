@@ -115,7 +115,7 @@ class ServiceNamespaceClash extends React.Component {
               <PersonIcon className={classes.nscPersonIcon} />
             </span>
           </div>
-          <ServiceInfoPanelTitle className={classes.panelTitle}>Service Sandboxing</ServiceInfoPanelTitle>
+          <ServiceInfoPanelTitle>Service Sandboxing</ServiceInfoPanelTitle>
           <p>
             It looks like this is the second service of this type that
             you've added to this account & sandbox. That's fine, but it's worth
