@@ -16,7 +16,8 @@ class ULinkORRememberInput extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    targetUrl: PropTypes.string.isRequired
+    targetUrl: PropTypes.string.isRequired,
+    isCommandTrigger: PropTypes.bool.isRequired
   }
 
   static get ACTION_TYPES () { return ACTION_TYPES }
@@ -77,10 +78,11 @@ class ULinkORRememberInput extends React.Component {
   * Handles the input changing
   */
   handleChange = (evt) => {
-    this.setState({ value: evt.target.value })
-    if (this.props.onChange) {
-      this.props.onChange(evt, this.getType(), this.getMatch())
-    }
+    this.setState({ value: evt.target.value }, () => {
+      if (this.props.onChange) {
+        this.props.onChange(evt, this.getType(), this.getMatch())
+      }
+    })
   }
 
   /* **************************************************************************/
@@ -92,20 +94,24 @@ class ULinkORRememberInput extends React.Component {
   }
 
   render () {
-    const { targetUrl, ...passProps } = this.props
+    const { targetUrl, isCommandTrigger, ...passProps } = this.props
     const { proposedMatches, value } = this.state
 
     return (
       <FormControl fullWidth {...passProps}>
         <InputLabel>
-          What do you want to do next time?
+          {isCommandTrigger ? (
+            'Do you want to save this behaviour?'
+          ) : (
+            'What do you want to do next time?'
+          )}
         </InputLabel>
         <Select
           value={value}
           onChange={this.handleChange}
           MenuProps={{ MenuListProps: { dense: true } }}>
           <MenuItem value={ACTION_TYPES.ASK}>
-            Ask me again
+            {isCommandTrigger ? `Don't save` : 'Ask me again'}
           </MenuItem>
           {proposedMatches.map((match, index) => (
             <MenuItem

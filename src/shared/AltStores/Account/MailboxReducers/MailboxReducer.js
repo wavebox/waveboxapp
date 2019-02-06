@@ -355,9 +355,15 @@ class MailboxReducer {
       ruledef.mailboxId = targetId
     }
 
-    return mailbox.changeData({
-      userWindowOpenRules: mailbox.userWindowOpenRules.concat(ruledef)
-    })
+    const next = mailbox.userWindowOpenRules
+      .filter((existing) => {
+        const keys = new Set([].concat(Object.keys(existing.rule), Object.keys(ruledef.rule)))
+        const diffKey = Array.from(keys).find((k) => existing.rule[k] !== ruledef.rule[k])
+        return !!diffKey
+      })
+      .concat([ruledef])
+
+    return mailbox.changeData({ userWindowOpenRules: next })
   }
 
   /**

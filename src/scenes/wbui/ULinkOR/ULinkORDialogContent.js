@@ -12,9 +12,11 @@ import ULinkORAccountSection from './ULinkORAccountSection'
 import SearchIcon from '@material-ui/icons/Search'
 import CancelIcon from '@material-ui/icons/Cancel'
 import grey from '@material-ui/core/colors/grey'
+import blue from '@material-ui/core/colors/blue'
 import StyleMixins from '../Styles/StyleMixins'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import ULinkORRememberInput from './ULinkORRememberInput'
+import InfoIcon from '@material-ui/icons/Info'
 
 const styles = {
   dialogContent: {
@@ -41,6 +43,14 @@ const styles = {
     color: grey[400],
     cursor: 'pointer',
     height: '100%'
+  },
+  commandTriggerInfo: {
+    color: blue[600],
+    fontSize: '85%',
+    '&>svg': {
+      fontSize: '20px',
+      verticalAlign: 'middle'
+    }
   }
 }
 
@@ -81,7 +91,8 @@ class ULinkORDialogContent extends React.Component {
   /* **************************************************************************/
 
   state = {
-    searchTerm: ''
+    searchTerm: '',
+    showCommandTriggerSaveInfo: false
   }
 
   /* **************************************************************************/
@@ -179,6 +190,7 @@ class ULinkORDialogContent extends React.Component {
   handleSendRememberCallbacks = (windowOpenMode, targetInfo = undefined) => {
     if (this.rememberInputRef && this.rememberInputRef.current) {
       const type = this.rememberInputRef.current.getType()
+      // ASK has no effect
       if (type === ULinkORRememberInput.ACTION_TYPES.ACCOUNT) {
         this.props.onChangeMailboxNoMatchWindowOpenRule(windowOpenMode, targetInfo)
       } else if (type === ULinkORRememberInput.ACTION_TYPES.DOMAIN) {
@@ -186,6 +198,18 @@ class ULinkORDialogContent extends React.Component {
         this.props.onAddMailboxWindowOpenRule(windowOpenMode, targetInfo, match)
       }
     }
+  }
+
+  /**
+  * Handles the remember input changing
+  * @param evt: the event that fired
+  * @param type: the type that's picked
+  * @param match: the match info
+  */
+  handleRememberInputChange = (evt, type, match) => {
+    this.setState({
+      showCommandTriggerSaveInfo: type !== ULinkORRememberInput.ACTION_TYPES.ASK
+    })
   }
 
   /* **************************************************************************/
@@ -279,7 +303,10 @@ class ULinkORDialogContent extends React.Component {
       settingsStore,
       avatarResolver
     } = this.props
-    const { searchTerm } = this.state
+    const {
+      searchTerm,
+      showCommandTriggerSaveInfo
+    } = this.state
 
     return (
       <React.Fragment>
@@ -307,11 +334,19 @@ class ULinkORDialogContent extends React.Component {
               ) : undefined
             }}
           />
-          {serviceId && !isCommandTrigger ? (
+          {serviceId ? (
             <ULinkORRememberInput
+              isCommandTrigger={isCommandTrigger}
               className={classes.rememberInput}
               ref={this.rememberInputRef}
-              targetUrl={targetUrl} />
+              targetUrl={targetUrl}
+              onChange={this.handleRememberInputChange} />
+          ) : undefined}
+          {isCommandTrigger && showCommandTriggerSaveInfo ? (
+            <p className={classes.commandTriggerInfo}>
+              <InfoIcon /> Some rules created with a keyboard modifier key will
+              not be applied when not using the modifier key
+            </p>
           ) : undefined}
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
