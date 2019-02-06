@@ -91,7 +91,9 @@ class AsyncDownloadItem extends EventEmitter {
 
   cancel () {
     fs.removeSync(this.tempDownloadLocation)
-    this[privDownloadItem].cancel()
+    if (!this[privDownloadItem].isDestroyed()) {
+      this[privDownloadItem].cancel()
+    }
   }
 
   isPaused () {
