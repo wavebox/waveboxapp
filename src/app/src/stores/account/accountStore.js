@@ -437,12 +437,16 @@ class AccountStore extends CoreAccountStore {
     if (!mailbox) { this.preventDefault(); return }
 
     const serviceIds = new Set(this.serviceIds())
+    const mailboxIds = new Set(this.mailboxIds())
     const providerIds = customProviderIds ? new Set(customProviderIds) : undefined
     let dirty = false
 
     // User rules
-    const cleanedUserRules = mailbox.userWindowOpenRules.filter(({ serviceId, providerId }) => {
-      if (serviceId && !serviceIds.has(serviceId)) {
+    const cleanedUserRules = mailbox.userWindowOpenRules.filter(({ serviceId, mailboxId, providerId }) => {
+      if (mailbox && !mailboxIds.has(mailboxId)) {
+        dirty = true
+        return false
+      } else if (serviceId && !serviceIds.has(serviceId)) {
         dirty = true
         return false
       } else if (providerId && providerIds && !providerIds.has(providerId)) {
@@ -455,7 +459,10 @@ class AccountStore extends CoreAccountStore {
 
     // No match
     let cleanedNoMatchRule
-    if (mailbox.userNoMatchWindowOpenRule.serviceId && !serviceIds.has(mailbox.userNoMatchWindowOpenRule.serviceId)) {
+    if (mailbox.userNoMatchWindowOpenRule.mailboxId && !mailboxIds.has(mailbox.userNoMatchWindowOpenRule.mailboxId)) {
+      dirty = true
+      cleanedNoMatchRule = { mode: ACMailbox.USER_WINDOW_OPEN_MODES.ASK }
+    } else if (mailbox.userNoMatchWindowOpenRule.serviceId && !serviceIds.has(mailbox.userNoMatchWindowOpenRule.serviceId)) {
       dirty = true
       cleanedNoMatchRule = { mode: ACMailbox.USER_WINDOW_OPEN_MODES.ASK }
     } else if (mailbox.userNoMatchWindowOpenRule.providerId && providerIds && !providerIds.has(mailbox.userNoMatchWindowOpenRule.providerId)) {

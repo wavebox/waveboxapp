@@ -18,7 +18,8 @@ import ConfirmButton from 'wbui/ConfirmButton'
 const humanizedModes = {
   [ACMailbox.USER_WINDOW_OPEN_MODES.BROWSER]: 'In default browser',
   [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX]: 'In wavebox window',
-  [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW]: 'In service window',
+  [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW]: 'In account window',
+  [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW]: 'In account window',
   [ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB]: 'In running service tab',
   [ACMailbox.USER_WINDOW_OPEN_MODES.ASK]: 'Ask what to do',
   [ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER]: 'Custom'
@@ -98,6 +99,7 @@ class MailboxLinkRulesetDialogContent extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
     return {
       serviceNames: accountState.allResolvedFullServiceNames(),
+      mailboxNames: accountState.allResolvedFullMailboxNames(),
       ...(mailbox ? {
         userWindowOpenRules: mailbox.userWindowOpenRules
       } : {
@@ -144,11 +146,12 @@ class MailboxLinkRulesetDialogContent extends React.Component {
   * Renders a rule
   * @param rule: the rule to render
   * @param index: the index of the rule
+  * @param mailboxNames: the full list of mailbox names
   * @param serviceNames: the full service name list
-  * @param divider: whether to render the divider
+  * @param providerNames: the full list of provider names
   * @return jsx
   */
-  renderRule ({ rule, serviceId, providerId, mode }, index, divider, serviceNames, providerNames) {
+  renderRule ({ rule, serviceId, mailboxId, providerId, mode }, index, divider, mailboxNames, serviceNames, providerNames) {
     return (
       <ListItem key={`${index}`} divider={divider} disableGutters>
         <ListItemText
@@ -158,8 +161,13 @@ class MailboxLinkRulesetDialogContent extends React.Component {
           ].filter((i) => !!i).join(' ')}
           secondary={[
             humanizedModes[mode],
-            serviceId ? `(${serviceNames[serviceId] || 'Deleted Service'})` : undefined,
-            providerId ? `(${providerNames[providerId] || 'Deleted Provider'})` : undefined
+            mailboxId
+              ? `(${mailboxNames[mailboxId] || 'Deleted Mailbox'})`
+              : serviceId
+                ? `(${serviceNames[serviceId] || 'Deleted Service'})`
+                : providerId
+                  ? `(${providerNames[providerId] || 'Deleted Provider'})`
+                  : undefined
           ].filter((i) => !!i).join(' ')} />
         <ListItemSecondaryAction>
           <IconButton onClick={() => this.handleDeleteRule(index)}>
@@ -178,6 +186,7 @@ class MailboxLinkRulesetDialogContent extends React.Component {
     const {
       userWindowOpenRules,
       serviceNames,
+      mailboxNames,
       providerNames
     } = this.state
 
@@ -195,7 +204,7 @@ class MailboxLinkRulesetDialogContent extends React.Component {
           <List dense>
             {userWindowOpenRules.length ? (
               userWindowOpenRules.map((rule, index, arr) => (
-                this.renderRule(rule, index, index !== arr.length - 1, serviceNames, providerNames)
+                this.renderRule(rule, index, index !== arr.length - 1, mailboxNames, serviceNames, providerNames)
               ))
             ) : (
               <ListItem>

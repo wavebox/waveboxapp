@@ -1,25 +1,23 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { ListItem, ListItemText } from '@material-ui/core'
+import { ListItem, Divider } from '@material-ui/core'
 import Fuse from 'fuse.js'
-import ULinkORAccountSectionListItem from './ULinkORAccountSectionListItem'
-import { withStyles } from '@material-ui/core/styles'
-import StyleMixins from '../Styles/StyleMixins'
+import MailboxListItem from './MailboxListItem'
+import ServiceListItem from './ServiceListItem'
 import { URL } from 'url'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import ULinkORListItemText from '../ULinkORListItemText'
 
 const privAccountStore = Symbol('privAccountStore')
 const privFuse = Symbol('privFuse')
 
-const styles = {
-  root: {
-    height: 200,
-    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
-  }
+const RESULT_TYPES = {
+  MAILBOX: 'MAILBOX',
+  SERVICE: 'SERVICE',
+  DIVIDER: 'DIVIDER'
 }
 
-@withStyles(styles)
 class ULinkORAccountSection extends React.Component {
   /* **************************************************************************/
   // Class
@@ -32,6 +30,7 @@ class ULinkORAccountSection extends React.Component {
     avatarResolver: PropTypes.func.isRequired,
     onOpenInRunningService: PropTypes.func.isRequired,
     onOpenInServiceWindow: PropTypes.func.isRequired,
+    onOpenInMailboxWindow: PropTypes.func.isRequired,
     onItemKeyDown: PropTypes.func
   }
 
@@ -135,7 +134,20 @@ class ULinkORAccountSection extends React.Component {
 
     this[privFuse].setCollection(collection)
     const results = this[privFuse].search(term)
-    return results.map((res) => res.id)
+    return results.map((res) => {
+      return { id: res.id, type: RESULT_TYPES.SERVICE }
+    })
+  }
+
+  /**
+  * @param hostname: a hostname to get tld from
+  * @return the top two domains or the original hostname
+  */
+  getTldFromHostname (hostname) {
+    const components = hostname.split('.')
+    return components.length > 2
+      ? components.slice(-2).join('.')
+      : hostname
   }
 
   /**
@@ -145,44 +157,68 @@ class ULinkORAccountSection extends React.Component {
   * @return and array of account ids
   */
   generateSuggestedSearchResults (accountState, targetUrl) {
-    // Look in the URL for hostnames. Also look through the
-    // querystring params for valid urls with hostnames
-    const targetHostnames = new Set(
-      ACMailbox.generateAvailableWindowOpenHostnamesForUrl(targetUrl)
-    )
+    // Figure out a little bit about our target url
+    const targetRules = ACMailbox.generateAvailableWindowOpenRulesForUrl(targetUrl)
+    const { fullMatchHostnames, partialMatchHostnames } = targetRules.reduce((acc, rule) => {
+      acc.fullMatchHostnames.add(rule.hostname)
+      if (rule.queryHostname) {
+        acc.fullMatchHostnames.add(rule.queryHostname)
+        const tld = this.getTldFromHostname(rule.queryHostname)
+        if (tld !== rule.queryHostname) {
+          acc.partialMatchHostnames.add(tld)
+        }
+      } else {
+        const tld = this.getTldFromHostname(rule.hostname)
+        if (tld !== rule.hostname) {
+          acc.partialMatchHostnames.add(tld)
+        }
+      }
+      return acc
+    }, { fullMatchHostnames: new Set(), partialMatchHostnames: new Set() })
 
-    // Generate some partial hostnames
-    const targetRootHostnames = new Set()
-    targetHostnames.forEach((hostname) => {
-      const root = hostname.split('.').slice(-2, -1)[0]
-      if (root) { targetRootHostnames.add(root) }
-    })
-
-    // Sort the services by matched an unmatched
-    const { full, root, none } = accountState.allServicesOrdered().reduce((acc, service) => {
+    // Filter out our services by what's useful
+    const { full, partial } = accountState.allServicesOrdered().reduce((acc, service) => {
       const serviceUrl = service.getUrlWithData(
         accountState.getServiceData(service.id),
         accountState.getMailboxAuthForServiceId(service.id)
       )
+
       let serviceUrlHostname
-      let serviceUrlRootHostname
+      let serviceUrlPartialHostname
       try {
         serviceUrlHostname = new URL(serviceUrl).hostname
-        serviceUrlRootHostname = serviceUrlHostname.split('.').slice(-2, -1)[0]
+        const tld = this.getTldFromHostname(serviceUrlHostname)
+        if (tld !== serviceUrlHostname) {
+          serviceUrlPartialHostname = serviceUrlHostname
+        }
       } catch (ex) { }
 
-      if (serviceUrlHostname && targetHostnames.has(serviceUrlHostname)) {
+      if (serviceUrlHostname && fullMatchHostnames.has(serviceUrlHostname)) {
         acc.full.push(service.id)
-      } else if (serviceUrlRootHostname && targetRootHostnames.has(serviceUrlRootHostname)) {
-        acc.root.push(service.id)
-      } else {
-        acc.none.push(service.id)
+      } else if (serviceUrlPartialHostname && fullMatchHostnames.has(serviceUrlPartialHostname)) {
+        acc.full.push(service.id)
+      } else if (serviceUrlHostname && partialMatchHostnames.has(serviceUrlHostname)) {
+        acc.partial.push(service.id)
+      } else if (serviceUrlPartialHostname && partialMatchHostnames.has(serviceUrlPartialHostname)) {
+        acc.partial.push(service.id)
       }
-
       return acc
-    }, { full: [], root: [], none: [] })
+    }, { full: [], partial: [] })
 
-    return [].concat(full, root, none)
+    // Build the return data
+    const matches = full.length > 5
+      ? full
+      : [].concat(full, partial.length <= 4 ? partial : [])
+
+    return [].concat(
+      matches.map((serviceId) => {
+        return { id: serviceId, type: RESULT_TYPES.SERVICE }
+      }),
+      matches.length ? [{ type: RESULT_TYPES.DIVIDER }] : [],
+      accountState.mailboxIds().map((mailboxId) => {
+        return { id: mailboxId, type: RESULT_TYPES.MAILBOX }
+      })
+    )
   }
 
   /* **************************************************************************/
@@ -199,6 +235,7 @@ class ULinkORAccountSection extends React.Component {
       avatarResolver,
       onOpenInRunningService,
       onOpenInServiceWindow,
+      onOpenInMailboxWindow,
       onItemKeyDown
     } = this.props
     const {
@@ -210,21 +247,39 @@ class ULinkORAccountSection extends React.Component {
     return (
       <React.Fragment>
         {renderResults.length ? (
-          renderResults.map((serviceId) => {
-            return (
-              <ULinkORAccountSectionListItem
-                key={serviceId}
-                serviceId={serviceId}
-                accountStore={this[privAccountStore]}
-                avatarResolver={avatarResolver}
-                onOpenInRunningService={onOpenInRunningService}
-                onOpenInServiceWindow={onOpenInServiceWindow}
-                onKeyDown={onItemKeyDown} />
-            )
+          renderResults.map(({ id, type }, index) => {
+            if (type === RESULT_TYPES.MAILBOX) {
+              return (
+                <MailboxListItem
+                  key={id}
+                  mailboxId={id}
+                  accountStore={this[privAccountStore]}
+                  avatarResolver={avatarResolver}
+                  onOpenInRunningService={onOpenInRunningService}
+                  onOpenInServiceWindow={onOpenInServiceWindow}
+                  onOpenInMailboxWindow={onOpenInMailboxWindow}
+                  onKeyDown={onItemKeyDown} />
+              )
+            } else if (type === RESULT_TYPES.SERVICE) {
+              return (
+                <ServiceListItem
+                  key={id}
+                  serviceId={id}
+                  accountStore={this[privAccountStore]}
+                  avatarResolver={avatarResolver}
+                  onOpenInRunningService={onOpenInRunningService}
+                  onOpenInServiceWindow={onOpenInServiceWindow}
+                  onKeyDown={onItemKeyDown} />
+              )
+            } else if (type === RESULT_TYPES.DIVIDER) {
+              return (
+                <Divider key={`${index}`} />
+              )
+            }
           })
         ) : (
           <ListItem>
-            <ListItemText
+            <ULinkORListItemText
               primary={`Couldn't find anything for "${searchTerm}"`}
               primaryTypographyProps={{ align: 'center' }} />
           </ListItem>

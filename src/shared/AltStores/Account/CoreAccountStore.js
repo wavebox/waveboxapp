@@ -445,6 +445,16 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @return all the mailbox names, fully resolved in an object
+    */
+    this.allResolvedFullMailboxNames = () => {
+      return this.mailboxIds().reduce((acc, mailboxId) => {
+        acc[mailboxId] = this.resolvedMailboxDisplayName(mailboxId)
+        return acc
+      }, {})
+    }
+
+    /**
     * @param serviceId: the id of the service
     * @return A fully resolved service id which includes mailbox info
     */

@@ -92,10 +92,11 @@ class ULinkORRememberInput extends React.Component {
   }
 
   render () {
+    const { targetUrl, ...passProps } = this.props
     const { proposedMatches, value } = this.state
 
     return (
-      <FormControl fullWidth>
+      <FormControl fullWidth {...passProps}>
         <InputLabel>
           What do you want to do next time?
         </InputLabel>
@@ -104,17 +105,17 @@ class ULinkORRememberInput extends React.Component {
           onChange={this.handleChange}
           MenuProps={{ MenuListProps: { dense: true } }}>
           <MenuItem value={ACTION_TYPES.ASK}>
-            Ask what to do each time
+            Ask me again
           </MenuItem>
           {proposedMatches.map((match, index) => (
             <MenuItem
               key={`${ACTION_TYPES.DOMAIN}${index}`}
               value={`${ACTION_TYPES.DOMAIN}${index}`}>
-              {`Do this for all "${match.queryHostname || match.hostname}" links in this account`}
+              {`Remember this for all "${match.queryHostname || match.hostname}" links in this account`}
             </MenuItem>
           ))}
           <MenuItem value={ACTION_TYPES.ACCOUNT}>
-            Do this for every link in this account
+            Remember this for every link in this account
           </MenuItem>
         </Select>
       </FormControl>

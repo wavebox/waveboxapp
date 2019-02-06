@@ -21,13 +21,19 @@ const styles = {
     paddingBottom: 0,
     ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
+  rememberInput: {
+    marginTop: 12
+  },
+  dialogTitle: {
+    borderBottom: `1px solid ${grey[300]}`
+  },
   dialogActions: {
     marginLeft: 0,
     marginRight: 0,
     marginTop: 0,
-    marginBottom: 12,
-    paddingLeft: 24,
-    paddingRight: 24,
+    marginBottom: 8,
+    paddingLeft: 4,
+    paddingRight: 4,
     paddingTop: 8,
     borderTop: `1px solid ${grey[300]}`
   },
@@ -155,18 +161,29 @@ class ULinkORDialogContent extends React.Component {
   }
 
   /**
+  * Handles opening in a mailbox window
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service
+  */
+  handleOpenInMailboxWindow = (evt, mailboxId) => {
+    this.handleSendRememberCallbacks(ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW, mailboxId)
+    this.props.onOpenLink(ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW, mailboxId)
+    this.props.onRequestClose()
+  }
+
+  /**
   * Sends the remember callbacks to the parent
   * @param windowOpenMode: the window open mode to change to
-  * @param windowOpenTarget = undefined: additional target that the opener provides
+  * @param targetInfo = undefined: additional target that the opener provides
   */
-  handleSendRememberCallbacks = (windowOpenMode, windowOpenTarget = undefined) => {
+  handleSendRememberCallbacks = (windowOpenMode, targetInfo = undefined) => {
     if (this.rememberInputRef && this.rememberInputRef.current) {
       const type = this.rememberInputRef.current.getType()
       if (type === ULinkORRememberInput.ACTION_TYPES.ACCOUNT) {
-        this.props.onChangeMailboxNoMatchWindowOpenRule(windowOpenMode, windowOpenTarget)
+        this.props.onChangeMailboxNoMatchWindowOpenRule(windowOpenMode, targetInfo)
       } else if (type === ULinkORRememberInput.ACTION_TYPES.DOMAIN) {
         const match = this.rememberInputRef.current.getMatch()
-        this.props.onAddMailboxWindowOpenRule(windowOpenMode, windowOpenTarget, match)
+        this.props.onAddMailboxWindowOpenRule(windowOpenMode, targetInfo, match)
       }
     }
   }
@@ -216,7 +233,7 @@ class ULinkORDialogContent extends React.Component {
   _getResultTargetElements () {
     const resultsEl = ReactDOM.findDOMNode(this.searchResultsRef.current)
     return resultsEl
-      ? Array.from(resultsEl.querySelectorAll(':scope > * > [role="button"], :scope > [role="button"]'))
+      ? Array.from(resultsEl.querySelectorAll('[data-ulinkor-keyboard-target="true"]'))
       : []
   }
 
@@ -263,11 +280,11 @@ class ULinkORDialogContent extends React.Component {
       avatarResolver
     } = this.props
     const { searchTerm } = this.state
+
     return (
       <React.Fragment>
-        <DialogTitle disableTypography>
+        <DialogTitle className={classes.dialogTitle} disableTypography>
           <Typography variant='h6'>Where would you like to open this link?</Typography>
-          <Typography variant='body2' color='textSecondary' noWrap>{targetUrl}</Typography>
           <TextField
             value={searchTerm}
             onChange={this.handleSearchTermChange}
@@ -290,6 +307,12 @@ class ULinkORDialogContent extends React.Component {
               ) : undefined
             }}
           />
+          {serviceId && !isCommandTrigger ? (
+            <ULinkORRememberInput
+              className={classes.rememberInput}
+              ref={this.rememberInputRef}
+              targetUrl={targetUrl} />
+          ) : undefined}
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
           <List dense ref={this.searchResultsRef}>
@@ -309,14 +332,13 @@ class ULinkORDialogContent extends React.Component {
               avatarResolver={avatarResolver}
               onOpenInRunningService={this.handleOpenInRunningService}
               onOpenInServiceWindow={this.handleOpenInServiceWindow}
+              onOpenInMailboxWindow={this.handleOpenInMailboxWindow}
               onItemKeyDown={this.handleSearchResultKeydown} />
           </List>
         </DialogContent>
-        {serviceId && !isCommandTrigger ? (
-          <DialogActions className={classes.dialogActions}>
-            <ULinkORRememberInput ref={this.rememberInputRef} targetUrl={targetUrl} />
-          </DialogActions>
-        ) : undefined}
+        <DialogActions className={classes.dialogActions}>
+          <Typography variant='body2' color='textSecondary' noWrap>{targetUrl}</Typography>
+        </DialogActions>
       </React.Fragment>
     )
   }

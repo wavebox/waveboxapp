@@ -73,7 +73,7 @@ class UnreadMailboxListItem extends React.Component {
   generateMailboxState (mailboxId, accountState = accountStore.getState()) {
     const mailbox = accountState.getMailbox(mailboxId)
     return {
-      mailbox: mailbox,
+      badgeColor: mailbox.badgeColor,
       unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
       hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId),
       avatar: accountState.getMailboxAvatarConfig(mailboxId)
@@ -94,7 +94,7 @@ class UnreadMailboxListItem extends React.Component {
       ...passProps
     } = this.props
     const {
-      mailbox,
+      badgeColor,
       avatar,
       hasUnreadActivity,
       unreadCount
@@ -106,7 +106,7 @@ class UnreadMailboxListItem extends React.Component {
         className={classNames(classes.root, className)}
         onClick={(evt) => requestShowMailbox(evt, mailboxId)}
         {...passProps}>
-        <MailboxBadge mailbox={mailbox} unreadCount={unreadCount} hasUnreadActivity={hasUnreadActivity}>
+        <MailboxBadge color={badgeColor} unreadCount={unreadCount} hasUnreadActivity={hasUnreadActivity}>
           <ACAvatarCircle2
             avatar={avatar}
             resolver={(i) => Resolver.image(i)}

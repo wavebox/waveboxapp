@@ -329,6 +329,8 @@ class MailboxReducer {
       rule.serviceId = targetId
     } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
       rule.providerId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+      rule.mailboxId = targetId
     }
 
     return mailbox.changeData({ userNoMatchWindowOpenRule: rule })
@@ -339,7 +341,7 @@ class MailboxReducer {
   * @param mailbox: the mailbox to update
   * @param rule: the rule to add
   * @param mode: the mode to use
-  * @param serviceId: an optional target id accompanying the rule
+  * @param targetId: an optional target id accompanying the rule
   */
   static addUserWindowOpenRule (mailbox, rule, mode, targetId) {
     const ruledef = { mode: mode, rule: rule }
@@ -349,6 +351,8 @@ class MailboxReducer {
       ruledef.serviceId = targetId
     } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
       ruledef.providerId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+      ruledef.mailboxId = targetId
     }
 
     return mailbox.changeData({

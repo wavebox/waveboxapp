@@ -87,10 +87,14 @@ class MailboxLinkNoMatchRule extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
     return mailbox ? {
       value: mailbox.userNoMatchWindowOpenRule,
-      valueServiceName: accountState.resolvedFullServiceName(mailbox.userNoMatchWindowOpenRule.serviceId)
+      valueAccountName: mailbox.userNoMatchWindowOpenRule.serviceId
+        ? accountState.resolvedFullServiceName(mailbox.userNoMatchWindowOpenRule.serviceId)
+        : mailbox.userNoMatchWindowOpenRule.mailboxId
+          ? accountState.resolvedMailboxDisplayName(mailbox.userNoMatchWindowOpenRule.mailboxId)
+          : undefined
     } : {
       value: {},
-      valueServiceName: undefined
+      valueAccountName: undefined
     }
   }
 
@@ -117,7 +121,9 @@ class MailboxLinkNoMatchRule extends React.Component {
   stringToRule (str) {
     return str.startsWith(ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) ? {
       mode: ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER,
-      providerId: str.replace(`${ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}:`, '')
+      targetInfo: {
+        providerId: str.replace(`${ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}:`, '')
+      }
     } : { mode: str }
   }
 
@@ -135,7 +141,7 @@ class MailboxLinkNoMatchRule extends React.Component {
       this.props.mailboxId,
       MailboxReducer.setUserNoMatchWindowOpenRule,
       rule.mode,
-      rule.providerId
+      rule.targetInfo
     )
   }
 
@@ -156,7 +162,7 @@ class MailboxLinkNoMatchRule extends React.Component {
     } = this.props
     const {
       value,
-      valueServiceName,
+      valueAccountName,
       customLinkProviderNames
     } = this.state
 
@@ -184,13 +190,19 @@ class MailboxLinkNoMatchRule extends React.Component {
               <FormControlLabel
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Service Window (${valueServiceName || 'Deleted Service'})`} />
+                label={`Account Window (${valueAccountName || 'Deleted Account'})`} />
+            ) : undefined}
+            {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW ? (
+              <FormControlLabel
+                value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW}
+                control={<Radio color='primary' className={classes.radio} />}
+                label={`Account Window (${valueAccountName || 'Deleted Account'})`} />
             ) : undefined}
             {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB ? (
               <FormControlLabel
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Running Service Tab (${valueServiceName || 'Deleted Service'})`} />
+                label={`Running Service Tab (${valueAccountName || 'Deleted Account'})`} />
             ) : undefined}
             {Object.keys(customLinkProviderNames).length ? (
               Object.keys(customLinkProviderNames).map((id) => {
