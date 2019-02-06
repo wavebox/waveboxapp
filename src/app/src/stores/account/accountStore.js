@@ -443,7 +443,7 @@ class AccountStore extends CoreAccountStore {
 
     // User rules
     const cleanedUserRules = mailbox.userWindowOpenRules.filter(({ serviceId, mailboxId, providerId }) => {
-      if (mailbox && !mailboxIds.has(mailboxId)) {
+      if (mailboxId && !mailboxIds.has(mailboxId)) {
         dirty = true
         return false
       } else if (serviceId && !serviceIds.has(serviceId)) {
