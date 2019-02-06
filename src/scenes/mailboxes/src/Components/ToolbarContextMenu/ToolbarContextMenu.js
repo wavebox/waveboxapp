@@ -31,8 +31,10 @@ class ToolbarContextMenu extends React.Component {
   * @param callback=undefined: executed on completion
   */
   closePopover = (evt) => {
-    evt.preventDefault()
-    evt.stopPropagation()
+    if (evt) {
+      evt.preventDefault()
+      evt.stopPropagation()
+    }
     this.props.onRequestClose()
   }
 

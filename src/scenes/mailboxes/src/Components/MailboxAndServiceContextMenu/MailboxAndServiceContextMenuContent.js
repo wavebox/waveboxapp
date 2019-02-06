@@ -166,7 +166,7 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   closePopover = (evt, callback = undefined) => {
     evt.preventDefault()
     evt.stopPropagation()
-    this.props.onRequestClose()
+    this.props.onRequestClose(evt)
     if (typeof (callback) === 'function') {
       setTimeout(() => { callback() }, 300)
     }

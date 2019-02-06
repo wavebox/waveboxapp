@@ -26,8 +26,10 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   * @param evt: the event that fired
   */
   closePopover = (evt) => {
-    evt.preventDefault()
-    evt.stopPropagation()
+    if (evt) {
+      evt.preventDefault()
+      evt.stopPropagation()
+    }
     this.props.onRequestClose()
   }
 

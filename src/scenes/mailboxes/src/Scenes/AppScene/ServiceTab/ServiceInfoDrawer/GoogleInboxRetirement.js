@@ -65,6 +65,10 @@ class GoogleInboxRetirement extends React.Component {
     electron.remote.shell.openExternal('https://blog.wavebox.io/inbox_to_gmail/')
   }
 
+  handleOpenShortBlog = (evt) => {
+    electron.remote.shell.openExternal('https://blog.wavebox.io/simple-switch-from-google-inbox-to-gmail/')
+  }
+
   handleLater = (evt) => {
     accountActions.reduceService(
       this.props.serviceId,
@@ -118,6 +122,8 @@ class GoogleInboxRetirement extends React.Component {
           <p>
             Once you're ready to move to the new Gmail, choose convert below. If you want to do
             it another time, right click your Google Inbox account icon at any time and pick Convert.
+            <br />
+            <span className={classes.link} onClick={this.handleOpenShortBlog}>Find out how convert works</span>
           </p>
         </ServiceInfoPanelBody>
         <ServiceInfoPanelActions actions={2}>
