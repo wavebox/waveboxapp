@@ -138,6 +138,7 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
         transformOrigin={{ horizontal: 'left', vertical: 'top' }}
         MenuListProps={{ dense: true }}
         disableEnforceFocus
+        disableAutoFocusItem
         onClose={this.closePopover}>
         {hasHomepageUrl ? (
           <MenuItem onClick={this.handleOpenHomepage}>

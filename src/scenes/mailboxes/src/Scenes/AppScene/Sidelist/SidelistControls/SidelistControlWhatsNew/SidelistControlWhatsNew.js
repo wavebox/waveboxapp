@@ -1,17 +1,15 @@
 import React from 'react'
-import SidelistControl from './SidelistControl'
-import { settingsStore, settingsActions } from 'stores/settings'
+import SidelistControl from '../SidelistControl'
+import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { UISettings } from 'shared/Models/Settings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import SidelistFAIcon from './SidelistFAIcon'
+import SidelistFAIcon from '../SidelistFAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import FARStarIcon from 'wbfa/FARStar'
-import { MenuItem, ListItemIcon, ListItemText } from '@material-ui/core'
-import FAREyeSlashIcon from 'wbfa/FAREyeSlash'
-import FAREyeIcon from 'wbfa/FAREye'
+import SidelistControlWhatsNewContextMenu from './SidelistControlWhatsNewContextMenu'
 
 const styles = (theme) => ({
   icon: {
@@ -40,11 +38,6 @@ const styles = (theme) => ({
     maxWidth: 300,
     marginTop: 0,
     marginBottom: 0
-  },
-  contextMenuFAWrap: {
-    width: 20,
-    height: 20,
-    fontSize: 20
   }
 })
 
@@ -95,65 +88,6 @@ class SidelistControlWhatsNew extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the context menu
-  * @param onRequestClose: a call which can close the context menu
-  * @return array
-  */
-  renderContextMenu = (onRequestClose) => {
-    const { classes } = this.props
-    const { showMode } = this.state
-    return (
-      <React.Fragment>
-        {showMode !== UISettings.SIDEBAR_NEWS_MODES.NEVER ? (
-          <MenuItem
-            onClick={(evt) => {
-              onRequestClose(evt, () => {
-                settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.NEVER)
-              })
-            }}>
-            <ListItemIcon>
-              <span className={classes.contextMenuFAWrap}>
-                <FAREyeSlashIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Hide What's New`} />
-          </MenuItem>
-        ) : undefined}
-        {showMode !== UISettings.SIDEBAR_NEWS_MODES.UNREAD ? (
-          <MenuItem
-            onClick={(evt) => {
-              onRequestClose(evt, () => {
-                settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.UNREAD)
-              })
-            }}>
-            <ListItemIcon>
-              <span className={classes.contextMenuFAWrap}>
-                <FAREyeIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Only show when there are new items`} />
-          </MenuItem>
-        ) : undefined}
-        {showMode !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
-          <MenuItem
-            onClick={(evt) => {
-              onRequestClose(evt, () => {
-                settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.ALWAYS)
-              })
-            }}>
-            <ListItemIcon>
-              <span className={classes.contextMenuFAWrap}>
-                <FAREyeIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Always show What's New`} />
-          </MenuItem>
-        ) : undefined}
-      </React.Fragment>
-    )
-  }
-
   render () {
     const { classes } = this.props
     const { hasUnseenNews, showMode, headline, summary } = this.state
@@ -191,7 +125,7 @@ class SidelistControlWhatsNew extends React.Component {
             className={classNames(classes.icon, hasUnseenNews ? 'has-news' : undefined)}
             IconClass={FARStarIcon} />
         )}
-        contextMenuRenderer={this.renderContextMenu} />
+        ContextMenuComponent={SidelistControlWhatsNewContextMenu} />
     )
   }
 }

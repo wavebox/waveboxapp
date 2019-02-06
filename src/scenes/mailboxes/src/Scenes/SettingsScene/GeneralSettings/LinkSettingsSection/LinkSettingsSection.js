@@ -284,6 +284,8 @@ class LinkSettingsSection extends React.Component {
                 <AddIcon /> Add new
               </Button>
               <Menu
+                disableAutoFocusItem
+                disableEnforceFocus
                 MenuListProps={{ dense: true }}
                 anchorEl={customLinkProviderAddMenuAnchor}
                 open={!!customLinkProviderAddMenuAnchor}

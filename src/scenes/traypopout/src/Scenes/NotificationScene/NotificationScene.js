@@ -196,6 +196,7 @@ class NotificationScene extends React.Component {
               MenuListProps={{ dense: true }}
               anchorReference='anchorPosition'
               disableEnforceFocus
+              disableAutoFocusItem
               onClose={() => this.setState({ contextMenuAnchor: null })}>
               <MenuItem onClick={() => {
                 this.setState({ contextMenuAnchor: null })
