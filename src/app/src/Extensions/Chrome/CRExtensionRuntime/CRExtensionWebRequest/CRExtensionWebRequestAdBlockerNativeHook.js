@@ -48,15 +48,17 @@ class CRExtensionWebRequestAdBlockerNativeHook {
   */
   blockingOnBeforeRequest (details) {
     if (this[privDisabled]) { return undefined }
+    if (details.resourceType === 'mainFrame') { return undefined }
 
-    let hostname
-    try {
-      hostname = new URL(details.url).hostname
-    } catch (ex) {
-      return undefined
-    }
+    const hostname = this._safeHostname(details.url)
+    if (hostname && this[privBlockRules].has(hostname)) {
+      const parentHostname = this._safeHostname(details.referrer)
+      if (parentHostname && this[privBlockRules].has(parentHostname)) {
+        // If the parent is on a block list assume we navigated here on purpose
+        // and we shouldn't also be blocking content
+        return undefined
+      }
 
-    if (this[privBlockRules].has(hostname)) {
       return { cancel: true }
     } else {
       return undefined
@@ -80,6 +82,22 @@ class CRExtensionWebRequestAdBlockerNativeHook {
       this[privDisabled] = false
     }
     responseCallback(null, undefined)
+  }
+
+  /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  /**
+  * @param url: the url to get the hostname for
+  * @return the hostname, or undefined if the url isn't valid
+  */
+  _safeHostname (url) {
+    try {
+      return new URL(url).hostname
+    } catch (ex) {
+      return undefined
+    }
   }
 }
 
