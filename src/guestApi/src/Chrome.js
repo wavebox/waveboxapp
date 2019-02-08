@@ -9,10 +9,10 @@
         return {
           name: (args || {}).name,
           sender: undefined,
-          postMessage: function () { throw new Error('Attempting to use a disconnected port object') },
+          postMessage: function () { },
           disconnect: function () { },
           ...['onDisconnect', 'onMessage'].reduce((acc, k) => {
-            return {
+            acc[k] = {
               addListener: function () { },
               dispatch: function () { },
               hasListener: function () { },
@@ -20,6 +20,7 @@
               removeListener: function () { },
               removeAllListenrs: function () { }
             }
+            return acc
           }, {})
         }
       }
