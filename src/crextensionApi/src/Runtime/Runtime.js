@@ -7,7 +7,8 @@ import {
   CRX_RUNTIME_ONMESSAGE_,
   CRX_RUNTIME_CONTENTSCRIPT_CONNECT_,
   CRX_PORT_CONNECT_SYNC,
-  CRX_PORT_CONNECTED_
+  CRX_PORT_CONNECTED_,
+  CRX_RUNTIME_NATIVEHOOK_MESSAGE_
 } from 'shared/crExtensionIpcEvents'
 import {
   CR_EXTENSION_PROTOCOL,
@@ -204,6 +205,18 @@ class Runtime {
       connectInfo
     )
     return new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
+  }
+
+  sendNativeHookMessage = (channel, message, callback) => {
+    if (this[privRuntimeEnvironment] !== CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      throw new Error('chrome.runtime.sendNativeHookMessage is only supported in background page')
+    }
+
+    DispatchManager.request(`${CRX_RUNTIME_NATIVEHOOK_MESSAGE_}${this[privExtensionId]}_${channel}`, [message], (evt, err, response) => {
+      if (!err && callback) {
+        callback(response)
+      }
+    })
   }
 
   /* **************************************************************************/
