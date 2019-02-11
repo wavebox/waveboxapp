@@ -115,6 +115,7 @@ class PlatformSettingsSection extends React.Component {
             onClick={(evt) => this.setState({ openLoginPopoverAnchor: evt.target })}>
             <Menu
               disableEnforceFocus
+              disableAutoFocusItem
               anchorEl={openLoginPopoverAnchor}
               open={!!openLoginPopoverAnchor}
               onClose={() => this.setState({ openLoginPopoverAnchor: null })}>

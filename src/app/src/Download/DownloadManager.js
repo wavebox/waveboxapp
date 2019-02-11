@@ -56,8 +56,15 @@ class DownloadManager extends EventEmitter {
   */
   _handleCancelRunningDownload = (evt, downloadId) => {
     const download = this[privUser].inProgress.get(downloadId)
-    if (!download || !download.item) { return }
-    download.item.cancel()
+    if (!download || !download.item) {
+      // If we don't know about the download make sure we re-emit
+      // that we failed so the app isn't left with ghost downloads
+      this.emit('download-failed', { sender: this }, {
+        id: downloadId
+      })
+    } else {
+      download.item.cancel()
+    }
   }
 
   /* ****************************************************************************/

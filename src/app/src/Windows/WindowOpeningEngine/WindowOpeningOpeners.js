@@ -50,9 +50,11 @@ class WindowOpeningOpeners {
     } else {
       let match
       try {
-        const allServiceIds = accountStore.getState().serviceIds()
+        const accountState = accountStore.getState()
+        const allMailboxIds = accountState.mailboxIds()
+        const allServiceIds = accountState.serviceIds()
         const customProviderIds = settingsStore.getState().os.customLinkProviderIds
-        match = mailbox.resolveWindowOpenRule(targetUrl, allServiceIds, customProviderIds)
+        match = mailbox.resolveWindowOpenRule(targetUrl, allMailboxIds, allServiceIds, customProviderIds)
 
         // Run a late cleanup on this in case services have been removed
         accountActions.cleanMailboxWindowOpenRules.defer(mailbox.id, customProviderIds)
@@ -73,6 +75,8 @@ class WindowOpeningOpeners {
         return LinkOpener.openUrlInCustomLinkProvider(match.providerId, targetUrl)
       } else if (match.mode === ACMailbox.USER_WINDOW_OPEN_MODES.ASK) {
         return this.askUserForWindowOpenTarget(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
+      } else if (match.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+        return LinkOpener.openUrlInMailboxWindow(match.mailboxId, targetUrl)
       } else {
         // Totally undefined state - do something sensible
         return this.askUserForWindowOpenTarget(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
@@ -262,6 +266,10 @@ class WindowOpeningOpeners {
       LinkOpener.openUrlInServiceWindow(serviceId, targetUrl)
       teardownFn()
     }
+    const mailboxWindowFn = (mailboxId) => {
+      LinkOpener.openUrlInMailboxWindow(mailboxId, targetUrl)
+      teardownFn()
+    }
 
     /* ******************* */
     // Custom link target
@@ -285,6 +293,7 @@ class WindowOpeningOpeners {
       waveboxWindowFn: waveboxWindowFn,
       runningServiceTabFn: runningServiceTabFn,
       serviceWindowFn: serviceWindowFn,
+      mailboxWindowFn: mailboxWindowFn,
       customLinkTargetFn: customLinkTargetFn
     })
 
@@ -314,6 +323,9 @@ class WindowOpeningOpeners {
           break
         case ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW:
           req.serviceWindowFn(target)
+          break
+        case ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW:
+          req.mailboxWindowFn(target)
           break
         case ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB:
           req.runningServiceTabFn(target)

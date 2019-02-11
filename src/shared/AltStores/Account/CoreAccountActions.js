@@ -772,6 +772,24 @@ class CoreAccountActions extends RemoteActions {
       return this.remoteDispatch('removeFromReadingQueue', args)
     }
   }
+
+  /* **************************************************************************/
+  // Google Inbox
+  /* **************************************************************************/
+
+  /**
+  * Converts a google inbox account to gmail
+  * @param serviceId: the id of the service
+  * @param duplicateFirst: true to duplicate and then work on the duplicate
+  */
+  convertGoogleInboxToGmail (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, duplicateFirst] = args
+      return { serviceId, duplicateFirst }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('convertGoogleInboxToGmail', args)
+    }
+  }
 }
 
 export default CoreAccountActions

@@ -1,14 +1,12 @@
 import React from 'react'
-import SidelistControl from './SidelistControl'
+import SidelistControl from '../SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { withStyles } from '@material-ui/core/styles'
-import SidelistFAIcon from './SidelistFAIcon'
-import { MenuItem, ListItemIcon, ListItemText } from '@material-ui/core'
+import SidelistFAIcon from '../SidelistFAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import FARMagicIcon from 'wbfa/FARMagic'
 import shallowCompare from 'react-addons-shallow-compare'
-import { settingsActions } from 'stores/settings'
-import FAREyeSlashIcon from 'wbfa/FAREyeSlash'
+import SidelistControlWizardContextMenu from './SidelistControlWizardContextMenu'
 
 const styles = (theme) => ({
   icon: {
@@ -16,11 +14,6 @@ const styles = (theme) => ({
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.wizard.icon.color', 'hover')
     }
-  },
-  contextMenuFAWrap: {
-    width: 24,
-    height: 24,
-    fontSize: 24
   }
 })
 
@@ -32,29 +25,6 @@ class SidelistControlWizard extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  }
-
-  /**
-  * Renders the context menu
-  * @param onRequestClose: a call which can close the context menu
-  * @return array
-  */
-  renderContextMenu = (onRequestClose) => {
-    const { classes } = this.props
-    return [
-      (<MenuItem
-        key='hide'
-        onClick={(evt) => {
-          onRequestClose(evt, () => { settingsActions.sub.app.setHasSeenAppWizard(true) })
-        }}>
-        <ListItemIcon>
-          <span className={classes.contextMenuFAWrap}>
-            <FAREyeSlashIcon />
-          </span>
-        </ListItemIcon>
-        <ListItemText inset primary='Hide Setup Wizard' />
-      </MenuItem>)
-    ]
   }
 
   render () {
@@ -74,7 +44,7 @@ class SidelistControlWizard extends React.Component {
           </div>
         )}
         icon={(<SidelistFAIcon className={classes.icon} IconClass={FARMagicIcon} />)}
-        contextMenuRenderer={this.renderContextMenu} />
+        ContextMenuComponent={SidelistControlWizardContextMenu} />
     )
   }
 }

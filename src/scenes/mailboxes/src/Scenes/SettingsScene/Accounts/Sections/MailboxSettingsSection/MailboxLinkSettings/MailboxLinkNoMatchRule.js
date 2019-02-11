@@ -62,7 +62,7 @@ class MailboxLinkNoMatchRule extends React.Component {
     const accountState = accountStore.getState()
     return {
       ...this.extractStateForMailbox(this.props.mailboxId, accountState),
-      providerNames: settingsStore.getState().os.customLinkProviderNames
+      customLinkProviderNames: settingsStore.getState().os.customLinkProviderNames
     }
   })()
 
@@ -74,7 +74,7 @@ class MailboxLinkNoMatchRule extends React.Component {
 
   settingsChanged = (settingsState) => {
     this.setState({
-      providerNames: settingsState.os.customLinkProviderNames
+      customLinkProviderNames: settingsState.os.customLinkProviderNames
     })
   }
 
@@ -87,11 +87,44 @@ class MailboxLinkNoMatchRule extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
     return mailbox ? {
       value: mailbox.userNoMatchWindowOpenRule,
-      valueServiceName: accountState.resolvedFullServiceName(mailbox.userNoMatchWindowOpenRule.serviceId)
+      valueAccountName: mailbox.userNoMatchWindowOpenRule.serviceId
+        ? accountState.resolvedFullServiceName(mailbox.userNoMatchWindowOpenRule.serviceId)
+        : mailbox.userNoMatchWindowOpenRule.mailboxId
+          ? accountState.resolvedMailboxDisplayName(mailbox.userNoMatchWindowOpenRule.mailboxId)
+          : undefined
     } : {
       value: {},
-      valueServiceName: undefined
+      valueAccountName: undefined
     }
+  }
+
+  /* **************************************************************************/
+  // Data utils
+  /* **************************************************************************/
+
+  /**
+  * Converts a rule to a string which can be used in the select
+  * @param rule: the rule
+  * @return a string representation
+  */
+  ruleToString (rule) {
+    return rule.mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER
+      ? `${ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}:${rule.providerId}`
+      : rule.mode
+  }
+
+  /**
+  * Converts a rule string from the select back to a rule
+  * @param str: the rule string
+  * @return a new version of the rule
+  */
+  stringToRule (str) {
+    return str.startsWith(ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) ? {
+      mode: ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER,
+      targetInfo: {
+        providerId: str.replace(`${ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}:`, '')
+      }
+    } : { mode: str }
   }
 
   /* **************************************************************************/
@@ -103,11 +136,12 @@ class MailboxLinkNoMatchRule extends React.Component {
   * @param evt: the event that fired
   */
   handleChange = (evt) => {
+    const rule = this.stringToRule(evt.target.value)
     accountActions.reduceMailbox(
       this.props.mailboxId,
       MailboxReducer.setUserNoMatchWindowOpenRule,
-      evt.target.value,
-      undefined // serviceId
+      rule.mode,
+      rule.targetInfo
     )
   }
 
@@ -128,8 +162,8 @@ class MailboxLinkNoMatchRule extends React.Component {
     } = this.props
     const {
       value,
-      valueServiceName,
-      providerNames
+      valueAccountName,
+      customLinkProviderNames
     } = this.state
 
     return (
@@ -138,7 +172,7 @@ class MailboxLinkNoMatchRule extends React.Component {
           primary={`New window behaviour (that don't match any rules)`} />
         <FormControl component='fieldset'>
           <RadioGroup
-            value={value.mode}
+            value={this.ruleToString(value)}
             onChange={this.handleChange}>
             <FormControlLabel
               value={ACMailbox.USER_WINDOW_OPEN_MODES.BROWSER}
@@ -156,19 +190,36 @@ class MailboxLinkNoMatchRule extends React.Component {
               <FormControlLabel
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Service Window (${valueServiceName || 'Deleted Service'})`} />
+                label={`Account Window (${valueAccountName || 'Deleted Account'})`} />
+            ) : undefined}
+            {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW ? (
+              <FormControlLabel
+                value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW}
+                control={<Radio color='primary' className={classes.radio} />}
+                label={`Account Window (${valueAccountName || 'Deleted Account'})`} />
             ) : undefined}
             {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB ? (
               <FormControlLabel
                 value={ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Running Service Tab (${valueServiceName || 'Deleted Service'})`} />
+                label={`Running Service Tab (${valueAccountName || 'Deleted Account'})`} />
             ) : undefined}
-            {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER ? (
+            {Object.keys(customLinkProviderNames).length ? (
+              Object.keys(customLinkProviderNames).map((id) => {
+                return (
+                  <FormControlLabel
+                    key={id}
+                    value={`${ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}:${id}`}
+                    control={<Radio color='primary' className={classes.radio} />}
+                    label={`Custom (${customLinkProviderNames[id]})`} />
+                )
+              })
+            ) : undefined}
+            {value.mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER && !customLinkProviderNames[value.providerId] ? (
               <FormControlLabel
-                value={ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER}
+                value={this.ruleToString(value)}
                 control={<Radio color='primary' className={classes.radio} />}
-                label={`Custom (${providerNames[value.providerId] || 'Deleted Provider'})`} />
+                label={`Custom (Deleted Provider)`} />
             ) : undefined}
           </RadioGroup>
         </FormControl>

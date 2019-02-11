@@ -37,7 +37,7 @@ class MailboxBadge extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
+    color: PropTypes.string,
     hasUnreadActivity: PropTypes.bool.isRequired,
     unreadCount: PropTypes.number.isRequired
   }
@@ -52,7 +52,7 @@ class MailboxBadge extends React.Component {
 
   render () {
     const {
-      mailbox,
+      color,
       unreadCount,
       hasUnreadActivity,
       className,
@@ -60,12 +60,10 @@ class MailboxBadge extends React.Component {
       classes,
       ...passProps
     } = this.props
-    if (!mailbox) { return false }
 
-    const badgeColor = mailbox.badgeColor
     let inverseBadgeColor
     try {
-      inverseBadgeColor = badgeColor ? Color(badgeColor).isLight() ? 'black' : 'white' : undefined
+      inverseBadgeColor = color ? Color(color).isLight() ? 'black' : 'white' : undefined
     } catch (ex) {
       inverseBadgeColor = 'white'
     }
@@ -92,7 +90,7 @@ class MailboxBadge extends React.Component {
               'WB-MailboxBadge',
               `WB-Badge-Content-${badgeContentType}`
             )}
-            style={{ backgroundColor: badgeColor, color: inverseBadgeColor }}>
+            style={{ backgroundColor: color, color: inverseBadgeColor }}>
             {badgeContent}
           </span>
         ) : undefined}

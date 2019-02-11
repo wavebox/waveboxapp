@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { ListItemText, ListItemAvatar, Avatar, Divider } from '@material-ui/core'
+import { ListItemAvatar, Avatar, Divider } from '@material-ui/core'
 import FABLinuxIcon from 'wbfa/FABLinux'
 import FABAppleIcon from 'wbfa/FABApple'
 import FABWindowsIcon from 'wbfa/FABWindows'
 import FARBolt from 'wbfa/FARBolt'
 import ULinkORListItem from './ULinkORListItem'
+import ULinkORListItemText from './ULinkORListItemText'
 
 const privSettingsStore = Symbol('privSettingsStore')
 
@@ -107,7 +108,7 @@ class ULinkORDialogPrimarySection extends React.Component {
           <ListItemAvatar>
             <Avatar src={iconResolver('app.svg')} />
           </ListItemAvatar>
-          <ListItemText
+          <ULinkORListItemText
             primary={(<strong>Wavebox Window</strong>)}
             secondary='Use your current session & stay logged in' />
         </ULinkORListItem>
@@ -117,7 +118,7 @@ class ULinkORDialogPrimarySection extends React.Component {
               <OSIconComponent />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText
+          <ULinkORListItemText
             primary={(<strong>Default Browser</strong>)}
             secondary='Use the default browser on your machine' />
         </ULinkORListItem>
@@ -132,7 +133,7 @@ class ULinkORDialogPrimarySection extends React.Component {
                   <FARBolt />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText
+              <ULinkORListItemText
                 primary={(<strong>{customLinkProviders[id].name}</strong>)} />
             </ULinkORListItem>
           )

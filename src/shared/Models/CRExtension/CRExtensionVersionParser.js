@@ -10,11 +10,10 @@ class CRExtensionVersionParser {
   static _expand (str) {
     if (typeof (str) === 'string') {
       return str.split('.').map((v) => {
-        if (v.length > 1 && v[0] === '0') {
-          return NaN
-        } else {
-          return parseInt(v)
-        }
+        const vInt = parseInt(v)
+        return vInt !== 0 && v.length > 1 && v[0] === '0' // Disallow 01 but allow 00
+          ? NaN
+          : vInt
       })
     } else {
       return []

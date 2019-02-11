@@ -33,8 +33,10 @@ import {
   CRX_WEB_REQUEST_ON_ERROR_OCCURRED_ADD_,
   CRX_WEB_REQUEST_ON_ERROR_OCCURRED_REMOVE_
 } from 'shared/crExtensionIpcEvents'
+import { CR_NATIVE_HOOK_EXTENSIONS } from 'shared/extensionApis'
 import CRExtensionWebRequestListener from './CRExtensionWebRequestListener'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
+import CRExtensionWebRequestAdBlockerNativeHook from './CRExtensionWebRequestAdBlockerNativeHook'
 
 const BLOCKING_ON_BEFORE_REQUEST_ERROR_SUPPRESS_MS = 1000 * 60
 
@@ -47,6 +49,9 @@ class CRExtensionWebRequest {
     this.extension = extension
     this._blockingOnBeforeRequestScript = undefined
     this._blockingOnBeforeRequestErrorSuppress = { last: 0, total: 0 }
+    this._blockingOnBeforeRequestNativeHook = extension.id === CR_NATIVE_HOOK_EXTENSIONS.WB_AD_BLOCKER
+      ? new CRExtensionWebRequestAdBlockerNativeHook(extension)
+      : undefined
 
     if (this.extension.manifest.permissions.has('webRequest')) {
       this._blockingOnBeforeRequestScript = this.extension.manifest.wavebox.webRequestOnBeforeRequestBlockingScript
@@ -147,9 +152,21 @@ class CRExtensionWebRequest {
   * @return modifiers that will cancel or redirect the request or undefined
   */
   blockingOnBeforeRequest = (details) => {
-    // Check we support
-    if (!this._blockingOnBeforeRequestScript) { return undefined }
+    if (this._blockingOnBeforeRequestNativeHook) {
+      return this._blockingOnBeforeRequestNativeHook.blockingOnBeforeRequest(details)
+    } else if (this._blockingOnBeforeRequestScript) {
+      return this._executeBlockingOnBeforeRequestScript(details)
+    }
 
+    return undefined
+  }
+
+  /**
+  * Executes the blocking before request script
+  * @param details: the request details
+  * @return reqest modifier
+  */
+  _executeBlockingOnBeforeRequestScript (details) {
     // Check our url matches
     const purl = new URL(details.url)
     const matches = CRExtensionMatchPatterns.matchUrls(

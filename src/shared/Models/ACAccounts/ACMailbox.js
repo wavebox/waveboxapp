@@ -6,6 +6,7 @@ const USER_WINDOW_OPEN_MODES = Object.freeze({
   BROWSER: 'BROWSER',
   WAVEBOX: 'WAVEBOX',
   WAVEBOX_SERVICE_WINDOW: 'WAVEBOX_SERVICE_WINDOW',
+  WAVEBOX_MAILBOX_WINDOW: 'WAVEBOX_MAILBOX_WINDOW',
   WAVEBOX_SERVICE_RUNNING_TAB: 'WAVEBOX_SERVICE_RUNNING_TAB',
   ASK: 'ASK',
   CUSTOM_PROVIDER: 'CUSTOM_PROVIDER'
@@ -345,16 +346,20 @@ class ACMailbox extends CoreACModel {
   /**
   * Finds matching window open rules for a given url within a subset of valid ids
   * @param targetUrl: the url to find a match for
+  * @param validMailboxIds: an array of valid mailbox ids
   * @param validServiceIds: an array of valid service ids
   * @param validProviderIds: an array of valid provider ids
   * @return a valid rule, either from the user rules or the no match rule
   */
-  resolveWindowOpenRule (targetUrl, validServiceIds, validProviderIds) {
+  resolveWindowOpenRule (targetUrl, validMailboxIds, validServiceIds, validProviderIds) {
+    const mailboxIds = new Set(validMailboxIds)
     const serviceIds = new Set(validServiceIds)
     const providerIds = new Set(validProviderIds)
     const rule = this.findMatchingUserWindowOpenRules(targetUrl)
-      .find(({ serviceId, providerId }) => {
-        if (serviceId && !serviceIds.has(serviceId)) {
+      .find(({ serviceId, mailboxId, providerId }) => {
+        if (mailboxId && !mailboxIds.has(mailboxId)) {
+          return false
+        } else if (serviceId && !serviceIds.has(serviceId)) {
           return false
         } else if (providerId && !providerIds.has(providerId)) {
           return false
@@ -366,7 +371,9 @@ class ACMailbox extends CoreACModel {
     if (rule) {
       return rule
     } else {
-      if (this.userNoMatchWindowOpenRule.serviceId && !serviceIds.has(this.userNoMatchWindowOpenRule.serviceId)) {
+      if (this.userNoMatchWindowOpenRule.mailboxId && !mailboxIds.has(this.userNoMatchWindowOpenRule.mailboxId)) {
+        return { mode: USER_WINDOW_OPEN_MODES.ASK }
+      } else if (this.userNoMatchWindowOpenRule.serviceId && !serviceIds.has(this.userNoMatchWindowOpenRule.serviceId)) {
         return { mode: USER_WINDOW_OPEN_MODES.ASK }
       } else if (this.userNoMatchWindowOpenRule.providerId && !providerIds.has(this.userNoMatchWindowOpenRule.providerId)) {
         return { mode: USER_WINDOW_OPEN_MODES.ASK }

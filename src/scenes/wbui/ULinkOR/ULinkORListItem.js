@@ -27,6 +27,7 @@ class ULinkORListItem extends React.Component {
     return (
       <ListItem
         button
+        data-ulinkor-keyboard-target='true'
         className={classNames(className, classes.root)}
         {...passProps} />
     )

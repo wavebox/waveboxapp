@@ -35,7 +35,10 @@ class AuthGoogle {
       redirect_uri: credentials.GOOGLE_AUTH_RETURN_URL,
       access_type: 'offline',
       response_type: 'code',
-      scope: [
+      scope: userStore.getState().wireConfigSimpleGoogleAuth() ? [
+        'profile',
+        'email'
+      ].join(' ') : [
         'profile',
         'email',
         'https://www.googleapis.com/auth/gmail.readonly'

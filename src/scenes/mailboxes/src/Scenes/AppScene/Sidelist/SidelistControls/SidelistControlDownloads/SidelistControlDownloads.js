@@ -1,6 +1,6 @@
 import React from 'react'
 import SidelistControl from '../SidelistControl'
-import { settingsStore, settingsActions } from 'stores/settings'
+import { settingsStore } from 'stores/settings'
 import { localHistoryStore } from 'stores/localHistory'
 import shallowCompare from 'react-addons-shallow-compare'
 import { UISettings } from 'shared/Models/Settings'
@@ -9,13 +9,12 @@ import classNames from 'classnames'
 import SidelistFAIcon from '../SidelistFAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import FASArrowToBottom from 'wbfa/FASArrowToBottom'
-import { MenuItem, ListItemIcon, ListItemText, Popover, CircularProgress } from '@material-ui/core'
-import FAREyeSlashIcon from 'wbfa/FAREyeSlash'
-import FAREyeIcon from 'wbfa/FAREye'
+import { Popover, CircularProgress } from '@material-ui/core'
 import pluralize from 'pluralize'
 import DownloadsPopoutContent from './DownloadsPopoutContent'
 import ReactDOM from 'react-dom'
 import StyleMixins from 'wbui/Styles/StyleMixins'
+import SidelistControlDownloadsContextMenu from './SidelistControlDownloadsContextMenu'
 
 const styles = (theme) => ({
   icon: {
@@ -23,11 +22,6 @@ const styles = (theme) => ({
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.downloads.icon.color', 'hover')
     }
-  },
-  contextMenuFAWrap: {
-    width: 20,
-    height: 20,
-    fontSize: 20
   },
   popout: {
     maxHeight: 500,
@@ -162,65 +156,6 @@ class SidelistControlDownloads extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the context menu
-  * @param onRequestClose: a call which can close the context menu
-  * @return array
-  */
-  renderContextMenu = (onRequestClose) => {
-    const { classes } = this.props
-    const { showMode } = this.state
-    return (
-      <React.Fragment>
-        {showMode !== UISettings.SIDEBAR_DOWNLOAD_MODES.NEVER ? (
-          <MenuItem
-            onClick={(evt) => {
-              onRequestClose(evt, () => {
-                settingsActions.sub.ui.setShowSidebarDownloads(UISettings.SIDEBAR_DOWNLOAD_MODES.NEVER)
-              })
-            }}>
-            <ListItemIcon>
-              <span className={classes.contextMenuFAWrap}>
-                <FAREyeSlashIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Hide Downloads`} />
-          </MenuItem>
-        ) : undefined}
-        {showMode !== UISettings.SIDEBAR_DOWNLOAD_MODES.UNREAD ? (
-          <MenuItem
-            onClick={(evt) => {
-              onRequestClose(evt, () => {
-                settingsActions.sub.ui.setShowSidebarDownloads(UISettings.SIDEBAR_DOWNLOAD_MODES.ACTIVE)
-              })
-            }}>
-            <ListItemIcon>
-              <span className={classes.contextMenuFAWrap}>
-                <FAREyeIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Only show when there are active downloads`} />
-          </MenuItem>
-        ) : undefined}
-        {showMode !== UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS ? (
-          <MenuItem
-            onClick={(evt) => {
-              onRequestClose(evt, () => {
-                settingsActions.sub.ui.setShowSidebarDownloads(UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS)
-              })
-            }}>
-            <ListItemIcon>
-              <span className={classes.contextMenuFAWrap}>
-                <FAREyeIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Always show Downloads`} />
-          </MenuItem>
-        ) : undefined}
-      </React.Fragment>
-    )
-  }
-
   render () {
     const { classes } = this.props
     const {
@@ -269,7 +204,7 @@ class SidelistControlDownloads extends React.Component {
                 IconClass={FASArrowToBottom} />
             </span>
           )}
-          contextMenuRenderer={this.renderContextMenu} />
+          ContextMenuComponent={SidelistControlDownloadsContextMenu} />
         <Popover
           anchorEl={popoutAnchor}
           anchorOrigin={{ vertical: 'center', horizontal: 'right' }}

@@ -329,6 +329,8 @@ class MailboxReducer {
       rule.serviceId = targetId
     } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
       rule.providerId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+      rule.mailboxId = targetId
     }
 
     return mailbox.changeData({ userNoMatchWindowOpenRule: rule })
@@ -339,7 +341,7 @@ class MailboxReducer {
   * @param mailbox: the mailbox to update
   * @param rule: the rule to add
   * @param mode: the mode to use
-  * @param serviceId: an optional target id accompanying the rule
+  * @param targetId: an optional target id accompanying the rule
   */
   static addUserWindowOpenRule (mailbox, rule, mode, targetId) {
     const ruledef = { mode: mode, rule: rule }
@@ -349,11 +351,19 @@ class MailboxReducer {
       ruledef.serviceId = targetId
     } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
       ruledef.providerId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+      ruledef.mailboxId = targetId
     }
 
-    return mailbox.changeData({
-      userWindowOpenRules: mailbox.userWindowOpenRules.concat(ruledef)
-    })
+    const next = mailbox.userWindowOpenRules
+      .filter((existing) => {
+        const keys = new Set([].concat(Object.keys(existing.rule), Object.keys(ruledef.rule)))
+        const diffKey = Array.from(keys).find((k) => existing.rule[k] !== ruledef.rule[k])
+        return !!diffKey
+      })
+      .concat([ruledef])
+
+    return mailbox.changeData({ userWindowOpenRules: next })
   }
 
   /**

@@ -1,30 +1,32 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Typography, ListItemText, ListItemSecondaryAction, Tooltip, IconButton } from '@material-ui/core'
+import { ListItemSecondaryAction, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
-import ACAvatarCircle2 from '../ACAvatarCircle2'
-import MailboxServiceBadge from '../MailboxServiceBadge'
+import ACAvatarCircle2 from '../../../ACAvatarCircle2'
+import MailboxServiceBadge from '../../../MailboxServiceBadge'
 import classNames from 'classnames'
 import TabIcon from '@material-ui/icons/Tab'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
-import ULinkORListItem from './ULinkORListItem'
+import ULinkORListItem from '../../ULinkORListItem'
+import ULinkORListItemText from '../../ULinkORListItemText'
 
 const privAccountStore = Symbol('privAccountStore')
 
 const styles = {
   root: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingTop: 0,
+    paddingBottom: 0,
     paddingRight: 84,
-    height: 65
+    paddingLeft: 32,
+    height: 48
   },
   avatarContainer: {
     position: 'relative',
-    width: 36,
-    minWidth: 36,
-    height: 36,
-    minHeight: 36,
+    width: 28,
+    minWidth: 28,
+    height: 28,
+    minHeight: 28,
     marginRight: 4
   },
   badge: {
@@ -48,18 +50,13 @@ const styles = {
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 36,
-    height: 36
-  },
-  mailboxAvatar: {
-    position: 'absolute',
-    right: -6,
-    bottom: -1
+    width: 28,
+    height: 28
   }
 }
 
 @withStyles(styles)
-class ULinkORAccountSectionListItem extends React.Component {
+class MailboxListItemSubServiceItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -132,7 +129,6 @@ class ULinkORAccountSectionListItem extends React.Component {
       return {
         membersAvailable: true,
         displayName: accountState.resolvedServiceDisplayName(serviceId),
-        mailboxAvatar: accountState.getMailboxAvatarConfig(mailbox.id),
         serviceAvatar: accountState.getServiceAvatarConfig(serviceId),
         isServiceSleeping: isServiceSleeping,
         supportsUnreadCount: service.supportsUnreadCount,
@@ -142,12 +138,10 @@ class ULinkORAccountSectionListItem extends React.Component {
         supportsUnreadActivity: service.supportsUnreadActivity,
         showBadgeActivity: service.showBadgeActivity,
         badgeColor: service.badgeColor,
-        mailboxHasSingleService: mailbox.hasSingleService,
         documentTitle: serviceData.documentTitle,
         nextUrl: isServiceSleeping
           ? service.getUrlWithData(serviceData, authData)
-          : service.url,
-        mailboxHelperDisplayName: accountState.resolvedMailboxExplicitServiceDisplayName(mailbox.id)
+          : service.url
       }
     } else {
       return {
@@ -216,7 +210,6 @@ class ULinkORAccountSectionListItem extends React.Component {
     const {
       membersAvailable,
       displayName,
-      mailboxAvatar,
       serviceAvatar,
       isServiceSleeping,
       supportsUnreadCount,
@@ -226,10 +219,8 @@ class ULinkORAccountSectionListItem extends React.Component {
       supportsUnreadActivity,
       showBadgeActivity,
       badgeColor,
-      mailboxHasSingleService,
       documentTitle,
-      nextUrl,
-      mailboxHelperDisplayName
+      nextUrl
     } = this.state
     if (!membersAvailable) { return false }
 
@@ -253,34 +244,14 @@ class ULinkORAccountSectionListItem extends React.Component {
             isAuthInvalid={false}>
             <ACAvatarCircle2
               avatar={serviceAvatar}
-              size={36}
+              size={28}
               resolver={avatarResolver}
               showSleeping={isServiceSleeping}
               circleProps={{ showSleeping: false }} />
-            {!mailboxHasSingleService ? (
-              <ACAvatarCircle2
-                avatar={mailboxAvatar}
-                className={classes.mailboxAvatar}
-                size={16}
-                resolver={avatarResolver}
-                showSleeping={false} />
-            ) : undefined}
           </MailboxServiceBadge>
         </div>
-        <ListItemText
-          primary={(
-            <React.Fragment>
-              {displayName}
-              {displayName !== mailboxHelperDisplayName ? (
-                <Typography
-                  inline
-                  color='textSecondary'
-                  component='span'>
-                  &nbsp;{mailboxHelperDisplayName}
-                </Typography>
-              ) : undefined}
-            </React.Fragment>
-          )}
+        <ULinkORListItemText
+          primary={displayName}
           primaryTypographyProps={{ noWrap: true }}
           secondary={documentTitle && documentTitle !== displayName ? documentTitle : nextUrl}
           secondaryTypographyProps={{ noWrap: true }} />
@@ -301,4 +272,4 @@ class ULinkORAccountSectionListItem extends React.Component {
   }
 }
 
-export default ULinkORAccountSectionListItem
+export default MailboxListItemSubServiceItem

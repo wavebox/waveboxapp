@@ -138,10 +138,11 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
         transformOrigin={{ horizontal: 'left', vertical: 'top' }}
         MenuListProps={{ dense: true }}
         disableEnforceFocus
+        disableAutoFocusItem
         onClose={this.closePopover}>
         {hasHomepageUrl ? (
           <MenuItem onClick={this.handleOpenHomepage}>
-            <ListItemText inset primary={name} />
+            <ListItemText primary={name} />
           </MenuItem>
         ) : undefined}
         {hasHomepageUrl ? (
@@ -152,7 +153,7 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
             <ListItemIcon>
               <SettingsApplicationsIcon />
             </ListItemIcon>
-            <ListItemText inset primary='Options' />
+            <ListItemText primary='Options' />
           </MenuItem>
         ) : undefined}
         {hasOptions ? (
@@ -162,7 +163,7 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
           <ListItemIcon>
             <ExtensionIcon />
           </ListItemIcon>
-          <ListItemText inset primary='Manage Extensions' />
+          <ListItemText primary='Manage Extensions' />
         </MenuItem>
       </Menu>
     )

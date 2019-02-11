@@ -1,14 +1,12 @@
 import React from 'react'
-import SidelistControl from './SidelistControl'
+import SidelistControl from '../SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { withStyles } from '@material-ui/core/styles'
-import { MenuItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import ThemeTools from 'wbui/Themes/ThemeTools'
-import SidelistFAIcon from './SidelistFAIcon'
+import SidelistFAIcon from '../SidelistFAIcon'
 import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
 import shallowCompare from 'react-addons-shallow-compare'
-import { settingsActions } from 'stores/settings'
-import FAREyeSlashIcon from 'wbfa/FAREyeSlash'
+import SidelistControlSupportContextMenu from './SidelistControlSupportContextMenu'
 
 const styles = (theme) => ({
   icon: {
@@ -16,11 +14,6 @@ const styles = (theme) => ({
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color', 'hover')
     }
-  },
-  contextMenuFAWrap: {
-    width: 20,
-    height: 20,
-    fontSize: 20
   }
 })
 
@@ -32,29 +25,6 @@ class SidelistControlSupport extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  }
-
-  /**
-  * Renders the context menu
-  * @param onRequestClose: a call which can close the context menu
-  * @return array
-  */
-  renderContextMenu = (onRequestClose) => {
-    const { classes } = this.props
-    return [
-      (<MenuItem
-        key='hide'
-        onClick={(evt) => {
-          onRequestClose(evt, () => { settingsActions.sub.ui.setShowSidebarSupport(false) })
-        }}>
-        <ListItemIcon>
-          <span className={classes.contextMenuFAWrap}>
-            <FAREyeSlashIcon />
-          </span>
-        </ListItemIcon>
-        <ListItemText inset primary='Hide Help, Support & FAQs' />
-      </MenuItem>)
-    ]
   }
 
   render () {
@@ -75,7 +45,7 @@ class SidelistControlSupport extends React.Component {
           </div>
         )}
         icon={(<SidelistFAIcon className={classes.icon} IconClass={FARQuestionCircleIcon} />)}
-        contextMenuRenderer={this.renderContextMenu} />
+        ContextMenuComponent={SidelistControlSupportContextMenu} />
     )
   }
 }

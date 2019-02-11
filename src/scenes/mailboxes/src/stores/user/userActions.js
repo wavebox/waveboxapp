@@ -189,19 +189,16 @@ class UserActions extends RendererUserActions {
 
   /**
   * Uploads the user profile
+  * @param force=false: true to force upload - e.g. from user action
   */
-  uploadUserProfile () { return {} }
+  uploadUserProfile (force = false) { return { force } }
 
   /**
   * Uploads the user profile after a certain wait
   * @param wait: the time to wait before uploading
   */
   uploadUserProfileAfter (wait) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(this.uploadUserProfile())
-      }, wait)
-    })
+    return { wait }
   }
 
   /**

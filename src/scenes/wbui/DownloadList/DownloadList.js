@@ -166,6 +166,7 @@ class DownloadList extends React.Component {
           MenuListProps={{ dense: true }}
           anchorReference='anchorPosition'
           disableEnforceFocus
+          disableAutoFocusItem
           onClose={this.handleCloseContextMenu}>
           {contextMenu ? (
             contextMenu.isActive ? (

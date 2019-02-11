@@ -68,7 +68,7 @@ class SidelistControl extends React.Component {
     tooltip: PropTypes.node.isRequired,
     tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)),
     tourTooltip: PropTypes.node,
-    contextMenuRenderer: PropTypes.func
+    ContextMenuComponent: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -168,7 +168,7 @@ class SidelistControl extends React.Component {
   */
   handleHideContextMenu = (evt, cb = undefined) => {
     this.setState({ contextMenuAnchor: null })
-    if (cb) {
+    if (typeof (cb) === 'function') {
       setTimeout(() => { cb() }, 250)
     }
   }
@@ -238,7 +238,7 @@ class SidelistControl extends React.Component {
       icon,
       children,
       onContextMenu,
-      contextMenuRenderer,
+      ContextMenuComponent,
       ...passProps
     } = this.props
     const {
@@ -279,14 +279,15 @@ class SidelistControl extends React.Component {
             {children}
           </div>
         </PrimaryTooltip>
-        {contextMenuRenderer ? (
+        {ContextMenuComponent ? (
           <Menu
             open={!!contextMenuAnchor}
             anchorEl={contextMenuAnchor}
             MenuListProps={{ dense: true }}
             disableEnforceFocus
+            disableAutoFocusItem
             onClose={this.handleHideContextMenu}>
-            {contextMenuRenderer(this.handleHideContextMenu)}
+            <ContextMenuComponent onRequestClose={this.handleHideContextMenu} />
           </Menu>
         ) : undefined}
       </div>

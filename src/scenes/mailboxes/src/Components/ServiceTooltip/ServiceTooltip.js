@@ -290,7 +290,7 @@ class ServiceTooltip extends React.Component {
           disablePadding: true
         })}
         enterDelay={openDelay <= 0 ? undefined : openDelay}
-        leaveDelay={openDelay <= 0 ? undefined : 1}
+        leaveDelay={1}
         width={400}
         onClose={this.handleTooltipClose}
         onOpen={this.handleTooltipOpen}

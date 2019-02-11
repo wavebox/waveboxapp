@@ -49,9 +49,9 @@ class ULinkORSceneContent extends React.Component {
   /**
   * Handles changing the no match rule
   * @param mode: the mode to open the link with
-  * @param target: the optional target to open the link with
+  * @param targetInfo: the optional target to open the link with
   */
-  handleChangeMailboxNoMatchRule = (mode, target) => {
+  handleChangeMailboxNoMatchRule = (mode, targetInfo) => {
     const { serviceId } = this.props
     const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
@@ -60,17 +60,17 @@ class ULinkORSceneContent extends React.Component {
       service.parentId,
       MailboxReducer.setUserNoMatchWindowOpenRule,
       mode,
-      target
+      targetInfo
     )
   }
 
   /**
   * Handles adding a match rule
   * @param mode: the mode to open the link with
-  * @param target: the optional target to open the link with
+  * @param targetInfo: the optional target to open the link with
   * @param match: the match rule
   */
-  handleAddMailboxMatchRule = (mode, target, match) => {
+  handleAddMailboxMatchRule = (mode, targetInfo, match) => {
     const { serviceId } = this.props
     const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
@@ -80,7 +80,7 @@ class ULinkORSceneContent extends React.Component {
       MailboxReducer.addUserWindowOpenRule,
       match,
       mode,
-      target
+      targetInfo
     )
   }
 

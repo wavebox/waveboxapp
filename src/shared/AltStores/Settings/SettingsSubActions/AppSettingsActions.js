@@ -201,6 +201,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Disables the proxy detection
+  * @param disable: true to disable
+  */
+  setDisableProxyDetection (disable) {
+    this.dispatchUpdate('disableProxyDetection', disable)
+  }
+
+  /**
   * Opens the metrics log
   */
   openMetricsLog () {
