@@ -8,7 +8,7 @@
       object-src 'self';
       connect-src *;
       font-src 'self';
-      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-Aoz6Umsr/bwg05a8CQuV04hhUt6nVff598DMX+hF9Gw=';
+      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-7JBPpgK4IZpD0XO8HaUui/vSrwjBCgE7nqjHUIHFvcY=';
       style-src 'self' 'unsafe-inline';
     ">
     <title>Wavebox</title>
@@ -174,16 +174,6 @@ window.appNodeModulesRequire = function (name) {
   */
   const uauthorizedBounce = function (errorStr) { return rejectBounce(errorStr || 'UNAUTHORIZED') }
 
-  // Check for older clients
-  if (!credentials.API_KEY) {
-    console.warn([
-      'Deprication Warning: Missing API Key',
-      '',
-      'Rather than a credentials file, Wavebox now uses a uniform API Key. When support is added for additional services you wont need to enable them individually rather just git pull as usual.',
-      'Updated build instructions & how to get your API Key are on the project homepage https://github.com/wavebox/waveboxapp'
-    ].join('\n'))
-  }
-
   /**
   * Fetches the bootstrap data
   * @return promise
@@ -200,7 +190,7 @@ window.appNodeModulesRequire = function (name) {
             bid: pkg.earlyBuildId || 'release',
             ident: pkg.name,
             api_key: credentials.API_KEY,
-            protocol: credentials.API_KEY ? 2 : 1,
+            protocol: 2,
             '_': new Date().getTime()
           })
           window.fetch(`https://waveboxio.com/client/${window.bootstrap.clientId}/init.json?${query}`)
@@ -240,7 +230,7 @@ window.appNodeModulesRequire = function (name) {
       })
       .then(
         ({ res, jsonContent }) => {
-          if (res.status === 403 || res.status === 401) {
+          if ((res.status === 403 || res.status === 401) && jsonContent.wavebox === true) {
             return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
           } else if (res.ok && jsonContent) {
             window.localStorage[CACHED_INIT_KEY] = JSON.stringify(jsonContent)
