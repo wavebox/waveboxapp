@@ -175,6 +175,14 @@ class CoreUserStore extends RemoteStore {
       return this.wireConfigExperiments().googleInboxRetirementVersion || 1
     }
 
+    /**
+    * Returns true to use the simple google auth
+    * @return true to use simple auth
+    */
+    this.wireConfigSimpleGoogleAuth = () => {
+      return this.wireConfigExperiments().simpleGoogleAuth === true
+    }
+
     /* ****************************************/
     // Containers
     /* ****************************************/

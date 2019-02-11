@@ -9,6 +9,7 @@ import {
 import uuid from 'uuid'
 import ServerVent from 'Server/ServerVent'
 import { accountStore, accountActions } from 'stores/account'
+import { userStore } from 'stores/user'
 import Debug from 'Debug'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
@@ -143,9 +144,14 @@ class GoogleStore {
   */
   isInvalidGrantError (err) {
     if (err && typeof (err.message) === 'string') {
+      if (userStore.getState().wireConfigSimpleGoogleAuth()) {
+        return false
+      }
+
       const isInvalid = err.message.indexOf('invalid_grant') !== -1 ||
         err.message.indexOf('Invalid Credentials') !== -1 ||
-        err.message.indexOf('no credentials provided') !== -1
+        err.message.indexOf('no credentials provided') !== -1 ||
+        err.message.indexOf('Insufficient Permission') !== -1
       if (isInvalid) { return true }
     }
 
