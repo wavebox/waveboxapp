@@ -216,7 +216,8 @@ class MailboxesWindowTabManager {
     if (!wc) { return undefined }
 
     const pid = wc.getOSProcessId()
-    return app.getAppMetrics().find((metric) => metric.pid === pid)
+    //TODO: electron4 deprication: return app.getAppMetrics().find((metric) => metric.pid === pid)
+    return undefined
   }
 
   /* ****************************************************************************/
