@@ -194,6 +194,10 @@ class AccountActions extends RendererAccountActions {
   // Mailbox Re-auth
   /* **************************************************************************/
 
+  /**
+  *
+  * @param serviceId: the id of the service
+  */
   reauthenticateService (serviceId) {
     return { serviceId: serviceId }
   }
