@@ -7,7 +7,7 @@ import pkg from 'package.json'
 import electron from 'electron'
 
 const WinRegistry = process.platform === 'win32' ? require('winreg') : null
-const AutoLaunch = ['darwin', 'linux'].includes(process.platform) ? require('auto-launch') : null
+const AutoLaunch = ['darwin', 'linux'].includes(process.platform) ? require('@artemv/auto-launch') : null
 
 const WIN32_REG_PATH = '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
 const darwinLaunchPath = process.platform === 'darwin' ? (() => {
