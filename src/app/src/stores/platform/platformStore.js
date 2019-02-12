@@ -43,10 +43,10 @@ class PlatformStore extends CorePlatformStore {
   /* **************************************************************************/
 
   handleChangeLoginPref ({ openAtLogin, openAsHidden }) {
-    if (null !== AutoLaunch) {
+    if (AutoLaunch !== null) {
       const autoLaunch = new AutoLaunch({
         name: pkg.name,
-        path: 'darwin' === process.platform ? darwinLaunchPath : undefined,
+        path: process.platform === 'darwin' ? darwinLaunchPath : undefined,
         isHidden: openAsHidden
       })
       if (openAtLogin) {
