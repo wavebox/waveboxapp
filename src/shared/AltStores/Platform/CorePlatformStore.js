@@ -21,7 +21,7 @@ class CorePlatformStore extends RemoteStore {
     /**
     * @return true if login preferences are supported on this platform
     */
-    this.loginPrefSupported = () => { return process.platform === 'darwin' || process.platform === 'win32' }
+    this.loginPrefSupported = () => ['darwin', 'win32', 'linux'].includes(process.platform)
 
     /* ****************************************/
     // Default Mail handler
@@ -30,7 +30,7 @@ class CorePlatformStore extends RemoteStore {
     /**
     * @return true if the platform supports mailto
     */
-    this.mailtoLinkHandlerSupported = () => { return process.platform === 'darwin' || process.platform === 'win32' }
+    this.mailtoLinkHandlerSupported = () => this.loginPrefSupported()
 
     /**
     * @return true if this app is the default mailto link handler
