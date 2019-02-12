@@ -100,6 +100,15 @@ class ServiceReducer {
     return service.changeData({ restoreLastUrl: restore })
   }
 
+  /**
+  * Sets whether the service should prevent low power mode
+  * @param service: the service to update
+  * @param prevent: true to prevent behaviour, false otherwise
+  */
+  static setPreventLowPowerMode (service, prevent) {
+    return service.changeData({ preventLowPowerMode: prevent })
+  }
+
   /* **************************************************************************/
   // Badge & Unread
   /* **************************************************************************/
@@ -196,6 +205,30 @@ class ServiceReducer {
         favicons: recentItem.favicons,
         time: new Date().getTime(),
         id: uuid.v4()
+      })
+    })
+  }
+
+  /**
+  * Changes a bookmark entry
+  * @param service: the parent service
+  * @param bookmarkId: the id of the bookmark
+  * @param changeset: the change to apply to the bookmark
+  */
+  static changeBookmark (service, bookmarkId, changeset) {
+    return service.changeData({
+      bookmarks: service.bookmarks.map((bookmark) => {
+        if (bookmark.id === bookmarkId) {
+          return {
+            ...bookmark,
+            ...changeset,
+            // Maintain some integrity
+            id: bookmark.id,
+            time: bookmark.time
+          }
+        } else {
+          return bookmark
+        }
       })
     })
   }

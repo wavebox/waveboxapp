@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import DictionaryInstallerSceneContent from './DictionaryInstallerSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 
 export default class DictionaryInstallerScene extends React.Component {
   /* **************************************************************************/

@@ -157,14 +157,6 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether the mouse navigation listener should be enabled or not
-  * @param enable: true to enable
-  */
-  setEnableMouseNavigationDarwin (enable) {
-    this.dispatchUpdate('enableMouseNavigationDarwin', enable)
-  }
-
-  /**
   * Sets whether to polyfill useragents or not
   * @param enable: true to enable
   */
@@ -185,11 +177,11 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether to use the experimentalMicrosoftHTTP stack
+  * Sets whether to fetch microsoft calls on the main thread
   * @param use: true to use
   */
-  setExperimentalMicrosoftHTTP (use) {
-    this.dispatchUpdate('experimentalMicrosoftHTTP', use)
+  setAppThreadFetchMicrosoftHTTP (use) {
+    this.dispatchUpdate('appThreadFetchMicrosoftHTTP', use)
   }
 
   /**
@@ -206,6 +198,14 @@ class AppSettingsActions extends CoreSettingsActions {
   */
   setSearchProvider (provider) {
     this.dispatchUpdate('searchProvider', provider)
+  }
+
+  /**
+  * Disables the proxy detection
+  * @param disable: true to disable
+  */
+  setDisableProxyDetection (disable) {
+    this.dispatchUpdate('disableProxyDetection', disable)
   }
 
   /**

@@ -34,15 +34,32 @@ class GoogleInboxService extends CoreGoogleMailService {
   // Properties: Mail
   /* **************************************************************************/
 
-  get unreadMode () { return this._value_('unreadMode', this.constructor.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED) }
-  get supportedUnreadModes () {
+  get inboxType () {
+    const val = this._value_('inboxType', undefined)
+    if (val !== undefined) { return val }
+
+    const depricatedVal = this._value_('unreadMode', undefined)
+    if (depricatedVal !== undefined) {
+      const convertedVal = this.constructor.depricatedUnreadModeToInboxType(depricatedVal)
+      if (convertedVal) { return convertedVal }
+    }
+
+    return this.constructor.INBOX_TYPES.GINBOX_UNBUNDLED
+  }
+  get supportedInboxTypes () {
     return new Set([
-      this.constructor.UNREAD_MODES.INBOX_ALL,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD,
-      this.constructor.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED
+      this.constructor.INBOX_TYPES.GMAIL_UNREAD,
+      this.constructor.INBOX_TYPES.GMAIL__ALL,
+      this.constructor.INBOX_TYPES.GINBOX_UNBUNDLED
     ])
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RELOAD }
+
+  /* **************************************************************************/
+  // Properties: Deprication
+  /* **************************************************************************/
+
+  get ginboxSeenRetirementVersion () { return this._value_('ginboxSeenRetirementVersion', 0) }
 }
 
 export default GoogleInboxService

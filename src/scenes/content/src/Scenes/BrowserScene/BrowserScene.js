@@ -5,8 +5,6 @@ import BrowserView from 'wbui/Guest/BrowserView'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
-import { settingsStore } from 'stores/settings'
-import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
@@ -59,18 +57,11 @@ class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    if (process.platform === 'darwin' && settingsStore.getState().launched.app.enableMouseNavigationDarwin) {
-      this.mouseNavigator = new MouseNavigationDarwin(
-        () => this.refs[BROWSER_REF].goBack(),
-        () => this.refs[BROWSER_REF].goForward()
-      )
-      this.mouseNavigator.register()
-    }
 
     // Handle a case where the webview wont immediately take focus.
     // Hack around a little bit to get it to focus
-    setTimeout(() => { this.focusWebView() }, 1)
-    remote.getCurrentWindow().on('focus', this.focusWebView)
+    setTimeout(() => { this.handleWindowFocused() }, 1)
+    remote.getCurrentWindow().on('focus', this.handleWindowFocused)
   }
 
   componentWillUnmount () {
@@ -78,7 +69,7 @@ class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
-    remote.getCurrentWindow().removeListener('focus', this.focusWebView)
+    remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
   }
 
   /* **************************************************************************/
@@ -166,14 +157,16 @@ class BrowserScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // UI Tools
+  // Window events
   /* **************************************************************************/
 
   /**
-  * Pulls the webview into focus
+  * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
-  focusWebView = () => {
-    this.refs[BROWSER_REF].focus()
+  handleWindowFocused = () => {
+    if (window.location.hash.length < 2) {
+      this.refs[BROWSER_REF].focus()
+    }
   }
 
   /* **************************************************************************/
@@ -228,7 +221,6 @@ class BrowserScene extends React.Component {
             didStartLoading={(evt) => browserActions.startLoading()}
             didStopLoading={(evt) => browserActions.stopLoading()}
             ipcMessage={this.handleBrowserIPCMessage}
-            willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={this.navigationStateDidChange} />

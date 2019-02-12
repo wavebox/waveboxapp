@@ -307,21 +307,85 @@ class MailboxReducer {
   /* **************************************************************************/
 
   /**
-  * Sets the default window open mode
-  * @param mailbox: the mailbox that contains the service
-  * @param mode: the new mode
-  */
-  static setDefaultWindowOpenMode (mailbox, mode) {
-    return mailbox.changeData({ defaultWindowOpenMode: mode })
-  }
-
-  /**
   * Sets whether to open drive links in the default browser
-  * @param mailbox: the mailbox that contains the service
-  * @param mode: the new mode
+  * @param mailbox: the mailbox to update
+  * @param open: true to open links, false otherwise
   */
   static setOpenDriveLinksWithExternalBrowser (mailbox, open) {
     return mailbox.changeData({ openGoogleDriveLinksWithExternalBrowser: open })
+  }
+
+  /**
+  * Sets the no match window open rule
+  * @param mailbox: the mailbox to update
+  * @param mode: the new mode to use
+  * @param targetId: an optional target id to accompany the mode
+  */
+  static setUserNoMatchWindowOpenRule (mailbox, mode, targetId) {
+    const rule = { mode: mode }
+    if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB) {
+      rule.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW) {
+      rule.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
+      rule.providerId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+      rule.mailboxId = targetId
+    }
+
+    return mailbox.changeData({ userNoMatchWindowOpenRule: rule })
+  }
+
+  /**
+  * Adds a new window open rule
+  * @param mailbox: the mailbox to update
+  * @param rule: the rule to add
+  * @param mode: the mode to use
+  * @param targetId: an optional target id accompanying the rule
+  */
+  static addUserWindowOpenRule (mailbox, rule, mode, targetId) {
+    const ruledef = { mode: mode, rule: rule }
+    if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_RUNNING_TAB) {
+      ruledef.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_SERVICE_WINDOW) {
+      ruledef.serviceId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.CUSTOM_PROVIDER) {
+      ruledef.providerId = targetId
+    } else if (mode === ACMailbox.USER_WINDOW_OPEN_MODES.WAVEBOX_MAILBOX_WINDOW) {
+      ruledef.mailboxId = targetId
+    }
+
+    const next = mailbox.userWindowOpenRules
+      .filter((existing) => {
+        const keys = new Set([].concat(Object.keys(existing.rule), Object.keys(ruledef.rule)))
+        const diffKey = Array.from(keys).find((k) => existing.rule[k] !== ruledef.rule[k])
+        return !!diffKey
+      })
+      .concat([ruledef])
+
+    return mailbox.changeData({ userWindowOpenRules: next })
+  }
+
+  /**
+  * Removes a single window open rule
+  * @param mailbox: the mailbox to update
+  * @param ruleIndex: the index of the rule
+  */
+  static removeUserWindowOpenRule (mailbox, ruleIndex) {
+    return mailbox.changeData({
+      userWindowOpenRules: [].concat(
+        mailbox.userWindowOpenRules.slice(0, ruleIndex),
+        mailbox.userWindowOpenRules.slice(ruleIndex + 1)
+      )
+    })
+  }
+
+  /**
+  * Clears all the window open rules
+  * @param mailbox: the mailbox to update
+  */
+  static clearAllUserWindowOpenRules (mailbox) {
+    return mailbox.changeData({ userWindowOpenRules: [] })
   }
 
   /* **************************************************************************/

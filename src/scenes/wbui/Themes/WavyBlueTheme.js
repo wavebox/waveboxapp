@@ -38,6 +38,11 @@ export default createMuiTheme({
           icon: {
             color: { default: blueGrey[200], hover: blueGrey[100] }
           }
+        },
+        downloads: {
+          icon: {
+            color: { default: teal[300], hover: teal[200] }
+          }
         }
       },
       toolbar: {

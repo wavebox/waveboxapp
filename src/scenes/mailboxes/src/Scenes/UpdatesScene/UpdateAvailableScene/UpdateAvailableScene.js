@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
 import UpdateAvailableSceneContent from './UpdateAvailableSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
 
 class UpdateAvailableScene extends React.Component {
   /* **************************************************************************/
@@ -42,7 +42,11 @@ class UpdateAvailableScene extends React.Component {
         routeName={routeName}
         disableEnforceFocus
         onClose={this.handleCheckLater}>
-        <RouterDialogStateProvider routeName={routeName} Component={UpdateAvailableSceneContent} />
+        <RouterDialogStateProvider
+          routeName={routeName}
+          location
+          match
+          Component={UpdateAvailableSceneContent} />
       </RouterDialog>
     )
   }

@@ -98,6 +98,13 @@ class OSSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether to mute notifications when suspended
+  */
+  setNotificationsMutedWhenSuspended (muted) {
+    this.dispatchUpdate('notificationsMutedWhenSuspended', muted)
+  }
+
+  /**
   * @param background: true to open links in the background
   */
   setOpenLinksInBackground (background) {

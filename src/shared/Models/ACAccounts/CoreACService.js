@@ -176,6 +176,7 @@ class CoreACService extends CoreACModel {
   get url () { SubclassNotImplementedError('CoreACService.url') }
   get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
   get restoreLastUrl () { return this._value_('restoreLastUrl', false) }
+  get preventLowPowerMode () { return this._value_('preventLowPowerMode', false) }
 
   /**
   * Gets the url being provided the service data if there is any customization to do
@@ -232,6 +233,24 @@ class CoreACService extends CoreACModel {
       if (item.meta) { return false }
       return !item.title || !item.favicon
     })
+  }
+
+  /**
+  * Gets a reading queue item with a given id
+  * @param id: the id of the reading queue item
+  * @return the item or undefined
+  */
+  getReadingQueueItemWithId (id) {
+    return this.readingQueue.find((q) => q.id === id)
+  }
+
+  /**
+  * Gets a bookmark with a given id
+  * @param id: the id of the bookmark
+  * @return the bookmark or undefined
+  */
+  getBookmarkWithId (id) {
+    return this.bookmarks.find((b) => b.id === id)
   }
 
   /* **************************************************************************/

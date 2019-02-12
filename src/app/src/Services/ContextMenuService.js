@@ -1,7 +1,6 @@
-import { app, BrowserWindow, Menu, shell, clipboard, nativeImage, webContents, session } from 'electron'
+import { app, BrowserWindow, Menu, shell, clipboard, nativeImage, session } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import WaveboxWindow from 'Windows/WaveboxWindow'
-import ContentWindow from 'Windows/ContentWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import { CRExtensionManager } from 'Extensions/Chrome'
@@ -14,6 +13,7 @@ import {
   WB_READING_QUEUE_LINK_ADDED,
   WB_READING_QUEUE_CURRENT_PAGE_ADDED
 } from 'shared/ipcEvents'
+import LinkOpener from 'LinkOpener'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -256,12 +256,13 @@ class ContextMenuService {
           }
         })
       }
+      // Look for a simple mailto url in the format mailto:user@user.com. If this is the
+      // case remove the mailto: prefix
+      const isEmailLink = params.linkURL.startsWith('mailto:') && params.linkURL.indexOf('?') === -1
       template.push({
-        label: 'Copy Link Address',
+        label: isEmailLink ? 'Copy Email Address' : 'Copy Link Address',
         click: () => {
-          // Look for a simple mailto url in the format mailto:user@user.com. If this is the
-          // case remove the mailto: prefix
-          if (params.linkURL.startsWith('mailto:') && params.linkURL.indexOf('?') === -1) {
+          if (isEmailLink) {
             clipboard.writeText(params.linkURL.replace('mailto:', ''))
           } else {
             clipboard.writeText(params.linkURL)
@@ -275,7 +276,7 @@ class ContextMenuService {
           submenu: [
             {
               label: 'Open Link in New Window',
-              click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
+              click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, accountInfo.mailbox.id) }
             },
             (accountInfo.has ? {
               label: 'Open Link as New Service',
@@ -303,11 +304,7 @@ class ContextMenuService {
                   {
                     label: 'New Window',
                     click: () => {
-                      this.openLinkInWaveboxWindowForAccount(
-                        contents,
-                        params.linkURL,
-                        accountStore.getState().getMailbox(mailboxId)
-                      )
+                      this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailboxId)
                     }
                   },
                   { type: 'separator' }
@@ -316,42 +313,7 @@ class ContextMenuService {
                     return {
                       label: accountState.resolvedServiceDisplayName(serviceId),
                       click: () => {
-                        if (accountState.isServiceSleeping(serviceId)) {
-                          accountActions.awakenService(serviceId)
-                          accountActions.changeActiveService(serviceId)
-                          setTimeout(() => { // This is really hacky
-                            const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-                            if (mailboxesWindow) {
-                              const tabId = mailboxesWindow.tabIds().find((tabId) => {
-                                const meta = mailboxesWindow.tabMetaInfo(tabId)
-                                return meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE &&
-                                  meta.serviceId === serviceId
-                              })
-                              if (tabId) {
-                                const wc = webContents.fromId(tabId)
-                                if (wc && !wc.isDestroyed()) {
-                                  wc.loadURL(params.linkURL)
-                                }
-                              }
-                            }
-                          }, 1000)
-                        } else {
-                          const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-                          if (mailboxesWindow) {
-                            const tabId = mailboxesWindow.tabIds().find((tabId) => {
-                              const meta = mailboxesWindow.tabMetaInfo(tabId)
-                              return meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE &&
-                                meta.serviceId === serviceId
-                            })
-                            if (tabId) {
-                              const wc = webContents.fromId(tabId)
-                              if (wc && !wc.isDestroyed()) {
-                                wc.loadURL(params.linkURL)
-                                accountActions.changeActiveService(serviceId)
-                              }
-                            }
-                          }
-                        }
+                        LinkOpener.openUrlInTopLevelService(serviceId, params.linkURL)
                       }
                     }
                   })
@@ -366,11 +328,7 @@ class ContextMenuService {
               return {
                 label: accountState.resolvedMailboxDisplayName(mailboxId),
                 click: () => {
-                  this.openLinkInWaveboxWindowForAccount(
-                    contents,
-                    params.linkURL,
-                    accountStore.getState().getMailbox(mailboxId)
-                  )
+                  this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailboxId)
                 }
               }
             })
@@ -409,7 +367,7 @@ class ContextMenuService {
           const targetUrl = AppSettings.generateSearchProviderUrl(searchProvider, params.selectionText)
           const openInWavebox = AppSettings.searchProviderOpensInWavebox(searchProvider)
           if (openInWavebox && accountInfo.has) {
-            this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox)
+            this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox.id)
           } else {
             shell.openExternal(targetUrl)
           }
@@ -469,7 +427,7 @@ class ContextMenuService {
           click: () => { clipboard.writeText(params.srcURL) }
         }
       ]
-    } else { // Text
+    } else if (params.isEditable || params.editFlags.canCopy) { // Textfield or general text
       return [
         params.editFlags.canCut ? {
           label: 'Cut',
@@ -492,6 +450,8 @@ class ContextMenuService {
           click: () => contents.selectAll()
         } : undefined
       ].filter((i) => !!i)
+    } else {
+      return []
     }
   }
 
@@ -505,10 +465,6 @@ class ContextMenuService {
   renderPageNavigationSection (contents, params, accountInfo) {
     if (params.linkURL) { return [] }
     return [
-      (accountInfo.has ? {
-        label: 'Home',
-        click: () => { contents.loadURL(accountInfo.service.url) }
-      } : undefined),
       {
         label: 'Go Back',
         enabled: contents.canGoBack(),
@@ -521,7 +477,11 @@ class ContextMenuService {
       {
         label: 'Reload',
         click: () => { contents.reload() }
-      }
+      },
+      (accountInfo.has ? {
+        label: 'Home',
+        click: () => { contents.loadURL(accountInfo.service.url) }
+      } : undefined)
     ].filter((i) => !!i)
   }
 
@@ -547,7 +507,7 @@ class ContextMenuService {
           },
           {
             label: 'Open Page in Wavebox',
-            click: () => { this.openLinkInWaveboxWindow(contents, params.pageURL) }
+            click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.pageURL, accountInfo.mailbox.id) }
           },
           (accountInfo.has ? {
             label: 'Open Page as New Service',
@@ -847,43 +807,15 @@ class ContextMenuService {
   /* **************************************************************************/
 
   /**
-  * Opens a link in a Wavebox popup window
-  * @param contents: the contents to open for
-  * @param url: the url to open
-  */
-  openLinkInWaveboxWindow (contents, url) {
-    const rootContents = ElectronWebContents.rootWebContents(contents)
-    const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
-    const waveboxWindow = WaveboxWindow.fromBrowserWindow(openerWindow)
-
-    const openerWebPreferences = contents.getWebPreferences()
-    const contentWindow = new ContentWindow(waveboxWindow ? waveboxWindow.tabMetaInfo(contents.id) : undefined)
-    contentWindow.create(
-      url,
-      undefined,
-      openerWindow,
-      { partition: openerWebPreferences.partition }
-    )
-  }
-
-  /**
   *  Opens a link in a Wavebox popup window, backed for a different account type
   * @param contents: the contents to open for
   * @param url: the url to open
-  * @param mailbox: the mailbox to open for
+  * @param mailboxId: the id of the mailbox to open for
   */
-  openLinkInWaveboxWindowForAccount (contents, url, mailbox) {
+  openLinkInWaveboxWindowForAccount (contents, url, mailboxId) {
     const rootContents = ElectronWebContents.rootWebContents(contents)
     const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
-    const contentWindow = new ContentWindow(
-      undefined // This is a hived window, so don't pass any meta info into it
-    )
-    contentWindow.create(
-      url,
-      undefined,
-      openerWindow,
-      { partition: mailbox.partitionId }
-    )
+    LinkOpener.openUrlInMailboxWindow(mailboxId, url, openerWindow)
   }
 
   /**

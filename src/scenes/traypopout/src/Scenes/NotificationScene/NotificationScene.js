@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
 import { accountActions } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import Infinate from 'react-infinite'
@@ -51,14 +51,14 @@ class NotificationScene extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    notifhistStore.listen(this.notificationsChanged)
+    localHistoryStore.listen(this.notificationsChanged)
 
     window.addEventListener('resize', this.saveContainerHeight, false)
     this.saveContainerHeight()
   }
 
   componentWillUnmount () {
-    notifhistStore.unlisten(this.notificationsChanged)
+    localHistoryStore.unlisten(this.notificationsChanged)
 
     window.removeEventListener('resize', this.saveContainerHeight)
   }
@@ -73,7 +73,7 @@ class NotificationScene extends React.Component {
 
   state = (() => {
     return {
-      notifications: notifhistStore.getState().notifications,
+      notifications: localHistoryStore.getState().notifications,
       containerHeight: 0,
       contextMenuAnchor: null
     }
@@ -196,10 +196,11 @@ class NotificationScene extends React.Component {
               MenuListProps={{ dense: true }}
               anchorReference='anchorPosition'
               disableEnforceFocus
+              disableAutoFocusItem
               onClose={() => this.setState({ contextMenuAnchor: null })}>
               <MenuItem onClick={() => {
                 this.setState({ contextMenuAnchor: null })
-                notifhistActions.clearAllNotifications()
+                localHistoryActions.clearAllNotifications()
               }}>
                 <ListItemText primary='Clear all Notifications' />
               </MenuItem>

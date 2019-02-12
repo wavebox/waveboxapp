@@ -179,6 +179,7 @@ class NotificationSettingsSection extends React.Component {
         onClick={(evt) => { this.setState({ notificationMenuAnchor: evt.target }) }}>
         <Menu
           disableEnforceFocus
+          disableAutoFocusItem
           anchorEl={notificationMenuAnchor}
           open={!!notificationMenuAnchor}
           onClose={() => this.setState({ notificationMenuAnchor: null })}>

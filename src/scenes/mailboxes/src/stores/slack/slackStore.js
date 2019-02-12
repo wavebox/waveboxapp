@@ -6,7 +6,8 @@ import { NotificationService } from 'Notifications'
 import {
   SLACK_FULL_COUNT_SYNC_INTERVAL,
   SLACK_RECONNECT_SOCKET_INTERVAL,
-  SLACK_RTM_RETRY_RECONNECT_MS
+  SLACK_RTM_RETRY_RECONNECT_MS,
+  SLACK_TICKLE_INTERVAL
 } from 'shared/constants'
 import Debug from 'Debug'
 import { remote } from 'electron'
@@ -16,6 +17,8 @@ import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import SlackServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/SlackServiceDataReducer'
 import SlackServiceReducer from 'shared/AltStores/Account/ServiceReducers/SlackServiceReducer'
+import { userStore } from 'stores/user'
+import PowerMonitorService from 'shared/PowerMonitorService'
 
 const MAX_NOTIFICATION_RECORD_AGE = 1000 * 60 * 10 // 10 mins
 const HTML5_NOTIFICATION_DELAY = 1000 * 2 // 2 secs
@@ -214,6 +217,23 @@ class SlackStore {
         actions.reconnectService(serviceId)
       }
     }, SLACK_RECONNECT_SOCKET_INTERVAL)
+    const ticklePoller = setInterval(() => {
+      if (!this.isValidConnection(serviceId, connectionId)) { return }
+      const rtm = this.connections.get(serviceId).rtm
+      if (!rtm) { return }
+      const service = accountStore.getState().getService(serviceId)
+      if (!service) { return }
+
+      if (PowerMonitorService.isSuspended || PowerMonitorService.isScreenLocked) {
+        return
+      }
+
+      if (!userStore.getState().wceTickleSlackRTM(service.rawTickleRTM)) {
+        return
+      }
+
+      rtm.send('tickle')
+    }, SLACK_TICKLE_INTERVAL)
 
     // Start up the socket
     this.connections.set(serviceId, {
@@ -221,7 +241,8 @@ class SlackStore {
       serviceId: serviceId,
       rtm: null,
       fullPoller: fullPoller,
-      reconnectPoller: reconnectPoller
+      reconnectPoller: reconnectPoller,
+      ticklePoller: ticklePoller
     })
 
     Promise.resolve()
@@ -414,6 +435,7 @@ class SlackStore {
       if (connection.rtm) { connection.rtm.close() }
       clearInterval(connection.fullPoller)
       clearInterval(connection.reconnectPoller)
+      clearInterval(connection.ticklePoller)
       this.connections.delete(connection.serviceId)
     })
     const connections = []
@@ -430,6 +452,7 @@ class SlackStore {
       if (connection.rtm) { connection.rtm.close() }
       clearInterval(connection.fullPoller)
       clearInterval(connection.reconnectPoller)
+      clearInterval(connection.ticklePoller)
       this.connections.delete(connection.serviceId)
     }
   }

@@ -1,30 +1,7 @@
 import Bootstrap from 'R/Bootstrap'
 import querystring from 'querystring'
-import { WB_FETCH_SERVICE_TEXT } from 'shared/ipcEvents'
-import { ipcRenderer } from 'electron'
-import uuid from 'uuid'
 import { google } from 'googleapis'
-import axiosDefaults from 'axios/lib/defaults'
-import axiosXHRAdaptor from 'axios/lib/adapters/xhr'
-import axios from 'axios'
-
-// This is quite bad really. We need to stub the transport layer in Google to use xhr rather
-// than require('http'). We can set that using the transformRequest switch in google.options
-// but there's a bug in the google-auth-library which doesn't pass these through. Great.
-// To work around this, change the default axios adapter (hence the bad part). On the plus
-// side though, we're only removing User-Agent and Accept-Encoding which technically
-// shouldn't be set by any client running in this environment, so it's relatively safe. Still bad.
-const originalTransformRequest = axiosDefaults.transformRequest[0]
-axios.defaults.transformRequest = [(data, headers) => {
-  delete headers['User-Agent']
-  delete headers['Accept-Encoding']
-  return originalTransformRequest(data, headers)
-}]
-// Configure Google
-google.options({
-  adapter: axiosXHRAdaptor
-  // transformRequest @Thomas101 - if google ever fix their auth library move transformRequest back here
-})
+import FetchService from 'shared/FetchService'
 
 const gmail = google.gmail('v1')
 const oauth2 = google.oauth2('v2')
@@ -106,13 +83,25 @@ class GoogleHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => gmail.users.watch({
-        userId: 'me',
-        resource: {
-          topicName: 'projects/wavebox-158310/topics/gmail'
-        },
-        auth: auth
-      }))
+      .then(() => {
+        return Promise.resolve()
+          .then(() => gmail.users.watch({
+            userId: 'me',
+            resource: {
+              topicName: 'projects/wavebox-158310/topics/gmail'
+            },
+            auth: auth
+          }))
+          .catch((ex) => {
+            if (ex && typeof (ex.message) === 'string' && ex.message.startsWith('Only one user push notification client allowed per developer')) {
+              // This suggests we're connected elsewhere - nothing to really do here, just look success-y
+              console.info('The failing status 400 call to https://www.googleapis.com/gmail/v1/users/me/watch is handled gracefully')
+              return Promise.resolve({ status: 200, data: {} })
+            } else {
+              return Promise.reject(ex)
+            }
+          })
+      })
       .then((res) => {
         if (res.status === 200) {
           return Promise.resolve(res.data)
@@ -339,30 +328,6 @@ class GoogleHTTP {
   /* **************************************************************************/
 
   /**
-  * Fetches and parses an atom feed
-  * @param partitionId: the id of the partition to run with
-  * @param url: the url to fetch
-  * @return promise: with the parsed xml content
-  */
-  static fetchGmailAtomFeed (partitionId, url) {
-    return new Promise((resolve, reject) => {
-      const returnChannel = `${WB_FETCH_SERVICE_TEXT}:${uuid.v4()}`
-      ipcRenderer.once(returnChannel, (evt, err, res) => {
-        if (err) {
-          reject(new Error(err.message || 'Unknown Error'))
-        } else {
-          const parser = new window.DOMParser()
-          const xmlDoc = parser.parseFromString(res, 'text/xml')
-          resolve(xmlDoc)
-        }
-      })
-      ipcRenderer.send(WB_FETCH_SERVICE_TEXT, returnChannel, partitionId, url, {
-        credentials: 'include'
-      })
-    })
-  }
-
-  /**
   * Fetches the unread count from the atom feed
   * @param partitionId: the id of the partition to run with
   * @param url: the url to fetch
@@ -370,7 +335,14 @@ class GoogleHTTP {
   */
   static fetchGmailAtomUnreadCount (partitionId, url) {
     return Promise.resolve()
-      .then(() => this.fetchGmailAtomFeed(partitionId, url))
+      .then(() => FetchService.request(url, partitionId, { credentials: 'include' }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.text())
+      .then((res) => {
+        const parser = new window.DOMParser()
+        const xmlDoc = parser.parseFromString(res, 'text/xml')
+        return Promise.resolve(xmlDoc)
+      })
       .then((res) => {
         const el = res.getElementsByTagName('fullcount')[0]
         if (!el) { return Promise.reject(new Error('<fullcount> element not found')) }

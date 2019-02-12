@@ -3,11 +3,9 @@ import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import TuneIcon from '@material-ui/icons/Tune'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
-import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListItemSection from 'wbui/SettingsListItemSection'
@@ -67,16 +65,12 @@ export default class MailboxAdvancedSettings extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
     return mailbox ? {
       artificiallyPersistCookies: mailbox.artificiallyPersistCookies,
-      defaultWindowOpenMode: mailbox.defaultWindowOpenMode,
       useCustomUserAgent: mailbox.useCustomUserAgent,
-      customUserAgentString: mailbox.customUserAgentString,
-      openDriveLinksWithExternalBrowser: mailbox.openDriveLinksWithExternalBrowser
+      customUserAgentString: mailbox.customUserAgentString
     } : {
       artificiallyPersistCookies: false,
-      defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
       useCustomUserAgent: false,
-      customUserAgentString: '',
-      openDriveLinksWithExternalBrowser: false
+      customUserAgentString: ''
     }
   }
 
@@ -96,10 +90,8 @@ export default class MailboxAdvancedSettings extends React.Component {
     } = this.props
     const {
       artificiallyPersistCookies,
-      defaultWindowOpenMode,
       useCustomUserAgent,
-      customUserAgentString,
-      openDriveLinksWithExternalBrowser
+      customUserAgentString
     } = this.state
 
     return (
@@ -132,20 +124,6 @@ export default class MailboxAdvancedSettings extends React.Component {
             accountActions.reduceMailbox(mailboxId, MailboxReducer.setArtificiallyPersistCookies, toggled)
           }}
           checked={artificiallyPersistCookies} />
-        <SettingsListItemSelectInline
-          label='Open new windows in which Browser'
-          value={defaultWindowOpenMode}
-          options={[
-            { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER, label: 'Default Browser' },
-            { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX, label: 'Wavebox Browser' }
-          ]}
-          onChange={(evt, value) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, value)} />
-        <SettingsListItemSwitch
-          label='Always open Google Drive links in the default browser'
-          checked={openDriveLinksWithExternalBrowser}
-          onChange={(evt, toggled) => {
-            accountActions.reduceMailbox(mailboxId, MailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
-          }} />
         <SettingsListItemSection divider={false}>
           <SettingsListItemSwitch
             divider={false}

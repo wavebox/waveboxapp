@@ -2,7 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 import ProSceneContent from './ProSceneContent'
 
 const styles = {

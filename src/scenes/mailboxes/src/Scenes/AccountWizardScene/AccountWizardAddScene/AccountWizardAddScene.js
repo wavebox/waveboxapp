@@ -3,7 +3,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import AccountWizardAddSceneContent from './AccountWizardAddSceneContent'
-import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'wbui/RouterDialog'
+import { ipcRenderer } from 'electron'
+import { WB_MAILBOXES_WINDOW_ADD_ACCOUNT } from 'shared/ipcEvents'
 
 const styles = {
   root: {
@@ -24,8 +26,24 @@ class AccountWizardAddScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.handleIPCOpen)
+  }
+
+  componentWillUnmount () {
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.handleIPCOpen)
+  }
+
+  /* **************************************************************************/
   // User Interaction
   /* **************************************************************************/
+
+  handleIPCOpen = () => {
+    window.location.hash = '/mailbox_wizard/add'
+  }
 
   /**
   * Closes the modal

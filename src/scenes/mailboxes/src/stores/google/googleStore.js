@@ -9,6 +9,7 @@ import {
 import uuid from 'uuid'
 import ServerVent from 'Server/ServerVent'
 import { accountStore, accountActions } from 'stores/account'
+import { userStore } from 'stores/user'
 import Debug from 'Debug'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
@@ -143,9 +144,14 @@ class GoogleStore {
   */
   isInvalidGrantError (err) {
     if (err && typeof (err.message) === 'string') {
+      if (userStore.getState().wireConfigSimpleGoogleAuth()) {
+        return false
+      }
+
       const isInvalid = err.message.indexOf('invalid_grant') !== -1 ||
         err.message.indexOf('Invalid Credentials') !== -1 ||
-        err.message.indexOf('no credentials provided') !== -1
+        err.message.indexOf('no credentials provided') !== -1 ||
+        err.message.indexOf('Insufficient Permission') !== -1
       if (isInvalid) { return true }
     }
 
@@ -386,19 +392,23 @@ class GoogleStore {
   */
   mailLabelIdsForService (service) {
     if (service.hasCustomUnreadLabelWatch) { return service.customUnreadLabelWatchArray }
-    switch (service.unreadMode) {
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
+    switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL__ALL:
         return ['INBOX']
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM:
         return ['INBOX', 'UNREAD']
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM:
         return ['INBOX', 'UNREAD', 'IMPORTANT']
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM:
         return ['INBOX', 'UNREAD', 'CATEGORY_PERSONAL']
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED: // default
+      case CoreGoogleMailService.INBOX_TYPES.GINBOX_UNBUNDLED:
         return ['INBOX', 'UNREAD']
       default:
         return ['INBOX']
@@ -414,9 +424,9 @@ class GoogleStore {
     if (service.customUnreadCountFromLabel && service.customUnreadCountLabel) {
       return (service.customUnreadCountLabel || '').toUpperCase()
     }
-    switch (service.unreadMode) {
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
+    switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL__ALL:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
         return 'INBOX'
       default:
         return undefined
@@ -432,10 +442,10 @@ class GoogleStore {
     if (service.customUnreadCountFromLabel && service.customUnreadCountLabel) {
       return service.customUnreadCountLabelField
     }
-    switch (service.unreadMode) {
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
+    switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL__ALL:
         return 'threadsTotal'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
         return 'threadsUnread'
       default:
         return undefined
@@ -463,12 +473,14 @@ class GoogleStore {
   * @return the query to run on the google servers for the unread counts
   */
   mailAtomQueryForService (service) {
-    switch (service.unreadMode) {
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+    switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM:
         return 'https://mail.google.com/mail/feed/atom/'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM:
         return 'https://mail.google.com/mail/feed/atom/%5Eiim'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM:
         return 'https://mail.google.com/mail/feed/atom/%5Esq_ig_i_personal'
       default:
         return undefined
@@ -481,19 +493,23 @@ class GoogleStore {
   */
   mailQueryForService (service) {
     if (service.hasCustomUnreadQuery) { return service.customUnreadQuery }
-    switch (service.unreadMode) {
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
+    switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL__ALL:
         return 'label:inbox'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM:
         return 'label:inbox label:unread'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM:
         return 'label:inbox label:unread is:important'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM:
         return 'label:inbox label:unread category:primary'
-      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
+      case CoreGoogleMailService.INBOX_TYPES.GINBOX_UNBUNDLED:
         return 'label:inbox label:unread -has:userlabels -category:promotions -category:forums -category:social' // Removed: -category:updates
       default:
         return 'label:inbox'

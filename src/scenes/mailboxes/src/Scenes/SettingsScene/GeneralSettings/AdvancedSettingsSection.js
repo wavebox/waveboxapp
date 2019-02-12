@@ -58,12 +58,12 @@ class AdvancedSettingsSection extends React.Component {
         'disableSmoothScrolling',
         'enableAutofillService',
         'enableWindowOpeningEngine',
-        'enableMouseNavigationDarwin',
         'polyfillUserAgents',
         'concurrentServiceLoadLimit',
         'searchProvider',
-        'experimentalMicrosoftHTTP',
-        'forceWindowPaintOnRestore'
+        'rawAppThreadFetchMicrosoftHTTP',
+        'forceWindowPaintOnRestore',
+        'disableProxyDetection'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -73,7 +73,8 @@ class AdvancedSettingsSection extends React.Component {
         'showCtxMenuAdvancedLinkOptions'
       ]) ||
       modelCompare(this.props.os, nextProps.os, [
-        'rawUseAsyncDownloadHandler'
+        'rawUseAsyncDownloadHandler',
+        'rawNotificationsMutedWhenSuspended'
       ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
@@ -131,6 +132,13 @@ class AdvancedSettingsSection extends React.Component {
             checked={app.enableMixedSandboxMode} />
         ) : undefined}
         <SettingsListItemSwitch
+          label='Proxy autodetection (Requires Restart)'
+          onChange={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setDisableProxyDetection(!toggled)
+          }}
+          checked={!app.disableProxyDetection} />
+        <SettingsListItemSwitch
           label='Automatically Polyfill UserAgents (Requires Restart)'
           onChange={(evt, toggled) => {
             showRestart()
@@ -151,15 +159,6 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.disableSmoothScrolling(!toggled)
           }}
           checked={!app.disableSmoothScrolling} />
-        {process.platform === 'darwin' ? (
-          <SettingsListItemSwitch
-            label='Touchpad swipe Navigation (Requires Restart)'
-            onChange={(evt, toggled) => {
-              showRestart()
-              settingsActions.sub.app.setEnableMouseNavigationDarwin(toggled)
-            }}
-            checked={app.enableMouseNavigationDarwin} />
-        ) : undefined}
         {DistributionConfig.isSnapInstall ? undefined : (
           <SettingsListItemSwitch
             label='Autofill passwords on right click'
@@ -183,6 +182,13 @@ class AdvancedSettingsSection extends React.Component {
             <SettingsListTypography type='warning' icon={<WarningIcon />}>
               All links will open in your default browser. You may experience
               broken links and blank windows with this setting
+              <p>
+                Other link tools (e.g. changeable behaviour with Shift+Click) are
+                not available with this option disabled
+              </p>
+              <p>
+                It's highly recommended keeping this setting enabled
+              </p>
             </SettingsListTypography>
           ) : (
             <SettingsListTypography>
@@ -199,12 +205,13 @@ class AdvancedSettingsSection extends React.Component {
           onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
           checked={userStore.getState().wceUseAsyncDownloadHandler(os.rawUseAsyncDownloadHandler)} />
         <SettingsListItemSwitch
-          label='Experimental Microsoft Account HTTP stack (Requires Restart)'
-          onChange={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.app.setExperimentalMicrosoftHTTP(toggled)
-          }}
-          checked={app.experimentalMicrosoftHTTP} />
+          label='Experimental Microsoft Account Network stack'
+          onChange={(evt, toggled) => settingsActions.sub.app.setAppThreadFetchMicrosoftHTTP(toggled)}
+          checked={userStore.getState().wceUseAppThreadFetchMicrosoftHTTP(app.rawAppThreadFetchMicrosoftHTTP)} />
+        <SettingsListItemSwitch
+          label='Auto mute notifications when suspended'
+          onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsMutedWhenSuspended(toggled)}
+          checked={userStore.getState().wceNotificationsMutedWhenSuspended(os.rawNotificationsMutedWhenSuspended)} />
         <SettingsListItemSwitch
           label='Force window repaint on restore (Requires Restart)'
           onChange={(evt, toggled) => settingsActions.sub.app.setForceWindowPaintOnRestore(toggled)}

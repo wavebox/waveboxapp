@@ -14,7 +14,7 @@ const styles = {
     '&>*': {
       width: 18,
       height: 18,
-      verticalAlign: 'middle'
+      verticalAlign: 'text-bottom'
     }
   },
   fileUploadButton: {

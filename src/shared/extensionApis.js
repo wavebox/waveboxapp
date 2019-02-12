@@ -33,6 +33,7 @@ module.exports = {
   CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX: 'x-wb-crx-cs/',
   CR_CONTENT_SCRIPT_START_CONTEXT: 1000,
   CR_NATIVE_HOOK_EXTENSIONS: {
-    LASTPASS: 'hdokiejnpimakedhajhdlcegeplioahd'
+    LASTPASS: 'hdokiejnpimakedhajhdlcegeplioahd',
+    WB_AD_BLOCKER: 'wavebox-ad-blocker'
   }
 }

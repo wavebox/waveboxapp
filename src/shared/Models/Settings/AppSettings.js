@@ -102,13 +102,13 @@ class AppSettings extends Model {
   get isolateMailboxProcesses () { return this._value_('isolateMailboxProcesses', false) }
   get enableMixedSandboxMode () { return this._value_('enableMixedSandboxMode', true) }
   get enableWindowOpeningEngine () { return this._value_('enableWindowOpeningEngine', true) }
-  get enableMouseNavigationDarwin () { return this._value_('enableMouseNavigationDarwin', true) }
   get polyfillUserAgents () { return this._value_('polyfillUserAgents', true) }
   get concurrentServiceLoadLimit () { return this._value_('concurrentServiceLoadLimit', 0) }
   get concurrentServiceLoadLimitIsAuto () { return this.concurrentServiceLoadLimit === 0 }
   get concurrentServiceLoadLimitIsNone () { return this.concurrentServiceLoadLimit === -1 }
-  get experimentalMicrosoftHTTP () { return this._value_('experimentalMicrosoftHTTP', false) }
+  get rawAppThreadFetchMicrosoftHTTP () { return this._value_('appThreadFetchMicrosoftHTTP', undefined) }
   get forceWindowPaintOnRestore () { return this._value_('forceWindowPaintOnRestore', false) }
+  get disableProxyDetection () { return this._value_('disableProxyDetection', false) }
 
   /* **************************************************************************/
   // Properties: Search

@@ -2,7 +2,6 @@ import acmailboxStorage from 'Storage/acmailboxStorage'
 import acserviceStorage from 'Storage/acserviceStorage'
 import avatarStorage from 'Storage/avatarStorage'
 import settingStorage from 'Storage/settingStorage'
-import mailboxStorage from 'Storage/mailboxStorage'
 import pkg from 'package.json'
 import { dialog, ipcMain } from 'electron'
 import fs from 'fs-extra'
@@ -26,9 +25,7 @@ const TAKEOUT_STORES = [
   avatarStorage,
   settingStorage
 ]
-const MIGRATED_DISK_TAKEOUT_STORES = [
-  mailboxStorage // in 3.14.7 and below. Before server sync
-]
+const MIGRATED_DISK_TAKEOUT_STORES = []
 
 const TAKEOUT_STORES_INDEX = TAKEOUT_STORES.reduce((acc, store) => {
   acc.set(store.exportName, store)

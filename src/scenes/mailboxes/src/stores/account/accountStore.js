@@ -37,6 +37,7 @@ import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
 import ACCOUNT_WARNING_TYPES from 'shared/Models/ACAccounts/AccountWarningTypes'
+import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
@@ -422,8 +423,9 @@ class AccountStore extends RendererAccountStore {
       ))
       let serviceId
       template.services.forEach((serviceType) => {
+        const ServiceClass = ServiceFactory.serviceClass(serviceType) || CoreACService
         const service = {
-          ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          ...ServiceClass.createJS(undefined, mailboxId, serviceType),
           ...template.expando,
           container: container.cloneForService(),
           containerId: containerId
@@ -441,8 +443,9 @@ class AccountStore extends RendererAccountStore {
         template.templateType
       ))
       template.services.forEach((serviceType) => {
+        const ServiceClass = ServiceFactory.serviceClass(serviceType) || CoreACService
         const service = {
-          ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          ...ServiceClass.createJS(undefined, mailboxId, serviceType),
           color: template.color,
           ...template.expando
         }
@@ -456,8 +459,9 @@ class AccountStore extends RendererAccountStore {
         template.templateType
       ))
       template.services.forEach((serviceType) => {
+        const ServiceClass = ServiceFactory.serviceClass(serviceType) || CoreACService
         const service = {
-          ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          ...ServiceClass.createJS(undefined, mailboxId, serviceType),
           ...template.expando
         }
         actions.createService.defer(mailboxId, template.servicesUILocation, service)

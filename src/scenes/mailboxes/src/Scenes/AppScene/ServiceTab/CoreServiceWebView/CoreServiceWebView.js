@@ -28,6 +28,7 @@ import classNames from 'classnames'
 import ServiceInvalidAuthCover from './ServiceInvalidAuthCover'
 import ServiceCrashedCover from './ServiceCrashedCover'
 import ServiceSleepHelper from './ServiceSleepHelper'
+import ServiceLoadErrorCover from './ServiceLoadErrorCover'
 
 const styles = {
   root: {
@@ -45,6 +46,10 @@ const styles = {
     '&.active': {
       // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
       '& webview': { visibility: 'visible' }
+    },
+
+    '&.high-power-always': {
+      '& webview': { visibility: 'visible !important' }
     }
   },
   browserContainer: {
@@ -185,6 +190,7 @@ class CoreServiceWebView extends React.Component {
       initialLoadDone: false,
       isLoading: false,
       isCrashed: false,
+      loadError: null,
       focusedUrl: null,
       permissionRequests: [],
       permissionRequestsUrl: undefined,
@@ -252,6 +258,15 @@ class CoreServiceWebView extends React.Component {
   handleUncrash = (evt) => {
     this.setState({ isCrashed: false }) // Update our crashed state
     this.refs[BROWSER_REF].reset()
+  }
+
+  /**
+  * Clears a load error
+  * @param evt: the event that fired
+  */
+  handleClearLoadError = (evt) => {
+    this.setState({ loadError: null })
+    this.refs[BROWSER_REF].reload()
   }
 
   /**
@@ -529,7 +544,10 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleDidStartLoading = (evt) => {
-    this.setState({ isLoading: true })
+    this.setState({
+      isLoading: true,
+      loadError: null
+    })
   }
 
   /**
@@ -566,6 +584,23 @@ class CoreServiceWebView extends React.Component {
   handleCrashed = (evt) => {
     console.log(`WebView Crashed ${this.props.mailboxId}:${this.props.serviceId}`, evt)
     this.setState({ isCrashed: true })
+  }
+
+  /**
+  * Handles a load error
+  * @param evt: the event that fired
+  */
+  handleLoadError = (evt) => {
+    if (!evt.isMainFrame) { return }
+    if (!ServiceLoadErrorCover.HANDLED_ERROR_CODES.has(evt.errorCode)) { return }
+
+    this.setState({
+      loadError: {
+        code: evt.errorCode,
+        description: evt.errorDescription,
+        url: evt.validatedURL
+      }
+    })
   }
 
   /**
@@ -636,7 +671,8 @@ class CoreServiceWebView extends React.Component {
       isolateMailboxProcesses,
       authDataId,
       permissionRequests,
-      permissionRequestsUrl
+      permissionRequestsUrl,
+      loadError
     } = this.state
 
     if (!mailbox || !service) { return false }
@@ -686,7 +722,13 @@ class CoreServiceWebView extends React.Component {
     ].join('_')
 
     return (
-      <div className={classNames(classes.root, className, isActive ? 'active' : undefined)}>
+      <div
+        className={classNames(
+          classes.root,
+          className,
+          isActive ? 'active' : undefined,
+          service.preventLowPowerMode ? 'high-power-always' : undefined
+        )}>
         <div className={classes.browserContainer}>
           <BrowserView
             ref={BROWSER_REF}
@@ -704,6 +746,9 @@ class CoreServiceWebView extends React.Component {
             onWebContentsAttached={this.handleWebContentsAttached}
 
             {...webviewEventProps}
+            didFailLoad={(evt) => {
+              this.multiCallBrowserEvent([this.handleLoadError, webviewEventProps.didFailLoad], [evt])
+            }}
 
             crashed={(evt) => {
               this.multiCallBrowserEvent([this.handleCrashed, webviewEventProps.crashed], [evt])
@@ -766,6 +811,7 @@ class CoreServiceWebView extends React.Component {
         {hasSearch ? (
           <ServiceSearch mailboxId={mailbox.id} serviceId={serviceId} />
         ) : undefined}
+        <ServiceLoadErrorCover loadError={loadError} attemptReload={this.handleClearLoadError} />
         <ServiceCrashedCover isCrashed={isCrashed} attemptUncrash={this.handleUncrash} />
         <ServiceInvalidAuthCover serviceId={serviceId} />
       </div>

@@ -8,6 +8,7 @@ const privDownloadId = Symbol('privDownloadId')
 const privDownloadItem = Symbol('privDownloadItem')
 const privSavePath = Symbol('privSavePath')
 const privDoneState = Symbol('privDoneState')
+const privStartProperties = Symbol('privStartProperties')
 
 class AsyncDownloadItem extends EventEmitter {
   /* ****************************************************************************/
@@ -24,6 +25,21 @@ class AsyncDownloadItem extends EventEmitter {
     this[privDownloadItem] = downloadItem
     this[privSavePath] = undefined
     this[privDoneState] = undefined
+
+    // The downloadItem can be destroyed from under us. We need to keep the values
+    // around, so the async API can query these as needed
+    this[privStartProperties] = {
+      url: downloadItem.getURL(),
+      mimeType: downloadItem.getMimeType(),
+      hasUserGesture: downloadItem.hasUserGesture(),
+      filename: downloadItem.getFilename(),
+      totalBytes: downloadItem.getTotalBytes(),
+      contentDisposition: downloadItem.getContentDisposition(),
+      urlChain: downloadItem.getURLChain(),
+      lastModifiedTime: downloadItem.getLastModifiedTime(),
+      etag: downloadItem.getETag(),
+      startTime: downloadItem.getState()
+    }
 
     downloadItem.on('updated', this._handleUpdated)
     downloadItem.on('done', this._handleDone)
@@ -66,40 +82,68 @@ class AsyncDownloadItem extends EventEmitter {
   pause () {
     this[privDownloadItem].pause()
   }
+
   resume () {
     if (!this.waitingSetup) {
       this[privDownloadItem].resume()
     }
   }
+
   cancel () {
     fs.removeSync(this.tempDownloadLocation)
-    this[privDownloadItem].cancel()
+    if (!this[privDownloadItem].isDestroyed()) {
+      this[privDownloadItem].cancel()
+    }
   }
 
   isPaused () {
-    return this.waitingSetup ? false : this[privDownloadItem].isPaused()
+    return this.waitingSetup || this[privDownloadItem].isDestroyed()
+      ? false
+      : this[privDownloadItem].isPaused()
   }
 
   canResume () {
-    return this[privDownloadItem].canResume()
+    return this[privDownloadItem].isDestroyed()
+      ? false
+      : this[privDownloadItem].canResume()
+  }
+
+  isFinished () {
+    return this[privDoneState] !== undefined
+  }
+
+  finishedState () {
+    return this[privDoneState]
+  }
+
+  isWaitingSetup () {
+    return this.waitingSetup
   }
 
   /* ****************************************************************************/
   // Getters
   /* ****************************************************************************/
 
-  getURL () { return this[privDownloadItem].getURL() }
-  getMimeType () { return this[privDownloadItem].getMimeType() }
-  hasUseGesture () { return this[privDownloadItem].hasUseGesture() }
-  getFilename () { return this[privDownloadItem].getFilename() }
-  getTotalBytes () { return this[privDownloadItem].getTotalBytes() }
-  getReceivedBytes () { return this[privDownloadItem].getReceivedBytes() }
-  getContentDisposition () { return this[privDownloadItem].getContentDisposition() }
-  getState () { return this.waitingSetup ? 'setup' : this[privDownloadItem].getState() }
-  getURLChain () { return this[privDownloadItem].getURLChain() }
-  getLastModifiedTime () { return this[privDownloadItem].getLastModifiedTime() }
-  getETag () { return this[privDownloadItem].getETag() }
-  getStartTime () { return this[privDownloadItem].getStartTime() }
+  getURL () { return this[privStartProperties].url }
+  getMimeType () { return this[privStartProperties].mimeType }
+  hasUserGesture () { return this[privStartProperties].hasUserGesture }
+  getFilename () { return this[privStartProperties].filename }
+  getTotalBytes () { return this[privStartProperties].totalBytes }
+  getReceivedBytes () {
+    return this[privDownloadItem].isDestroyed()
+      ? this[privDoneState] === 'completed' ? this[privStartProperties].totalBytes : 0
+      : this[privDownloadItem].getReceivedBytes()
+  }
+  getContentDisposition () { return this[privStartProperties].contentDisposition }
+  getState () {
+    return this.waitingSetup
+      ? 'setup'
+      : this[privDownloadItem].isDestroyed() ? this[privDoneState] : this[privDownloadItem].getState()
+  }
+  getURLChain () { return this[privStartProperties].urlChain }
+  getLastModifiedTime () { return this[privStartProperties].lastModifiedTime }
+  getETag () { return this[privStartProperties].etag }
+  getStartTime () { return this[privStartProperties].getStartTime }
 
   /* ****************************************************************************/
   // Event handlers

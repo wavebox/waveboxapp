@@ -54,6 +54,7 @@ module.exports = Object.freeze({
   SLACK_FULL_COUNT_SYNC_INTERVAL: minutes(5),
   SLACK_RECONNECT_SOCKET_INTERVAL: minutes(1),
   SLACK_RTM_RETRY_RECONNECT_MS: seconds(15),
+  SLACK_TICKLE_INTERVAL: seconds(30),
 
   // Microsoft
   MICROSOFT_PROFILE_SYNC_INTERVAL: hours(6),
@@ -66,6 +67,8 @@ module.exports = Object.freeze({
   SYNC_SOCKET_RECONNECT_RANGE: seconds(4.5),
   USER_PROFILE_SYNC_INTERVAL: hours(6),
   USER_PROFILE_DEFERED_SYNC_ON_CREATE: minutes(15),
+  USER_PROFILE_SYNC_THROTTLE: seconds(30),
+  USER_PROFILE_SYNC_RETRY: minutes(3),
 
   // Dictionaries
   PREINSTALLED_DICTIONARIES: ['en_US'],

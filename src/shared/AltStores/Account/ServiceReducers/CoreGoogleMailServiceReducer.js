@@ -25,14 +25,15 @@ class CoreGoogleMailServiceReducer extends ServiceReducer {
   }
 
   /**
-  * Sets the unread mode
-  * @param service: the service to update
-  * @param unreadMode: the new unread mode
+  * Sets the inbox type
+  * @param service: the servie to update
+  * @param inboxType: the inbox type to set
   */
-  static setUnreadMode (service, unreadMode) {
-    if (service.unreadMode !== unreadMode) {
-      return service.changeData({ unreadMode: unreadMode })
-    }
+  static setInboxType (service, inboxType) {
+    if (!service.supportedInboxTypes.has(inboxType)) { return undefined }
+    return service.changeData({
+      inboxType: inboxType
+    })
   }
 
   /**

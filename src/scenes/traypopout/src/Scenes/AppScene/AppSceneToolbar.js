@@ -192,6 +192,7 @@ class AppSceneToolbar extends React.Component {
           anchorEl={dockMenuAnchor}
           MenuListProps={{ dense: true }}
           disableEnforceFocus
+          disableAutoFocusItem
           onClose={() => this.setState({ dockMenuAnchor: null })}>
           <MenuItem onClick={() => {
             this.setState({ dockMenuAnchor: null })
@@ -252,6 +253,8 @@ class AppSceneToolbar extends React.Component {
           )}
         </AppSceneToolbarButton>
         <Menu
+          disableAutoFocusItem
+          disableEnforceFocus
           anchorEl={notificationMenuAnchor}
           open={!!notificationMenuAnchor}
           MenuListProps={{ dense: true }}

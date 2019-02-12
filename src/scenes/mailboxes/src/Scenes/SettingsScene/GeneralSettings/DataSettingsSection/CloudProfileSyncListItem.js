@@ -215,7 +215,7 @@ class CloudProfileSyncListItem extends React.Component {
             disabled={!enableProfileSync}
             onClick={() => {
               this.setState({ userProfileUploadShowStatus: true })
-              userActions.uploadUserProfile()
+              userActions.uploadUserProfile(true)
             }}>
             {uploadIcon}
             {uploadText}

@@ -1,22 +1,27 @@
 import { shell, app } from 'electron'
-import ContentWindow from 'Windows/ContentWindow'
-import ContentPopupWindow from 'Windows/ContentPopupWindow'
-import WaveboxWindow from 'Windows/WaveboxWindow'
 import { settingsStore } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
-import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'
 import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import accountStore from 'stores/account/accountStore'
-import uuid from 'uuid'
 import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
-import CRExtensionWebPreferences from 'WebContentsManager/CRExtensionWebPreferences'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { OSSettings } from 'shared/Models/Settings'
+import WindowOpeningOpeners from './WindowOpeningOpeners'
+
+const privWindowOpeningOpeners = Symbol('privWindowOpeningOpeners')
 
 class WindowOpeningHandler {
+  /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
+  constructor () {
+    this[privWindowOpeningOpeners] = new WindowOpeningOpeners()
+  }
+
   /* ****************************************************************************/
   // Window.open handlers
   /* ****************************************************************************/
@@ -72,7 +77,7 @@ class WindowOpeningHandler {
 
     // Check if the kill-switch is set for this
     if (settingsState.app.enableWindowOpeningEngine === false) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
       return
     }
 
@@ -133,20 +138,20 @@ class WindowOpeningHandler {
 
     // Action the window open
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      const openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options)
+      const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options)
       evt.newGuest = openedWindow.window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL || openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) { // typo. Found in 4.3.1beta. Update wire config and remove after 4.5.0 release
-      this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
+      this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
+    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) {
+      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, provisionalTargetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
+      this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL || openMode === WINDOW_OPEN_MODES.CONTENT_PROVISIONAL) { // typo. Found in 4.3.1beta. Update wire config and remove after 4.5.0 release
-      this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, provisionalTargetUrl, options, partitionOverride)
+      this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options, partitionOverride)
+    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVISIONAL) {
+      this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       evt.sender.downloadURL(targetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.CURRENT) {
@@ -161,8 +166,10 @@ class WindowOpeningHandler {
       evt.sender.loadURL(provisionalTargetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
       /* no-op */
+    } else if (openMode === WINDOW_OPEN_MODES.ASK_USER) {
+      this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride, true)
     } else {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
     }
   }
 
@@ -240,30 +247,30 @@ class WindowOpeningHandler {
         evt.preventDefault()
       } else if (navigateMode === NAVIGATE_MODES.OPEN_EXTERNAL) {
         evt.preventDefault()
-        this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+        this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
       } else if (navigateMode === NAVIGATE_MODES.OPEN_CONTENT) {
         evt.preventDefault()
-        this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
       } else if (navigateMode === NAVIGATE_MODES.OPEN_CONTENT_RESET) {
         evt.preventDefault()
-        this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
         evt.sender.goToIndex(0)
       } else if (navigateMode === NAVIGATE_MODES.CONVERT_TO_CONTENT) {
         evt.preventDefault()
-        this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
-        this.closeOpeningWindowIfSupported(evt.sender.id)
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
+        this[privWindowOpeningOpeners].closeOpeningWindowIfSupported(evt.sender.id)
       } else if (navigateMode === NAVIGATE_MODES.CONVERT_TO_CONTENT_POPUP) {
         evt.preventDefault()
-        this.openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
-        this.closeOpeningWindowIfSupported(evt.sender.id)
+        this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
+        this[privWindowOpeningOpeners].closeOpeningWindowIfSupported(evt.sender.id)
       } else if (navigateMode === NAVIGATE_MODES.CONVERT_TO_EXTERNAL) {
         evt.preventDefault()
-        this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
-        this.closeOpeningWindowIfSupported(evt.sender.id)
+        this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
+        this[privWindowOpeningOpeners].closeOpeningWindowIfSupported(evt.sender.id)
       } else if (navigateMode === NAVIGATE_MODES.CONVERT_TO_DEFAULT) {
         evt.preventDefault()
-        this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, newWindowOptions)
-        this.closeOpeningWindowIfSupported(evt.sender.id)
+        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, newWindowOptions)
+        this[privWindowOpeningOpeners].closeOpeningWindowIfSupported(evt.sender.id)
       }
     }
   }
@@ -324,6 +331,7 @@ class WindowOpeningHandler {
     switch (behaviour) {
       case OSSettings.COMMAND_LINK_BEHAVIOUR.BROWSER_OPEN: return WINDOW_OPEN_MODES.EXTERNAL
       case OSSettings.COMMAND_LINK_BEHAVIOUR.WAVEBOX_OPEN: return WINDOW_OPEN_MODES.CONTENT
+      case OSSettings.COMMAND_LINK_BEHAVIOUR.ASK: return WINDOW_OPEN_MODES.ASK_USER
       default: return openMode
     }
   }
@@ -371,98 +379,6 @@ class WindowOpeningHandler {
     return {
       ...tabMetaInfo,
       opener: { url: currentUrl, webContentsId: webContentsId }
-    }
-  }
-
-  /* ****************************************************************************/
-  // Window opening tools
-  /* ****************************************************************************/
-
-  /**
-  * Opens a window with the default behaviour
-  * @param openingBrowserWindow: the browser window that's opening
-  * @param tabMetaInfo: the meta info to provide the new tab with
-  * @param mailbox: the mailbox that's attempting to open
-  * @param targetUrl: the url to open
-  * @param options: the config options for the window
-  * @param partitionOverride = undefined: an optional override for the opener partition
-  * @return the opened window if any
-  */
-  openWindowDefault (openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride = undefined) {
-    if (!mailbox) {
-      return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
-    } else {
-      if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
-      } else if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        return this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
-      }
-    }
-  }
-
-  /**
-  * Opens a wavebox popup content window
-  * @param openingBrowserWindow: the browser window that's opening
-  * @param tabMetaInfo: the meta info to provide the new tab with
-  * @param targetUrl: the url to open
-  * @param options: the config options for the window
-  * @return the new contentwindow instance
-  */
-  openWindowWaveboxPopupContent (openingBrowserWindow, tabMetaInfo, targetUrl, options) {
-    const contentWindow = new ContentPopupWindow(tabMetaInfo)
-    contentWindow.create(targetUrl, options)
-    return contentWindow
-  }
-
-  /**
-  * Opens a wavebox content window
-  * @param openingBrowserWindow: the browser window that's opening
-  * @param tabMetaInfo: the meta info to provide the new tab with
-  * @param targetUrl: the url to open
-  * @param options: the config options for the window
-  * @param partitionOverride = undefined: an optional override for the opener partition
-  * @return the new contentwindow instance
-  */
-  openWindowWaveboxContent (openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride = undefined) {
-    const contentWindow = new ContentWindow(tabMetaInfo)
-    const windowOptions = { ...options, webPreferences: undefined }
-    const guestWebPreferences = (options.webPreferences || {})
-    if (partitionOverride) {
-      // Be careful about overwriting the partition. If we're trying to share affinity on different
-      // partitions we're going to break the webcontents. We also see some odd behaviour when the
-      // overwriting partition is chrome extension one. Hive this off into its own process
-      // to prevent this. (Grammarly signin from BA doesn't fire correctly)
-      if (guestWebPreferences.affinity && (partitionOverride !== guestWebPreferences.partition || CRExtensionWebPreferences.isExtensionPartition(partitionOverride))) {
-        guestWebPreferences.affinity = `transient_${uuid.v4()}`
-      }
-      guestWebPreferences.partition = partitionOverride
-    }
-    contentWindow.create(targetUrl, windowOptions, openingBrowserWindow, guestWebPreferences)
-    return contentWindow
-  }
-
-  /**
-  * Opens links in an external window
-  * @param openingBrowserWindow: the browser window that's opening
-  * @param targetUrl: the url to open
-  * @param mailbox=undefined: the mailbox to take the settings from if available
-  */
-  openWindowExternal (openingBrowserWindow, targetUrl, mailbox = undefined) {
-    shell.openExternal(targetUrl, {
-      activate: !settingsStore.getState().os.openLinksInBackground
-    })
-  }
-
-  /**
-  * Closes an opening window if it's supported
-  * @param webContentsId: the id of the opening webcontents
-  */
-  closeOpeningWindowIfSupported (webContentsId) {
-    const waveboxWindow = WaveboxWindow.fromWebContentsId(webContentsId)
-    if (waveboxWindow) {
-      if (waveboxWindow.allowsGuestClosing) {
-        waveboxWindow.close()
-      }
     }
   }
 }

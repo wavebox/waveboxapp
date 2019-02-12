@@ -22,7 +22,7 @@ class SlackService extends CoreACService {
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }
-  static get humanizedColor () { return 'rgb(102, 187, 152)' }
+  static get humanizedColor () { return 'rgb(46, 182, 125)' }
 
   /* **************************************************************************/
   // Properties: Support
@@ -107,6 +107,7 @@ class SlackService extends CoreACService {
   get hasTeamOverview () { return !!this.teamOverview }
   get authTeamName () { return this._value_('authTeamName') }
   get authUserId () { return this._value_('authUserId') }
+  get rawTickleRTM () { return this._value_('tickleRTM', undefined) }
 }
 
 export default SlackService

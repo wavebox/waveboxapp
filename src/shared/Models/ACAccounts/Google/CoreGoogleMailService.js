@@ -1,7 +1,7 @@
 import CoreACService from '../CoreACService'
 import SubclassNotImplementedError from '../SubclassNotImplementedError'
 
-const UNREAD_MODES = Object.freeze({
+const DEPRICATED_UNREAD_MODES = Object.freeze({
   INBOX_ALL: 'INBOX_ALL',
   INBOX_UNREAD: 'INBOX_UNREAD',
   INBOX_UNREAD_IMPORTANT: 'INBOX_UNREAD_IMPORTANT',
@@ -10,6 +10,27 @@ const UNREAD_MODES = Object.freeze({
   INBOX_UNREAD_ATOM: 'INBOX_UNREAD_ATOM',
   INBOX_UNREAD_PERSONAL_ATOM: 'INBOX_UNREAD_PERSONAL_ATOM',
   INBOX_UNREAD_IMPORTANT_ATOM: 'INBOX_UNREAD_IMPORTANT_ATOM'
+})
+const INBOX_TYPES = Object.freeze({
+  // Gmail
+  GMAIL_DEFAULT: 'GMAIL_DEFAULT',
+  GMAIL_IMPORTANT: 'GMAIL_IMPORTANT',
+  GMAIL_UNREAD: 'GMAIL_UNREAD',
+  GMAIL_STARRED: 'GMAIL_STARRED',
+  GMAIL_PRIORITY: 'GMAIL_PRIORITY',
+
+  // Gmail via atom
+  GMAIL_DEFAULT_ATOM: 'GMAIL_DEFAULT_ATOM',
+  GMAIL_IMPORTANT_ATOM: 'GMAIL_IMPORTANT_ATOM',
+  GMAIL_UNREAD_ATOM: 'GMAIL_UNREAD_ATOM',
+  GMAIL_STARRED_ATOM: 'GMAIL_STARRED_ATOM',
+  GMAIL_PRIORITY_ATOM: 'GMAIL_PRIORITY_ATOM',
+
+  // Gmail Pseudo
+  GMAIL__ALL: 'GMAIL__ALL',
+
+  // Google Inbox (depricated)
+  GINBOX_UNBUNDLED: 'GINBOX_UNBUNDLED'
 })
 const CUSTOM_UNREAD_COUNT_LABEL_FIELDS = Object.freeze([
   'messagesTotal',
@@ -23,8 +44,21 @@ class CoreGoogleMailService extends CoreACService {
   // Class: types
   /* **************************************************************************/
 
-  static get UNREAD_MODES () { return UNREAD_MODES }
+  static get INBOX_TYPES () { return INBOX_TYPES }
   static get CUSTOM_UNREAD_COUNT_LABEL_FIELDS () { return CUSTOM_UNREAD_COUNT_LABEL_FIELDS }
+
+  static depricatedUnreadModeToInboxType (unreadMode) {
+    switch (unreadMode) {
+      case DEPRICATED_UNREAD_MODES.INBOX_ALL: return INBOX_TYPES.GMAIL__ALL
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD: return INBOX_TYPES.GMAIL_UNREAD
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD_IMPORTANT: return INBOX_TYPES.GMAIL_IMPORTANT
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD_PERSONAL: return INBOX_TYPES.GMAIL_DEFAULT
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD_UNBUNDLED: return INBOX_TYPES.GINBOX_UNBUNDLED
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD_ATOM: return INBOX_TYPES.GMAIL_UNREAD_ATOM
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM: return INBOX_TYPES.GMAIL_DEFAULT_ATOM
+      case DEPRICATED_UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM: return INBOX_TYPES.GMAIL_IMPORTANT_ATOM
+    }
+  }
 
   /* **************************************************************************/
   // Properties: Sync
@@ -32,7 +66,7 @@ class CoreGoogleMailService extends CoreACService {
 
   get syncWatchFields () {
     return [
-      'unreadMode',
+      'inboxType',
       'customUnreadQuery',
       'customUnreadLabelWatchString',
       'customUnreadCountFromLabel',
@@ -59,8 +93,8 @@ class CoreGoogleMailService extends CoreACService {
   // Properties: Mail
   /* **************************************************************************/
 
-  get unreadMode () { SubclassNotImplementedError('CoreGoogleMailServce.unreadMode') }
-  get supportedUnreadModes () { SubclassNotImplementedError('CoreGoogleMailServce.supportedUnreadModes') }
+  get inboxType () { SubclassNotImplementedError('CoreGoogleMailServce.inboxType') }
+  get supportedInboxTypes () { SubclassNotImplementedError('CoreGoogleMailServce.supportedInboxTypes') }
   get reloadBehaviour () { SubclassNotImplementedError('CoreGoogleMailServce.reloadBehaviour') }
 
   /* **************************************************************************/

@@ -7,6 +7,7 @@ import NotificationScene from 'Scenes/NotificationScene'
 import UnreadScene from 'Scenes/UnreadScene'
 import RecentScene from 'Scenes/RecentScene'
 import ReadingScene from 'Scenes/ReadingScene'
+import DownloadScene from 'Scenes/DownloadScene'
 import AppSceneToolbar from './AppSceneToolbar'
 import AppSceneWindowTitlebar from './AppSceneWindowTitlebar'
 import {
@@ -26,6 +27,7 @@ const UNREAD_INDEX = 0
 const NOTIF_INDEX = 1
 const RECENT_INDEX = 2
 const READING_INDEX = 3
+const DOWNLOAD_INDEX = 4
 
 const styles = {
   container: {
@@ -113,6 +115,7 @@ class AppScene extends React.Component {
     this.notifRef = React.createRef()
     this.recentRef = React.createRef()
     this.readingRef = React.createRef()
+    this.downloadRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -190,6 +193,7 @@ class AppScene extends React.Component {
             case NOTIF_INDEX: this.notifRef.current.resetNavigationStack(); break
             case RECENT_INDEX: this.recentRef.current.resetNavigationStack(); break
             case READING_INDEX: this.readingRef.current.resetNavigationStack(); break
+            case DOWNLOAD_INDEX: this.downloadRef.current.resetNavigationStack(); break
           }
         } catch (ex) { }
         return undefined
@@ -208,6 +212,7 @@ class AppScene extends React.Component {
               case NOTIF_INDEX: this.notifRef.current.resetNavigationStack(); break
               case RECENT_INDEX: this.recentRef.current.resetNavigationStack(); break
               case READING_INDEX: this.readingRef.current.resetNavigationStack(); break
+              case DOWNLOAD_INDEX: this.downloadRef.current.resetNavigationStack(); break
             }
           } catch (ex) { }
         }, 500))
@@ -253,7 +258,7 @@ class AppScene extends React.Component {
         <div className={classNames(classes.body, isWindowedMode ? classes.bodyWithTitlebar : undefined)}>
           <AppBar position='static' className={classes.appBar}>
             <Tabs
-              fullWidth
+              variant='fullWidth'
               value={tabIndex}
               onChange={this.handleChangeTab}
               classes={{ indicator: classes.tabInkBar }}>
@@ -273,6 +278,10 @@ class AppScene extends React.Component {
                 label='Tasks'
                 className={classes.tabButton}
                 value={READING_INDEX} />
+              <Tab
+                label='Downloads'
+                className={classes.tabButton}
+                value={DOWNLOAD_INDEX} />
             </Tabs>
           </AppBar>
           <ErrorBoundary>
@@ -286,6 +295,7 @@ class AppScene extends React.Component {
               <NotificationScene innerRef={this.notifRef} />
               <RecentScene innerRef={this.recentRef} />
               <ReadingScene innerRef={this.readingRef} />
+              <DownloadScene innerRef={this.downloadRef} />
             </SwipeableViews>
           </ErrorBoundary>
           <AppSceneToolbar

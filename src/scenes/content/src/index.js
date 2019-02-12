@@ -4,13 +4,11 @@ import Provider from 'Scenes/Provider'
 import browserActions from 'stores/browser/browserActions'
 import querystring from 'querystring'
 import { WB_SEND_IPC_TO_CHILD } from 'shared/ipcEvents'
-import { ipcRenderer, webFrame, remote } from 'electron'
+import { ipcRenderer, remote } from 'electron'
 import { settingsStore, settingsActions } from 'stores/settings'
+import { accountStore, accountActions } from 'stores/account'
+import { userStore, userActions } from 'stores/user'
 import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
-
-// Prevent zooming
-webFrame.setVisualZoomLevelLimits(1, 1)
-webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent right click
 window.addEventListener('contextmenu', (evt) => {
@@ -35,6 +33,10 @@ document.addEventListener('dragover', (evt) => {
 // Load what we have in the db
 settingsStore.getState()
 settingsActions.load()
+accountStore.getState()
+accountActions.load()
+userStore.getState()
+userActions.load()
 
 // Parse our settings
 const {

@@ -11,7 +11,7 @@ import { platformStore, platformActions } from 'stores/platform'
 import { accountStore, accountActions } from 'stores/account'
 import { userStore, userActions } from 'stores/user'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
 import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
@@ -30,7 +30,6 @@ import { LinuxNotification } from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
 import { AppSettings, TraySettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
-import mailboxStorage from 'Storage/mailboxStorage'
 import constants from 'shared/constants'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import WaveboxAppCommandKeyTracker from './WaveboxAppCommandKeyTracker'
@@ -102,9 +101,6 @@ class WaveboxApp {
     this[privStarted] = true
     this[privArgv] = yargs.parse(process.argv)
 
-    // Do any data migration
-    mailboxStorage.startMigration()
-
     // Start our stores
     accountStore.getState()
     accountActions.load()
@@ -116,8 +112,8 @@ class WaveboxApp {
     userActions.load()
     emblinkStore.getState()
     emblinkActions.load()
-    notifhistStore.getState()
-    notifhistActions.load()
+    localHistoryStore.getState()
+    localHistoryActions.load()
     guestStore.getState()
     guestActions.load()
 
@@ -201,6 +197,9 @@ class WaveboxApp {
     }
     if (launchSettings.app.disableHardwareAcceleration || this[privArgv].safemode === true) {
       app.disableHardwareAcceleration()
+    }
+    if (launchSettings.app.disableProxyDetection) {
+      app.commandLine.appendSwitch('no-proxy-server', 'true')
     }
     app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
 

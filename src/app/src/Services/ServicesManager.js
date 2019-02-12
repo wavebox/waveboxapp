@@ -10,6 +10,7 @@ import NotificationService from './NotificationService'
 import FetchService from './FetchService'
 import TakeoutService from './TakeoutService'
 import RecentTrackerService from './RecentTrackerService'
+import PowerMonitorService from './PowerMonitorService'
 
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
@@ -24,6 +25,7 @@ const privNotificationService = Symbol('privNotificationService')
 const privFetchService = Symbol('privFetchService')
 const privTakeoutService = Symbol('privTakeoutService')
 const privRecentTrackerService = Symbol('privRecentTrackerService')
+const privPowerMonitorService = Symbol('privPowerMonitorService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -45,6 +47,7 @@ class ServicesManager {
     this[privFetchService] = undefined
     this[privTakeoutService] = undefined
     this[privRecentTrackerService] = undefined
+    this[privPowerMonitorService] = undefined
   }
 
   load () {
@@ -63,6 +66,7 @@ class ServicesManager {
     this[privFetchService] = new FetchService()
     this[privTakeoutService] = new TakeoutService()
     this[privRecentTrackerService] = new RecentTrackerService()
+    this[privPowerMonitorService] = new PowerMonitorService()
   }
 
   /* ****************************************************************************/
@@ -80,7 +84,8 @@ class ServicesManager {
   get notificationService () { return this[privNotificationService] }
   get fetchService () { return this[privFetchService] }
   get takeoutService () { return this[privTakeoutService] }
-  get RecentTrackerService () { return this[privRecentTrackerService] }
+  get recentTrackerService () { return this[privRecentTrackerService] }
+  get powerMonitorService () { return this[privPowerMonitorService] }
 }
 
 export default new ServicesManager()

@@ -11,7 +11,6 @@ import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
-import { userStore } from 'stores/user'
 
 const styles = {
   // Dialog
@@ -37,9 +36,6 @@ const styles = {
   tabInkBar: {
     backgroundColor: lightBlue[100]
   },
-  tabEmail: {
-    fontSize: '85%'
-  },
 
   // Footer
   button: {
@@ -64,35 +60,11 @@ class SettingsSceneContent extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    userStore.listen(this.userUpdated)
-  }
-
-  componentWillUnmount () {
-    userStore.unlisten(this.userUpdated)
-  }
-
-  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    const userState = userStore.getState()
-    return {
-      showRestart: false,
-      userIsLoggedIn: userState.user.isLoggedIn,
-      userEmail: userState.user.userEmail
-    }
-  })()
-
-  userUpdated = (userState) => {
-    this.setState({
-      userIsLoggedIn: userState.user.isLoggedIn,
-      userEmail: userState.user.userEmail
-    })
+  state = {
+    showRestart: false
   }
 
   /* **************************************************************************/
@@ -177,7 +149,7 @@ class SettingsSceneContent extends React.Component {
   }
 
   render () {
-    const { showRestart, userIsLoggedIn, userEmail } = this.state
+    const { showRestart } = this.state
     const { classes, match } = this.props
 
     const tab = match.params.tab || 'general'
@@ -187,7 +159,7 @@ class SettingsSceneContent extends React.Component {
       <React.Fragment>
         <AppBar position='static' className={classes.appBar}>
           <Tabs
-            fullWidth
+            variant='fullWidth'
             value={tab}
             onChange={this.handleTabChange}
             classes={{ indicator: classes.tabInkBar }}>
@@ -208,12 +180,7 @@ class SettingsSceneContent extends React.Component {
               className={classes.tabButton}
               value='support' />
             <Tab
-              label={userIsLoggedIn ? (
-                <span>
-                  <div>Wavebox Subscription</div>
-                  <div className={classes.tabEmail}>{userEmail}</div>
-                </span>
-              ) : 'Wavebox Subscription'}
+              label='Wavebox Subscription'
               className={classes.tabButton}
               value='pro' />
           </Tabs>

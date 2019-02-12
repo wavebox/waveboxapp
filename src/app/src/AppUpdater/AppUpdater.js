@@ -5,6 +5,7 @@ import Win32Registry from './Win32Registry'
 import AppUpdaterLog from './AppUpdaterLog'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
+import Platform from 'shared/Platform'
 
 const SQUIRREL_INSTALL_SWITCH = '--squirrel-install'
 const SQUIRREL_UPDATE_SWITCH = '--squirrel-updated'
@@ -17,7 +18,7 @@ class AppUpdater {
   /* ****************************************************************************/
 
   static get isSupportedPlatform () {
-    return process.platform === 'darwin' || process.platform === 'win32'
+    return Platform.SQUIRREL_UPDATE_ENABLED_ON_PLATFORM
   }
 
   /* ****************************************************************************/

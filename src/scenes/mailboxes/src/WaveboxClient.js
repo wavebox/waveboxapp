@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import { accountStore, accountActions } from 'stores/account'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { updaterStore, updaterActions } from 'stores/updater'
 import { userStore, userActions } from 'stores/user'
@@ -9,10 +9,9 @@ import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { platformStore, platformActions } from 'stores/platform'
 import { guestStore, guestActions } from 'stores/guest'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
 import { EventEmitter } from 'events'
 import Debug from 'Debug'
-import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
 import {
@@ -20,16 +19,12 @@ import {
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD
 } from 'shared/ipcEvents'
-import { ipcRenderer, webFrame } from 'electron'
+import { ipcRenderer } from 'electron'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
 
 // We often exceed 10 listeners so increase this
 EventEmitter.defaultMaxListeners = 50
-
-// Prevent zooming
-webFrame.setVisualZoomLevelLimits(1, 1)
-webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Context menu
 document.addEventListener('contextmenu', (evt) => {
@@ -82,8 +77,8 @@ platformStore.getState()
 platformActions.load()
 emblinkStore.getState()
 emblinkActions.load()
-notifhistStore.getState()
-notifhistActions.load()
+localHistoryStore.getState()
+localHistoryActions.load()
 guestStore.getState()
 guestActions.load()
 
@@ -95,18 +90,6 @@ userActions.startAutoUpdateExtensions()
 userActions.startAutoUpdateWireConfig()
 userActions.startAutoUpdateContainers()
 userActions.startAutoUploadUserProfile()
-
-// Navigation
-if (process.platform === 'darwin' && settingsStore.getState().launched.app.enableMouseNavigationDarwin) {
-  const mouseNavigator = new MouseNavigationDarwin(
-    () => accountDispatch.navigateBack(),
-    () => accountDispatch.navigateForward()
-  )
-  mouseNavigator.register()
-  window.addEventListener('beforeunload', () => {
-    mouseNavigator.unregister()
-  })
-}
 
 // Debugging
 Debug.load()

@@ -94,7 +94,8 @@ class ServiceAdvancedSection extends React.Component {
       hasService: true,
       sandboxFromMailbox: service.sandboxFromMailbox,
       customCSS: service.customCSS,
-      customJS: service.customJS
+      customJS: service.customJS,
+      preventLowPowerMode: service.preventLowPowerMode
     } : {
       hasService: false
     }
@@ -113,13 +114,15 @@ class ServiceAdvancedSection extends React.Component {
       serviceId,
       classes,
       onRequestEditCustomCode,
+      children,
       ...passProps
     } = this.props
     const {
       hasService,
       sandboxFromMailbox,
       customJS,
-      customCSS
+      customCSS,
+      preventLowPowerMode
     } = this.state
     if (!hasService) { return false }
 
@@ -161,7 +164,6 @@ class ServiceAdvancedSection extends React.Component {
           </div>
         </SettingsListItem>
         <SettingsListItemSwitch
-          divider={false}
           label={(
             <span>
               <InboxIcon className={classes.sandboxIcon} /> Sandbox Service
@@ -170,6 +172,12 @@ class ServiceAdvancedSection extends React.Component {
           secondary={`With sandboxing enabled this service wont share any cookies or information with any other services`}
           checked={sandboxFromMailbox}
           onChange={(evt, toggled) => accountActions.changeServiceSandboxing(serviceId, toggled)} />
+        <SettingsListItemSwitch
+          divider={!!children}
+          label='Prevent tab using low power mode'
+          checked={preventLowPowerMode}
+          onChange={(evt, toggled) => accountActions.reduceService(serviceId, ServiceReducer.setPreventLowPowerMode, toggled)} />
+        {children}
       </SettingsListSection>
     )
   }

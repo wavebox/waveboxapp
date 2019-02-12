@@ -2,6 +2,7 @@ import alt from '../alt'
 import actions from './updaterActions'
 import settingsStore from '../settings/settingsStore'
 import querystring from 'querystring'
+import uuid from 'uuid'
 import {
   UPDATE_CHECK_INTERVAL,
   UPDATE_FEED_MANUAL,
@@ -15,6 +16,10 @@ import {
   WB_SQUIRREL_UPDATE_CHECK,
   WB_SQUIRREL_APPLY_UPDATE
 } from 'shared/ipcEvents'
+import {
+  WCRPC_GET_UPDATER_CONFIG
+} from 'shared/webContentsRPC'
+import Platform from 'shared/Platform'
 import AppSettings from 'shared/Models/Settings/AppSettings'
 import { ipcRenderer } from 'electron'
 import pkg from 'package.json'
@@ -40,7 +45,8 @@ class UpdaterStore {
   /* **************************************************************************/
 
   constructor () {
-    this.squirrelEnabled = process.platform === 'darwin' || process.platform === 'win32'
+    this.squirrelEnabled = Platform.SQUIRREL_UPDATE_ENABLED_ON_PLATFORM
+    this.osPackageManager = Platform.PACKAGE_MANAGERS.UNKNOWN
     this.nextCheckTO = null
     this.lastManualDownloadUrl = null
     this.updateFailedCount = 0
@@ -108,32 +114,32 @@ class UpdaterStore {
   showUserPrompt () {
     if (this.updateState === UPDATE_STATES.CHECKING || this.updateState === UPDATE_STATES.DOWNLOADING) {
       if (this.userActionedUpdate) {
-        if (this.squirrelEnabled) {
-          window.location.hash = `/updates/checking/squirrel`
-        } else {
-          window.location.hash = `/updates/checking/manual`
-        }
+        window.location.hash = this.squirrelEnabled
+          ? `/updates/checking/squirrel`
+          : `/updates/checking/manual`
         return true
       }
     } else if (this.updateState === UPDATE_STATES.DOWNLOADED) {
-      window.location.hash = this.squirrelEnabled ? `/updates/install/squirrel` : `/updates/available/manual`
+      const qs = querystring.stringify({
+        installmethod: DistributionConfig.installMethod,
+        osPackageManager: this.osPackageManager
+      })
+      window.location.hash = this.squirrelEnabled
+        ? `/updates/install/squirrel?${qs}`
+        : `/updates/available/manual?${qs}`
       return true
     } else if (this.updateState === UPDATE_STATES.NONE) {
       if (this.userActionedUpdate) {
-        if (this.squirrelEnabled) {
-          window.location.hash = `/updates/none/squirrel`
-        } else {
-          window.location.hash = `/updates/none/manual`
-        }
+        window.location.hash = this.squirrelEnabled
+          ? `/updates/none/squirrel`
+          : `/updates/none/manual`
         return true
       }
     } else if (this.updateState === UPDATE_STATES.ERROR) {
       if (this.userActionedUpdate || this.updateFailedCount > 5) {
-        if (this.squirrelEnabled) {
-          window.location.hash = `/updates/error/squirrel`
-        } else {
-          window.location.hash = `/updates/error/manual`
-        }
+        window.location.hash = this.squirrelEnabled
+          ? `/updates/error/squirrel`
+          : `/updates/error/manual`
         if (this.updateFailedCount > 5) {
           this.updateFailedCount = 0 // Reset to prevent bugging the user
         }
@@ -159,6 +165,29 @@ class UpdaterStore {
     })
   }
 
+  /**
+  * Asynchronously fetches the updater config
+  * @return promise
+  */
+  fetchUpdaterConfig () {
+    return new Promise((resolve, reject) => {
+      const ret = `${WCRPC_GET_UPDATER_CONFIG}_${uuid.v4()}`
+      let hasReturned = false
+      const timeout = setTimeout(() => {
+        if (hasReturned) { return }
+        hasReturned = true
+        reject(new Error('Timeout'))
+      }, 2000)
+      ipcRenderer.once(ret, (evt, config) => {
+        if (hasReturned) { return }
+        hasReturned = true
+        clearTimeout(timeout)
+        resolve(config)
+      })
+      ipcRenderer.send(WCRPC_GET_UPDATER_CONFIG, ret)
+    })
+  }
+
   /* **************************************************************************/
   // Handlers: Lifecycle
   /* **************************************************************************/
@@ -166,7 +195,18 @@ class UpdaterStore {
   handleLoad () {
     clearTimeout(this.nextCheckTO)
     this.lastManualDownloadUrl = null
-    actions.checkForUpdates.defer()
+
+    this.fetchUpdaterConfig().then(
+      (config) => {
+        this.osPackageManager = config.osPackageManager
+        this.emitChange()
+        actions.checkForUpdates.defer()
+      },
+      (ex) => {
+        console.error('Failed to fetch updater config. Continuing in unknown state')
+        actions.checkForUpdates.defer()
+      }
+    )
   }
 
   handleUnload () {

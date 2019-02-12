@@ -40,6 +40,7 @@ const MAPPING = [
   ['farDesktop', 'fasDesktop'],
   ['farPenSquare', 'fasPenSquare'],
   ['farClone', 'farClone'],
+  ['farFrown', 'farFrown'],
 
   ['falWindowClose', 'farWindowClose'],
   ['falWindowMaximize', 'farWindowMaximize'],
@@ -74,11 +75,16 @@ const MAPPING = [
   ['fasArrowFromTop', 'fasArrowUp'],
   ['fasArrowFromBottom', 'fasArrowDown'],
   ['fasMapPin', 'fasMapPin'],
+  ['fasArrowToBottom', 'fasArrowDown'],
+  ['fasExchangeAlt', 'fasExchangeAlt'],
 
   ['fabSlack', 'fabSlack'],
   ['fabGoogle', 'fabGoogle'],
   ['fabMicrosoft', 'fabMicrosoft'],
-  ['fabTrello', 'fabTrello']
+  ['fabTrello', 'fabTrello'],
+  ['fabLinux', 'fabLinux'],
+  ['fabApple', 'fabApple'],
+  ['fabWindows', 'fabWindows']
 ]
 
 /**

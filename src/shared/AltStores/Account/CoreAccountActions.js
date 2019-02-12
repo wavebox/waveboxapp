@@ -117,6 +117,20 @@ class CoreAccountActions extends RemoteActions {
     }
   }
 
+  /**
+  * Cleans the window open rules on a mailbox
+  * @param id: the id of the mailbox
+  * @param customProviderIds: a list of custom provider ids
+  */
+  cleanMailboxWindowOpenRules (...args) {
+    if (process.type === 'browser') {
+      const [id, customProviderIds] = args
+      return { id, customProviderIds }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('cleanMailboxWindowOpenRules', args)
+    }
+  }
+
   /* **************************************************************************/
   // Auth
   /* **************************************************************************/
@@ -756,6 +770,24 @@ class CoreAccountActions extends RemoteActions {
       return { serviceId, id }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('removeFromReadingQueue', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Google Inbox
+  /* **************************************************************************/
+
+  /**
+  * Converts a google inbox account to gmail
+  * @param serviceId: the id of the service
+  * @param duplicateFirst: true to duplicate and then work on the duplicate
+  */
+  convertGoogleInboxToGmail (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, duplicateFirst] = args
+      return { serviceId, duplicateFirst }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('convertGoogleInboxToGmail', args)
     }
   }
 }

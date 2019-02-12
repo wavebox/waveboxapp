@@ -2,8 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
-import { RouterDialog } from 'Components/RouterDialog'
+import { RouterDialog } from 'wbui/RouterDialog'
 import NewsSceneContent from './NewsSceneContent'
+import { ipcRenderer } from 'electron'
+import {
+  WB_MAILBOXES_WINDOW_SHOW_NEWS
+} from 'shared/ipcEvents'
 
 const styles = {
   root: {
@@ -24,8 +28,24 @@ class NewsScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.handleIPCOpen)
+  }
+
+  componentWillUnmount () {
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.handleIPCOpen)
+  }
+
+  /* **************************************************************************/
   // User Interaction
   /* **************************************************************************/
+
+  handleIPCOpen = () => {
+    window.location.hash = '/news'
+  }
 
   /**
   * Closes the modal

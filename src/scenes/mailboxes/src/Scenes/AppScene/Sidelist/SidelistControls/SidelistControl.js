@@ -66,9 +66,9 @@ class SidelistControl extends React.Component {
     onClick: PropTypes.func.isRequired,
     icon: PropTypes.element.isRequired,
     tooltip: PropTypes.node.isRequired,
-    tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)).isRequired,
-    tourTooltip: PropTypes.node.isRequired,
-    contextMenuRenderer: PropTypes.func
+    tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)),
+    tourTooltip: PropTypes.node,
+    ContextMenuComponent: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -168,7 +168,7 @@ class SidelistControl extends React.Component {
   */
   handleHideContextMenu = (evt, cb = undefined) => {
     this.setState({ contextMenuAnchor: null })
-    if (cb) {
+    if (typeof (cb) === 'function') {
       setTimeout(() => { cb() }, 250)
     }
   }
@@ -211,6 +211,7 @@ class SidelistControl extends React.Component {
   * @return jsx
   */
   renderTourTooltipContent (classes, tourTooltip) {
+    if (!tourTooltip) { return undefined }
     return (
       <div className={classes.popoverContentContainer} onClick={this.handleTourNext}>
         {tourTooltip}
@@ -237,7 +238,7 @@ class SidelistControl extends React.Component {
       icon,
       children,
       onContextMenu,
-      contextMenuRenderer,
+      ContextMenuComponent,
       ...passProps
     } = this.props
     const {
@@ -248,7 +249,7 @@ class SidelistControl extends React.Component {
       tooltipOpen
     } = this.state
 
-    const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
+    const showTourPopover = !hasSeenTour && tourStep && currentTourStep === tourStep && !dismissingTour
     return (
       <div {...passProps}>
         <PrimaryTooltip
@@ -278,14 +279,15 @@ class SidelistControl extends React.Component {
             {children}
           </div>
         </PrimaryTooltip>
-        {contextMenuRenderer ? (
+        {ContextMenuComponent ? (
           <Menu
             open={!!contextMenuAnchor}
             anchorEl={contextMenuAnchor}
             MenuListProps={{ dense: true }}
             disableEnforceFocus
+            disableAutoFocusItem
             onClose={this.handleHideContextMenu}>
-            {contextMenuRenderer(this.handleHideContextMenu)}
+            <ContextMenuComponent onRequestClose={this.handleHideContextMenu} />
           </Menu>
         ) : undefined}
       </div>

@@ -7,11 +7,10 @@ import WaveboxWindowManager from './WaveboxWindowManager'
 import {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
-  WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
-  WB_WINDOW_DARWIN_SCROLL_TOUCH_END,
   WB_WINDOW_FOCUS,
   WB_WINDOW_BLUR,
-  WB_WINDOW_MIN_MAX_DBL_CLICK
+  WB_WINDOW_MIN_MAX_DBL_CLICK,
+  WB_WINDOW_RESET_VISUAL_ZOOM
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
@@ -297,6 +296,24 @@ class WaveboxWindow extends EventEmitter {
     return false
   }
 
+  /**
+  * Hook that gets called before the app fully quits from a keyboard shortcut
+  * Overwrite this for custom behaviours
+  * @param accelerator: the accelerator that was called
+  * @return false to allow full quit, true to prevent the behaviour
+  */
+  onBeforeFullQuit (accelerator) {
+    return false
+  }
+
+  /**
+  * Hook that gets called to determine where to send window open requests to
+  * @return a webContents if supported, falsey if not
+  */
+  userLinkOpenRequestResponder () {
+    return null
+  }
+
   /* ****************************************************************************/
   // Mouse Navigation
   /* ****************************************************************************/
@@ -306,14 +323,7 @@ class WaveboxWindow extends EventEmitter {
   * Darwin is handled in the rendering thread
   */
   bindMouseNavigation () {
-    if (process.platform === 'darwin') {
-      this.window.on('scroll-touch-begin', () => {
-        this.window.webContents.send(WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN, {})
-      })
-      this.window.on('scroll-touch-end', () => {
-        this.window.webContents.send(WB_WINDOW_DARWIN_SCROLL_TOUCH_END, {})
-      })
-    } else if (process.platform === 'win32') {
+    if (process.platform === 'win32') {
       this.window.on('app-command', (evt, cmd) => {
         switch (cmd) {
           case 'browser-backward': this.navigateBack(); break
@@ -671,6 +681,7 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
     wc.setZoomFactor(1.0)
+    wc.send(WB_WINDOW_RESET_VISUAL_ZOOM)
     return this
   }
 

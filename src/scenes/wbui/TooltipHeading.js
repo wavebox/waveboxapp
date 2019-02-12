@@ -21,6 +21,11 @@ const styles = (theme) => ({
     paddingLeft: 12,
     paddingRight: 12
   },
+  titleTextContainer: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
   title: {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -81,7 +86,7 @@ class TooltipHeading extends React.Component {
 
     return (
       <div className={classNames(classes.root, className)} {...passProps}>
-        <div>
+        <div className={classes.titleTextContainer}>
           <div className={classes.title}>{primary}</div>
           {secondary ? (
             <div className={classes.subtitle}>{secondary}</div>

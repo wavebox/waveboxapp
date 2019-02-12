@@ -6,6 +6,9 @@ import { WindowOpeningHandler } from './WindowOpeningEngine'
 import { GuestWebPreferences } from 'WebContentsManager'
 import querystring from 'querystring'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
+import { WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL } from 'shared/ipcEvents'
+import { settingsStore } from 'stores/settings'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
 const privGuestWebPreferences = Symbol('privGuestWebPreferences')
@@ -241,6 +244,30 @@ class ContentWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Overwrite. Prevents full quit on the first keystroke
+  * @param accelerator: the accelerator that was used
+  * @return true to prevent behaviour
+  */
+  onBeforeFullQuit (accelerator) {
+    if (WaveboxAppCommandKeyTracker.anyModifierPressed && settingsStore.getState().ui.warnBeforeKeyboardQuitting) {
+      this.window.webContents.send(WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL, accelerator)
+      return true
+    } else {
+      return super.onBeforeFullQuit(accelerator)
+    }
+  }
+
+  /**
+  * Overwrite
+  * @return the top level webcontents
+  */
+  userLinkOpenRequestResponder () { return this.window.webContents }
+
+  /* ****************************************************************************/
   // Actions
   /* ****************************************************************************/
 
@@ -330,6 +357,16 @@ class ContentWindow extends WaveboxWindow {
   * @return the webcontents which is an editable target
   */
   focusedEditableWebContents () {
+    // Look to see if we are in part of the wavebox ui
+    let purl
+    try {
+      purl = new URL(this.window.webContents.getURL())
+    } catch (ex) { }
+    if (purl && purl.hash.length > 2) { // Normally it's /# so anything more and we're in a screen
+      return this.window.webContents
+    }
+
+    // Return focused tab
     return this[privGuestWebContentsId]
       ? webContents.fromId(this[privGuestWebContentsId])
       : undefined

@@ -41,15 +41,21 @@ export default class UISettingsSection extends React.Component {
         'sidebarEnabled',
         'showSidebarSupport',
         'showSidebarNewsfeed',
+        'showSidebarDownloads',
         'showTitlebar',
         'showAppMenu',
         'showTitlebarCount',
         'showTitlebarAccount',
         'theme',
         'sidebarSize',
-        'showSidebarScrollbars'
+        'showSidebarScrollbars',
+        'warnBeforeKeyboardQuitting'
       ]) ||
-      modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
+      modelCompare(this.props.accelerators, nextProps.accelerators, [
+        'toggleSidebar',
+        'toggleMenu',
+        'quit'
+      ]) ||
       modelCompare(this.props.extension, nextProps.extension, ['showBrowserActionsInToolbar', 'toolbarBrowserActionLayout']) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
@@ -84,6 +90,15 @@ export default class UISettingsSection extends React.Component {
             label='Show sleeping account icons in grey'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)}
             checked={ui.showSleepableServiceIndicator} />
+          <SettingsListItemSwitch
+            label={(
+              <span>
+                <span>Warn before quitting with </span>
+                <SettingsListKeyboardShortcutText shortcut={accelerators.quit} />
+              </span>
+            )}
+            onChange={(evt, toggled) => settingsActions.sub.ui.setWarnBeforeKeyboardQuitting(toggled)}
+            checked={ui.warnBeforeKeyboardQuitting} />
           <SettingsListItemSelectInline
             label='App theme'
             divider={process.platform === 'darwin'}
@@ -214,6 +229,15 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.SIDEBAR_SIZES.TINY, label: 'Tiny' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setSidebarSize(value)} />
+          <SettingsListItemSelectInline
+            label={`Show Downloads in Sidebar`}
+            value={ui.showSidebarDownloads}
+            options={[
+              { value: UISettings.SIDEBAR_DOWNLOAD_MODES.NEVER, label: 'Never' },
+              { value: UISettings.SIDEBAR_DOWNLOAD_MODES.ACTIVE, label: `When there are active downloads` },
+              { value: UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS, label: 'Always' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setShowSidebarDownloads(value)} />
           <SettingsListItemSelectInline
             label={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}

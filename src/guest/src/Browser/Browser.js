@@ -7,6 +7,7 @@ import ExtensionLoader from './Extensions/ExtensionLoader'
 import CRExtensionLoader from './Extensions/CRExtensionLoader'
 import UserCodeInjection from './UserCodeInjection'
 import WaveboxApiProvider from './WaveboxApiProvider'
+import VisualZoomProvider from './VisualZoomProvider'
 
 const privStarted = Symbol('privStarted')
 const privKeyboardShim = Symbol('privKeyboardShim')
@@ -17,6 +18,7 @@ const privUserCodeInjection = Symbol('privUserCodeInjection')
 const privLifecycle = Symbol('privLifecycle')
 const privCRExtensionLoader = Symbol('privCRExtensionLoader')
 const privWaveboxApiProvider = Symbol('privWaveboxApiProvider')
+const privVisualZoomProvider = Symbol('privVisualZoomProvider')
 
 class Browser {
   /* **************************************************************************/
@@ -34,6 +36,7 @@ class Browser {
     this[privLifecycle] = undefined
     this[privCRExtensionLoader] = undefined
     this[privWaveboxApiProvider] = undefined
+    this[privVisualZoomProvider] = undefined
   }
 
   /**
@@ -50,6 +53,7 @@ class Browser {
     this[privUserCodeInjection] = new UserCodeInjection()
     this[privLifecycle] = new Lifecycle()
     this[privWaveboxApiProvider] = new WaveboxApiProvider()
+    this[privVisualZoomProvider] = new VisualZoomProvider()
 
     // Extensions
     this[privCRExtensionLoader] = new CRExtensionLoader()

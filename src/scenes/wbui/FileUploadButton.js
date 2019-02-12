@@ -37,6 +37,47 @@ class FileUploadButton extends React.Component {
     disabled: PropTypes.bool
   }
 
+  /**
+   * Loads an uploaded image and fits it within the max size
+   * @param fileRef: the html5 file reference
+   * @param maxSize=undefined: an optional maximum size to apply
+   * @return promise
+   */
+  static loadAndFitImageBase64 (fileRef, maxSize = undefined) {
+    if (!fileRef) {
+      return Promise.reject(new Error('No image selected'))
+    }
+
+    return new Promise((resolve, reject) => {
+      // Load the image
+      const reader = new window.FileReader()
+      reader.addEventListener('load', () => {
+        // Get the image size
+        const image = new window.Image()
+        image.onload = () => {
+          // Scale the image down. Never scale up
+          const scale = typeof (maxSize) === 'number'
+            ? Math.min(1.0, maxSize / (image.width > image.height ? image.width : image.height))
+            : 1
+          const width = image.width * scale
+          const height = image.height * scale
+
+          // Resize the image
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(image, 0, 0, width, height)
+
+          // Done
+          resolve(canvas.toDataURL())
+        }
+        image.src = reader.result
+      }, false)
+      reader.readAsDataURL(fileRef)
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/

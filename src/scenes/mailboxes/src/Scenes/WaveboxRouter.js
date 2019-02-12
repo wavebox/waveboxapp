@@ -1,6 +1,6 @@
 import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
-import { RouterDialogRoute } from 'Components/RouterDialog'
+import { RouterDialogRoute } from 'wbui/RouterDialog'
 import AppScene from './AppScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import PrivacyDialog from './PrivacyDialog'
@@ -32,19 +32,22 @@ import {
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } from './AccountScene'
-import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
-import WaveboxRouterNoMatch from './WaveboxRouterNoMatch'
+import WaveboxRouterErrorBoundary from 'wbui/WaveboxRouter/WaveboxRouterErrorBoundary'
+import WaveboxRouterNoMatch from 'wbui/WaveboxRouter/WaveboxRouterNoMatch'
 import {
   ProfileRestoreScene,
   ProfileRestoreFetchingScene,
   ProfileRestoreRestartingScene
 } from './ProfileRestoreScene'
+import { BookmarkEditScene } from './BookmarkScene'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
+import KeyboardQuitSnackbarHelper from 'wbui/KeyboardQuitSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
 import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
 import CommandPaletteScene from './CommandPaletteScene'
 import SwitcherScene from './SwitcherScene'
+import ULinkORScene from './ULinkORScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -68,6 +71,9 @@ export default class WaveboxRouter extends React.Component {
           <ErrorBoundary>
             <ReadingQueueSnackbarHelper />
           </ErrorBoundary>
+          <ErrorBoundary>
+            <KeyboardQuitSnackbarHelper />
+          </ErrorBoundary>
 
           {/* Dialogs: Switching */}
           <WaveboxRouterErrorBoundary>
@@ -86,6 +92,11 @@ export default class WaveboxRouter extends React.Component {
           </WaveboxRouterErrorBoundary>
           <WaveboxRouterErrorBoundary>
             <DictionaryInstallerScene routeName='dictionary_installer' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: link open */}
+          <WaveboxRouterErrorBoundary>
+            <ULinkORScene routeName='ulinkor_ask' />
           </WaveboxRouterErrorBoundary>
 
           {/* Dialogs: Mailbox wizard */}
@@ -113,6 +124,11 @@ export default class WaveboxRouter extends React.Component {
           {/* Dialogs: App Wizard */}
           <WaveboxRouterErrorBoundary>
             <AppWizardScene routeName='app_wizard' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Bookmarks */}
+          <WaveboxRouterErrorBoundary>
+            <BookmarkEditScene routeName='bookmark_edit' />
           </WaveboxRouterErrorBoundary>
 
           {/* Dialogs: Compose */}
@@ -184,13 +200,16 @@ export default class WaveboxRouter extends React.Component {
           <WaveboxRouterErrorBoundary>
             <Switch>
               {/* Dialogs: Switching */}
-              {/* @Thomas101 cpallette <RouterDialogRoute path='/command' routeName='command' /> */}
+              <RouterDialogRoute path='/command' routeName='command' />
               <RouterDialogRoute path='/switcher/:mode?' routeName='switcher' />
 
               {/* Dialogs: Settings */}
               <RouterDialogRoute path='/settings/:tab?/:tabArg?' routeName='settings' />
               <RouterDialogRoute path='/site_permissions' routeName='site_permissions' />
               <RouterDialogRoute path='/dictionary_installer' routeName='dictionary_installer' />
+
+              {/* Dialogs: Links */}
+              <RouterDialogRoute path='/link/open/:requestId' routeName='ulinkor_ask' />
 
               {/* Dialogs: Mailbox wizard */}
               <RouterDialogRoute path='/mailbox_wizard/add/:mailboxId?' routeName='account_wizard_add' />
@@ -204,6 +223,9 @@ export default class WaveboxRouter extends React.Component {
 
               {/* Dialogs: App Wizard */}
               <RouterDialogRoute path='/app_wizard/:step?' routeName='app_wizard' />
+
+              {/* Dialogs: Bookmarks */}
+              <RouterDialogRoute path='/bookmark/edit/:serviceId/:bookmarkId' routeName='bookmark_edit' />
 
               {/* Dialogs: Compose */}
               <RouterDialogRoute path='/incoming/compose' routeName='incoming_compose' />

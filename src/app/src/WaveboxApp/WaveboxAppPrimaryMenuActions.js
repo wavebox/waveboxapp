@@ -17,6 +17,7 @@ import { settingsActions } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
 import { accountStore } from 'stores/account'
 import LinkOpener from 'LinkOpener'
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 class WaveboxAppPrimaryMenuActions {
   /* ****************************************************************************/
@@ -51,7 +52,13 @@ class WaveboxAppPrimaryMenuActions {
   // App Lifecycle
   /* ****************************************************************************/
 
-  fullQuit = () => {
+  fullQuit = (accelerator) => {
+    const focused = WaveboxWindow.focused()
+    if (focused) {
+      const res = focused.onBeforeFullQuit(accelerator)
+      if (res === true) { return }
+    }
+
     evtMain.emit(evtMain.WB_QUIT_APP, {})
   }
 
@@ -265,7 +272,7 @@ class WaveboxAppPrimaryMenuActions {
       title: pkg.name,
       message: pkg.name,
       detail: [
-        Release.generateVersionString(pkg, '\n'),
+        Release.generateVersionComponents(pkg, undefined, DistributionConfig.installMethod).join('\n'),
         'Made with ♥ at wavebox.io'
       ].filter((l) => !!l).join('\n'),
       buttons: [ 'Done', 'Website' ]

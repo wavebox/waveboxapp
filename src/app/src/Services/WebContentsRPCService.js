@@ -14,6 +14,7 @@ import {
   WCRPC_CLOSE_WINDOW,
   WCRPC_OPEN_RECENT_LINK,
   WCRPC_OPEN_READING_QUEUE_LINK,
+  WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
@@ -21,11 +22,15 @@ import {
   WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
   WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
-  WCRPC_RESOLVE_PERMISSION_REQUEST
+  WCRPC_RESOLVE_PERMISSION_REQUEST,
+  WCRPC_GET_UPDATER_CONFIG
 } from 'shared/webContentsRPC'
 import { PermissionManager } from 'Permissions'
 import os from 'os'
 import LinkOpener from 'LinkOpener'
+import AppUpdater from 'AppUpdater'
+import DistributionConfig from 'Runtime/DistributionConfig'
+import Platform from 'shared/Platform'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -49,6 +54,7 @@ class WebContentsRPCService {
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
     ipcMain.on(WCRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
     ipcMain.on(WCRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
+    ipcMain.on(WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE, this._handleOpenUrlInTopLevelService)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -57,6 +63,7 @@ class WebContentsRPCService {
     ipcMain.on(WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, this._handleSyncGetExtensionContentScriptPreloadInfo)
     ipcMain.on(WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, this._handleSyncGetExtensionHostedPreloadInfo)
     ipcMain.on(WCRPC_RESOLVE_PERMISSION_REQUEST, this._handleResolvePermissionRequest)
+    ipcMain.on(WCRPC_GET_UPDATER_CONFIG, this._handleGetUpdaterConfig)
   }
 
   /* ****************************************************************************/
@@ -189,6 +196,17 @@ class WebContentsRPCService {
   _handleOpenReadingQueueLink = (evt, serviceId, readingItem) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     LinkOpener.openReadingQueueLink(evt.sender, serviceId, readingItem)
+  }
+
+  /**
+  * Handles openinga url in a top level service
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service to open in
+  * @param url: the url top open
+  */
+  _handleOpenUrlInTopLevelService = (evt, serviceId, url) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.openUrlInTopLevelService(serviceId, url)
   }
 
   /**
@@ -363,9 +381,37 @@ class WebContentsRPCService {
   /**
   * Handles the resolution of a permission request
   * @param evt: the event that fired
+  * @param wcId: the id of the webcontents
+  * @param type: the type of request
+  * @param permission: the permission to get
   */
   _handleResolvePermissionRequest = (evt, wcId, type, permission) => {
     PermissionManager.resolvePermissionRequest(wcId, type, permission)
+  }
+
+  /**
+  * Gets the updater config
+  * @param evt: the event that fired
+  * @param returnChannel: the channel to return the response to
+  */
+  _handleGetUpdaterConfig = (evt, returnChannel) => {
+    Promise.resolve()
+      .then(() => DistributionConfig.getDefaultOSPackageManager())
+      .then((packageManager) => {
+        if (evt.sender.isDestroyed()) { return }
+        evt.sender.send(returnChannel, {
+          osPackageManager: packageManager,
+          autoupdaterSupportedPlatform: AppUpdater.isSupportedPlatform
+        })
+      })
+      .catch((ex) => {
+        console.error(`Failed to respond to "${WCRPC_GET_UPDATER_CONFIG}" continuing with unknown side effects`, ex)
+        if (evt.sender.isDestroyed()) { return }
+        evt.sender.send(returnChannel, {
+          osPackageManager: Platform.PACKAGE_MANAGERS.UNKNOWN,
+          autoupdaterSupportedPlatform: false
+        })
+      })
   }
 }
 

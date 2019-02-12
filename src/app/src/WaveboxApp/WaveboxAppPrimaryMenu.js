@@ -122,7 +122,7 @@ class WaveboxAppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Quit',
-            click: WaveboxAppPrimaryMenuActions.fullQuit,
+            click: () => WaveboxAppPrimaryMenuActions.fullQuit(accelerators.quit),
             accelerator: accelerators.quit
           }
         ].filter((item) => item !== undefined)
@@ -203,15 +203,12 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.menuToggle,
             accelerator: accelerators.toggleMenu
           },
-          /*
-          @Thomas101 cpallette
           { type: 'separator' },
           {
-            label: 'Open Command Palette',
+            label: 'Open Quick Switch',
             click: WaveboxAppPrimaryMenuActions.openCommandPalette,
             accelerator: accelerators.commandPalette
           },
-          */
           { type: 'separator' },
           {
             label: 'Navigate Back',
@@ -231,6 +228,11 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Actual Size',
+            click: WaveboxAppPrimaryMenuActions.zoomReset,
+            accelerator: accelerators.zoomReset
+          },
+          {
             label: 'Zoom In',
             click: WaveboxAppPrimaryMenuActions.zoomIn,
             accelerator: accelerators.zoomIn
@@ -239,11 +241,6 @@ class WaveboxAppPrimaryMenu {
             label: 'Zoom Out',
             click: WaveboxAppPrimaryMenuActions.zoomOut,
             accelerator: accelerators.zoomOut
-          },
-          {
-            label: 'Reset Zoom',
-            click: WaveboxAppPrimaryMenuActions.zoomReset,
-            accelerator: accelerators.zoomReset
           },
           { type: 'separator' },
           {

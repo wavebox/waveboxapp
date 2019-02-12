@@ -113,6 +113,45 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
+    * @param userSetting: the setting that the user has defined
+    * @return the wire config experiment to use the app fetch stack for MS
+    */
+    this.wceUseAppThreadFetchMicrosoftHTTP = (userSetting) => {
+      if (userSetting !== undefined) {
+        return userSetting
+      } else {
+        const val = this.wireConfigExperiments().useAppThreadFetchMicrosoftHTTP
+        return val === undefined ? true : val
+      }
+    }
+
+    /**
+    * @param userSetting: the setting that the user has defined
+    * @return the wire config expierment to enable tickle or not
+    */
+    this.wceTickleSlackRTM = (userSetting) => {
+      if (userSetting !== undefined) {
+        return userSetting
+      } else {
+        const val = this.wireConfigExperiments().tickleSlackRTM
+        return val === undefined ? true : val
+      }
+    }
+
+    /**
+    * @param userSetting: the setting that the user has defined
+    * @return the wire config experiment to use mute notifications when suspended
+    */
+    this.wceNotificationsMutedWhenSuspended = (userSetting) => {
+      if (userSetting !== undefined) {
+        return userSetting
+      } else {
+        const val = this.wireConfigExperiments().notificationsMutedWhenSuspended
+        return val === undefined ? true : val
+      }
+    }
+
+    /**
     * @param defaultVal=[]: the default value if none is found
     * @return the window open rules
     */
@@ -126,6 +165,22 @@ class CoreUserStore extends RemoteStore {
     */
     this.wireConfigNavigateRules = (defaultVal = []) => {
       return (this.wireConfig || {}).navigate || defaultVal
+    }
+
+    /**
+    * Returns the retirement version for google inbox
+    * @return the retirement version
+    */
+    this.wireConfigGoogleInboxRetirementVersion = () => {
+      return this.wireConfigExperiments().googleInboxRetirementVersion || 1
+    }
+
+    /**
+    * Returns true to use the simple google auth
+    * @return true to use simple auth
+    */
+    this.wireConfigSimpleGoogleAuth = () => {
+      return this.wireConfigExperiments().simpleGoogleAuth === true
     }
 
     /* ****************************************/

@@ -26,12 +26,6 @@ const styles = (theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
-  },
-  deleteIcon: {
-    opacity: 0.8,
-    '&:hover': {
-      opacity: 1
-    }
   }
 })
 
@@ -118,8 +112,8 @@ class ServiceTooltipQueueItem extends React.Component {
           secondaryTypographyProps={{ className: classes.text }}
           primary={queueItem.title || <span>&nbsp;</span>}
           secondary={queueItem.url} />
-        <TooltipSectionListItemSecondaryAction>
-          <CancelIcon className={classes.deleteIcon} onClick={this.handleDeleteItem} />
+        <TooltipSectionListItemSecondaryAction onClick={this.handleDeleteItem}>
+          <CancelIcon />
         </TooltipSectionListItemSecondaryAction>
       </TooltipSectionListItem>
     )
