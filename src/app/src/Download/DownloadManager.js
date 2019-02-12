@@ -140,12 +140,8 @@ class DownloadManager extends EventEmitter {
         .then(() => {
           const itemFilename = item.getFilename()
           // Download target picking
-          if (!settingsState.os.alwaysAskDownloadLocation && settingsState.os.defaultDownloadLocation) {
-            const folderLocation = settingsState.os.defaultDownloadLocation
-
-            // Check the containing folder exists
-            fs.ensureDirSync(folderLocation)
-            const savePath = unusedFilename.sync(path.join(folderLocation, itemFilename))
+          if (!settingsState.os.alwaysAskDownloadLocation && settingsState.os.defaultDownloadLocation && fs.existsSync(settingsState.os.defaultDownloadLocation)) {
+            const savePath = unusedFilename.sync(path.join(settingsState.os.defaultDownloadLocation, itemFilename))
             return Promise.resolve(savePath)
           } else {
             return new Promise((resolve, reject) => {
