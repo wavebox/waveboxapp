@@ -7,7 +7,7 @@ import pkg from 'package.json'
 import electron from 'electron'
 
 const WinRegistry = process.platform === 'win32' ? require('winreg') : null
-const AutoLaunch = process.platform === 'darwin' ? require('auto-launch') : null
+const AutoLaunch = ['darwin', 'linux'].includes(process.platform) ? require('auto-launch') : null
 
 const WIN32_REG_PATH = '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
 const darwinLaunchPath = process.platform === 'darwin' ? (() => {
@@ -43,10 +43,10 @@ class PlatformStore extends CorePlatformStore {
   /* **************************************************************************/
 
   handleChangeLoginPref ({ openAtLogin, openAsHidden }) {
-    if (process.platform === 'darwin') {
+    if (null !== AutoLaunch) {
       const autoLaunch = new AutoLaunch({
         name: pkg.name,
-        path: darwinLaunchPath,
+        path: 'darwin' === process.platform ? darwinLaunchPath : undefined,
         isHidden: openAsHidden
       })
       if (openAtLogin) {
