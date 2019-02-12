@@ -37,8 +37,8 @@ class ContainerServiceData extends CoreACServiceData {
   * @override
   */
   getHasUnreadActivity (service) {
-    if (service.supportsWBGAPI && this.hasUnreadActivity) {
-      return this.hasUnreadActivity
+    if (service.supportsWBGAPI && this.wbgapiHasUnreadActivity) {
+      return this.wbgapiHasUnreadActivity
     } else if (service.container.faviconUnreadActivityRegexp && this.faviconIndicatesUnreadActivity) {
       return this.faviconIndicatesUnreadActivity
     } else if (service.container.html5NotificationsGenerateUnreadActivity && this.notificationIndicatesUnreadActivity) {
