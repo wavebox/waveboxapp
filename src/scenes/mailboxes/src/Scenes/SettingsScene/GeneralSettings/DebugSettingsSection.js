@@ -80,6 +80,7 @@ class DebugSettingsSection extends React.Component {
           icon={<AssessmentIcon />}
           confirmIcon={<CheckIcon />}
           confirmWaitMs={2000}
+          onConfirmedClick={() => {}}
           buttonProps={{
             onClick: () => { ipcRenderer.send(WB_USER_RECORD_NEXT_WINDOW_OPEN_EVENT) }
           }} />
