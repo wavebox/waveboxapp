@@ -308,8 +308,9 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleSleepService = (evt) => {
+    const { serviceId } = this.props
     this.closePopover(evt, () => {
-      accountActions.sleepService(this.props.serviceId)
+      accountActions.sleepService(serviceId, true)
     })
   }
 
@@ -318,8 +319,9 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleSleepAllServices = (evt) => {
+    const { mailboxId } = this.props
     this.closePopover(evt, () => {
-      accountActions.sleepAllServicesInMailbox(this.props.mailboxId)
+      accountActions.sleepAllServicesInMailbox(mailboxId, true)
     })
   }
 
