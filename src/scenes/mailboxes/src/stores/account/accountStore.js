@@ -305,25 +305,24 @@ class AccountStore extends RendererAccountStore {
 
   handleNavigateAndSwitchToService ({ serviceId, url }) {
     this.preventDefault()
+    if (!this.hasService(serviceId)) { return }
 
-    if (this.isServiceActive(serviceId) && !this.isServiceSleeping(serviceId)) {
-      accountDispatch.loadUrl(serviceId, url)
-    } else if (!this.isServiceSleeping(serviceId)) {
+    if (!this.isServiceActive(serviceId)) {
+      actions.changeActiveService.defer(serviceId)
+    }
+
+    let tries = 0
+    const retrier = setInterval(() => {
       if (accountDispatch.getIsWebviewMounted(serviceId)) {
         accountDispatch.loadUrl(serviceId, url)
-        actions.changeActiveService.defer(serviceId)
+        clearInterval(retrier)
       } else {
-        actions.changeActiveService.defer(serviceId)
-        setTimeout(() => {
-          accountDispatch.loadUrl(serviceId, url)
-        }, 500)
+        tries++
+        if (tries > 20) {
+          clearInterval(retrier)
+        }
       }
-    } else {
-      actions.changeActiveService.defer(serviceId)
-      setTimeout(() => {
-        accountDispatch.loadUrl(serviceId, url)
-      }, 500)
-    }
+    }, 200)
   }
 
   /* **************************************************************************/

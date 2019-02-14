@@ -192,6 +192,7 @@ class CoreServiceWebView extends React.Component {
       isCrashed: false,
       loadError: null,
       focusedUrl: null,
+      webContentsAttached: false,
       permissionRequests: [],
       permissionRequestsUrl: undefined,
       snapshot: accountState.getSnapshot(serviceId),
@@ -372,7 +373,9 @@ class CoreServiceWebView extends React.Component {
   * @return true if we're mounted, or null if not applicable for us
   */
   handleGetIsWebviewMounted = (evt) => {
-    return evt.serviceId === this.props.serviceId ? true : null
+    return evt.serviceId === this.props.serviceId
+      ? this.state.webContentsAttached
+      : null
   }
 
   /**
@@ -572,6 +575,7 @@ class CoreServiceWebView extends React.Component {
       mailboxId: mailboxId,
       serviceId: serviceId
     })
+    this.setState({ webContentsAttached: true })
 
     // Update the store
     accountActions.setWebcontentTabId.defer(serviceId, webContents.id)
