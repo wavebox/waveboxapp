@@ -11,8 +11,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import { NotificationService } from 'Notifications'
 import {
-  WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
-  WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN,
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
@@ -74,8 +72,6 @@ const styles = {
   }
 }
 
-const BROWSER_REF = 'browser'
-
 @withStyles(styles)
 class CoreServiceWebView extends React.Component {
   /* **************************************************************************/
@@ -105,11 +101,13 @@ class CoreServiceWebView extends React.Component {
   constructor (props) {
     super(props)
 
+    this.browserRef = React.createRef()
+
     const self = this
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
       if (self[m] !== undefined) { return } // Allow overwriting
-      self[m] = function () {
-        return self.refs[BROWSER_REF][m].apply(self.refs[BROWSER_REF], Array.from(arguments))
+      self[m] = function (...args) {
+        return self.browserRef.current[m](...args)
       }
     })
   }
@@ -133,12 +131,6 @@ class CoreServiceWebView extends React.Component {
     accountDispatch.on('navigateBack', this.handleNavigateBack)
     accountDispatch.on('navigateForward', this.handleNavigateForward)
     accountDispatch.on('loadUrl', this.handleNavigateLoadUrl)
-
-    if (!this.state.isActive) {
-      if (this.refs[BROWSER_REF]) {
-        this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
-      }
-    }
   }
 
   componentWillUnmount () {
@@ -258,7 +250,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleUncrash = (evt) => {
     this.setState({ isCrashed: false }) // Update our crashed state
-    this.refs[BROWSER_REF].reset()
+    this.browserRef.current.reset()
   }
 
   /**
@@ -267,7 +259,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleClearLoadError = (evt) => {
     this.setState({ loadError: null })
-    this.refs[BROWSER_REF].reload()
+    this.browserRef.current.reload()
   }
 
   /**
@@ -276,8 +268,8 @@ class CoreServiceWebView extends React.Component {
   * @param permission: the resolved permission
   */
   handleResolvePermission = (type, permission) => {
-    if (this.refs[BROWSER_REF]) {
-      this.refs[BROWSER_REF].resolvePermissionRequest(type, permission)
+    if (this.browserRef.current) {
+      this.browserRef.current.resolvePermissionRequest(type, permission)
     }
   }
 
@@ -289,14 +281,21 @@ class CoreServiceWebView extends React.Component {
   * @Pass through to webview.loadURL()
   */
   loadURL = (url) => {
-    return this.refs[BROWSER_REF].loadURL(url)
+    return this.browserRef.current.loadURL(url)
   }
 
   /**
   * @return the dom node for the webview
   */
   getWebviewNode = () => {
-    return this.refs[BROWSER_REF].getWebviewNode()
+    return this.browserRef.current.getWebviewNode()
+  }
+
+  /**
+  * @return true if the webview is attached
+  */
+  isWebviewAttached = () => {
+    return this.browserRef.current.isWebviewAttached()
   }
 
   /* **************************************************************************/
@@ -310,7 +309,7 @@ class CoreServiceWebView extends React.Component {
   handleOpenDevTools = (evt) => {
     const isThisTab = evt.serviceId === this.props.serviceId || (!evt.service && this.state.isActive)
     if (isThisTab) {
-      this.refs[BROWSER_REF].openDevTools()
+      this.browserRef.current.openDevTools()
     }
   }
 
@@ -321,7 +320,7 @@ class CoreServiceWebView extends React.Component {
   handleRefocus = (evt) => {
     const isThisTab = evt.serviceId === this.props.serviceId || (!evt.service && this.state.isActive)
     if (isThisTab) {
-      setTimeout(() => { this.refs[BROWSER_REF].focus() })
+      setTimeout(() => { this.browserRef.current.focus() })
     }
   }
 
@@ -363,7 +362,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleGetCurrentUrl = (evt) => {
     return evt.serviceId === this.props.serviceId
-      ? this.refs[BROWSER_REF].getURL()
+      ? this.browserRef.current.getURL()
       : null
   }
 
@@ -383,7 +382,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleNavigateBack = () => {
     if (this.state.isActive) {
-      this.refs[BROWSER_REF].goBack()
+      this.browserRef.current.goBack()
     }
   }
 
@@ -392,7 +391,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleNavigateForward = () => {
     if (this.state.isActive) {
-      this.refs[BROWSER_REF].goForward()
+      this.browserRef.current.goForward()
     }
   }
 
@@ -402,7 +401,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleNavigateLoadUrl = (evt) => {
     if (evt.serviceId === this.props.serviceId) {
-      this.refs[BROWSER_REF].loadURL(evt.url)
+      this.browserRef.current.loadURL(evt.url)
     }
   }
 
@@ -441,7 +440,7 @@ class CoreServiceWebView extends React.Component {
             evt.channel.notificationId,
             evt.channel.notification,
             (notificationId) => {
-              this.refs[BROWSER_REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
+              this.browserRef.current.send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
             }
           )
         }
@@ -461,19 +460,12 @@ class CoreServiceWebView extends React.Component {
   * Handles the Browser DOM becoming ready
   */
   handleBrowserDomReady = () => {
-    const { service, isActive } = this.state
-    const node = this.refs[BROWSER_REF]
+    const { service } = this.state
+    const node = this.browserRef.current
 
     // Push the custom user content
     if (service.hasCustomCSS || service.hasCustomJS) {
       node.send(WB_BROWSER_INJECT_CUSTOM_CONTENT, { css: service.customCSS, js: service.customJS })
-    }
-
-    // Wake or sleep the browser
-    if (isActive) {
-      node.send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
-    } else {
-      node.send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
     }
 
     this.setState({ initialLoadDone: true })
@@ -646,13 +638,8 @@ class CoreServiceWebView extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (prevState.isActive !== this.state.isActive) {
       if (this.state.isActive) {
-        if (this.refs[BROWSER_REF]) {
-          this.refs[BROWSER_REF].focus()
-          this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
-        }
-      } else {
-        if (this.refs[BROWSER_REF]) {
-          this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
+        if (this.browserRef.current) {
+          this.browserRef.current.focus()
         }
       }
     }
@@ -735,7 +722,7 @@ class CoreServiceWebView extends React.Component {
         )}>
         <div className={classes.browserContainer}>
           <BrowserView
-            ref={BROWSER_REF}
+            ref={this.browserRef}
             key={webviewKey}
             id={webviewId}
             preload={Resolver.guestPreload()}

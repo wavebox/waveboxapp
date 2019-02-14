@@ -14,8 +14,6 @@ import {
 } from 'shared/ipcEvents'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
-const REF = 'mailbox_tab'
-
 export default class GoogleMailServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
@@ -24,6 +22,16 @@ export default class GoogleMailServiceWebView extends React.Component {
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecylce
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.webviewRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -94,7 +102,7 @@ export default class GoogleMailServiceWebView extends React.Component {
         const nextIconsInscreen = !settingsState.ui.sidebarEnabled && !settingsState.ui.showTitlebar
         if (prevIconsInscreen !== nextIconsInscreen) {
           try {
-            this.refs[REF].send(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, { inscreen: nextIconsInscreen })
+            this.webviewRef.current.send(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, { inscreen: nextIconsInscreen })
           } catch (ex) {
             console.warn(ex)
           }
@@ -115,7 +123,7 @@ export default class GoogleMailServiceWebView extends React.Component {
   */
   handleOpenItem = (evt) => {
     if (evt.serviceId === this.props.serviceId) {
-      this.refs[REF].sendOrQueueIfSleeping(WB_BROWSER_OPEN_MESSAGE, {
+      this.webviewRef.current.sendOrQueueIfSleeping(WB_BROWSER_OPEN_MESSAGE, {
         messageId: evt.data.messageId,
         threadId: evt.data.threadId,
         search: evt.data.search
@@ -129,7 +137,7 @@ export default class GoogleMailServiceWebView extends React.Component {
   */
   handleComposeMessage = (evt) => {
     if (evt.serviceId === this.props.serviceId) {
-      this.refs[REF].sendOrQueueIfSleeping(WB_BROWSER_COMPOSE_MESSAGE, {
+      this.webviewRef.current.sendOrQueueIfSleeping(WB_BROWSER_COMPOSE_MESSAGE, {
         recipient: evt.data.recipient,
         subject: evt.data.subject,
         body: evt.data.body
@@ -159,7 +167,7 @@ export default class GoogleMailServiceWebView extends React.Component {
   handleBrowserDomReady = () => {
     // UI Fixes
     const ui = this.state.ui
-    this.refs[REF].send(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, {
+    this.webviewRef.current.send(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, {
       inscreen: !ui.sidebarEnabled && !ui.showTitlebar && process.platform === 'darwin'
     })
   }
@@ -191,17 +199,21 @@ export default class GoogleMailServiceWebView extends React.Component {
       if (this.state.isActive) {
         // Try to get the UI to reload to show when we make this item active
         if (this.state.serviceType === SERVICE_TYPES.GOOGLE_MAIL) {
-          this.refs[REF].executeJavaScript(`
-            try {
-              document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
-            } catch (ex) { }
-          `, true)
+          if (this.webviewRef.current.isWebviewAttached()) {
+            this.webviewRef.current.executeJavaScript(`
+              try {
+                document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
+              } catch (ex) { }
+            `, true)
+          }
         } else if (this.state.serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
-          this.refs[REF].executeJavaScript(`
-            if (document.documentElement.scrollTop < document.documentElement.offsetHeight / 3) {
-              document.querySelector('[jsaction="global.navigate_and_refresh"]').click()
-            }
-          `, true)
+          if (this.webviewRef.current.isWebviewAttached()) {
+            this.webviewRef.current.executeJavaScript(`
+              if (document.documentElement.scrollTop < document.documentElement.offsetHeight / 3) {
+                document.querySelector('[jsaction="global.navigate_and_refresh"]').click()
+              }
+            `, true)
+          }
         }
       }
     }
@@ -211,7 +223,7 @@ export default class GoogleMailServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
     return (
       <CoreServiceWebView
-        ref={REF}
+        ref={this.webviewRef}
         mailboxId={mailboxId}
         serviceId={serviceId}
         domReady={this.handleBrowserDomReady}

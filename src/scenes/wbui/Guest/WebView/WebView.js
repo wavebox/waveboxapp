@@ -26,6 +26,10 @@ stylesheet.innerHTML = `
   .RC-WebView-Root>webview.capture-in-progress { visibility: visible !important; }
 `
 
+const privIpcPromises = Symbol('privIpcPromises')
+const privWatchEventListener = Symbol('privWatchEventListener')
+const privWebviewAttached = Symbol('privWebviewAttached')
+
 class WebView extends React.Component {
   /* **************************************************************************/
   // Class
@@ -51,8 +55,9 @@ class WebView extends React.Component {
       stylesheetAttached = true
     }
 
-    this.ipcPromises = new Map()
-    this.watchEventListeners = new Set()
+    this[privIpcPromises] = new Map()
+    this[privWatchEventListener] = new Set()
+    this[privWebviewAttached] = false
 
     this.exposeWebviewMethods()
   }
@@ -107,6 +112,7 @@ class WebView extends React.Component {
     const node = this.getWebviewNode()
     const nwc = node.getWebContents()
     if (nwc && wc.id === nwc.id) {
+      this[privWebviewAttached] = true
       if (this.props.onWebContentsAttached) {
         this.props.onWebContentsAttached(wc)
       }
@@ -176,7 +182,7 @@ class WebView extends React.Component {
   updateEventListeners = () => {
     const node = this.getWebviewNode()
     WEBVIEW_EVENTS.forEach((domName) => {
-      const isListening = this.watchEventListeners.has(domName)
+      const isListening = this[privWatchEventListener].has(domName)
       const hasReactListener = !!this.props[camelCase(domName)] || INTERCEPTED_WEBVIEW_EVENTS.has(domName)
 
       if (isListening !== hasReactListener) {
@@ -256,11 +262,11 @@ class WebView extends React.Component {
     if (typeof (evt.channel.type) !== 'string') { return false }
 
     if (evt.channel.type.indexOf(SEND_RESPOND_PREFIX) === 0) {
-      if (this.ipcPromises.has(evt.channel.type)) {
-        const responder = this.ipcPromises.get(evt.channel.type)
+      if (this[privIpcPromises].has(evt.channel.type)) {
+        const responder = this[privIpcPromises].get(evt.channel.type)
         clearTimeout(responder.timeout)
         responder.resolve(evt.channel.data)
-        this.ipcPromises.delete(evt.channel.type)
+        this[privIpcPromises].delete(evt.channel.type)
       }
       return true
     } else {
@@ -397,38 +403,16 @@ class WebView extends React.Component {
       const id = Math.random().toString()
       const respondName = SEND_RESPOND_PREFIX + ':' + sendName + ':' + id
       const rejectTimeout = setTimeout(() => {
-        this.ipcPromises.delete(respondName)
+        this[privIpcPromises].delete(respondName)
         reject(new Error('Request Timeout'))
       }, timeout)
-      this.ipcPromises.set(respondName, { resolve: resolve, timeout: rejectTimeout })
-      this.getWebviewNode().send(sendName, Object.assign({}, obj, { __respond__: respondName }))
+      this[privIpcPromises].set(respondName, { resolve: resolve, timeout: rejectTimeout })
+      this.getWebviewNode().send(sendName, { ...obj, __respond__: respondName })
     })
   }
 
-  send = (...args) => {
-    //TODO: this is a hack a needs fixing
-    let res
-    try {
-      res = this.getWebviewNode().send(...args)
-    } catch (ex) {
-      console.log('webview.send failed', ex)
-    }
-    return res
-  }
-
-  executeJavaScript = (...args) => {
-    //TODO: this is a hack a needs fixing
-    let res
-    try {
-      res = this.getWebviewNode().executeJavaScript(...args)
-    } catch (ex) {
-      console.log('webview.executeJavaScript failed', ex)
-    }
-    return res
-  }
-
   /* **************************************************************************/
-  // Rendering
+  // Public
   /* **************************************************************************/
 
   /**
@@ -437,6 +421,17 @@ class WebView extends React.Component {
   getWebviewNode = () => {
     return ReactDOM.findDOMNode(this).getElementsByTagName('webview')[0]
   }
+
+  /**
+  * @return true if the webview is attached
+  */
+  isWebviewAttached = () => {
+    return this[privWebviewAttached]
+  }
+
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
 
   shouldComponentUpdate () {
     // we never want to re-render. We will handle this manually in componentWillReceiveProps
