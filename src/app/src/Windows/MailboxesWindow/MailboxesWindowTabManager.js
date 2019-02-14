@@ -281,12 +281,15 @@ class MailboxesWindowTabManager {
   */
   getOpenWindowCount (serviceId) {
     const mailboxesWindowId = WaveboxWindow.fromWebContentsId(this.webContentsId).browserWindowId
+
     const count = WaveboxWindow.all().reduce((acc, w) => {
       if (w.browserWindowId === mailboxesWindowId) { return acc }
       const windowCount = w.tabIds().reduce((acc, tabId) => {
         const meta = w.tabMetaInfo(tabId)
         if (!meta) { return acc }
-        if (!meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return acc }
+        if (meta.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return acc }
+        if (meta.serviceId !== serviceId) { return acc }
+
         return acc + 1
       }, 0)
       return acc + windowCount

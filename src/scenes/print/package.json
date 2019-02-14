@@ -5,7 +5,7 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Printer UI for Wavebox",
   "dependencies": {
-    "pdfjs-dist": "2.2.2",
+    "pdfjs-dist": "2.0.943",
     "uuid": "3.3.2"
   },
   "devDependencies": {

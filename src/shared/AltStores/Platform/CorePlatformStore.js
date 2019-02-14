@@ -14,6 +14,8 @@ class CorePlatformStore extends RemoteStore {
   constructor () {
     super(DISPATCH_NAME, ACTIONS_NAME, STORE_NAME)
 
+    this.installMethod = 'unknown'
+
     /* ****************************************/
     // Open at login
     /* ****************************************/
@@ -21,7 +23,15 @@ class CorePlatformStore extends RemoteStore {
     /**
     * @return true if login preferences are supported on this platform
     */
-    this.loginPrefSupported = () => { return process.platform === 'darwin' || process.platform === 'win32' }
+    this.loginPrefSupported = () => {
+      if (process.platform === 'darwin' || process.platform === 'win32') {
+        return true
+      } else if (process.platform === 'linux' && this.installMethod !== 'snap') {
+        return true
+      } else {
+        return false
+      }
+    }
 
     /* ****************************************/
     // Default Mail handler
@@ -30,7 +40,7 @@ class CorePlatformStore extends RemoteStore {
     /**
     * @return true if the platform supports mailto
     */
-    this.mailtoLinkHandlerSupported = () => { return process.platform === 'darwin' || process.platform === 'win32' }
+    this.mailtoLinkHandlerSupported = () => this.loginPrefSupported()
 
     /**
     * @return true if this app is the default mailto link handler
@@ -63,7 +73,9 @@ class CorePlatformStore extends RemoteStore {
   // Loading
   /* **************************************************************************/
 
-  handleLoad () { /* no-op */ }
+  handleLoad ({ installMethod }) {
+    this.installMethod = installMethod
+  }
 }
 
 export default CorePlatformStore

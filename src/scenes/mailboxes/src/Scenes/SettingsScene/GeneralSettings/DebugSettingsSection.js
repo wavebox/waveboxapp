@@ -6,10 +6,15 @@ import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import TimelineIcon from '@material-ui/icons/Timeline'
+import AssessmentIcon from '@material-ui/icons/Assessment'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import BugReportIcon from '@material-ui/icons/BugReport'
+import CheckIcon from '@material-ui/icons/Check'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
+import { WB_USER_RECORD_NEXT_WINDOW_OPEN_EVENT } from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
 
 const styles = {
   link: {
@@ -69,6 +74,16 @@ class DebugSettingsSection extends React.Component {
           )}
           onChange={(evt, toggled) => { settingsActions.sub.app.setWriteMetricsLog(toggled) }}
           checked={app.writeMetricsLog} />
+        <SettingsListItemConfirmButton
+          label='Log next window open event'
+          confirmLabel='All set!'
+          icon={<AssessmentIcon />}
+          confirmIcon={<CheckIcon />}
+          confirmWaitMs={2000}
+          onConfirmedClick={() => {}}
+          buttonProps={{
+            onClick: () => { ipcRenderer.send(WB_USER_RECORD_NEXT_WINDOW_OPEN_EVENT) }
+          }} />
         <SettingsListItemButton
           divider={false}
           label='Task Monitor'

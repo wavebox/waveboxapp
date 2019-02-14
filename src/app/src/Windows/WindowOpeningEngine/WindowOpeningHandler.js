@@ -1,4 +1,4 @@
-import { shell, app } from 'electron'
+import { ipcMain, shell, app, dialog, clipboard } from 'electron'
 import { settingsStore } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
 import WindowOpeningEngine from './WindowOpeningEngine'
@@ -7,11 +7,13 @@ import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import accountStore from 'stores/account/accountStore'
 import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
+import { WB_USER_RECORD_NEXT_WINDOW_OPEN_EVENT } from 'shared/ipcEvents'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { OSSettings } from 'shared/Models/Settings'
 import WindowOpeningOpeners from './WindowOpeningOpeners'
 
 const privWindowOpeningOpeners = Symbol('privWindowOpeningOpeners')
+const privRecordOpenEvent = Symbol('privRecordOpenEvent')
 
 class WindowOpeningHandler {
   /* ****************************************************************************/
@@ -20,6 +22,9 @@ class WindowOpeningHandler {
 
   constructor () {
     this[privWindowOpeningOpeners] = new WindowOpeningOpeners()
+    this[privRecordOpenEvent] = false
+
+    ipcMain.on(WB_USER_RECORD_NEXT_WINDOW_OPEN_EVENT, () => { this[privRecordOpenEvent] = true })
   }
 
   /* ****************************************************************************/
@@ -170,6 +175,46 @@ class WindowOpeningHandler {
       this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride, true)
     } else {
       this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
+    }
+
+    // If the user wanted to record this, output the info
+    if (this[privRecordOpenEvent]) {
+      this[privRecordOpenEvent] = false
+      const openEvt = {
+        targetUrl: targetUrl,
+        provisionalTargetUrl: provisionalTargetUrl,
+        currentUrl: currentUrl,
+        currentHostUrl: currentHostUrl,
+        disposition: disposition,
+        openingWindowType: openingWindowType,
+        shiftPressed: WaveboxAppCommandKeyTracker.shiftPressed,
+        commandOrControlPressed: WaveboxAppCommandKeyTracker.commandOrControlPressed,
+        platform: process.platform,
+        openMode: openMode
+      }
+      console.log('Window open event', openEvt)
+      dialog.showMessageBox({
+        type: 'info',
+        buttons: [
+          'Done',
+          'Copy full info to clipboard'
+        ],
+        defaultId: 0,
+        title: 'Window open event',
+        message: [
+          `Window open event info...`,
+          ''
+        ].concat(
+          Object.keys(openEvt).reduce((acc, k) => {
+            const v = `${openEvt[k]}`
+            return acc.concat(`${k}: ${v.length > 25 ? `${v.substr(0, 25)}...` : v}`)
+          }, [])
+        ).join('\n')
+      }, (opt) => {
+        if (opt === 1) {
+          clipboard.writeText(JSON.stringify(openEvt, null, 2))
+        }
+      })
     }
   }
 
