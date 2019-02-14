@@ -104,7 +104,7 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   generateAccountState (props, accountState = accountStore.getState()) {
     const { mailboxId, serviceId } = props
     const mailbox = accountState.getMailbox(mailboxId)
-    const mailboxActiveServiceId = accountState.activeServiceIdInMailbox(mailboxId)
+    const mailboxShimService = accountState.activeServiceIdInMailbox(mailboxId) || mailbox.allServices[0]
     const service = accountState.getService(serviceId)
 
     return {
@@ -112,13 +112,13 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
       ...(mailbox ? {
         serviceCount: mailbox.allServiceCount,
         mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId),
-        mailboxActiveServiceId: mailboxActiveServiceId,
-        mailboxActiveServiceIsSleeping: mailboxActiveServiceId ? accountState.isServiceSleeping(mailboxActiveServiceId) : true
+        mailboxShimService: mailboxShimService,
+        mailboxShimServiceSleeping: accountState.isServiceSleeping(mailboxShimService)
       } : {
         serviceCount: 0,
         mailboxDisplayName: 'Untitled',
-        mailboxActiveServiceId: undefined,
-        mailboxActiveServiceIsSleeping: true
+        mailboxShimService: undefined,
+        mailboxShimServiceSleeping: true
       }),
       ...(serviceId ? {
         service: accountState.getService(serviceId),
@@ -195,12 +195,19 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleReloadService = (evt) => {
+    const { isServiceSleeping } = this.state
     const { serviceId } = this.props
-    accountActions.changeActiveService(serviceId)
-    setTimeout(() => {
-      accountDispatch.reloadService(serviceId)
-    }, 100) // Give the UI some time to catch up
-    this.closePopover(evt)
+    if (isServiceSleeping) {
+      this.closePopover(evt, () => {
+        accountActions.awakenService(serviceId)
+        accountActions.changeActiveService(serviceId)
+      })
+    } else {
+      this.closePopover(evt, () => {
+        accountActions.changeActiveService(serviceId)
+        accountDispatch.reloadService(serviceId)
+      })
+    }
   }
 
   /**
@@ -208,13 +215,18 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleReloadMailbox = (evt) => {
-    const { mailboxActiveServiceId } = this.state
-    if (mailboxActiveServiceId) {
-      setTimeout(() => {
-        accountDispatch.reloadService(mailboxActiveServiceId)
-      }, 100) // Give the UI some time to catch up
+    const { mailboxShimService, mailboxShimServiceSleeping } = this.state
+    if (mailboxShimServiceSleeping) {
+      this.closePopover(evt, () => {
+        accountActions.awakenService(mailboxShimService)
+        accountActions.changeActiveService(mailboxShimService)
+      })
+    } else {
+      this.closePopover(evt, () => {
+        accountActions.changeActiveService(mailboxShimService)
+        accountDispatch.reloadService(mailboxShimService)
+      })
     }
-    this.closePopover(evt)
   }
 
   /**
@@ -296,8 +308,9 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleSleepService = (evt) => {
+    const { serviceId } = this.props
     this.closePopover(evt, () => {
-      accountActions.sleepService(this.props.serviceId)
+      accountActions.sleepService(serviceId, true)
     })
   }
 
@@ -306,8 +319,9 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleSleepAllServices = (evt) => {
+    const { mailboxId } = this.props
     this.closePopover(evt, () => {
-      accountActions.sleepAllServicesInMailbox(this.props.mailboxId)
+      accountActions.sleepAllServicesInMailbox(mailboxId, true)
     })
   }
 
@@ -620,9 +634,6 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
       service,
       serviceCount,
       userHasSleepable,
-      isServiceSleeping,
-      mailboxActiveServiceId,
-      mailboxActiveServiceIsSleeping,
       serviceType
     } = this.state
     if (!mailbox) { return false }
@@ -641,13 +652,7 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
         {userHasSleepable && serviceCount > 1 ? this.renderItem(ITEM_TYPES.MAILBOX_SLEEP) : undefined}
 
         {/* Reload & Sync & Auth */}
-        {service && !isServiceSleeping ? (
-          this.renderItem(ITEM_TYPES.SERVICE_RELOAD)
-        ) : (
-          mailboxActiveServiceId && !mailboxActiveServiceIsSleeping ? (
-            this.renderItem(ITEM_TYPES.MAILBOX_RELOAD)
-          ) : undefined
-        )}
+        {this.renderItem(service ? ITEM_TYPES.SERVICE_RELOAD : ITEM_TYPES.MAILBOX_RELOAD)}
         {this.renderItem(service && !serviceIsPriority ? ITEM_TYPES.RESYNC_SERVICE : ITEM_TYPES.RESYNC_MAILBOX)}
         {service && service.supportedAuthNamespace ? this.renderItem(ITEM_TYPES.SERVICE_REAUTHENTICATE) : undefined}
 

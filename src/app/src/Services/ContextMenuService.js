@@ -423,6 +423,16 @@ class ContextMenuService {
           click: () => { contents.downloadURL(params.srcURL) }
         },
         {
+          label: 'Copy Image',
+          click: () => {
+            if (params.srcURL.startsWith('data:')) {
+              clipboard.writeImage(nativeImage.createFromDataURL(params.srcURL))
+            } else {
+              contents.copyImageAt(params.x, params.y)
+            }
+          }
+        },
+        {
           label: 'Copy Image Address',
           click: () => { clipboard.writeText(params.srcURL) }
         }

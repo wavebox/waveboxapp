@@ -813,17 +813,17 @@ class AccountStore extends CoreAccountStore {
     this.clearServiceSleep(id)
   }
 
-  handleSleepService ({ id }) {
+  handleSleepService ({ id, ignoreChildrenCheck }) {
     if (this.isServiceSleeping(id)) { this.preventDefault(); return }
-    this.sleepService(id)
+    this.sleepService(id, ignoreChildrenCheck)
   }
 
-  handleSleepAllServicesInMailbox ({ id }) {
+  handleSleepAllServicesInMailbox ({ id, ignoreChildrenCheck }) {
     const mailbox = this.getMailbox(id)
     if (!mailbox) { this.preventDefault(); return }
 
     mailbox.allServices.forEach((serviceId) => {
-      this.sleepService(serviceId)
+      this.sleepService(serviceId, ignoreChildrenCheck)
     })
   }
 
@@ -872,14 +872,15 @@ class AccountStore extends CoreAccountStore {
   /**
   * Runs the process of sending a mailbox to sleep whilst also checking if it owns any other windows
   * @param id: the id of the service
+  * @Param ignoreChildrenCheck=false: set to true to ignore checking for child windows
   * @return true if we did sleep, false otherwise
   */
-  sleepService (id) {
+  sleepService (id, ignoreChildrenCheck = false) {
     if (this.isServiceSleeping(id)) { return }
 
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
     const openWindowCount = mailboxesWindow ? mailboxesWindow.tabManager.getOpenWindowCount(id) : 0
-    if (openWindowCount === 0) {
+    if (ignoreChildrenCheck === true || openWindowCount === 0) {
       // Clear previous
       clearTimeout(this._sleepingQueue_.get(id) || null)
       this._sleepingQueue_.delete(id)

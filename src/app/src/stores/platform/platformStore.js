@@ -6,8 +6,12 @@ import path from 'path'
 import pkg from 'package.json'
 import electron from 'electron'
 
-const WinRegistry = process.platform === 'win32' ? require('winreg') : null
-const AutoLaunch = process.platform === 'darwin' ? require('auto-launch') : null
+const WinRegistry = process.platform === 'win32'
+  ? require('winreg')
+  : null
+const AutoLaunch = ['darwin', 'linux'].includes(process.platform)
+  ? require('@artemv/auto-launch')
+  : null
 
 const WIN32_REG_PATH = '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
 const darwinLaunchPath = process.platform === 'darwin' ? (() => {
@@ -39,14 +43,25 @@ class PlatformStore extends CorePlatformStore {
   }
 
   /* **************************************************************************/
+  // Remote
+  /* **************************************************************************/
+
+  /**
+  * Overwrite
+  */
+  _remoteConnectReturnValue () {
+    return { installMethod: this.installMethod }
+  }
+
+  /* **************************************************************************/
   // Handlers: Login
   /* **************************************************************************/
 
   handleChangeLoginPref ({ openAtLogin, openAsHidden }) {
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' || (process.platform === 'linux' && this.installMethod !== 'snap')) {
       const autoLaunch = new AutoLaunch({
         name: pkg.name,
-        path: darwinLaunchPath,
+        path: process.platform === 'darwin' ? darwinLaunchPath : undefined,
         isHidden: openAsHidden
       })
       if (openAtLogin) {

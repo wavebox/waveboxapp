@@ -457,11 +457,12 @@ class CoreAccountActions extends RemoteActions {
   /**
   * Sleeps a service
   * @param id: the id of the service
+  * @param ignoreChildrenCheck=false: set to true to ignore checking for child windows
   */
   sleepService (...args) {
     if (process.type === 'browser') {
-      const [id] = args
-      return { id }
+      const [id, ignoreChildrenCheck = false] = args
+      return { id, ignoreChildrenCheck }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('sleepService', args)
     }
@@ -470,11 +471,12 @@ class CoreAccountActions extends RemoteActions {
   /**
   * Sleeps all services in a mailbox
   * @param id: the id of the mailbox
+  * * @param ignoreChildrenCheck=false: set to true to ignore checking for child windows
   */
   sleepAllServicesInMailbox (...args) {
     if (process.type === 'browser') {
-      const [id] = args
-      return { id }
+      const [id, ignoreChildrenCheck = false] = args
+      return { id, ignoreChildrenCheck }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('sleepAllServicesInMailbox', args)
     }
