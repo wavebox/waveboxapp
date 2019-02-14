@@ -38,7 +38,7 @@
     "vm2": "3.6.10",
     "winreg": "1.2.4",
     "xml2js": "0.4.19",
-    "yargs": "12.0.5"
+    "yargs": "13.1.0"
   },
   "scripts": {
     "postinstall": "node ../../scripts/npmlibPatchEmscriptenWasmLoader.js"
