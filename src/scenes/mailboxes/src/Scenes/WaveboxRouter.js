@@ -258,6 +258,8 @@ export default class WaveboxRouter extends React.Component {
               {/* Dialogs: Utils */}
               <RouterDialogRoute path='/spinner' routeName='spinner' />
 
+              <Route path='/keyboardtarget' render={() => { return false }} />
+
               <Route component={WaveboxRouterNoMatch} />
             </Switch>
           </WaveboxRouterErrorBoundary>
