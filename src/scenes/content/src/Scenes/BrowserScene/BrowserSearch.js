@@ -140,7 +140,9 @@ class BrowserSearch extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (this.state.isSearching !== prevState.isSearching) {
       if (this.state.isSearching) {
-        this.focus()
+        this.searchInputRef.focus()
+      } else {
+        this.searchInputRef.blur()
       }
     }
   }

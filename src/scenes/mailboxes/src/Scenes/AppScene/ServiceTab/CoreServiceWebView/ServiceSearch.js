@@ -172,6 +172,8 @@ class ServiceSearch extends React.Component {
       if (this.state.isSearching !== prevState.isSearching) {
         if (this.state.isSearching) {
           this.inputRef.focus()
+        } else {
+          this.inputRef.blur()
         }
       }
     }

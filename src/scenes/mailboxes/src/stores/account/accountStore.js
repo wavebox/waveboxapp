@@ -981,10 +981,17 @@ class AccountStore extends RendererAccountStore {
 
   handleStartSearchingService ({ serviceId = this.activeServiceId() }) {
     if (!serviceId) { this.preventDefault(); return }
-    this._search_.set(serviceId, {
-      term: '',
-      hash: uuid.v4()
-    })
+    if (this._search_.has(serviceId)) {
+      this._search_.set(serviceId, {
+        term: this._search_.get(serviceId).term,
+        hash: uuid.v4()
+      })
+    } else {
+      this._search_.set(serviceId, {
+        term: '',
+        hash: uuid.v4()
+      })
+    }
   }
 
   handleUntrackSearchingService ({ serviceId = this.activeServiceId() }) {

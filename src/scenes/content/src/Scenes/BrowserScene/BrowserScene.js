@@ -161,10 +161,10 @@ class BrowserScene extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Handles the window refocusing by pointing the focus back onto the active mailbox
+  * Handles the window refocusing by pointing the focus back onto the active webview
   */
   handleWindowFocused = () => {
-    if (window.location.hash.length < 2) {
+    if (window.location.hash.length <= 2) {
       this.refs[BROWSER_REF].focus()
     }
   }
