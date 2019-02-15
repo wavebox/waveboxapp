@@ -133,6 +133,24 @@ class BrowserSearch extends React.Component {
     }
   }
 
+  /**
+  * Handles the input bluring
+  * @param evt: the event that fired
+  */
+  handleBlur = (evt) => {
+    if (window.location.hash.indexOf('keyboardtarget?search=true') !== -1) {
+      window.location.hash = '/'
+    }
+  }
+
+  /**
+  * Handles the input focusing
+  * @param evt: the event that fired
+  */
+  handleFocus = (evt) => {
+    window.location.hash = '/keyboardtarget?search=true'
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -140,7 +158,9 @@ class BrowserSearch extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (this.state.isSearching !== prevState.isSearching) {
       if (this.state.isSearching) {
-        this.focus()
+        this.searchInputRef.focus()
+      } else {
+        this.searchInputRef.blur()
       }
     }
   }
@@ -158,6 +178,8 @@ class BrowserSearch extends React.Component {
           inputProps={{ tabIndex: -1 }}
           className={classes.input}
           value={searchTerm}
+          onBlur={this.handleBlur}
+          onFocus={this.handleFocus}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
         <IconButton tabIndex={-1} onClick={this.handleFindNext}>

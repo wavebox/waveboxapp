@@ -205,22 +205,6 @@ class AccountDispatch extends EventEmitter {
     this.emit('refocus', { serviceId: serviceId })
   }
 
-  /**
-  * Emis a blurred event for a mailbox
-  * @param serviceId: the id of the service
-  */
-  blurred (serviceId) {
-    this.emit('blurred', { serviceId: serviceId })
-  }
-
-  /**
-  * Emis a focused event for a mailbox
-  * @param serviceId: the id of the service
-  */
-  focused (serviceId) {
-    this.emit('focused', { serviceId: serviceId })
-  }
-
   /* **************************************************************************/
   // Event Fires : Linking
   /* **************************************************************************/

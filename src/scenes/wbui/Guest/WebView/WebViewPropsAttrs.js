@@ -24,8 +24,6 @@ const WEBVIEW_EVENTS = [
   'gpu-crashed',
   'plugin-crashed',
   'destroyed',
-  'focus',
-  'blur',
   'update-target-url',
   'will-navigate',
   'did-change-theme-color'

@@ -47,6 +47,8 @@ export default class WaveboxRouter extends React.Component {
               {/* Dialogs: Links */}
               <RouterDialogRoute path='/link/open/:requestId' routeName='ulinkor_ask' />
 
+              <Route path='/keyboardtarget' render={() => { return false }} />
+
               <Route component={WaveboxRouterNoMatch} />
             </Switch>
           </WaveboxRouterErrorBoundary>

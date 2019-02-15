@@ -1,6 +1,5 @@
 import React from 'react'
 import WaveboxRouter from './WaveboxRouter'
-import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
 import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
@@ -52,7 +51,6 @@ export default class Provider extends React.Component {
     // STEP 3. Listen for self
     accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
-    accountDispatch.on('blurred', this.serviceBlurred)
 
     // Step 4. Customizations
     if (this.state.uiSettings.customMainCSS) {
@@ -80,7 +78,6 @@ export default class Provider extends React.Component {
     // STEP 3. Listening for self
     accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
-    accountDispatch.removeListener('blurred', this.serviceBlurred)
 
     // STEP 4. Customizations
     this.renderCustomCSS(null)
@@ -126,43 +123,11 @@ export default class Provider extends React.Component {
     })
   }
 
-  /* **************************************************************************/
-  // Rendering Events
-  /* **************************************************************************/
-
-  /**
-  * Handles a mailbox bluring by trying to refocus the mailbox
-  * @param evt: the event that fired
-  */
-  serviceBlurred = (evt) => {
-    // Requeue the event to run on the end of the render cycle
-    clearTimeout(this.refocusTO)
-    this.refocusTO = setTimeout(() => {
-      const active = document.activeElement
-      if (active.tagName === 'WEBVIEW') {
-        // Nothing to do, already focused on mailbox
-        clearInterval(this.forceFocusTO)
-      } else if (active.tagName === 'BODY') {
-        // Focused on body, just dip focus onto the webview
-        clearInterval(this.forceFocusTO)
-        accountDispatch.refocus()
-      } else {
-        // focused on some element in the ui, poll until we move back to body
-        this.forceFocusTO = setInterval(() => {
-          if (document.activeElement.tagName === 'BODY') {
-            clearInterval(this.forceFocusTO)
-            accountDispatch.refocus()
-          }
-        }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
-      }
-    }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
-  }
-
   /**
   * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
   handleWindowFocused = () => {
-    if (window.location.hash.length < 2) {
+    if (window.location.hash.length <= 2) {
       accountDispatch.refocus()
     }
   }
