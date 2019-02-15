@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "4.7.1",
+  "version": "4.7.2",
   "releaseChannel": "STABLE",
   "description": "Wavebox",
   "scripts": {
@@ -102,7 +102,7 @@
   },
   "electronInstallEnv": {
     "xELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "xELECTRON_CUSTOM_DIR": "wb_4_7_1"
+    "xELECTRON_CUSTOM_DIR": "wb_4_7_2"
   },
   "pre-commit": [
     "validate"

@@ -307,7 +307,7 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenDevTools = (evt) => {
-    const isThisTab = evt.serviceId === this.props.serviceId || (!evt.service && this.state.isActive)
+    const isThisTab = evt.serviceId === this.props.serviceId || (!evt.serviceId && this.state.isActive)
     if (isThisTab) {
       this.browserRef.current.openDevTools()
     }
@@ -318,7 +318,7 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleRefocus = (evt) => {
-    const isThisTab = evt.serviceId === this.props.serviceId || (!evt.service && this.state.isActive)
+    const isThisTab = evt.serviceId === this.props.serviceId || (!evt.serviceId && this.state.isActive)
     if (isThisTab) {
       setTimeout(() => { this.browserRef.current.focus() })
     }
@@ -610,24 +610,6 @@ class CoreServiceWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Browser Events : Focus
-  /* **************************************************************************/
-
-  /**
-  * Handles a browser focusing
-  */
-  handleBrowserFocused () {
-    accountDispatch.focused(this.props.serviceId)
-  }
-
-  /**
-  * Handles a browser un-focusing
-  */
-  handleBrowserBlurred () {
-    accountDispatch.blurred(this.props.serviceId)
-  }
-
-  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -758,12 +740,6 @@ class CoreServiceWebView extends React.Component {
             }}
             ipcMessage={(evt) => {
               this.multiCallBrowserEvent([this.dispatchBrowserIPCMessage, webviewEventProps.ipcMessage], [evt])
-            }}
-            focus={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserFocused, webviewEventProps.focus], [evt])
-            }}
-            blur={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserBlurred, webviewEventProps.blur], [evt])
             }}
             updateTargetUrl={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserUpdateTargetUrl, webviewEventProps.updateTargetUrl], [evt])

@@ -77,10 +77,12 @@ class WebView extends React.Component {
 
     // Create an artificial onWebContentsAttached event
     electron.remote.getCurrentWebContents().on('did-attach-webview', this.handleWebContentsAttached)
+    electron.remote.getCurrentWindow().on('focus', this.handleWindowFocused)
   }
 
   componentWillUnmount () {
     electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
+    electron.remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -117,6 +119,33 @@ class WebView extends React.Component {
         this.props.onWebContentsAttached(wc)
       }
       electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
+    }
+  }
+
+  /**
+  * Handles the window coming into focus
+  * @param evt: the event that fired
+  */
+  handleWindowFocused = (evt) => {
+    const node = this.getWebviewNode()
+    if (document.activeElement === node) {
+      // There's an issue where the mouse hover state is incorrectly reported to the child window.
+      // It's not 100% reproducable but is more reproducable when all these are true:,
+      // gmail, darwin, multiple extensions, switching via keyboard, switching from another desktop
+      // Bluring the element, focusing on another and focusing back on next tick seems to fix
+      node.blur()
+      const el = document.createElement('input')
+      el.style.position = 'fixed'
+      el.style.top = '-10000px'
+      el.style.left = '0px'
+      el.style.width = '1px'
+      el.style.height = '1px'
+      document.body.appendChild(el)
+      el.focus()
+      setTimeout(() => {
+        node.focus()
+        document.body.removeChild(el)
+      })
     }
   }
 
@@ -188,6 +217,7 @@ class WebView extends React.Component {
       if (isListening !== hasReactListener) {
         if (isListening && !hasReactListener) {
           node.removeEventListener(domName, this.handleWebviewEvent)
+          this[privWatchEventListener].delete(domName)
         } else if (!isListening && hasReactListener) {
           if (domName === 'will-navigate') {
             /**
@@ -201,6 +231,7 @@ class WebView extends React.Component {
             ].join(' '), this.getWebviewNode())
           }
           node.addEventListener(domName, this.handleWebviewEvent)
+          this[privWatchEventListener].add(domName)
         }
       }
     })
