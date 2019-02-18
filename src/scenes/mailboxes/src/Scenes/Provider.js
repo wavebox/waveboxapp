@@ -32,9 +32,8 @@ export default class Provider extends React.Component {
 
   componentDidMount () {
     // STEP 0. Maintaining focus
-    this.refocusTO = null
-    this.forceFocusTO = null
-    remote.getCurrentWindow().on('focus', this.handleWindowFocused)
+    remote.getCurrentWindow().on('focus', this.handleFocusWebview)
+    remote.getCurrentWebContents().on('did-attach-webview', this.handleFocusWebview)
 
     // STEP 1. App services
     Analytics.startAutoreporting()
@@ -59,9 +58,8 @@ export default class Provider extends React.Component {
   }
 
   componentWillUnmount () {
-    clearTimeout(this.refocusTO)
-    clearInterval(this.forceFocusTO)
-    remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
+    remote.getCurrentWindow().removeListener('focus', this.handleFocusWebview)
+    remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleFocusWebview)
 
     // STEP 1. App services
     Analytics.stopAutoreporting()
@@ -123,10 +121,14 @@ export default class Provider extends React.Component {
     })
   }
 
+  /* **************************************************************************/
+  // Focus lifecycle
+  /* **************************************************************************/
+
   /**
   * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
-  handleWindowFocused = () => {
+  handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
       accountDispatch.refocus()
     }
