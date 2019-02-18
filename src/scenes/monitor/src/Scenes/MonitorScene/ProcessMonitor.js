@@ -179,7 +179,6 @@ class ProcessMonitor extends React.Component {
   * @return jsx
   */
   renderBasicRow (classes, isAdvanced, metric) {
-    const osUnreliableIndicator = metric.os.unreliable ? '*' : ''
     if (isAdvanced) {
       return (
         <TableRow key={metric.pid} className={classes.row}>
@@ -190,27 +189,13 @@ class ProcessMonitor extends React.Component {
             {this.renderDescription(metric)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizeBytes(metric.os.memory)}
-            {osUnreliableIndicator}
+            {this.humanizeBytes(metric.memory.bytes)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizeBytes(metric.chromium.memory.workingSetSize, 1024)}
+            {this.humanizePercent(metric.extended.cpu)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizeBytes(metric.chromium.memory.peakWorkingSetSize, 1024)}
-          </TableCell>
-          <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizeBytes(metric.chromium.memory.privateBytes, 1024)}
-          </TableCell>
-          <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizeBytes(metric.chromium.memory.sharedBytes, 1024)}
-          </TableCell>
-          <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizePercent(metric.os.cpu)}
-            {osUnreliableIndicator}
-          </TableCell>
-          <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizePercent(metric.chromium.cpu.percentCPUUsage)}
+            {this.humanizePercent(metric.cpu.percentCPUUsage)}
           </TableCell>
         </TableRow>
       )
@@ -224,12 +209,10 @@ class ProcessMonitor extends React.Component {
             {this.renderDescription(metric)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizeBytes(metric.os.memory)}
-            {osUnreliableIndicator}
+            {this.humanizeBytes(metric.memory.bytes)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizePercent(metric.chromium.cpu.percentCPUUsage)}
-            {osUnreliableIndicator}
+            {this.humanizePercent(metric.cpu.percentCPUUsage)}
           </TableCell>
         </TableRow>
       )
@@ -249,11 +232,7 @@ class ProcessMonitor extends React.Component {
           <TableRow className={classes.headRow}>
             <TableCell className={classNames(classes.hCell, classes.pidCell)}>Pid</TableCell>
             <TableCell className={classNames(classes.hCell)}>Description</TableCell>
-            <TableCell className={classNames(classes.hCell, classes.fixed80)}>OS Memory</TableCell>
-            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Working Set</TableCell>
-            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Peak Working Set</TableCell>
-            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Private Memory</TableCell>
-            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Shared Memory</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Memory</TableCell>
             <TableCell className={classNames(classes.hCell, classes.fixed80)}>OS CPU</TableCell>
             <TableCell className={classNames(classes.hCell, classes.fixed80)}>CR CPU</TableCell>
           </TableRow>

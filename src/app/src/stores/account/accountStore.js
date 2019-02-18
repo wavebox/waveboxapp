@@ -29,6 +29,7 @@ import GenericService from 'shared/Models/ACAccounts/Generic/GenericService'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import HtmlMetaService from 'HTTP/HtmlMetaService'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
+import ServicesManager from 'Services'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -885,10 +886,20 @@ class AccountStore extends CoreAccountStore {
       clearTimeout(this._sleepingQueue_.get(id) || null)
       this._sleepingQueue_.delete(id)
 
-      // Record metrics
-      const sleepMetrics = this.generateServiceSleepMetrics(id)
-      this._sleepingMetrics_.set(id, sleepMetrics)
-      this.dispatchToRemote('remoteSetSleepMetrics', [id, sleepMetrics])
+      // Sleep metrics went async after electron 3. We don't want to hold sleep up to generate
+      // the metrics so instead sleep right away and optimistically hope we can generate
+      // metrics. Because the webcontents wont sleep immediately due to ipc and
+      // generating the last screenshot there will normally be time to do this!
+      this._sleepingMetrics_.delete(id)
+      this.dispatchToRemote('remoteSetSleepMetrics', [id, null])
+      Promise.resolve()
+        .then(() => this.generateServiceSleepMetrics(id))
+        .then((metrics) => {
+          this._sleepingMetrics_.set(id, metrics)
+          this.dispatchToRemote('remoteSetSleepMetrics', [id, metrics])
+          this.emitChange()
+        })
+        .catch(() => { /* no-op */ })
 
       // Sleep
       this._sleepingServices_.set(id, true)
@@ -911,15 +922,20 @@ class AccountStore extends CoreAccountStore {
   /**
   * @param mailboxId: the id of the mailbox
   * @param serviceType: the type of service
-  * @return the metrics for the web contents or undefined if not found
+  * @return a promise with the metrics or undefined if not found
   */
   generateServiceSleepMetrics (id) {
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    const metric = mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(id) : undefined
-    return metric ? {
-      ...metric,
-      timestamp: new Date().getTime()
-    } : undefined
+    if (!mailboxesWindow) { return Promise.resolve(undefined) }
+
+    const pid = mailboxesWindow.tabManager.getWebContentsOSProcessId(id)
+    if (pid === undefined) { return Promise.resolve(undefined) }
+
+    return Promise.resolve()
+      .then(() => ServicesManager.metricsService.getMetricsForPid(pid))
+      .then((metric) => {
+        return { ...metric, timestamp: new Date().getTime() }
+      })
   }
 
   /* **************************************************************************/

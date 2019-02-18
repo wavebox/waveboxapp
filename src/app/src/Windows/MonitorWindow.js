@@ -43,11 +43,14 @@ class MonitorWindow extends WaveboxWindow {
   * Collects the current stats and forwards them to the webcontents
   */
   collectMetrics = () => {
-    ServicesManager.metricsService.getExtendedMetrics().then((metrics) => {
-      if (this.window) {
-        this.window.webContents.send(WB_COLLECTED_METRICS, { metrics: metrics })
-      }
-    })
+    Promise.resolve()
+      .then(() => ServicesManager.metricsService.getMetrics(true))
+      .then((metrics) => {
+        if (this.window) {
+          this.window.webContents.send(WB_COLLECTED_METRICS, { metrics: metrics })
+        }
+      })
+      .catch(() => { /* no-op */ })
   }
 
   /* ****************************************************************************/

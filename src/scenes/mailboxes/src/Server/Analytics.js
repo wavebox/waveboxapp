@@ -7,6 +7,7 @@ import settingsStore from 'stores/settings/settingsStore'
 import SettingsIdent from 'shared/Models/Settings/SettingsIdent'
 import querystring from 'querystring'
 import os from 'os'
+import uuid from 'uuid'
 import { URL } from 'url'
 import pkg from 'package.json'
 import DistributionConfig from 'Runtime/DistributionConfig'
@@ -16,7 +17,7 @@ import {
   ANALYTICS_CONFIG_INTERVAL
 } from 'shared/constants'
 import {
-  WB_METRICS_GET_CHROMIUM_METRICS_SYNC
+  WB_METRICS_FETCH_CHROMIUM_METRICS
 } from 'shared/ipcEvents'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
@@ -122,6 +123,28 @@ class Analytics {
   }
 
   /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  /**
+  * Gets the resource usage from the main thread
+  * @return promise
+  */
+  getResourceUsage () {
+    return new Promise((resolve, reject) => {
+      const returnChannel = `${WB_METRICS_FETCH_CHROMIUM_METRICS}_${uuid.v4()}`
+      ipcRenderer.once(returnChannel, (evt, err, metrics) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(metrics)
+        }
+      })
+      ipcRenderer.send(WB_METRICS_FETCH_CHROMIUM_METRICS, returnChannel)
+    })
+  }
+
+  /* ****************************************************************************/
   // Events: WB
   /* ****************************************************************************/
 
@@ -164,27 +187,32 @@ class Analytics {
   * Log the resource usage
   */
   sendResourceUsage () {
-    const metrics = ipcRenderer.sendSync(WB_METRICS_GET_CHROMIUM_METRICS_SYNC)
-    if (!metrics) { return Promise.resolve({ sent: false }) }
-    const sendMetrics = metrics.map((metric) => {
-      if (metric.webContentsInfo) {
-        return {
-          ...metric,
-          webContentsInfo: metric.webContentsInfo.map((wcMetric) => {
+    return Promise.resolve()
+      .then(() => this.getResourceUsage())
+      .then((metrics) => {
+        const sendMetrics = metrics.map((metric) => {
+          if (metric.webContentsInfo) {
             return {
-              description: wcMetric.description,
-              url: wcMetric.url ? new URL(wcMetric.url).hostname : undefined
+              ...metric,
+              webContentsInfo: metric.webContentsInfo.map((wcMetric) => {
+                return {
+                  description: wcMetric.description,
+                  url: wcMetric.url ? new URL(wcMetric.url).hostname : undefined
+                }
+              })
             }
-          })
-        }
-      } else {
-        return metric
-      }
-    })
-
-    return this.sendWb('resource', {
-      metrics: sendMetrics
-    }, true)
+          } else {
+            return metric
+          }
+        })
+        return sendMetrics
+      })
+      .then((sendMetrics) => {
+        return this.sendWb('resource', { metrics: sendMetrics }, true)
+      })
+      .catch((ex) => {
+        return Promise.resolve({ sent: false })
+      })
   }
 
   /* ****************************************************************************/

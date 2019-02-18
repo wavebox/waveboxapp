@@ -45,27 +45,10 @@ class MonitorStore {
 
   handleLoad () { /* no-op */ }
 
-  handleUpdateMetrics ({ metrics, system }) {
+  handleUpdateMetrics ({ metrics }) {
     this.metrics.clear()
     metrics.forEach((metric) => {
-      if (metric.os) {
-        this.metrics.set(metric.pid, metric)
-      } else {
-        // If we don't have OS metrics, scrape dummy values from the chromium ones
-        this.metrics.set(metric.pid, {
-          ...metric,
-          os: {
-            unreliable: true,
-            cpu: metric.chromium.cpu.percentCPUUsage,
-            memory: metric.chromium.memory.workingSetSize * 1024,
-            ppid: -1,
-            pid: metric.pid,
-            ctime: -1,
-            elapsed: -1,
-            timestamp: -1
-          }
-        })
-      }
+      this.metrics.set(metric.pid, metric)
     })
   }
 
