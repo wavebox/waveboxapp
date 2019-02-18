@@ -58,10 +58,7 @@ class BrowserScene extends React.Component {
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
 
-    // Handle a case where the webview wont immediately take focus.
-    // Hack around a little bit to get it to focus
-    setTimeout(() => { this.handleWindowFocused() }, 1)
-    remote.getCurrentWindow().on('focus', this.handleWindowFocused)
+    remote.getCurrentWindow().on('focus', this.handleFocusWebview)
   }
 
   componentWillUnmount () {
@@ -69,7 +66,7 @@ class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
-    remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
+    remote.getCurrentWindow().removeListener('focus', this.handleFocusWebview)
   }
 
   /* **************************************************************************/
@@ -163,7 +160,7 @@ class BrowserScene extends React.Component {
   /**
   * Handles the window refocusing by pointing the focus back onto the active webview
   */
-  handleWindowFocused = () => {
+  handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
       this.refs[BROWSER_REF].focus()
     }
@@ -222,6 +219,7 @@ class BrowserScene extends React.Component {
             didStopLoading={(evt) => browserActions.stopLoading()}
             ipcMessage={this.handleBrowserIPCMessage}
             didNavigate={this.navigationStateDidChange}
+            onWebContentsAttached={this.handleFocusWebview}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={this.navigationStateDidChange} />
           <BrowserViewLoadBar isLoading={isLoading} />
