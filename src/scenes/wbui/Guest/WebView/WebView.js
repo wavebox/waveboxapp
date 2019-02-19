@@ -368,7 +368,7 @@ class WebView extends React.Component {
       // Run the capture
       setTimeout(() => {
         try {
-          node.capturePage(arg1, (img) => {
+          node.getWebContents().capturePage(arg1, (img) => {
             clearTimeout(timeoutWarn)
             clearTimeout(timeout)
             setTimeout(() => {
