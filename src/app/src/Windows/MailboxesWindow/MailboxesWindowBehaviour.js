@@ -188,11 +188,11 @@ class MailboxesWindowBehaviour {
       const mapped = KeyboardLayout.getCurrentKeymap()[input.code]
       if (mapped) {
         if (input.shift && input.alt) {
-          input.key = mapped.withAltGraphShift
+          input.key = mapped.withAltGraphShift.toLowerCase()
         } else if (input.shift) {
-          input.key = mapped.withShift
+          input.key = mapped.withShift.toLowerCase()
         } else if (input.alt) {
-          input.key = mapped.withAltGraph
+          input.key = mapped.withAltGraph.toLowerCase()
         }
       }
     }
