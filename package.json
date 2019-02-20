@@ -62,8 +62,8 @@
   "main": "bin/app/index.js",
   "dependencies": {
     "@babel/cli": "7.2.3",
-    "@babel/core": "7.2.2",
-    "@babel/plugin-proposal-class-properties": "7.3.0",
+    "@babel/core": "7.3.3",
+    "@babel/plugin-proposal-class-properties": "7.3.3",
     "@babel/plugin-proposal-decorators": "7.3.0",
     "@babel/preset-env": "7.3.1",
     "@babel/preset-react": "7.0.0",
@@ -86,11 +86,11 @@
     "terser-webpack-plugin": "1.2.2",
     "url-loader": "1.1.2",
     "uuid": "3.3.2",
-    "webpack": "4.29.3",
+    "webpack": "4.29.5",
     "webpack-cli": "3.2.3",
     "webpack-notifier": "1.7.0",
     "windows-shortcuts": "0.1.6",
-    "yargs": "13.1.0"
+    "yargs": "13.2.1"
   },
   "devDependencies": {
     "babel-eslint": "10.0.1",
@@ -102,7 +102,7 @@
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_4_7_3"
+    "ELECTRON_CUSTOM_DIR": "wb_4_7_10"
   },
   "pre-commit": [
     "validate"

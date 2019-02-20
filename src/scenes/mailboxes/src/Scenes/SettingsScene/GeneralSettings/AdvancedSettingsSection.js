@@ -62,8 +62,7 @@ class AdvancedSettingsSection extends React.Component {
         'concurrentServiceLoadLimit',
         'searchProvider',
         'rawAppThreadFetchMicrosoftHTTP',
-        'forceWindowPaintOnRestore',
-        'disableProxyDetection'
+        'forceWindowPaintOnRestore'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -131,13 +130,6 @@ class AdvancedSettingsSection extends React.Component {
             }}
             checked={app.enableMixedSandboxMode} />
         ) : undefined}
-        <SettingsListItemSwitch
-          label='Proxy autodetection (Requires Restart)'
-          onChange={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.app.setDisableProxyDetection(!toggled)
-          }}
-          checked={!app.disableProxyDetection} />
         <SettingsListItemSwitch
           label='Automatically Polyfill UserAgents (Requires Restart)'
           onChange={(evt, toggled) => {
