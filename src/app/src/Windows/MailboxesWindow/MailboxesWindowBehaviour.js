@@ -9,6 +9,7 @@ import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 import WINDOW_TYPES from '../WindowTypes'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import KeyboardLayout from 'keyboard-layout'
 
 class MailboxesWindowBehaviour {
   /* ****************************************************************************/
@@ -172,7 +173,7 @@ class MailboxesWindowBehaviour {
   */
   handleBeforeInputEvent = (evt, input) => {
     // Do the fastest check we can first
-    if (!input.shift && !input.control && !input.alt && !input.meta) { return }
+    if (!input.control && !input.alt && !input.meta) { return }
 
     // Grab everything we need dropping out as we go...
     const webContentsId = evt.sender.id
@@ -180,6 +181,21 @@ class MailboxesWindowBehaviour {
     const { serviceId } = this.tabManager.getServiceId(webContentsId)
     const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
+
+    // Electron 3 macOS has some difficulty pulling out the correct key. For example Shift+, comes out
+    // as Comma rather than <. Try to shim this
+    if (process.platform === 'darwin') {
+      const mapped = KeyboardLayout.getCurrentKeymap()[input.code]
+      if (mapped) {
+        if (input.shift && input.alt) {
+          input.key = mapped.withAltGraphShift.toLowerCase()
+        } else if (input.shift) {
+          input.key = mapped.withShift.toLowerCase()
+        } else if (input.alt) {
+          input.key = mapped.withAltGraph.toLowerCase()
+        }
+      }
+    }
 
     if (service.shouldPreventInputEvent(input)) {
       evt.preventDefault()

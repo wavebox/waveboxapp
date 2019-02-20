@@ -126,20 +126,19 @@ class WebView extends React.Component {
       // There's an issue where the mouse hover state is incorrectly reported to the child window.
       // It's not 100% reproducable but is more reproducable when all these are true:,
       // gmail, darwin, multiple extensions, switching via keyboard, switching from another desktop
-      // Bluring the element, focusing on another and focusing back on next tick seems to fix
-      node.blur()
-      const el = document.createElement('input')
-      el.style.position = 'fixed'
-      el.style.top = '-10000px'
-      el.style.left = '0px'
-      el.style.width = '1px'
-      el.style.height = '1px'
-      document.body.appendChild(el)
-      el.focus()
+      //
+      // Bluring the element, focusing on another and focusing back on next tick seems to fix it
+      // but has the nasty side-effect of causing webviews with a focused iframe to maintain pragmatic
+      // focus but actually not hold focus
+      //
+      // An alternative fix for this is to force a repaint. You can either do this by visibility=hidden/visible
+      // or by changing the physical dimensions on the element. By changing by 0.1px it causes a reflow and repaint
+      // of the dom but the user should not see the size change because chromium will round down (Unless you have a
+      // monitor with 10x pixel density).
+      node.style.top = '-0.1px'
       setTimeout(() => {
-        node.focus()
-        document.body.removeChild(el)
-      })
+        node.style.top = '0px'
+      }, 1) // Timeout of 0 mostly works but occasionaly doesn't. 1 should ensure we hit a paint cycle
     }
   }
 

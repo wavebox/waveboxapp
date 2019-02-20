@@ -129,7 +129,7 @@ class CoreGoogleMailService extends CoreACService {
   shouldPreventInputEvent (input) {
     // Bushfix for issue #323
     if (process.platform === 'darwin') {
-      if (input.meta && input.code === 'Comma') { return true }
+      if (input.meta && input.key === ',') { return true }
     }
     return false
   }
