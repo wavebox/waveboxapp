@@ -135,10 +135,14 @@ class WebView extends React.Component {
       // or by changing the physical dimensions on the element. By changing by 0.1px it causes a reflow and repaint
       // of the dom but the user should not see the size change because chromium will round down (Unless you have a
       // monitor with 10x pixel density).
-      node.style.top = '-0.1px'
-      setTimeout(() => {
-        node.style.top = '0px'
-      }, 1) // Timeout of 0 mostly works but occasionaly doesn't. 1 should ensure we hit a paint cycle
+      const sizeBackFn = () => {
+        node.removeEventListener('resize', sizeBackFn)
+        setTimeout(() => {
+          node.style.top = '0px'
+        })
+      }
+      node.addEventListener('resize', sizeBackFn)
+      node.style.top = '0.1px'
     }
   }
 
