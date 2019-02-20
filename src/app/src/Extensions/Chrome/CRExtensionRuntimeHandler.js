@@ -1,6 +1,7 @@
 import { webContents, ipcMain } from 'electron'
 import fs from 'fs-extra'
 import { URL } from 'url'
+import os from 'os'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
@@ -13,6 +14,7 @@ import {
 } from 'shared/extensionApis'
 import {
   CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC,
+  CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC,
   CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED,
   CRX_RUNTIME_SENDMESSAGE,
   CRX_TABS_SENDMESSAGE,
@@ -49,6 +51,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
 
     ipcMain.on(CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC, this._handleProvisionContentScriptContextSync)
+    ipcMain.on(CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC, this._handleContentScriptBenchmarkConfigSync)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
   }
@@ -192,6 +195,18 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     setTimeout(() => {
       evt.returnValue = contextId
     }, 500)
+  }
+
+  /**
+  * Gets the content script benchmarking config
+  * @param evt: the event that fired
+  */
+  _handleContentScriptBenchmarkConfigSync = (evt) => {
+    evt.returnValue = {
+      cscripts: this[privCSContexts].size,
+      runtimes: this.runtimes.size,
+      cpus: os.cpus().length
+    }
   }
 
   /**

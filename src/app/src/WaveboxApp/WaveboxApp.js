@@ -204,6 +204,7 @@ class WaveboxApp {
     app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
+    process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 
     if (AppSettings.SUPPORTS_MIXED_SANDBOX_MODE) {
       if (launchSettings.app.enableMixedSandboxMode && this[privArgv].safemode !== true) {

@@ -177,8 +177,10 @@ class PDFRenderService {
   * @param window: the print window
   */
   _pdfPrintCleanup (downloadPath, window) {
-    window.removeAllListeners('closed')
-    window.close()
+    if (window && !window.isDestroyed()) {
+      window.removeAllListeners('closed')
+      window.close()
+    }
     if (downloadPath) {
       try { fs.removeSync(downloadPath) } catch (ex) { }
     }
