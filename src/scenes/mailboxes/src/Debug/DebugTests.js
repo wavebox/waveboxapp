@@ -327,7 +327,7 @@ class DebugTests {
     } = require('shared/ipcEvents')
     const {
       CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC
-    } = require('shared/crExtensionIPCEvents')
+    } = require('shared/crExtensionIpcEvents')
 
     const sig = '[TEST:FLASH_TEST]'
 
