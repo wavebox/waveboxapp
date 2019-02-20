@@ -45,9 +45,9 @@ window.printPDF = function (localPath) {
       })
     })
     .then(() => {
-      document.title = 'wbaction:print'
+      document.title = 'wbaction:print::PDF'
     })
     .catch((e) => {
-      document.title = 'wbaction:error'
+      document.title = 'wbaction:error::PDF'
     })
 }

@@ -7,9 +7,14 @@ import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebConten
 import DownloadManager from 'Download/DownloadManager'
 
 const privPrinting = Symbol('privPrinting')
-const COMMANDS = {
+const TL_COMMANDS = {
   PRINT: 'wbaction:print::',
   DOWNLOAD: 'wbaction:download::'
+}
+const PRINT_COMMANDS = {
+  PRINT: 'wbaction:print::',
+  ERROR: 'wbaction:error::',
+  CANCEL: 'wbaction:cancel::'
 }
 
 class PDFRenderService {
@@ -21,6 +26,25 @@ class PDFRenderService {
     this[privPrinting] = new Set()
 
     app.on('web-contents-created', this._handleWebContentsCreated)
+  }
+
+  /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  /**
+  * @param sender: the sender to reset the title on
+  * @param command: the command we responded to
+  * @param title: the current title
+  * @return promise
+  */
+  resetTitle (sender, command, title) {
+    return new Promise((resolve) => {
+      const nextTitle = title.substr(command.length).replace(/'/g, '"')
+      sender.executeJavaScript(`document.title = '${nextTitle}'`, () => {
+        resolve()
+      })
+    })
   }
 
   /* ****************************************************************************/
@@ -65,14 +89,14 @@ class PDFRenderService {
   _handleWebContentsTitleUpdated = (evt, title) => {
     if (!evt.sender.getURL().startsWith(CHROME_PDF_URL)) { return }
 
-    if (title.startsWith(COMMANDS.PRINT)) {
+    if (title.startsWith(TL_COMMANDS.PRINT)) {
       const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
-      evt.sender.executeJavaScript(`document.title = '${title.substr(COMMANDS.PRINT.length)}'`, () => {
+      this.resetTitle(evt.sender, TL_COMMANDS.PRINT, title).then(() => {
         this._handleStartPrint(evt.sender, pdfUrl)
       })
-    } else if (title.startsWith(COMMANDS.DOWNLOAD)) {
+    } else if (title.startsWith(TL_COMMANDS.DOWNLOAD)) {
       const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
-      evt.sender.executeJavaScript(`document.title = '${title.substr(COMMANDS.DOWNLOAD.length)}'`, () => {
+      this.resetTitle(evt.sender, TL_COMMANDS.DOWNLOAD, title).then(() => {
         evt.sender.downloadURL(pdfUrl)
       })
     }
@@ -120,7 +144,7 @@ class PDFRenderService {
       downloadButton.addEventListener('click', (evt) => {
         evt.preventDefault()
         evt.stopPropagation()
-        document.title = '${COMMANDS.DOWNLOAD}' + document.title
+        document.title = '${TL_COMMANDS.DOWNLOAD}' + document.title
       })
     })()
   `)
@@ -139,7 +163,7 @@ class PDFRenderService {
         printButton.setAttribute('aria-label', 'Print')
         printButton.setAttribute('title', 'Print')
         printButton.addEventListener('click', () => {
-          document.title = '${COMMANDS.PRINT}' + document.title
+          document.title = '${TL_COMMANDS.PRINT}' + document.title
         })
 
         const toolbar = document.querySelector('#toolbar').shadowRoot
@@ -229,23 +253,19 @@ class PDFRenderService {
       window.setMenuBarVisibility(false)
       window.on('closed', () => { reject(new Error('User closed window')) })
       window.on('page-title-updated', (evt, title) => {
-        if (title.startsWith('wbaction:')) {
-          evt.preventDefault()
-
-          if (title === 'wbaction:print') {
+        if (title.startsWith(PRINT_COMMANDS.PRINT)) {
+          this.resetTitle(window.webContents, PRINT_COMMANDS.PRINT, title).then(() => {
             window.webContents.print({ silent: false, printBackground: false, deviceName: '' }, () => {
-              setTimeout(() => {
-                this._pdfPrintCleanup(tmpDownloadPath, window)
-                resolve()
-              }, 1000)
+              this._pdfPrintCleanup(tmpDownloadPath, window)
+              resolve()
             })
-          } else if (title === 'wbaction:error') {
-            this._pdfPrintCleanup(tmpDownloadPath, window)
-            reject(new Error('Printing Error'))
-          } else if (title === 'wbaction:cancel') {
-            this._pdfPrintCleanup(tmpDownloadPath, window)
-            reject(new Error('User cancelled'))
-          }
+          })
+        } else if (title.startsWith(PRINT_COMMANDS.ERROR)) {
+          this._pdfPrintCleanup(tmpDownloadPath, window)
+          reject(new Error('Printing Error'))
+        } else if (title.startsWith(PRINT_COMMANDS.CANCEL)) {
+          this._pdfPrintCleanup(tmpDownloadPath, window)
+          reject(new Error('User cancelled'))
         }
       })
       window.loadURL(`file://${Resolver.printScene('index.html')}`)

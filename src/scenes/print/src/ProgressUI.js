@@ -19,7 +19,7 @@ class ProgressUI {
     }
     this.elements.cancelButton.addEventListener('click', (evt) => {
       evt.preventDefault()
-      document.title = 'wbaction:cancel'
+      document.title = 'wbaction:cancel::PDF'
     })
   }
 
