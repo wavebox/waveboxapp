@@ -263,6 +263,7 @@ class WaveboxWindow extends EventEmitter {
   */
   destroy (evt) {
     settingsStore.unlisten(this.updateWindowMenubar)
+    ipcMain.removeListener(WB_WINDOW_MIN_MAX_DBL_CLICK, this._handleMinMaxDoubleClickWindow)
     if (this.window) {
       this.locationSaver.unregister(this.window)
       if (!this.window.isDestroyed()) {
