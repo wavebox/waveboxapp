@@ -7,6 +7,10 @@ import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebConten
 import DownloadManager from 'Download/DownloadManager'
 
 const privPrinting = Symbol('privPrinting')
+const COMMANDS = {
+  PRINT: 'wbaction:print::',
+  DOWNLOAD: 'wbaction:download::'
+}
 
 class PDFRenderService {
   /* ****************************************************************************/
@@ -41,6 +45,7 @@ class PDFRenderService {
     const targetUrl = evt.sender.getURL()
     if (!targetUrl.startsWith(CHROME_PDF_URL)) { return }
     this._injectPrintButton(evt.sender)
+    this._injectDownloadButton(evt.sender)
 
     // Look to see if we should print. Really this should be under did-navigate
     // but if a new window is a launched the modal popup can appear to early in
@@ -60,10 +65,16 @@ class PDFRenderService {
   _handleWebContentsTitleUpdated = (evt, title) => {
     if (!evt.sender.getURL().startsWith(CHROME_PDF_URL)) { return }
 
-    if (title === 'wbaction:print') {
-      evt.sender.executeJavaScript(`document.title = 'PDF'`)
+    if (title.startsWith(COMMANDS.PRINT)) {
       const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
-      this._handleStartPrint(evt.sender, pdfUrl)
+      evt.sender.executeJavaScript(`document.title = '${title.substr(COMMANDS.PRINT.length)}'`, () => {
+        this._handleStartPrint(evt.sender, pdfUrl)
+      })
+    } else if (title.startsWith(COMMANDS.DOWNLOAD)) {
+      const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
+      evt.sender.executeJavaScript(`document.title = '${title.substr(COMMANDS.DOWNLOAD.length)}'`, () => {
+        evt.sender.downloadURL(pdfUrl)
+      })
     }
   }
 
@@ -98,6 +109,24 @@ class PDFRenderService {
   /* ****************************************************************************/
 
   /**
+  * Injects the download button
+  * @param wc: the webcontents to inject to
+  */
+  _injectDownloadButton (wc) {
+    wc.executeJavaScript(`
+    ;(function () {
+      const toolbar = document.querySelector('#toolbar').shadowRoot
+      const downloadButton = toolbar.querySelector('#download')
+      downloadButton.addEventListener('click', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
+        document.title = '${COMMANDS.DOWNLOAD}' + document.title
+      })
+    })()
+  `)
+  }
+
+  /**
   * Injects the print button
   * @param wc: the webcontents to inject to
   */
@@ -110,7 +139,7 @@ class PDFRenderService {
         printButton.setAttribute('aria-label', 'Print')
         printButton.setAttribute('title', 'Print')
         printButton.addEventListener('click', () => {
-          document.title = 'wbaction:print'
+          document.title = '${COMMANDS.PRINT}' + document.title
         })
 
         const toolbar = document.querySelector('#toolbar').shadowRoot
