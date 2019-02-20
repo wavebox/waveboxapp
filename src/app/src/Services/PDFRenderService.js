@@ -204,13 +204,11 @@ class PDFRenderService {
           evt.preventDefault()
 
           if (title === 'wbaction:print') {
-            window.webContents.print({ silent: false, printBackground: false, deviceName: '' }, (success) => {
-              this._pdfPrintCleanup(tmpDownloadPath, window)
-              if (success) {
+            window.webContents.print({ silent: false, printBackground: false, deviceName: '' }, () => {
+              setTimeout(() => {
+                this._pdfPrintCleanup(tmpDownloadPath, window)
                 resolve()
-              } else {
-                reject(new Error('Printing Error'))
-              }
+              }, 1000)
             })
           } else if (title === 'wbaction:error') {
             this._pdfPrintCleanup(tmpDownloadPath, window)
