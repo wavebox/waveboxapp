@@ -9,7 +9,13 @@ import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 import WINDOW_TYPES from '../WindowTypes'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
-import KeyboardLayout from 'keyboard-layout'
+
+let KeyboardLayout
+try {
+  KeyboardLayout = process.platform === 'darwin' ? require('keyboard-layout') : null
+} catch (ex) {
+  KeyboardLayout = null
+}
 
 class MailboxesWindowBehaviour {
   /* ****************************************************************************/
@@ -184,7 +190,7 @@ class MailboxesWindowBehaviour {
 
     // Electron 3 macOS has some difficulty pulling out the correct key. For example Shift+, comes out
     // as Comma rather than <. Try to shim this
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' && KeyboardLayout) {
       const mapped = KeyboardLayout.getCurrentKeymap()[input.code]
       if (mapped) {
         if (input.shift && input.alt) {
