@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import electron from 'electron'
 import camelCase from './camelCase'
+import WebViewGroupEventDispatcher from './WebViewGroupEventDispatcher'
 import {
   WEBVIEW_EVENTS,
   REACT_WEBVIEW_EVENTS,
@@ -76,13 +77,13 @@ class WebView extends React.Component {
     this.updateEventListeners()
 
     // Create an artificial onWebContentsAttached event
-    electron.remote.getCurrentWebContents().on('did-attach-webview', this.handleWebContentsAttached)
-    electron.remote.getCurrentWindow().on('focus', this.handleWindowFocused)
+    WebViewGroupEventDispatcher.on('did-attach-webview', this.handleWebContentsAttached)
+    WebViewGroupEventDispatcher.on('window-focus', this.handleWindowFocused)
   }
 
   componentWillUnmount () {
-    electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
-    electron.remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
+    WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
+    WebViewGroupEventDispatcher.removeListener('window-focus', this.handleWindowFocused)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -118,7 +119,7 @@ class WebView extends React.Component {
       if (this.props.onWebContentsAttached) {
         this.props.onWebContentsAttached(wc)
       }
-      electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
+      WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
     }
   }
 

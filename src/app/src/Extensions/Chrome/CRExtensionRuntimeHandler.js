@@ -594,6 +594,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     if (details.resourceType !== 'xhr') { return undefined }
 
     if (this._isPreflightCSXHRRequest(details.method, details.requestHeaders)) {
+      if (!details.webContentsId) { return undefined }
       const requestWebContents = webContents.fromId(details.webContentsId)
       if (!requestWebContents || requestWebContents.isDestroyed()) { return undefined }
       const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
@@ -627,6 +628,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       if (!runtime || runtime.contentScript.xhrToken !== xhrToken) { return nextHeaders }
 
       // Check we are able to match this url
+      if (!details.webContentsId) { return undefined }
       const requestWebContents = webContents.fromId(details.webContentsId)
       if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
       const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
