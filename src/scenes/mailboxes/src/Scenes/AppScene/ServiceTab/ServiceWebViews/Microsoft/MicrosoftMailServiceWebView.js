@@ -3,8 +3,7 @@ import React from 'react'
 import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountDispatch, AccountLinker } from 'stores/account'
 import { microsoftActions } from 'stores/microsoft'
-
-const REF = 'mailbox_tab'
+import querystring from 'querystring'
 
 export default class MicrosoftMailServiceWebView extends React.Component {
   /* **************************************************************************/
@@ -56,13 +55,15 @@ export default class MicrosoftMailServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleComposeMessage = (evt) => {
-    // Note we can't support the full set of compose here because microsoft blocks automated
-    // inputs. Instead we do the best we can - which is bringing up the compose window
     if (evt.serviceId === this.props.serviceId) {
-      this.refs[REF].getWebContents().sendInputEvent({
-        type: 'keyDown',
-        keyCode: 'N',
-        modifiers: process.platform === 'darwin' ? ['meta'] : ['control']
+      const qs = querystring.stringify({
+        to: evt.data.recipient,
+        subject: evt.data.subject,
+        body: evt.data.body
+      })
+      AccountLinker.openContentWindow(this.props.serviceId, `https://outlook.live.com/mail/deeplink/compose?${qs}`, {
+        width: 800,
+        height: 600
       })
     }
   }
@@ -75,10 +76,7 @@ export default class MicrosoftMailServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <CoreServiceWebView
-        ref={REF}
-        mailboxId={mailboxId}
-        serviceId={serviceId} />
+      <CoreServiceWebView mailboxId={mailboxId} serviceId={serviceId} />
     )
   }
 }
