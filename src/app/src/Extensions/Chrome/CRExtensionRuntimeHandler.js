@@ -691,6 +691,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   */
   onCSXHRError = (details) => {
     this[privOpenXHRRequests].delete(details.id)
+    this[privPreflightXHRRequests].delete(details.id)
   }
 
   /* ****************************************************************************/
