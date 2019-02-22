@@ -26,7 +26,7 @@
     "hunspell-asm": "1.1.2",
     "keyboard-layout": "2.0.15",
     "keyboardevent-from-electron-accelerator": "1.1.0",
-    "keytar": "4.4.0",
+    "keytar": "4.4.1",
     "lru-cache": "5.1.1",
     "mime": "2.4.0",
     "mkdirp": "0.5.1",

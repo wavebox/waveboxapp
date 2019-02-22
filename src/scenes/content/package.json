@@ -20,10 +20,10 @@
     "fbjs": "1.0.0",
     "fuse.js": "3.4.2",
     "prop-types": "15.7.2",
-    "react": "16.8.2",
+    "react": "16.8.3",
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
-    "react-dom": "16.8.2",
+    "react-dom": "16.8.3",
     "react-router-dom": "4.3.1",
     "uuid": "3.3.2"
   },
