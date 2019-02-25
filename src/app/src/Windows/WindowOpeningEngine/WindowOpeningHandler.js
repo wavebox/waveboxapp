@@ -131,6 +131,7 @@ class WindowOpeningHandler {
     }
 
     // Look to see if the user wants to overwrite the behaviour
+    const preAppCommandOpenUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
     if (WaveboxAppCommandKeyTracker.shiftPressed) {
       openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
     }
@@ -140,41 +141,50 @@ class WindowOpeningHandler {
 
     // Update the tab meta data
     const saltedTabMetaInfo = this._autosaltTabMetaInfo(tabMetaInfo, currentUrl, webContentsId)
+    const openUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
 
     // Action the window open
-    if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options)
-      evt.newGuest = openedWindow.window
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, provisionalTargetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVISIONAL) {
-      this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, provisionalTargetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
-      evt.sender.downloadURL(targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.CURRENT) {
-      evt.sender.loadURL(targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.CURRENT_PROVISIONAL) {
-      evt.sender.loadURL(provisionalTargetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT) {
-      evt.sender.loadURL('about:blank')
-      evt.sender.loadURL(targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL) {
-      evt.sender.loadURL('about:blank')
-      evt.sender.loadURL(provisionalTargetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
-      /* no-op */
-    } else if (openMode === WINDOW_OPEN_MODES.ASK_USER) {
-      this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride, true)
-    } else {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
+    switch (openMode) {
+      case WINDOW_OPEN_MODES.POPUP_CONTENT:
+        const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, options)
+        evt.newGuest = openedWindow.window
+        break
+      case WINDOW_OPEN_MODES.EXTERNAL:
+      case WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL:
+        this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, openUrl)
+        break
+      case WINDOW_OPEN_MODES.DEFAULT:
+      case WINDOW_OPEN_MODES.DEFAULT_IMPORTANT:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
+        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, openUrl, options, partitionOverride)
+        break
+      case WINDOW_OPEN_MODES.CONTENT:
+      case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, options, partitionOverride)
+        break
+      case WINDOW_OPEN_MODES.DOWNLOAD:
+        evt.sender.downloadURL(openUrl)
+        break
+      case WINDOW_OPEN_MODES.CURRENT:
+      case WINDOW_OPEN_MODES.CURRENT_PROVISIONAL:
+        evt.sender.loadURL(openUrl)
+        break
+      case WINDOW_OPEN_MODES.BLANK_AND_CURRENT:
+      case WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL:
+        evt.sender.loadURL('about:blank')
+        evt.sender.loadURL(openUrl)
+        break
+      case WINDOW_OPEN_MODES.SUPPRESS:
+        /* no-op */
+        break
+      case WINDOW_OPEN_MODES.ASK_USER:
+        // When we ask the user, we can gleem some info about the url from the original open mode we served
+        this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, preAppCommandOpenUrl, options, partitionOverride, true)
+        break
+      default:
+        this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, openUrl)
+        break
     }
 
     // If the user wanted to record this, output the info
@@ -215,6 +225,27 @@ class WindowOpeningHandler {
           clipboard.writeText(JSON.stringify(openEvt, null, 2))
         }
       })
+    }
+  }
+
+  /**
+  * Gets the url to open from the target url and provisional target url
+  * @param openMode: the open mode
+  * @param targetUrl: the current target url
+  * @param provisionalTargetUrl: the current provisional target url
+  * @return either the targetUrl or provisionalTargetUrl
+  */
+  _getNewWindowUrlFromMode (openMode, targetUrl, provisionalTargetUrl) {
+    switch (openMode) {
+      case WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
+      case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.CURRENT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL:
+        return provisionalTargetUrl
+      default:
+        return targetUrl
     }
   }
 
