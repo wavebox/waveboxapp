@@ -83,7 +83,7 @@
     "node-abi": "2.7.1",
     "progress-bar-webpack-plugin": "1.12.1",
     "style-loader": "0.23.1",
-    "terser-webpack-plugin": "1.2.2",
+    "terser-webpack-plugin": "1.2.3",
     "url-loader": "1.1.2",
     "uuid": "3.3.2",
     "webpack": "4.29.5",
