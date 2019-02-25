@@ -139,14 +139,21 @@ class WindowOpeningHandler {
       openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
     }
 
-    // Update the tab meta data
+    // Generate some opener info for the new window
     const saltedTabMetaInfo = this._autosaltTabMetaInfo(tabMetaInfo, currentUrl, webContentsId)
     const openUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
+    const updatedOptions = {
+      ...options,
+      ...(disposition === 'foreground-tab' // With foreground-tab we want to use the window to decide its sizing (normally derived from its parent)
+        ? { width: undefined, height: undefined, x: undefined, y: undefined }
+        : undefined
+      )
+    }
 
     // Action the window open
     switch (openMode) {
       case WINDOW_OPEN_MODES.POPUP_CONTENT:
-        const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, options)
+        const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions)
         evt.newGuest = openedWindow.window
         break
       case WINDOW_OPEN_MODES.EXTERNAL:
@@ -157,11 +164,11 @@ class WindowOpeningHandler {
       case WINDOW_OPEN_MODES.DEFAULT_IMPORTANT:
       case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
       case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
-        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, openUrl, options, partitionOverride)
+        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, openUrl, updatedOptions, partitionOverride)
         break
       case WINDOW_OPEN_MODES.CONTENT:
       case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
-        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, options, partitionOverride)
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions, partitionOverride)
         break
       case WINDOW_OPEN_MODES.DOWNLOAD:
         evt.sender.downloadURL(openUrl)
@@ -180,7 +187,7 @@ class WindowOpeningHandler {
         break
       case WINDOW_OPEN_MODES.ASK_USER:
         // When we ask the user, we can gleem some info about the url from the original open mode we served
-        this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, preAppCommandOpenUrl, options, partitionOverride, true)
+        this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, preAppCommandOpenUrl, updatedOptions, partitionOverride, true)
         break
       default:
         this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, openUrl)
