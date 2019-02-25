@@ -10,12 +10,15 @@ import LinkIcon from '@material-ui/icons/Link'
 import EditIcon from '@material-ui/icons/Edit'
 import AddIcon from '@material-ui/icons/Add'
 import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListItemText from 'wbui/SettingsListItemText'
+import InfoIcon from '@material-ui/icons/Info'
 import {
   List, ListItem, ListItemText, ListItemSecondaryAction,
   IconButton, Button, Dialog, Paper, Divider, Menu, MenuItem
 } from '@material-ui/core'
 import CustomLinkProviderEditorDialogContent from './CustomLinkProviderEditorDialogContent'
 import { withStyles } from '@material-ui/core/styles'
+import blue from '@material-ui/core/colors/blue'
 
 const LINK_OPEN_OPTIONS = [
   { value: OSSettings.COMMAND_LINK_BEHAVIOUR.DEFAULT, label: 'Default Behaviour' },
@@ -99,6 +102,11 @@ const styles = {
   customLinkOpenerList: {
     marginTop: 8,
     width: '100%'
+  },
+  link: {
+    color: blue[600],
+    textDecoration: 'underline',
+    cursor: 'pointer'
   }
 }
 
@@ -273,7 +281,7 @@ class LinkSettingsSection extends React.Component {
             value={linkBehaviourWithShift}
             options={LINK_OPEN_OPTIONS}
             onChange={(evt, value) => settingsActions.sub.os.setLinkBehaviourWithShift(value)} />
-          <SettingsListItem className={classes.customLinkOpenerContainer} divider={false}>
+          <SettingsListItem className={classes.customLinkOpenerContainer}>
             <div className={classes.customLinkOpenerTitle}>
               <ListItemText primary='Custom link openers (Advanced)' />
               <Button
@@ -326,6 +334,18 @@ class LinkSettingsSection extends React.Component {
               </Paper>
             ) : undefined}
           </SettingsListItem>
+          <SettingsListItemText
+            divider={false}
+            primary='Each account also has its own unique set of link settings'
+            primaryType='info'
+            primaryIcon={(<InfoIcon />)}
+            secondary={(
+              <span
+                className={classes.link}
+                onClick={() => { window.location.hash = '/settings/accounts' }}>
+                Account Settings
+              </span>
+            )} />
         </SettingsListSection>
         <Dialog
           disableEnforceFocus
