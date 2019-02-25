@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import CoreServiceWebView from '../../CoreServiceWebView'
-import { accountDispatch, AccountLinker } from 'stores/account'
+import { accountStore, accountDispatch, AccountLinker } from 'stores/account'
 import { microsoftActions } from 'stores/microsoft'
 import querystring from 'querystring'
 
@@ -13,6 +13,16 @@ export default class MicrosoftMailServiceWebView extends React.Component {
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecylce
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.webviewRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -55,13 +65,35 @@ export default class MicrosoftMailServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleComposeMessage = (evt) => {
-    if (evt.serviceId === this.props.serviceId) {
+    const { serviceId } = this.props
+    if (evt.serviceId === serviceId) {
+      let currentHostname
+      try {
+        currentHostname = new URL(this.webviewRef.current.getURL()).hostname
+      } catch (ex) { }
+
+      let launchUrl
+      if (currentHostname === 'outlook.office365.com') {
+        launchUrl = 'https://outlook.office365.com/mail/deeplink/compose'
+      } else if (currentHostname === 'outlook.live.com') {
+        launchUrl = 'https://outlook.live.com/mail/deeplink/compose'
+      } else {
+        const auth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+        if (auth) {
+          launchUrl = auth.isPersonalAccount
+            ? 'https://outlook.live.com/mail/deeplink/compose'
+            : 'https://outlook.office365.com/mail/deeplink/compose'
+        } else {
+          launchUrl = 'https://outlook.live.com/mail/deeplink/compose'
+        }
+      }
+
       const qs = querystring.stringify({
         to: evt.data.recipient,
         subject: evt.data.subject,
         body: evt.data.body
       })
-      AccountLinker.openContentWindow(this.props.serviceId, `https://outlook.live.com/mail/deeplink/compose?${qs}`, {
+      AccountLinker.openContentWindow(serviceId, `${launchUrl}?${qs}`, {
         width: 800,
         height: 600
       })
@@ -76,7 +108,10 @@ export default class MicrosoftMailServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <CoreServiceWebView mailboxId={mailboxId} serviceId={serviceId} />
+      <CoreServiceWebView
+        ref={this.webviewRef}
+        mailboxId={mailboxId}
+        serviceId={serviceId} />
     )
   }
 }
