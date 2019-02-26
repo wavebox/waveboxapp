@@ -9,7 +9,9 @@ import {
   UPDATE_FEED_WIN32_IA32,
   UPDATE_FEED_WIN32_X64,
   UPDATE_USER_MANUAL_DOWNLOAD_STABLE,
-  UPDATE_USER_MANUAL_DOWNLOAD_BETA
+  UPDATE_USER_MANUAL_DOWNLOAD_BETA,
+  UPDATE_USER_CHANGELOG_STABLE,
+  UPDATE_USER_CHANGELOG_BETA
 } from 'shared/constants'
 import {
   WB_SQUIRREL_UPDATE_CHECK,
@@ -71,6 +73,15 @@ class UpdaterStore {
         return UPDATE_USER_MANUAL_DOWNLOAD_BETA
       } else {
         return UPDATE_USER_MANUAL_DOWNLOAD_STABLE
+      }
+    }
+
+    this.getChangelogUrl = () => {
+      const updateChannel = settingsStore.getState().app.updateChannel
+      if (updateChannel === AppSettings.UPDATE_CHANNELS.BETA) {
+        return UPDATE_USER_CHANGELOG_BETA
+      } else {
+        return UPDATE_USER_CHANGELOG_STABLE
       }
     }
 

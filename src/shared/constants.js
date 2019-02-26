@@ -119,6 +119,7 @@ module.exports = Object.freeze({
   KB_URL: 'https://wavebox.io/kb',
   GITHUB_URL: 'https://github.com/wavebox/waveboxapp/',
   GITHUB_ISSUE_URL: 'https://github.com/wavebox/waveboxapp/issues/',
+  GITHUB_RELEASES_URL: 'https://github.com/wavebox/waveboxapp/releases/',
   PRIVACY_URL: 'https://wavebox.io/privacy/',
   TERMS_URL: 'https://wavebox.io/terms/',
   EULA_URL: 'https://wavebox.io/eula/',
@@ -133,7 +134,9 @@ module.exports = Object.freeze({
   UPDATE_FEED_MANUAL: 'https://waveboxio.com/updates/latest/',
   UPDATE_CHECK_INTERVAL: hours(12),
   UPDATE_USER_MANUAL_DOWNLOAD_STABLE: 'https://wavebox.io/download',
-  UPDATE_USER_MANUAL_DOWNLOAD_BETA: 'https://github.com/wavebox/waveboxapp/releases',
+  UPDATE_USER_MANUAL_DOWNLOAD_BETA: 'https://github.com/wavebox/waveboxapp/releases/',
+  UPDATE_USER_CHANGELOG_STABLE: 'https://github.com/wavebox/waveboxapp/releases/latest/',
+  UPDATE_USER_CHANGELOG_BETA: 'https://github.com/wavebox/waveboxapp/releases/',
 
   WAVEBOX_CAPTURE_URL_HOSTNAMES: [
     'wavebox.io',

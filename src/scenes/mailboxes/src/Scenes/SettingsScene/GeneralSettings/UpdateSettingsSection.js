@@ -11,9 +11,17 @@ import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SystemUpdateIcon from '@material-ui/icons/SystemUpdate'
 import { withStyles } from '@material-ui/core/styles'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
+import SettingsListItemText from 'wbui/SettingsListItemText'
+import { GITHUB_RELEASES_URL } from 'shared/constants'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
-
+  link: {
+    color: blue[600],
+    textDecoration: 'underline',
+    cursor: 'pointer'
+  }
 }
 
 @withStyles(styles)
@@ -67,10 +75,18 @@ class UpdateSettingsSection extends React.Component {
             updaterActions.checkForUpdates()
           }} />
         <SettingsListItemButton
-          divider={false}
           label='Check for update now'
           icon={<SystemUpdateIcon />}
           onClick={() => { updaterActions.userCheckForUpdates() }} />
+        <SettingsListItemText
+          divider={false}
+          primary={(
+            <span
+              className={classes.link}
+              onClick={() => WBRPCRenderer.wavebox.openExternal(GITHUB_RELEASES_URL)}>
+              Wavebox changelog
+            </span>
+          )} />
       </SettingsListSection>
     )
   }

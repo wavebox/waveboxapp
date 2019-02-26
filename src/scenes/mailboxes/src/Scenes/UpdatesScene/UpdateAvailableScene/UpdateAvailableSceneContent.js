@@ -10,6 +10,7 @@ import Platform from 'shared/Platform'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import classNames from 'classnames'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
   dialogContent: {
@@ -41,6 +42,12 @@ const styles = {
   },
   showAllPackageManagersButton: {
     marginTop: 16
+  },
+  changelogLink: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: blue[600],
+    fontSize: '85%'
   }
 }
 
@@ -118,6 +125,13 @@ class UpdateAvailableSceneContent extends React.Component {
     window.location.hash = '/'
     const updaterState = updaterStore.getState()
     WBRPCRenderer.wavebox.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
+  }
+
+  /**
+  * Opens a changelog
+  */
+  handleOpenChangelog = () => {
+    WBRPCRenderer.wavebox.openExternal(updaterStore.getState().getChangelogUrl())
   }
 
   /* **************************************************************************/
@@ -320,6 +334,9 @@ class UpdateAvailableSceneContent extends React.Component {
             installMethod,
             osPackageManager
           )}
+          <p className={classes.changelogLink} onClick={this.handleOpenChangelog}>
+            See what's new in this release
+          </p>
         </DialogContent>
         {this.renderActions(classes, provider)}
       </React.Fragment>
