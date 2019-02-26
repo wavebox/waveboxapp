@@ -9,8 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 import RecentListItem from './RecentListItem'
-import { ipcRenderer } from 'electron'
-import { WCRPC_OPEN_RECENT_LINK } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const LIST_ITEM_HEIGHT = 67
 
@@ -114,7 +113,7 @@ class RecentScene extends React.Component {
   /* **************************************************************************/
 
   handleRecentItemClick = (evt, recentItem) => {
-    ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, recentItem.serviceId, recentItem)
+    WBRPCRenderer.wavebox.openRecentLink(recentItem.serviceId, recentItem)
   }
 
   /* **************************************************************************/

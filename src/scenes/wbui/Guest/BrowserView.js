@@ -5,9 +5,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
 import { ipcRenderer } from 'electron'
 import {
-  WCRPC_PERMISSION_REQUESTS_CHANGED,
-  WCRPC_RESOLVE_PERMISSION_REQUEST
-} from 'shared/webContentsRPC'
+  WBRPC_PERMISSION_REQUESTS_CHANGED,
+  WBRPC_RESOLVE_PERMISSION_REQUEST
+} from 'shared/WBRPCEvents'
 
 const privPermissionRequests = Symbol('privPermissionRequests')
 
@@ -53,11 +53,11 @@ export default class BrowserView extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    ipcRenderer.on(WCRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
+    ipcRenderer.on(WBRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
   }
 
   componentWillUnmount () {
-    ipcRenderer.removeListener(WCRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
+    ipcRenderer.removeListener(WBRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
   }
 
   /* **************************************************************************/
@@ -113,7 +113,7 @@ export default class BrowserView extends React.Component {
       : undefined
 
     if (webviewWC) {
-      ipcRenderer.send(WCRPC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
+      ipcRenderer.send(WBRPC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
     }
   }
 

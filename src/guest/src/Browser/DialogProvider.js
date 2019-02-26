@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron'
 import uuid from 'uuid'
-import { WCRPC_SHOW_ASYNC_MESSAGE_DIALOG } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import ExtensionLoader from './Extensions/ExtensionLoader'
 import {
   WB_BROWSER_ALERT_PRESENT,
@@ -64,7 +64,7 @@ class DialogProvider {
       if (data.type === 'wavebox-alert-present') {
         ipcRenderer.sendToHost({ type: WB_BROWSER_ALERT_PRESENT })
         if (this.asyncAlert) {
-          ipcRenderer.send(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, {
+          WBRPCRenderer.webContents.showAsyncDialogMessage({
             type: 'none',
             message: `${data.message}`,
             buttons: ['OK']

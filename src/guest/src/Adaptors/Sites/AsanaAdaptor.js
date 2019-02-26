@@ -1,6 +1,5 @@
 import BaseAdaptor from './BaseAdaptor'
-import { ipcRenderer } from 'electron'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class AsanaAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -34,7 +33,7 @@ class AsanaAdaptor extends BaseAdaptor {
       }
     }, 100)
 
-    ipcRenderer.on(WCRPC_DOM_READY, () => {
+    WBRPCRenderer.webContents.once('dom-ready', () => {
       if (patchInterval !== null) {
         setTimeout(() => {
           clearInterval(patchInterval)

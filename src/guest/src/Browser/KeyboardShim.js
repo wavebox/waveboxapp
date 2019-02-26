@@ -1,5 +1,4 @@
-import { ipcRenderer } from 'electron'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const privNavBackBound = Symbol('privNavBackBound')
 
@@ -11,7 +10,7 @@ class KeyboardShim {
   constructor () {
     this[privNavBackBound] = false
     document.addEventListener('DOMContentLoaded', this._bindNavBack, false)
-    ipcRenderer.once(WCRPC_DOM_READY, this._bindNavBack)
+    WBRPCRenderer.webContents.once('dom-ready', this._bindNavBack)
   }
 
   /* **************************************************************************/
@@ -28,7 +27,7 @@ class KeyboardShim {
     document.body.addEventListener('keydown', this._handleKeydownNavBack, false)
 
     document.removeEventListener('DOMContentLoaded', this._bindNavBack)
-    ipcRenderer.removeListener(WCRPC_DOM_READY, this._bindNavBack)
+    WBRPCRenderer.webContents.removeListener('dom-ready', this._bindNavBack)
   }
 
   /**

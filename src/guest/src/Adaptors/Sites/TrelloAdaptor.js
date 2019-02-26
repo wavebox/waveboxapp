@@ -1,6 +1,6 @@
 import BaseAdaptor from './BaseAdaptor'
 import { ipcRenderer } from 'electron'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import { WB_BROWSER_TRELLO_UNREAD_COUNT_CHANGED } from 'shared/ipcEvents'
 
 const NOTIFICATION_CHANGE_CHECK_INTERVAL = 1500
@@ -110,7 +110,7 @@ class TrelloAdaptor extends BaseAdaptor {
       const frames = document.body.querySelectorAll('iframe.attachment-viewer-frame-preview-iframe[src*=".pdf"]:not(.wavebox-pdf-iframe-preview-enabled)')
       Array.from(frames).forEach((frame) => this._renderWaveboxPDFPreview(frame))
     })
-    ipcRenderer.on(WCRPC_DOM_READY, () => {
+    WBRPCRenderer.webContents.once('dom-ready', () => {
       this[privPdfObserver].observe(document.body, { childList: true, subtree: true })
     })
   }

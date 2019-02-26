@@ -1,14 +1,9 @@
 import Chrome from './Chrome'
 import { URL } from 'whatwg-url'
-import { ipcRenderer } from 'electronCrx'
 import ExtensionDatasource from './Core/ExtensionDatasource'
 import { CR_RUNTIME_ENVIRONMENTS, CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import XMLHttpRequestBuilder from './XMLHttpRequestBuilder'
-import {
-  WCRPC_SYNC_GET_INITIAL_HOST_URL,
-  WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
-  WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG
-} from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class Loader {
   /* **************************************************************************/
@@ -25,7 +20,7 @@ class Loader {
     //      know this yet, but can wait for did-navigate to figure out where we are
     // If we're about:blank we can infer the hostname and protocol from the host url rather than our current url
     const currentUrl = !window.location.href || window.location.href === 'about:blank'
-      ? ipcRenderer.sendSync(WCRPC_SYNC_GET_INITIAL_HOST_URL)
+      ? WBRPCRenderer.webContents.getInitialHostUrlSync()
       : window.location.href
 
     const parsedUrl = new URL(currentUrl)
@@ -41,7 +36,7 @@ class Loader {
   * @param extensionId: the id of the extension to inject
   */
   static _injectExtensionPage (extensionId) {
-    const config = ipcRenderer.sendSync(WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, extensionId)
+    const config = WBRPCRenderer.wavebox.getExtensionHostedPreloadConfigSync(extensionId)
     if (config && config.hasRuntime) {
       const extensionDatasource = new ExtensionDatasource(extensionId, config.runtimeConfig)
       const environment = config.isBackgroundPage
@@ -60,7 +55,7 @@ class Loader {
     // Write the start function into the window
     window.contentScriptInit = function (extensionId) {
       delete window.contentScriptInit
-      const config = ipcRenderer.sendSync(WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, extensionId)
+      const config = WBRPCRenderer.wavebox.getExtensionContentScriptPreloadConfigSync(extensionId)
       if (config && config.hasRuntime) {
         const extensionDatasource = new ExtensionDatasource(extensionId, config.runtimeConfig)
         window.chrome = new Chrome(extensionId, CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT, extensionDatasource)

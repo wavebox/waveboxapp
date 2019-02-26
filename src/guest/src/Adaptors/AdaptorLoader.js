@@ -1,8 +1,8 @@
-import { ipcRenderer, webFrame } from 'electron'
+import { webFrame } from 'electron'
 import AdaptorRegistry from './AdaptorRegistry'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
 import { ExtensionLoader } from 'Browser'
 import UrlPattern from 'url-pattern'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const privHasStarted = Symbol('privHasStarted')
 const privRunningAdaptors = Symbol('privRunningAdaptors')
@@ -28,7 +28,7 @@ class AdaptorLoader {
       this._loadAdaptor(window.location.href)
     } else {
       // Defer loading of about:blank
-      ipcRenderer.once(WCRPC_DOM_READY, () => {
+      WBRPCRenderer.webContents.once('dom-ready', () => {
         this._loadAdaptor(window.location.href)
       })
     }

@@ -4,7 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
 import CommandPaletteSearchItem from './CommandPaletteSearchItem'
 import CommandPaletteSearchEngine from './CommandPaletteSearchEngine'
-import { ipcRenderer } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import FASMapPinIcon from 'wbfa/FASMapPin'
 import HistoryIcon from '@material-ui/icons/History'
@@ -12,10 +11,7 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 import classNames from 'classnames'
 import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import Resolver from 'Runtime/Resolver'
-import {
-  WCRPC_OPEN_RECENT_LINK,
-  WCRPC_OPEN_READING_QUEUE_LINK
-} from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   targetIcon: {
@@ -145,13 +141,13 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
     const { item } = this.state
     switch (searchTarget) {
       case CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK:
-        ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, item)
+        WBRPCRenderer.wavebox.openRecentLink(serviceId, item)
         break
       case CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE:
-        ipcRenderer.send(WCRPC_OPEN_READING_QUEUE_LINK, serviceId, item)
+        WBRPCRenderer.wavebox.openReadingQueueLink(serviceId, item)
         break
       case CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT:
-        ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, item)
+        WBRPCRenderer.wavebox.openReadingLink(serviceId, item)
         break
     }
     onRequestClose()

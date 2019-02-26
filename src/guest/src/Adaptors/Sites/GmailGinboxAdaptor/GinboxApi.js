@@ -1,6 +1,5 @@
 import escapeHTML from 'escape-html'
-import { ipcRenderer } from 'electron'
-import { WCRPC_SEND_INPUT_EVENTS } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class GinboxApi {
   /**
@@ -178,7 +177,7 @@ class GinboxApi {
         if (element) {
           clearInterval(interval)
           const rect = element.getBoundingClientRect()
-          ipcRenderer.send(WCRPC_SEND_INPUT_EVENTS, [
+          WBRPCRenderer.webContents.sendInputEvents([
             {
               type: 'mouseDown',
               x: rect.left + 1,

@@ -1,5 +1,4 @@
-import { ipcRenderer } from 'electron'
-import { WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import { URL } from 'whatwg-url'
 
 const privConfig = Symbol('privConfig')
@@ -19,7 +18,7 @@ class LiveConfig {
 
   get config () {
     if (this[privConfig] === null) {
-      this[privConfig] = Object.freeze(ipcRenderer.sendSync(WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, window.location.href))
+      this[privConfig] = Object.freeze(WBRPCRenderer.wavebox.getGuestPreloadConfigSync())
     }
     return this[privConfig]
   }
