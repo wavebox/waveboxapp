@@ -32,6 +32,24 @@ class BrowserToolbar extends React.Component {
   }
 
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.toolbarRef = React.createRef()
+  }
+
+  /* **************************************************************************/
+  // Public
+  /* **************************************************************************/
+
+  focusAddress = () => {
+    this.toolbarRef.current.focusAddress()
+  }
+
+  /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
 
@@ -151,6 +169,7 @@ class BrowserToolbar extends React.Component {
     return (
       <Paper {...passProps}>
         <BrowserToolbarContent
+          innerRef={this.toolbarRef}
           className={classes.toolbar}
           address={currentUrl}
           isLoading={isLoading}

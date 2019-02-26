@@ -55,6 +55,7 @@ class BrowserScene extends React.Component {
   constructor (props) {
     super(props)
 
+    this.toolbarRef = React.createRef()
     this.searchRef = React.createRef()
     this.browserRef = React.createRef()
   }
@@ -107,6 +108,18 @@ class BrowserScene extends React.Component {
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
+
+  /**
+  * Handles the webcontents attaching
+  */
+  handleWebContentsAttached = () => {
+    if (this.props.url && this.props.url !== 'about:blank') {
+      this.handleFocusWebview()
+    } else {
+      console.log(">", this.toolbarRef.current)
+      this.toolbarRef.current.focusAddress()
+    }
+  }
 
   /**
   * Handles the navigation state changing
@@ -203,6 +216,7 @@ class BrowserScene extends React.Component {
     return (
       <div className={classes.scene}>
         <BrowserToolbar
+          innerRef={this.toolbarRef}
           className={classes.toolbar}
           handleGoBack={() => this.browserRef.current.goBack()}
           handleGoForward={() => this.browserRef.current.goForward()}
@@ -213,7 +227,7 @@ class BrowserScene extends React.Component {
         <div className={classes.webviewContainer}>
           <BrowserView
             ref={this.browserRef}
-            src={url}
+            src={url || 'about:blank'}
             partition={partition}
             plugins
             allowpopups
@@ -229,7 +243,7 @@ class BrowserScene extends React.Component {
             didStopLoading={(evt) => browserActions.stopLoading()}
             ipcMessage={this.handleBrowserIPCMessage}
             didNavigate={this.navigationStateDidChange}
-            onWebContentsAttached={this.handleFocusWebview}
+            onWebContentsAttached={this.handleWebContentsAttached}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={this.navigationStateDidChange} />
           <BrowserViewLoadBar isLoading={isLoading} />

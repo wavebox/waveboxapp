@@ -153,6 +153,14 @@ class BrowserToolbar extends React.Component {
   }
 
   /* **************************************************************************/
+  // Public
+  /* **************************************************************************/
+
+  focusAddress = () => {
+    this.addressRef.current.focus()
+  }
+
+  /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
 
@@ -189,13 +197,25 @@ class BrowserToolbar extends React.Component {
   * @return the url to load in external browsers and show to the user
   */
   humanizeUrl (targetUrl) {
-    try {
-      return this.isPDFUrl(targetUrl)
-        ? new URL(targetUrl).searchParams.get('src')
-        : targetUrl
-    } catch (ex) {
+    if (this.isPDFUrl(targetUrl)) {
+      try {
+        return new URL(targetUrl).searchParams.get('src')
+      } catch (ex) {
+        return targetUrl
+      }
+    } else if (this.isBlankUrl(targetUrl)) {
+      return ''
+    } else {
       return targetUrl
     }
+  }
+
+  /**
+  * @param targetUrl: the current url
+  * @return true if this is a blank url
+  */
+  isBlankUrl (targetUrl) {
+    return !targetUrl || targetUrl === 'about:blank'
   }
 
   /**
