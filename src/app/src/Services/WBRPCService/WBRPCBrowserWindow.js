@@ -1,7 +1,8 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import {
-  WBRPC_CLOSE_WINDOW
+  WBRPC_CLOSE_WINDOW,
+  WBRPC_BW_FOCUS
 } from 'shared/WBRPCEvents'
 
 const privConnected = Symbol('privConnected')
@@ -22,6 +23,11 @@ class WBRPCBrowserWindow {
   */
   connect (contents) {
     this[privConnected].add(contents.id)
+
+    const bw = BrowserWindow.fromWebContents(contents)
+    if (bw) {
+      bw.on('focus', this._handleFocus)
+    }
   }
 
   /**
@@ -30,6 +36,14 @@ class WBRPCBrowserWindow {
   */
   disconnect (contentsId) {
     this[privConnected].delete(contentsId)
+  }
+
+  /* ****************************************************************************/
+  // IPC: WebContent events
+  /* ****************************************************************************/
+
+  _handleFocus = (evt) => {
+    evt.sender.webContents.send(WBRPC_BW_FOCUS, evt.sender.id, evt.sender.webContents.id)
   }
 
   /* ****************************************************************************/

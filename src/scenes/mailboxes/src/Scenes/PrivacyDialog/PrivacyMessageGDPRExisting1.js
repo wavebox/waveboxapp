@@ -1,13 +1,13 @@
 import React from 'react'
 import { Dialog, DialogContent, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL } from 'shared/constants'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import FARSpinnerThirdIcon from 'wbfa/FARSpinnerThird'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   modal: {
@@ -72,7 +72,7 @@ class PrivacyMessageGDPRExisting1 extends React.Component {
   */
   handleOpenPrivacy = (evt) => {
     evt.preventDefault()
-    remote.shell.openExternal(PRIVACY_URL)
+    WBRPCRenderer.wavebox.openExternal(PRIVACY_URL)
   }
 
   /* **************************************************************************/

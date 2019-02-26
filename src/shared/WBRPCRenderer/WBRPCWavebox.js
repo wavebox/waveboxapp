@@ -6,7 +6,8 @@ import {
   WBRPC_GET_UPDATER_CONFIG,
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
-  WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG
+  WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
+  WBRPC_OPEN_EXTERNAL
 } from '../WBRPCEvents'
 
 class WBRPCWavebox {
@@ -60,6 +61,15 @@ class WBRPCWavebox {
   */
   openReadingQueueLink (serviceId, readingItem) {
     ipcRenderer.send(WBRPC_OPEN_READING_QUEUE_LINK, serviceId, readingItem)
+  }
+
+  /**
+  * Opens a link in an external handler
+  * @param url: the url to open
+  * @param options: additional options to send
+  */
+  openExternal (url, options) {
+    ipcRenderer.send(WBRPC_OPEN_EXTERNAL, url, options)
   }
 
   /* ****************************************************************************/

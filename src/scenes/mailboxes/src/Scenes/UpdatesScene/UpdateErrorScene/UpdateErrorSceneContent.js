@@ -4,11 +4,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { DialogContent, DialogActions, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from '../Common/UpdateModalTitle'
-import electron from 'electron'
 import pkg from 'package.json'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import ErrorIcon from '@material-ui/icons/Error'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   dialogContent: {
@@ -93,7 +93,7 @@ class UpdateErrorSceneContent extends React.Component {
   */
   handleDownloadManually = () => {
     window.location.hash = '/'
-    electron.remote.shell.openExternal(updaterStore.getState().getManualUpdateDownloadUrl())
+    WBRPCRenderer.wavebox.openExternal(updaterStore.getState().getManualUpdateDownloadUrl())
   }
 
   /**

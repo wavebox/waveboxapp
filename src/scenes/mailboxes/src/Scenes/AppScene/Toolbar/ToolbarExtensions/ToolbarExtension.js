@@ -4,7 +4,7 @@ import { crextensionStore, crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
 import ToolbarExtensionAction from 'wbui/ToolbarExtensionAction'
 import ToolbarExtensionActionContextMenu from 'wbui/ToolbarExtensionActionContextMenu'
-import electron from 'electron'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 export default class ToolbarExtension extends React.Component {
   /* **************************************************************************/
@@ -109,7 +109,7 @@ export default class ToolbarExtension extends React.Component {
         window.location.hash = `/settings/extensions`
         break
       case ToolbarExtensionActionContextMenu.ITEM_TYPES.HOMEPAGE:
-        electron.remote.shell.openExternal(this.state.manifest.homepageUrl)
+        WBRPCRenderer.wavebox.openExternal(this.state.manifest.homepageUrl)
         break
       case ToolbarExtensionActionContextMenu.ITEM_TYPES.OPTIONS:
         crextensionActions.openExtensionOptions(extensionId)

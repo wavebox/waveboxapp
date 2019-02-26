@@ -1,11 +1,12 @@
-import { ipcMain } from 'electron'
+import { ipcMain, shell } from 'electron'
 import {
   WBRPC_OPEN_RECENT_LINK,
   WBRPC_OPEN_READING_QUEUE_LINK,
   WBRPC_GET_UPDATER_CONFIG,
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
-  WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG
+  WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
+  WBRPC_OPEN_EXTERNAL
 } from 'shared/WBRPCEvents'
 import LinkOpener from 'LinkOpener'
 import AppUpdater from 'AppUpdater'
@@ -42,6 +43,7 @@ class WBRPCWavebox {
     // Links
     ipcMain.on(WBRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
     ipcMain.on(WBRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
+    ipcMain.on(WBRPC_OPEN_EXTERNAL, this._handleOpenExternal)
 
     // Updates
     ipcMain.on(WBRPC_GET_UPDATER_CONFIG, this._handleGetUpdaterConfig)
@@ -199,6 +201,17 @@ class WBRPCWavebox {
   _handleOpenReadingQueueLink = (evt, serviceId, readingItem) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     LinkOpener.openReadingQueueLink(evt.sender, serviceId, readingItem)
+  }
+
+  /**
+  * Pushes an open call to an external opener
+  * @param evt: the event that fired
+  * @param url: the url to open
+  * @param options: the options to pass
+  */
+  _handleOpenExternal = (evt, url, options) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    shell.openExternal(url, options)
   }
 
   /* ****************************************************************************/

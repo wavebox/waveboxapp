@@ -1,7 +1,6 @@
 import React from 'react'
 import { Dialog, DialogContent, Button, Checkbox, FormControlLabel } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL, TERMS_URL, EULA_URL } from 'shared/constants'
@@ -9,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import red from '@material-ui/core/colors/red'
 import FARSpinnerThirdIcon from 'wbfa/FARSpinnerThird'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   modal: {
@@ -106,7 +106,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
   */
   handleOpenPrivacy = (evt) => {
     evt.preventDefault()
-    remote.shell.openExternal(PRIVACY_URL)
+    WBRPCRenderer.wavebox.openExternal(PRIVACY_URL)
   }
 
   /**
@@ -115,7 +115,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
   */
   handleOpenServiceTerms = (evt) => {
     evt.preventDefault()
-    remote.shell.openExternal(TERMS_URL)
+    WBRPCRenderer.wavebox.openExternal(TERMS_URL)
   }
 
   /**
@@ -124,7 +124,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
   */
   handleOpenEULA = (evt) => {
     evt.preventDefault()
-    remote.shell.openExternal(EULA_URL)
+    WBRPCRenderer.wavebox.openExternal(EULA_URL)
   }
 
   /**

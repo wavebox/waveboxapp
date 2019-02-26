@@ -12,9 +12,9 @@ import ServiceInfoPanelContent from 'wbui/ServiceInfoPanelContent'
 import ServiceInfoPanelTitle from 'wbui/ServiceInfoPanelTitle'
 import Resolver from 'Runtime/Resolver'
 import blue from '@material-ui/core/colors/blue'
-import electron from 'electron'
 import GoogleInboxServiceReducer from 'shared/AltStores/Account/ServiceReducers/GoogleInboxServiceReducer'
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   headImgContainer: {
@@ -58,15 +58,15 @@ class GoogleInboxRetirement extends React.Component {
   /* **************************************************************************/
 
   handleMoreGoogleInfoClick = (evt) => {
-    electron.remote.shell.openExternal('https://www.google.com/inbox/')
+    WBRPCRenderer.wavebox.openExternal('https://www.google.com/inbox/')
   }
 
   handleOpenBlog = (evt) => {
-    electron.remote.shell.openExternal('https://blog.wavebox.io/inbox_to_gmail/')
+    WBRPCRenderer.wavebox.openExternal('https://blog.wavebox.io/inbox_to_gmail/')
   }
 
   handleOpenShortBlog = (evt) => {
-    electron.remote.shell.openExternal('https://blog.wavebox.io/simple-switch-from-google-inbox-to-gmail/')
+    WBRPCRenderer.wavebox.openExternal('https://blog.wavebox.io/simple-switch-from-google-inbox-to-gmail/')
   }
 
   handleLater = (evt) => {

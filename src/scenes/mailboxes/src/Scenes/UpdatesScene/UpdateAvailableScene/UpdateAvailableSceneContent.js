@@ -4,12 +4,12 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { DialogActions, DialogContent, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from '../Common/UpdateModalTitle'
-import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import querystring from 'querystring'
 import Platform from 'shared/Platform'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import classNames from 'classnames'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   dialogContent: {
@@ -117,7 +117,7 @@ class UpdateAvailableSceneContent extends React.Component {
   handleDownloadManual = () => {
     window.location.hash = '/'
     const updaterState = updaterStore.getState()
-    electron.remote.shell.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
+    WBRPCRenderer.wavebox.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
   }
 
   /* **************************************************************************/

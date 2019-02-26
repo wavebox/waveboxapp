@@ -6,13 +6,13 @@ import {
   WAVEBOX_CAPTURE_URLS,
   WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
-import electron from 'electron'
 import pkg from 'package.json'
 import WaveboxWebViewLoadbar from './WaveboxWebViewLoadbar'
 import WaveboxWebViewToolbar from './WaveboxWebViewToolbar'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const BROWSER_VIEW_PASS_PROPS = new Set(BrowserView.REACT_WEBVIEW_EVENTS)
 const REF = 'webview'
@@ -82,7 +82,7 @@ class WaveboxWebView extends React.Component {
           return true
         case WAVEBOX_CAPTURE_URLS.WAVEBOX_PRO_BUY:
           window.location.hash = '/'
-          electron.remote.shell.openExternal(purl.searchParams.get('url'))
+          WBRPCRenderer.wavebox.openExternal(purl.searchParams.get('url'))
           return true
       }
     }
@@ -148,7 +148,7 @@ class WaveboxWebView extends React.Component {
   handleOpenNewWindow = (evt) => {
     const handled = WaveboxWebView.routeWaveboxUrl(evt.url)
     if (!handled) {
-      electron.remote.shell.openExternal(evt.url)
+      WBRPCRenderer.wavebox.openExternal(evt.url)
     }
   }
 

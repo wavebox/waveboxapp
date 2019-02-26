@@ -9,7 +9,7 @@ import Spinner from 'wbui/Activity/Spinner'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
-import electron from 'electron'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import {
   WAVEBOX_CAPTURE_URL_HOSTNAMES,
   WAVEBOX_CAPTURE_URLS
@@ -133,7 +133,7 @@ class AccountWizardAddSceneContent extends React.Component {
     if (defaultHandled) { return }
     const mailboxAddHandled = this.processAddAccout(evt.url)
     if (mailboxAddHandled) { return }
-    electron.remote.shell.openExternal(evt.url)
+    WBRPCRenderer.wavebox.openExternal(evt.url)
   }
 
   /**

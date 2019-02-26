@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import { remote } from 'electron'
 const { nativeImage, app } = remote
 
@@ -40,7 +41,7 @@ class AppBadge extends React.Component {
 
   componentDidMount () {
     if (process.platform === 'win32') {
-      remote.getCurrentWindow().on('focus', this.handleWindowFocused)
+      WBRPCRenderer.browserWindow.on('focus', this.handleWindowFocused)
     }
   }
 
@@ -56,7 +57,7 @@ class AppBadge extends React.Component {
     }
 
     if (process.platform === 'win32') {
-      remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
+      WBRPCRenderer.browserWindow.removeListener('focus', this.handleWindowFocused)
     }
   }
 

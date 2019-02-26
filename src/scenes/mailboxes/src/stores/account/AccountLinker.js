@@ -1,7 +1,8 @@
 import accountStore from './accountStore'
 import settingsStore from '../settings/settingsStore'
 import { WB_NEW_WINDOW } from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class AccountLinker {
   /**
@@ -9,7 +10,7 @@ class AccountLinker {
   * @param url: the url to open
   */
   static openExternalWindow (url) {
-    remote.shell.openExternal(url, {
+    WBRPCRenderer.wavebox.openExternal(url, {
       activate: !settingsStore.getState().os.openLinksInBackground
     })
   }

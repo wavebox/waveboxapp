@@ -17,6 +17,7 @@ import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import classNames from 'classnames'
 import FASFileDownload from 'wbfa/FASFileDownload'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = (theme) => ({
   toolbar: {
@@ -140,7 +141,7 @@ class BrowserToolbar extends React.Component {
   * Opens the current page in the default browser
   */
   handleOpenInBrowser = (evt) => {
-    remote.shell.openExternal(this.externalUrl(this.state.currentUrl), { })
+    WBRPCRenderer.wavebox.openExternal(this.externalUrl(this.state.currentUrl))
   }
 
   /**

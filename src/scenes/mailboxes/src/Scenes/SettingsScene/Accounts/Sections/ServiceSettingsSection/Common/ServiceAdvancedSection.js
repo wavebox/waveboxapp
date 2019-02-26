@@ -6,7 +6,6 @@ import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import shallowCompare from 'react-addons-shallow-compare'
 import TuneIcon from '@material-ui/icons/Tune'
 import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
-import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import SettingsListItem from 'wbui/SettingsListItem'
@@ -14,6 +13,7 @@ import CodeIcon from '@material-ui/icons/Code'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import { Button } from '@material-ui/core'
 import InboxIcon from '@material-ui/icons/Inbox'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   userscriptLink: {
@@ -159,7 +159,10 @@ class ServiceAdvancedSection extends React.Component {
             </div>
             <a
               className={classes.userscriptLink}
-              onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(USER_SCRIPTS_WEB_URL) }}
+              onClick={(evt) => {
+                evt.preventDefault()
+                WBRPCRenderer.wavebox.openExternal(USER_SCRIPTS_WEB_URL)
+              }}
               href={USER_SCRIPTS_WEB_URL}>Find custom userscripts</a>
           </div>
         </SettingsListItem>

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { remote } from 'electron'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
@@ -14,6 +13,7 @@ import { Button, ListItemSecondaryAction, ListItemText, Dialog } from '@material
 import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
 import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
 import GoogleMailCustomUnreadDialogContent from './GoogleMailCustomUnreadDialogContent'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   customUnreadModeListItem: {
@@ -113,8 +113,7 @@ class GoogleMailUnreadSettings extends React.Component {
   */
   handleOpenInboxTypeKB = (evt) => {
     evt.preventDefault()
-
-    remote.shell.openExternal('https://wavebox.io/kb/gmail-inbox-type')
+    WBRPCRenderer.wavebox.openExternal('https://wavebox.io/kb/gmail-inbox-type')
   }
 
   /**
