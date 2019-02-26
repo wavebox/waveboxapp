@@ -2,63 +2,17 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { browserStore, browserActions } from 'stores/browser'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, Toolbar, IconButton, Typography, Tooltip } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
-import { CHROME_PDF_URL } from 'shared/constants'
-import { URL } from 'url'
-import { remote } from 'electron'
-import Spinner from 'wbui/Activity/Spinner'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack'
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
-import CloseIcon from '@material-ui/icons/Close'
-import RefreshIcon from '@material-ui/icons/Refresh'
-import SearchIcon from '@material-ui/icons/Search'
-import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
 import ThemeTools from 'wbui/Themes/ThemeTools'
-import classNames from 'classnames'
-import FASFileDownload from 'wbfa/FASFileDownload'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
+import BrowserToolbarContent from 'wbui/BrowserToolbarContent'
 
 const styles = (theme) => ({
   toolbar: {
     height: 40,
     minHeight: 40,
     backgroundColor: ThemeTools.getValue(theme, 'wavebox.toolbar.backgroundColor')
-  },
-  toolbarLoadingIconContainer: {
-    width: 40,
-    minWidth: 40,
-    minHeight: 40,
-    height: 40,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  toolbarUrl: {
-    height: 40,
-    lineHeight: '40px',
-    width: '100%',
-    overflow: 'hidden',
-    fontSize: '14px',
-    userSelect: 'initial',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.text.color')
-  },
-  icon: {
-    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color'),
-    '&:hover': {
-      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'hover')
-    },
-    '&.is-disabled': {
-      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled'),
-      '&:hover': {
-        color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled')
-      }
-    }
-  },
-  faIcon: {
-    fontSize: '18px'
   }
 })
 
@@ -72,7 +26,9 @@ class BrowserToolbar extends React.Component {
     handleGoBack: PropTypes.func.isRequired,
     handleGoForward: PropTypes.func.isRequired,
     handleStop: PropTypes.func.isRequired,
-    handleReload: PropTypes.func.isRequired
+    handleReload: PropTypes.func.isRequired,
+    handleDownload: PropTypes.func.isRequired,
+    handleLoadUrl: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -110,45 +66,59 @@ class BrowserToolbar extends React.Component {
     })
   }
 
-  /**
-  * Converts a url to a url that can be shown and used externally
-  * @param url: the true url
-  * @return the url to load in external browsers and show to the user
-  */
-  externalUrl (targetUrl) {
-    if (targetUrl.startsWith(CHROME_PDF_URL)) {
-      return new URL(targetUrl).searchParams.get('src')
-    } else {
-      return targetUrl
-    }
-  }
-
-  /**
-  * @param targetUrl: the current url
-  * @return true if this url is downloadable
-  */
-  isDownloadableUrl (targetUrl) {
-    if (targetUrl.startsWith(CHROME_PDF_URL)) { return true }
-
-    return false
-  }
-
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
   /**
   * Opens the current page in the default browser
+  * @param evt: the event that fired
+  * @param url: the url to open
   */
-  handleOpenInBrowser = (evt) => {
-    WBRPCRenderer.wavebox.openExternal(this.externalUrl(this.state.currentUrl))
+  handleOpenInBrowser = (evt, url) => {
+    WBRPCRenderer.wavebox.openExternal(url)
   }
 
   /**
   * Downloads the current page
+  * @param evt: the event that fired
+  * @param url: the url to download
   */
-  handleDownload = (evt) => {
-    remote.getCurrentWebContents().downloadURL(this.externalUrl(this.state.currentUrl))
+  handleDownload = (evt, url) => {
+    this.props.handleDownload(url)
+  }
+
+  /**
+  * Starts search
+  * @param evt: the event that fired
+  */
+  handleSearch = (evt) => {
+    browserActions.toggleSearch()
+  }
+
+  /**
+  * Handles the address field leaving focus
+  */
+  handleBlurAddress = () => {
+    if (window.location.hash.indexOf('keyboardtarget?browserurl=true') !== -1) {
+      window.location.hash = '/'
+    }
+  }
+
+  /**
+  * Handles the address field going into focus
+  */
+  handleFocusAddress = () => {
+    window.location.hash = '/keyboardtarget?browserurl=true'
+  }
+
+  /**
+  * Handles the address field changing
+  * @param evt: the event that fired
+  * @param address: the address to load
+  */
+  handleChangeAddress = (evt, address) => {
+    this.props.handleLoadUrl(address)
   }
 
   /* **************************************************************************/
@@ -167,58 +137,43 @@ class BrowserToolbar extends React.Component {
       handleGoForward,
       handleStop,
       handleReload,
+      handleDownload,
+      handleLoadUrl,
       ...passProps
     } = this.props
-    const { isLoading, currentUrl, canGoBack, canGoForward } = this.state
+    const {
+      isLoading,
+      currentUrl,
+      canGoBack,
+      canGoForward
+    } = this.state
 
     return (
       <Paper {...passProps}>
-        <Toolbar disableGutters className={classes.toolbar}>
-          <IconButton
-            disableRipple={!canGoBack}
-            onClick={canGoBack ? handleGoBack : undefined}>
-            <ArrowBackIcon className={classNames(classes.icon, !canGoBack ? 'is-disabled' : undefined)} />
-          </IconButton>
-          <IconButton
-            disableRipple={!canGoForward}
-            onClick={canGoForward ? handleGoForward : undefined}>
-            <ArrowForwardIcon className={classNames(classes.icon, !canGoForward ? 'is-disabled' : undefined)} />
-          </IconButton>
-          <IconButton onClick={isLoading ? handleStop : handleReload}>
-            {isLoading ? (
-              <CloseIcon className={classes.icon} />
-            ) : (
-              <RefreshIcon className={classes.icon} />
-            )}
-          </IconButton>
-          <div className={classes.toolbarLoadingIconContainer}>
-            {isLoading ? (
-              <Spinner
-                size={15}
-                color={ThemeTools.getValue(theme, 'wavebox.toolbar.spinner.color')} />
-            ) : undefined}
-          </div>
-          <Typography className={classes.toolbarUrl}>
-            {this.externalUrl(currentUrl)}
-          </Typography>
-          <Tooltip title='Find in Page'>
-            <IconButton onClick={() => browserActions.toggleSearch()}>
-              <SearchIcon className={classes.icon} />
-            </IconButton>
-          </Tooltip>
-          {this.isDownloadableUrl(currentUrl) ? (
-            <Tooltip title='Download'>
-              <IconButton onClick={this.handleDownload}>
-                <FASFileDownload className={classNames(classes.icon, classes.faIcon)} />
-              </IconButton>
-            </Tooltip>
-          ) : undefined}
-          <Tooltip title='Open in Browser' placement='bottom-start'>
-            <IconButton onClick={this.handleOpenInBrowser}>
-              <OpenInBrowserIcon className={classes.icon} />
-            </IconButton>
-          </Tooltip>
-        </Toolbar>
+        <BrowserToolbarContent
+          className={classes.toolbar}
+          address={currentUrl}
+          isLoading={isLoading}
+          canGoBack={canGoBack}
+          canGoForward={canGoForward}
+          hasGoBack
+          hasGoForward
+          hasStopAndReload
+          hasLoadingSpinner
+          hasHome={false}
+          hasDownload
+          hasSearch
+          hasOpenInBrowser
+          onGoBack={this.handleGoBack}
+          onGoForward={this.handleGoForward}
+          onStop={this.handleStop}
+          onReload={this.handleReload}
+          onBlurAddress={this.handleBlurAddress}
+          onFocusAddress={this.handleFocusAddress}
+          onChangeAddress={this.handleChangeAddress}
+          onSearch={this.handleSearch}
+          onDownload={this.handleDownload}
+          onOpenInBrowser={this.handleOpenInBrowser} />
       </Paper>
     )
   }

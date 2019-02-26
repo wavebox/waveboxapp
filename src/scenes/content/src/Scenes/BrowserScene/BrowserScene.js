@@ -12,9 +12,6 @@ import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
 import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
 import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionRequests'
 
-const SEARCH_REF = 'search'
-const BROWSER_REF = 'browser'
-
 const styles = {
   scene: {
     position: 'absolute',
@@ -53,6 +50,17 @@ class BrowserScene extends React.Component {
 
   /* **************************************************************************/
   // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.searchRef = React.createRef()
+    this.browserRef = React.createRef()
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
@@ -110,8 +118,8 @@ class BrowserScene extends React.Component {
       browserActions.setCurrentUrl(evt.url)
     }
     browserActions.updateNavigationControls(
-      this.refs[BROWSER_REF].canGoBack(),
-      this.refs[BROWSER_REF].canGoForward()
+      this.browserRef.current.canGoBack(),
+      this.browserRef.current.canGoForward()
     )
   }
 
@@ -148,8 +156,8 @@ class BrowserScene extends React.Component {
   * @param permission: the resolved permission
   */
   handleResolvePermission = (type, permission) => {
-    if (this.refs[BROWSER_REF]) {
-      this.refs[BROWSER_REF].resolvePermissionRequest(type, permission)
+    if (this.browserRef.current) {
+      this.browserRef.current.resolvePermissionRequest(type, permission)
     }
   }
 
@@ -162,7 +170,7 @@ class BrowserScene extends React.Component {
   */
   handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
-      this.refs[BROWSER_REF].focus()
+      this.browserRef.current.focus()
     }
   }
 
@@ -196,13 +204,15 @@ class BrowserScene extends React.Component {
       <div className={classes.scene}>
         <BrowserToolbar
           className={classes.toolbar}
-          handleGoBack={() => this.refs[BROWSER_REF].goBack()}
-          handleGoForward={() => this.refs[BROWSER_REF].goForward()}
-          handleStop={() => this.refs[BROWSER_REF].stop()}
-          handleReload={() => this.refs[BROWSER_REF].reload()} />
+          handleGoBack={() => this.browserRef.current.goBack()}
+          handleGoForward={() => this.browserRef.current.goForward()}
+          handleStop={() => this.browserRef.current.stop()}
+          handleReload={() => this.browserRef.current.reload()}
+          handleDownload={(url) => this.browserRef.current.getWebContents().downloadURL(url)}
+          handleLoadUrl={(url) => this.browserRef.current.loadURL(url)} />
         <div className={classes.webviewContainer}>
           <BrowserView
-            ref={BROWSER_REF}
+            ref={this.browserRef}
             src={url}
             partition={partition}
             plugins
@@ -228,7 +238,7 @@ class BrowserScene extends React.Component {
             permissionRequests={permissionRequests}
             url={permissionRequestsUrl}
             onResolvePermission={this.handleResolvePermission} />
-          <BrowserSearch ref={SEARCH_REF} />
+          <BrowserSearch ref={this.searchRef} />
         </div>
       </div>
     )
