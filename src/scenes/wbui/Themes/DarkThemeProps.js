@@ -77,6 +77,11 @@ export default {
         icon: {
           color: { default: blue[600], hover: blue[200] }
         }
+      },
+      busy: {
+        icon: {
+          color: { default: blue[600] }
+        }
       }
     },
     toolbar: {

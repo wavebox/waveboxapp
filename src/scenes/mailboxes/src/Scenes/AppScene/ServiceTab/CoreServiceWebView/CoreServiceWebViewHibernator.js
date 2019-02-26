@@ -10,7 +10,7 @@ import ConcurrencyLock from './ConcurrencyLock'
 const privQueuedIPCSend = Symbol('privQueuedIPCSend')
 const privInstanceId = Symbol('privInstanceId')
 
-let concurrencyLock
+let _concurrencyLock
 class CoreServiceWebViewHibernator extends React.Component {
   /* **************************************************************************/
   // Class
@@ -28,16 +28,36 @@ class CoreServiceWebViewHibernator extends React.Component {
   static REACT_WEBVIEW_EVENTS = CoreServiceWebView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/
+  // ConcurrencyLock
+  /* **************************************************************************/
+
+  /**
+  * Creates or returns the concurrency lock
+  * @return concurrency lock
+  */
+  static getConcurrencyLock () {
+    // Late build this as the concurrency lock needs the stores loaded to grab
+    // the settings
+    if (!_concurrencyLock) {
+      _concurrencyLock = new ConcurrencyLock()
+    }
+    return _concurrencyLock
+  }
+
+  /**
+  * Creates or returns the concurrency lock
+  * @return concurrency lock
+  */
+  getConcurrencyLock () {
+    return this.constructor.getConcurrencyLock()
+  }
+
+  /* **************************************************************************/
   // Class Lifecycle
   /* **************************************************************************/
 
   constructor (props) {
     super(props)
-
-    // Late build this as it needs stores setup
-    if (!concurrencyLock) {
-      concurrencyLock = new ConcurrencyLock()
-    }
 
     this.webviewRef = React.createRef()
     this[privQueuedIPCSend] = []
@@ -69,7 +89,7 @@ class CoreServiceWebViewHibernator extends React.Component {
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountUpdated)
-    concurrencyLock.destroyLoadLock(this[privInstanceId])
+    this.getConcurrencyLock().destroyLoadLock(this[privInstanceId])
   }
 
   componentWillReceiveProps (nextProps) {
@@ -103,7 +123,7 @@ class CoreServiceWebViewHibernator extends React.Component {
   */
   generateInitialState (serviceId) {
     // Tear-down any previous state
-    concurrencyLock.destroyLoadLock(this[privInstanceId])
+    this.getConcurrencyLock().destroyLoadLock(this[privInstanceId])
 
     const accountState = accountStore.getState()
     const isSleeping = accountState.isServiceSleeping(serviceId)
@@ -113,9 +133,9 @@ class CoreServiceWebViewHibernator extends React.Component {
       isActive: isActive,
       captureRef: null,
       hasLoadLock: !isSleeping && isActive
-        ? concurrencyLock.forceLoadLock(this[privInstanceId])
+        ? this.getConcurrencyLock().forceLoadLock(this[privInstanceId])
         : !isSleeping
-          ? concurrencyLock.requestLoadLock(this[privInstanceId], this.loadLockAquired)
+          ? this.getConcurrencyLock().requestLoadLock(this[privInstanceId], this.loadLockAquired)
           : false
     }
   }
@@ -146,7 +166,7 @@ class CoreServiceWebViewHibernator extends React.Component {
       if (prevState.hasLoadLock) {
         if (!prevState.isSleeping && nextState.isSleeping) {
           // Move from awake to asleep
-          concurrencyLock.destroyLoadLock(this[privInstanceId])
+          this.getConcurrencyLock().destroyLoadLock(this[privInstanceId])
           nextState.hasLoadLock = false
         }
       } else {
@@ -156,8 +176,8 @@ class CoreServiceWebViewHibernator extends React.Component {
 
         if (transitioningToAwake) {
           nextState.hasLoadLock = nextState.isActive
-            ? concurrencyLock.forceLoadLock(this[privInstanceId])
-            : concurrencyLock.requestLoadLock(this[privInstanceId], this.loadLockAquired)
+            ? this.getConcurrencyLock().forceLoadLock(this[privInstanceId])
+            : this.getConcurrencyLock().requestLoadLock(this[privInstanceId], this.loadLockAquired)
         }
       }
 
@@ -194,7 +214,7 @@ class CoreServiceWebViewHibernator extends React.Component {
   * @param evt: the event that fired
   */
   handleDidStopLoading = (evt) => {
-    concurrencyLock.loadLockLoaded(this[privInstanceId])
+    this.getConcurrencyLock().loadLockLoaded(this[privInstanceId])
 
     // Call parent
     if (this.props.didStopLoading) {
@@ -207,7 +227,7 @@ class CoreServiceWebViewHibernator extends React.Component {
   * @param evt: the event that fired
   */
   handleCrashed = (evt) => {
-    concurrencyLock.loadLockLoaded(this[privInstanceId])
+    this.getConcurrencyLock().loadLockLoaded(this[privInstanceId])
 
     // Call parent
     if (this.props.crashed) {

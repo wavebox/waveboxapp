@@ -42,6 +42,11 @@ export default createMuiTheme({
           icon: {
             color: { default: cyan[600], hover: cyan[400] }
           }
+        },
+        busy: {
+          icon: {
+            color: { default: cyan[600] }
+          }
         }
       },
       toolbar: {
