@@ -147,7 +147,7 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
         WBRPCRenderer.wavebox.openReadingQueueLink(serviceId, item)
         break
       case CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT:
-        WBRPCRenderer.wavebox.openReadingLink(serviceId, item)
+        WBRPCRenderer.wavebox.openRecentLink(serviceId, item)
         break
     }
     onRequestClose()
