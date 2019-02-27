@@ -7,8 +7,8 @@
       img-src data:;
       font-src 'self';
       connect-src *;
-      script-src 'self' 'sha256-ZKrrkzqXNmvrQz2mL3om3Tx4vKLbqfZ3B1Ivzj/7ihM=';
-      style-src 'self' 'sha256-iDu6wJmv9RMbO1QWO+NmRmm4DrhRRdf7iDwGKR/P50g='
+      script-src 'self' 'sha256-2jo/VXXUAmj3rqz+Kj3cKnUhQn3m5d/X7YJdkQP5VV8=';
+      style-src 'self' 'sha256-snBfYiDkaNjUHLTCYbt7gy9LerOfteBIReaVK+M8Vxg='
     ">
     <title>Wavebox</title>
     <link rel="stylesheet" type="text/css" href="../../fonts/opensans/opensans.css">
@@ -103,6 +103,53 @@
         word-break: break-all;
         user-select: all;
       }
+      [data-enhance="proxy-settings-toggle"] {
+        font-size: 85%;
+        font-weight: 300;
+        color: rgb(75, 191, 235);
+        background-color: #f7f7f7;
+        padding-right: 5px;
+        padding-bottom: 5px;
+      }
+      #proxy-settings {
+        display: none;
+        font-size: 85%;
+        border: 2px solid rgb(75, 191, 235);
+        border-radius: 3px;
+        padding: 8px;
+        margin-top: -15px;
+      }
+
+      .form-groups-horizontal {
+        display: flex;
+        width: 100%;
+        margin: 10px -4px;
+      }
+      .form-group-text {
+        width: 100%;
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+      .form-group-text > label {
+        display: block;
+      }
+      .form-group-text > input[type="text"] {
+        width: 100%;
+        padding: 4px;
+      }
+      input::placeholder {
+        color: rgb(167, 171, 169);
+      }
+
+      [data-enhance="proxy-settings-save"] {
+        border: 1px solid transparent;
+        border-radius: 3px;
+        padding: 4px 16px;
+        font-size: 14px;
+        background-color: #1976D2;
+        color: white;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -120,6 +167,34 @@
         <br />
         <p>
           <a data-enhance="reload">Retry</a>
+        </p>
+        <p>
+          <a data-enhance="proxy-settings-toggle">Change Proxy Settings</a>
+          <div id="proxy-settings">
+            <div>
+              <input type="radio" name="proxyMode" value="AUTO"> Auto
+            </div>
+            <div>
+              <input type="radio" name="proxyMode" value="DISABLED"> Disabled
+            </div>
+            <div>
+              <input type="radio" name="proxyMode" value="SOCKS_MANUAL"> Custom SOCKS5 Proxy
+            </div>
+            <div>
+              <input type="radio" name="proxyMode" value="HTTP_MANUAL"> Custom HTTP Proxy
+            </div>
+            <div class="form-groups-horizontal">
+              <div class="form-group-text">
+                <label>Custom Proxy Server</label>
+                <input type="text" name="proxyServer" placeholder="127.0.0.1" />
+              </div>
+              <div class="form-group-text">
+                <label>Custom Proxy Port</label>
+                <input type="text" name="proxyPort" placeholder="8888" />
+              </div>
+            </div>
+            <button data-enhance="proxy-settings-save">Save & Restart</button>
+          </div>
         </p>
         <p>
           <a data-enhance="test-connectivity">Test Connectivity</a>
@@ -176,6 +251,27 @@ document.querySelector('[data-enhance="test-connectivity"]').addEventListener('c
     .then(() => testEndpoint('https://microsoft.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
     .then(() => { outputEl.innerHTML += '<div><strong>Done</strong></div>' })
 }, false)
+document.querySelector('[data-enhance="proxy-settings-toggle"]').addEventListener('click', (evt) => {
+  evt.preventDefault()
+  document.getElementById('proxy-settings').style.display = 'block'
+}, false)
+document.querySelector('[data-enhance="proxy-settings-save"]').addEventListener('click', (evt) => {
+  evt.preventDefault()
+  electron.ipcRenderer.send(
+    'WBRPC_SET_PROXY_SETTINGS',
+    document.querySelector(`input[name="proxyMode"]:checked`).value,
+    document.querySelector('input[name="proxyServer"]').value,
+    document.querySelector('input[name="proxyPort"]').value
+  )
+}, false)
+
+const proxySettings = electron.ipcRenderer.sendSync('WBRPC_SYNC_GET_PROXY_SETTINGS')
+try {
+  document.querySelector(`input[name="proxyMode"][value="${proxySettings.proxyMode}"]`).checked = true
+  document.querySelector('input[name="proxyServer"]').value = proxySettings.proxyServer
+  document.querySelector('input[name="proxyPort"]').value = proxySettings.proxyPort
+} catch (ex) { console.error(ex) }
+
 window.addEventListener('online', () => {
   window.location.href = `mailboxes.html?${querystring.stringify(onlineArgs)}`
 }, false)

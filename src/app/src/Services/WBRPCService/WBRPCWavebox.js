@@ -1,4 +1,5 @@
 import { ipcMain, shell } from 'electron'
+import { evtMain } from 'AppEvents'
 import {
   WBRPC_OPEN_RECENT_LINK,
   WBRPC_OPEN_READING_QUEUE_LINK,
@@ -6,7 +7,9 @@ import {
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
-  WBRPC_OPEN_EXTERNAL
+  WBRPC_OPEN_EXTERNAL,
+  WBRPC_SYNC_GET_PROXY_SETTINGS,
+  WBRPC_SET_PROXY_SETTINGS
 } from 'shared/WBRPCEvents'
 import LinkOpener from 'LinkOpener'
 import AppUpdater from 'AppUpdater'
@@ -14,7 +17,7 @@ import DistributionConfig from 'Runtime/DistributionConfig'
 import Platform from 'shared/Platform'
 import { URL } from 'url'
 import { ElectronWebContents } from 'ElectronTools'
-import { settingsStore } from 'stores/settings'
+import { settingsStore, settingsActions } from 'stores/settings'
 import { userStore } from 'stores/user'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
@@ -47,6 +50,10 @@ class WBRPCWavebox {
 
     // Updates
     ipcMain.on(WBRPC_GET_UPDATER_CONFIG, this._handleGetUpdaterConfig)
+
+    // Proxy
+    ipcMain.on(WBRPC_SYNC_GET_PROXY_SETTINGS, this._handleSyncGetProxySettings)
+    ipcMain.on(WBRPC_SET_PROXY_SETTINGS, this._handleSetProxySettings)
   }
 
   /**
@@ -241,6 +248,47 @@ class WBRPCWavebox {
           autoupdaterSupportedPlatform: false
         })
       })
+  }
+
+  /* ****************************************************************************/
+  // IPC: Proxy
+  /* ****************************************************************************/
+
+  /**
+  * Synchronously gets the proxy settings
+  * @param evt: the event that fired
+  */
+  _handleSyncGetProxySettings = (evt) => {
+    try {
+      const app = settingsStore.getState().launched.app
+      evt.returnValue = {
+        proxyMode: app.proxyMode,
+        proxyServer: app.proxyServer,
+        proxyPort: app.proxyPort
+      }
+    } catch (ex) {
+      console.error(`Failed to respond to "${WBRPC_SYNC_GET_PROXY_SETTINGS}" continuing with unknown side effects`, ex)
+      evt.returnValue = {}
+    }
+  }
+
+  /**
+  * Sets the proxy settings and restarts the app
+  * @param evt: the event that fired
+  * @param mode: the new mode
+  * @param server: the new server
+  * @param port: the new port
+  */
+  _handleSetProxySettings = (evt, mode, server, port) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+
+    settingsActions.sub.app.setProxyMode(mode)
+    settingsActions.sub.app.setProxyServer(server)
+    settingsActions.sub.app.setProxyPort(port)
+
+    setTimeout(() => {
+      evtMain.emit(evtMain.WB_RELAUNCH_APP, { })
+    }, 1000)
   }
 }
 

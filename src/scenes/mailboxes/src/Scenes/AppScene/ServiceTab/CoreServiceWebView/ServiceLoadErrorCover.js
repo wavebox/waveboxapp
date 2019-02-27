@@ -9,9 +9,11 @@ import WifiOffIcon from '@material-ui/icons/WifiOff'
 import FARFrown from 'wbfa/FARFrown'
 
 const HANDLED_ERROR_CODES = new Set([
+  -2, // FAILED
   -102, // CONNECTION_REFUSED
   -105, // ERR_NAME_NOT_RESOLVED
-  -106 // ERR_INTERNET_DISCONNECTED
+  -106, // ERR_INTERNET_DISCONNECTED,
+  -130 // PROXY_CONNECTION_FAILED
 ])
 
 const styles = {
@@ -51,6 +53,7 @@ class ServiceLoadErrorCover extends React.Component {
   */
   renderIconComponent (code) {
     switch (code) {
+      case -2: return FARFrown
       case -102: return FARFrown
       case -105: return FARFrown
       case -106: return WifiOffIcon
@@ -63,6 +66,7 @@ class ServiceLoadErrorCover extends React.Component {
   */
   renderTitle (code) {
     switch (code) {
+      case -2: return `Failed to connect`
       case -102: return `This site can't be reached`
       case -105: return `This site can't be reached`
       case -106: return `No internet`
@@ -77,6 +81,11 @@ class ServiceLoadErrorCover extends React.Component {
   */
   renderText (code, description, url) {
     switch (code) {
+      case -2: return [
+        'Try checking your internet connection and proxy settings',
+        '',
+        description
+      ]
       case -102: return [
         'Refused to connect to the server:',
         url,
@@ -105,14 +114,18 @@ class ServiceLoadErrorCover extends React.Component {
   */
   renderButton (classes, code, attemptReload) {
     switch (code) {
-      case -102: return undefined
-      case -105: return undefined
-      case -106: return (
-        <Button variant='contained' onClick={attemptReload}>
-          <RefreshIcon className={classes.infoButtonIcon} />
-          Reload
-        </Button>
-      )
+      case -102:
+      case -105:
+        return undefined
+
+      case -2:
+      case -106:
+        return (
+          <Button variant='contained' onClick={attemptReload}>
+            <RefreshIcon className={classes.infoButtonIcon} />
+            Reload
+          </Button>
+        )
     }
   }
 

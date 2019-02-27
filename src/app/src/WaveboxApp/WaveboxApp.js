@@ -199,6 +199,20 @@ class WaveboxApp {
       app.disableHardwareAcceleration()
     }
     app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
+    switch (launchSettings.app.proxyMode) {
+      case AppSettings.PROXY_MODES.DISABLED:
+        app.commandLine.appendSwitch('no-proxy-server', 'true')
+        break
+      case AppSettings.PROXY_MODES.HTTP_MANUAL:
+      case AppSettings.PROXY_MODES.SOCKS_MANUAL:
+        const configStr = launchSettings.app.manualProxyString
+        if (configStr) {
+          app.commandLine.appendSwitch('proxy-server', configStr)
+        }
+        break
+      default:
+        break
+    }
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
     process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
