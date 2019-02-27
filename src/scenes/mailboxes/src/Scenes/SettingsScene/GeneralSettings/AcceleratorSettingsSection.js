@@ -167,6 +167,9 @@ const styles = {
     color: blue[700],
     fontSize: '85%'
   },
+  textField: {
+    marginTop: 14
+  },
   textFieldInput: {
     fontSize: '0.8rem',
     width: 180
@@ -220,6 +223,7 @@ class AcceleratorSettingsSection extends React.Component {
                   name={`AcceleratorSettings_${name}`}
                   defaultValue={accelerator}
                   margin='dense'
+                  className={classes.textField}
                   placeholder={acceleratorDefault || '...'}
                   onBlur={(evt) => settingsActions.sub.accelerators.set(name, evt.target.value)}
                   InputProps={{

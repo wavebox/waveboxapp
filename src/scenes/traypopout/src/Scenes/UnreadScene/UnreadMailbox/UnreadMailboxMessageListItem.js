@@ -51,29 +51,21 @@ const avatarColorPalette = [
 
 const styles = {
   avatarContainer: {
-    display: 'block',
-    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 60,
     minWidth: 60,
     height: 60,
     minHeight: 60,
-    left: -10,
-    top: 5
+    marginLeft: -15
   },
   serviceAvatar: {
-    position: 'absolute',
-    top: 0,
-    left: 0
-  },
-  serviceAvatarNoExtended: {
-    top: 5
+
   },
   extendedAvatar: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 35,
-    height: 35
+    width: 40,
+    height: 40
   },
   listItem: {
     paddingTop: 8,
@@ -157,40 +149,41 @@ class UnreadMailboxMessageListItem extends React.Component {
   * Renders the avatar
   * @param classes: the classes to use
   * @param extended: the extended info
+  * @param serviceAvatar: the service avatar
   * @return jsx or undefined
   */
-  renderAvatar (classes, extended) {
-    if (!extended) { return undefined }
-    if (extended.optAvatarText) {
-      const charCode = extended.optAvatarText.toLowerCase().charCodeAt(0)
-      const [backgroundColor, color] = avatarColorPalette[charCode % avatarColorPalette.length]
-      return (
-        <Avatar
-          className={classes.extendedAvatar}
-          style={{ backgroundColor: backgroundColor, color: color }}>
-          {extended.optAvatarText}
-        </Avatar>
-      )
+  renderAvatar (classes, extended, serviceAvatar) {
+    if (extended) {
+      if (extended.optAvatarText) {
+        const charCode = extended.optAvatarText.toLowerCase().charCodeAt(0)
+        const [backgroundColor, color] = avatarColorPalette[charCode % avatarColorPalette.length]
+        return (
+          <Avatar
+            className={classes.extendedAvatar}
+            style={{ backgroundColor: backgroundColor, color: color }}>
+            {extended.optAvatarText}
+          </Avatar>
+        )
+      }
     }
 
-    return undefined
+    return (
+      <ACAvatarCircle2
+        className={classes.serviceAvatar}
+        avatar={serviceAvatar}
+        resolver={(i) => Resolver.image(i)}
+        size={40} />
+    )
   }
 
   render () {
     const { message, classes, className, ...passProps } = this.props
     const { avatar } = this.state
 
-    const extendedAvatar = this.renderAvatar(classes, message.extended)
-
     return (
       <ListItem className={classNames(classes.listItem, className)} button {...passProps}>
-        <span className={classes.avatarContainer} data-tom>
-          <ACAvatarCircle2
-            className={classNames(classes.serviceAvatar, !extendedAvatar ? classes.serviceAvatarNoExtended : undefined)}
-            avatar={avatar}
-            resolver={(i) => Resolver.image(i)}
-            size={50} />
-          {extendedAvatar}
+        <span className={classes.avatarContainer}>
+          {this.renderAvatar(classes, message.extended, avatar)}
         </span>
         <span>
           <span className={classes.primaryMessageText}>{message.text}</span>
