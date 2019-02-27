@@ -309,6 +309,8 @@ class AccountStore extends RendererAccountStore {
 
     if (!this.isServiceActive(serviceId)) {
       actions.changeActiveService.defer(serviceId)
+    } else if (this.isServiceSleeping(serviceId)) {
+      actions.awakenService.defer(serviceId)
     }
 
     let tries = 0
