@@ -2,7 +2,8 @@ import { ipcMain, BrowserWindow } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import {
   WBRPC_CLOSE_WINDOW,
-  WBRPC_BW_FOCUS
+  WBRPC_BW_FOCUS,
+  WBRPC_IS_FOCUSED_SYNC
 } from 'shared/WBRPCEvents'
 
 const privConnected = Symbol('privConnected')
@@ -15,6 +16,7 @@ class WBRPCBrowserWindow {
   constructor () {
     this[privConnected] = new Set()
     ipcMain.on(WBRPC_CLOSE_WINDOW, this._handleCloseWindow)
+    ipcMain.on(WBRPC_IS_FOCUSED_SYNC, this._handleIsFocusedSync)
   }
 
   /**
@@ -59,6 +61,24 @@ class WBRPCBrowserWindow {
     const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
     if (!bw || bw.isDestroyed()) { return }
     bw.close()
+  }
+
+  /**
+  * Checks if the current window is focused
+  * @param evt: the event that fired
+  */
+  _handleIsFocusedSync = (evt) => {
+    try {
+      const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
+      if (!bw || bw.isDestroyed()) {
+        evt.returnValue = false
+      } else {
+        evt.returnValue = bw.isFocused()
+      }
+    } catch (ex) {
+      console.error(`Failed to respond to "${WBRPC_IS_FOCUSED_SYNC}" continuing with unknown side effects`, ex)
+      evt.returnValue = false
+    }
   }
 }
 

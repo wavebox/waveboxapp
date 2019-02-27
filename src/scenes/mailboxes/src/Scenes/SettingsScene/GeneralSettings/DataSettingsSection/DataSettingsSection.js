@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
 import { accountActions } from 'stores/account'
 import { crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -25,6 +25,7 @@ import {
 import RuntimePaths from 'Runtime/RuntimePaths'
 import FASCloudDownloadIcon from 'wbfa/FASCloudDownload'
 import FASCloudUploadIcon from 'wbfa/FASCloudUpload'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   listItem: {
@@ -78,7 +79,7 @@ class DataSettingsSection extends React.Component {
         <SettingsListItemButton
           label='Wavebox data folder'
           icon={<FolderOpenIcon />}
-          onClick={() => { remote.shell.showItemInFolder(RuntimePaths.APP_DATA_PATH) }} />
+          onClick={() => { WBRPCRenderer.wavebox.showItemInFolder(RuntimePaths.APP_DATA_PATH) }} />
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
             variant='contained'

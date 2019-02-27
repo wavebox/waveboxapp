@@ -8,6 +8,8 @@ import {
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
   WBRPC_OPEN_EXTERNAL,
+  WBRPC_SHOW_ITEM_IN_FOLDER,
+  WBRPC_OPEN_ITEM,
   WBRPC_SYNC_GET_PROXY_SETTINGS,
   WBRPC_SET_PROXY_SETTINGS
 } from 'shared/WBRPCEvents'
@@ -43,10 +45,12 @@ class WBRPCWavebox {
     ipcMain.on(WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, this._handleSyncGetExtensionContentScriptPreloadInfo)
     ipcMain.on(WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, this._handleSyncGetExtensionHostedPreloadInfo)
 
-    // Links
+    // Links & opening
     ipcMain.on(WBRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
     ipcMain.on(WBRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
     ipcMain.on(WBRPC_OPEN_EXTERNAL, this._handleOpenExternal)
+    ipcMain.on(WBRPC_SHOW_ITEM_IN_FOLDER, this._handleShowItemInFolder)
+    ipcMain.on(WBRPC_OPEN_ITEM, this._handleOpenItem)
 
     // Updates
     ipcMain.on(WBRPC_GET_UPDATER_CONFIG, this._handleGetUpdaterConfig)
@@ -185,7 +189,7 @@ class WBRPCWavebox {
   }
 
   /* ****************************************************************************/
-  // IPC: Links
+  // IPC: Links & opening
   /* ****************************************************************************/
 
   /**
@@ -219,6 +223,31 @@ class WBRPCWavebox {
   _handleOpenExternal = (evt, url, options) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     shell.openExternal(url, options)
+  }
+
+  /**
+  * Shows an item in the folder
+  * @param evt: the event that fired
+  * @param fullPath: the full path to the item
+  */
+  _handleShowItemInFolder = (evt, fullPath) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    shell.showItemInFolder(fullPath)
+  }
+
+  /**
+  * Opens an item
+  * @param evt: the event that fired
+  * @param fullPath: the full path to the item
+  * @param fallbackToFolder: if set to true and the item can't be opened, it will be shown in the folder
+  */
+  _handleOpenItem = (evt, fullPath, fallbackToFolder) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    if (fallbackToFolder) {
+      shell.openItem(fullPath) || shell.showItemInFolder(fullPath)
+    } else {
+      shell.openItem(fullPath)
+    }
   }
 
   /* ****************************************************************************/

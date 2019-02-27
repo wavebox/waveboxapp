@@ -101,12 +101,8 @@ class Spellchecker {
 
   /**
   * Re-binds the provider
-  * @param evt: the event that fired
-  * @param webContentsId: the id of the webcontents
-  * @param isMainFrame: true if it was the main frame that finished
   */
-  _handleRebindProvider = (evt, webContentsId, isMainFrame) => {
-    if (isMainFrame) { return }
+  _handleRebindProvider = () => {
     if (!this[privWebFrameLanguage]) { return }
     // Fix for https://github.com/electron/electron/issues/11868
     clearTimeout(this[privRebindThrottle])

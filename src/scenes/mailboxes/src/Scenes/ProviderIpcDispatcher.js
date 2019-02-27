@@ -5,7 +5,8 @@ import { NotificationRenderer } from 'Notifications'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE
 } from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 export default class ProviderIpcDispatcher extends React.Component {
   componentDidMount () {
@@ -36,7 +37,7 @@ export default class ProviderIpcDispatcher extends React.Component {
       body: req.filename,
       silent: !downloadNotificationSoundEnabled
     }, (req) => {
-      remote.shell.openItem(req.path) || remote.shell.showItemInFolder(req.path)
+      WBRPCRenderer.wavebox.openItem(req.path, true)
     }, req)
   }
 

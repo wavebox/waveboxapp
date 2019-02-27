@@ -10,7 +10,6 @@ import {
   SLACK_TICKLE_INTERVAL
 } from 'shared/constants'
 import Debug from 'Debug'
-import { remote } from 'electron'
 import emoji from 'node-emoji'
 import { accountStore, accountActions, accountDispatch } from '../account'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
@@ -19,6 +18,7 @@ import SlackServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducer
 import SlackServiceReducer from 'shared/AltStores/Account/ServiceReducers/SlackServiceReducer'
 import { userStore } from 'stores/user'
 import PowerMonitorService from 'shared/PowerMonitorService'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const MAX_NOTIFICATION_RECORD_AGE = 1000 * 60 * 10 // 10 mins
 const HTML5_NOTIFICATION_DELAY = 1000 * 2 // 2 secs
@@ -596,7 +596,7 @@ class SlackStore {
     this._markNotificationPublished(slackNotificationId)
 
     // Check to see if we're active and in the channel
-    if (remote.getCurrentWindow().isFocused()) {
+    if (WBRPCRenderer.browserWindow.isFocusedSync()) {
       if (accountState.activeServiceId() === serviceId) {
         const currentUrl = accountDispatch.getCurrentUrl(serviceId) || ''
         if (currentUrl.indexOf(message.channel) !== -1) { return }

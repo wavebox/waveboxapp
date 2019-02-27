@@ -7,7 +7,9 @@ import {
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
-  WBRPC_OPEN_EXTERNAL
+  WBRPC_OPEN_EXTERNAL,
+  WBRPC_SHOW_ITEM_IN_FOLDER,
+  WBRPC_OPEN_ITEM
 } from '../WBRPCEvents'
 
 class WBRPCWavebox {
@@ -70,6 +72,24 @@ class WBRPCWavebox {
   */
   openExternal (url, options) {
     ipcRenderer.send(WBRPC_OPEN_EXTERNAL, url, options)
+  }
+
+  /**
+  * Shows an item in the folder
+  * @param evt: the event that fired
+  * @param fullPath: the full path to the item
+  */
+  showItemInFolder (fullPath) {
+    ipcRenderer.send(WBRPC_SHOW_ITEM_IN_FOLDER, fullPath)
+  }
+
+  /**
+  * Opens an item
+  * @param fullPath: the full path to the item
+  * @param fallbackToFolder=false: if set to true and the item can't be opened, it will be shown in the folder
+  */
+  openItem (fullPath, fallbackToFolder = false) {
+    ipcRenderer.send(WBRPC_OPEN_ITEM, fullPath, fallbackToFolder)
   }
 
   /* ****************************************************************************/

@@ -109,15 +109,17 @@ class WebView extends React.Component {
   /**
   * Handles a webcontents attaching to the dom
   * @param evt: the event that fired
-  * @param wc: the webcontents that did attach
+  * @param attachedId: the id of the webcontents that did attach
   */
-  handleWebContentsAttached = (evt, wc) => {
+  handleWebContentsAttached = (evt, attachedId) => {
     const node = this.getWebviewNode()
     const nwc = node.getWebContents()
-    if (nwc && wc.id === nwc.id) {
-      this[privWebviewAttached] = true
+    this[privWebviewAttached] = true
+    console.log("attached---", attachedId)
+    if (nwc && nwc.id === attachedId) {
+      console.log("Happy")
       if (this.props.onWebContentsAttached) {
-        this.props.onWebContentsAttached(wc)
+        this.props.onWebContentsAttached(attachedId)
       }
       WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
     }

@@ -9,7 +9,8 @@ import {
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
   WBRPC_WC_DOM_READY,
   WBRPC_WC_DID_FRAME_FINISH_LOAD,
-  WBRPC_WC_DID_FINISH_LOAD
+  WBRPC_WC_DID_FINISH_LOAD,
+  WBRPC_WC_DID_ATTACH_WEBVIEW
 } from 'shared/WBRPCEvents'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import { ElectronWebContents } from 'ElectronTools'
@@ -48,6 +49,7 @@ class WBRPCWebContents {
     contents.on('dom-ready', this._handleDomReady)
     contents.on('did-frame-finish-load', this._handleFrameFinishLoad)
     contents.on('did-finish-load', this._handleDidFinishLoad)
+    contents.on('did-attach-webview', this._handleDidAttachWebView)
     contents.on('console-message', this._handleConsoleMessage)
 
     // WebContent utils
@@ -102,6 +104,11 @@ class WBRPCWebContents {
 
   _handleDidFinishLoad = (evt) => {
     evt.sender.send(WBRPC_WC_DID_FINISH_LOAD, evt.sender.id)
+  }
+
+  _handleDidAttachWebView = (evt, wc) => {
+    // evt.sender is confusingly the child, so use the hostWebContents to get the receiver
+    wc.hostWebContents.send(WBRPC_WC_DID_ATTACH_WEBVIEW, wc.hostWebContents.id, wc.id)
   }
 
   _handleConsoleMessage = (evt, level, message, line, sourceId) => {

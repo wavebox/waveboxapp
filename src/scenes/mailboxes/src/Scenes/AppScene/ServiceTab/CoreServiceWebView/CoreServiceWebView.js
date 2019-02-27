@@ -558,19 +558,19 @@ class CoreServiceWebView extends React.Component {
 
   /**
   * Handles the webcontents being attached
-  * @param webContents: the webcontents that were attached
+  * @param attachedId: the id of the webcontents that were attached
   */
-  handleWebContentsAttached = (webContents) => {
+  handleWebContentsAttached = (attachedId) => {
     const { mailboxId, serviceId } = this.props
     ipcRenderer.send(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, {
-      webContentsId: webContents.id,
+      webContentsId: attachedId,
       mailboxId: mailboxId,
       serviceId: serviceId
     })
     this.setState({ webContentsAttached: true })
 
     // Update the store
-    accountActions.setWebcontentTabId.defer(serviceId, webContents.id)
+    accountActions.setWebcontentTabId.defer(serviceId, attachedId)
   }
 
   /**

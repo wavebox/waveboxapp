@@ -2,7 +2,8 @@ import { EventEmitter } from 'events'
 import { ipcRenderer } from 'electron'
 import {
   WBRPC_CLOSE_WINDOW,
-  WBRPC_BW_FOCUS
+  WBRPC_BW_FOCUS,
+  WBRPC_IS_FOCUSED_SYNC
 } from '../WBRPCEvents'
 
 class WBRPCBrowserWindow extends EventEmitter {
@@ -21,15 +22,26 @@ class WBRPCBrowserWindow extends EventEmitter {
   /* ****************************************************************************/
 
   _handleWindowFocused = (evt, bwId, wcId) => {
-    this.emit('focus', bwId, wcId)
+    this.emit('focus', { senderId: bwId }, wcId)
   }
 
   /* ****************************************************************************/
   // Current window
   /* ****************************************************************************/
 
+  /**
+  * Attempts to close the current window
+  */
   close () {
     ipcRenderer.send(WBRPC_CLOSE_WINDOW)
+  }
+
+  /**
+  * Checks if the current window is focused
+  * @return true if the window is focused, false otherwise
+  */
+  isFocusedSync () {
+    return ipcRenderer.sendSync(WBRPC_IS_FOCUSED_SYNC)
   }
 }
 

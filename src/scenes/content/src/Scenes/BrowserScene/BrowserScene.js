@@ -11,6 +11,7 @@ import { withStyles } from '@material-ui/core/styles'
 import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
 import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
 import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionRequests'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   scene: {
@@ -67,7 +68,7 @@ class BrowserScene extends React.Component {
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
 
-    remote.getCurrentWindow().on('focus', this.handleFocusWebview)
+    WBRPCRenderer.browserWindow.on('focus', this.handleFocusWebview)
   }
 
   componentWillUnmount () {
@@ -75,7 +76,7 @@ class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
-    remote.getCurrentWindow().removeListener('focus', this.handleFocusWebview)
+    WBRPCRenderer.browserWindow.removeListener('focus', this.handleFocusWebview)
   }
 
   /* **************************************************************************/

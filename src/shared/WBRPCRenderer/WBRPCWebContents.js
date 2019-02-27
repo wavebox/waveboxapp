@@ -7,7 +7,8 @@ import {
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
   WBRPC_WC_DOM_READY,
   WBRPC_WC_DID_FRAME_FINISH_LOAD,
-  WBRPC_WC_DID_FINISH_LOAD
+  WBRPC_WC_DID_FINISH_LOAD,
+  WBRPC_WC_DID_ATTACH_WEBVIEW
 } from '../WBRPCEvents'
 
 class WBRPCWebContents extends EventEmitter {
@@ -21,6 +22,7 @@ class WBRPCWebContents extends EventEmitter {
     ipcRenderer.on(WBRPC_WC_DOM_READY, this._handleDomReady)
     ipcRenderer.on(WBRPC_WC_DID_FRAME_FINISH_LOAD, this._handleDidFrameFinishLoad)
     ipcRenderer.on(WBRPC_WC_DID_FINISH_LOAD, this._handleDidFinishLoad)
+    ipcRenderer.on(WBRPC_WC_DID_ATTACH_WEBVIEW, this._handleDidAttachWebview)
   }
 
   /* ****************************************************************************/
@@ -28,15 +30,19 @@ class WBRPCWebContents extends EventEmitter {
   /* ****************************************************************************/
 
   _handleDomReady = (evt, senderId) => {
-    this.emit('dom-ready', senderId)
+    this.emit('dom-ready', { senderId })
   }
 
   _handleDidFrameFinishLoad = (evt, senderId, isMainFrame) => {
-    this.emit('did-frame-finish-load', senderId, isMainFrame)
+    this.emit('did-frame-finish-load', { senderId }, isMainFrame)
   }
 
   _handleDidFinishLoad = (evt, senderId) => {
-    this.emit('did-finish-load', senderId)
+    this.emit('did-finish-load', { senderId })
+  }
+
+  _handleDidAttachWebview = (evt, senderId, attachedId) => {
+    this.emit('did-attach-webview', { senderId }, attachedId)
   }
 
   /* ****************************************************************************/

@@ -1,5 +1,5 @@
 import EventEmitter from 'events'
-import electron from 'electron'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const privBindings = Symbol('privBindings')
 const supportedListeners = new Set([
@@ -39,10 +39,10 @@ class WebViewGroupEventDispatcher extends EventEmitter {
     // Add the listener
     switch (eventName) {
       case 'window-focus':
-        electron.remote.getCurrentWindow().on('focus', this._handleBrowserWindowFocus)
+        WBRPCRenderer.browserWindow.on('focus', this._handleBrowserWindowFocus)
         break
       case 'did-attach-webview':
-        electron.remote.getCurrentWebContents().on('did-attach-webview', this._handleWebContentsAttached)
+        WBRPCRenderer.webContents.on('did-attach-webview', this._handleWebContentsAttached)
         break
     }
 
@@ -61,10 +61,10 @@ class WebViewGroupEventDispatcher extends EventEmitter {
     // Remove the listener
     switch (eventName) {
       case 'window-focus':
-        electron.remote.getCurrentWindow().removeListener('focus', this._handleBrowserWindowFocus)
+        WBRPCRenderer.browserWindow.removeListener('focus', this._handleBrowserWindowFocus)
         break
       case 'did-attach-webview':
-        electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this._handleWebContentsAttached)
+        WBRPCRenderer.webContents.removeListener('did-attach-webview', this._handleWebContentsAttached)
         break
     }
 
@@ -76,11 +76,13 @@ class WebViewGroupEventDispatcher extends EventEmitter {
   /* **************************************************************************/
 
   _handleBrowserWindowFocus = () => {
+    console.log("dp bw focus")
     this.emit('window-focus', { sender: this })
   }
 
-  _handleWebContentsAttached = (evt, wc) => {
-    this.emit('did-attach-webview', { sender: this }, wc)
+  _handleWebContentsAttached = (evt, attachedId) => {
+    console.log("dp wc attached",evt, attachedId)
+    this.emit('did-attach-webview', { sender: this }, attachedId)
   }
 }
 
