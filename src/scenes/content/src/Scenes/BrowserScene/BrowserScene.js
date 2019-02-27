@@ -6,7 +6,6 @@ import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 import Resolver from 'Runtime/Resolver'
-import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
 import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
@@ -160,7 +159,7 @@ class BrowserScene extends React.Component {
   * @param evt: the event that fired
   */
   handleClose = (evt) => {
-    remote.getCurrentWindow().close()
+    WBRPCRenderer.browserWindow.close()
   }
 
   /**

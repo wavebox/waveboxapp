@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Snackbar, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { remote } from 'electron'
 import ElectronAccelerator from './ElectronAccelerator'
 import { withStyles } from '@material-ui/core/styles'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   accelerator: {
@@ -38,15 +38,13 @@ class FullscreenSnackbarHelper extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    const browserWindow = remote.getCurrentWindow()
-    browserWindow.on('enter-full-screen', this.handleEnterFullScreen)
-    browserWindow.on('leave-full-screen', this.handleLeaveFullScreen)
+    WBRPCRenderer.browserWindow.on('enter-full-screen', this.handleEnterFullScreen)
+    WBRPCRenderer.browserWindow.on('leave-full-screen', this.handleLeaveFullScreen)
   }
 
   componentWillUnmount () {
-    const browserWindow = remote.getCurrentWindow()
-    browserWindow.removeListener('enter-full-screen', this.handleEnterFullScreen)
-    browserWindow.removeListener('leave-full-screen', this.handleLeaveFullScreen)
+    WBRPCRenderer.browserWindow.removeListener('enter-full-screen', this.handleEnterFullScreen)
+    WBRPCRenderer.browserWindow.removeListener('leave-full-screen', this.handleLeaveFullScreen)
   }
 
   /* **************************************************************************/

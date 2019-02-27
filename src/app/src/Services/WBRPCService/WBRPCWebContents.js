@@ -7,10 +7,10 @@ import {
   WBRPC_SEND_INPUT_EVENTS,
   WBRPC_SHOW_ASYNC_MESSAGE_DIALOG,
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
-  WBRPC_WC_DOM_READY,
-  WBRPC_WC_DID_FRAME_FINISH_LOAD,
-  WBRPC_WC_DID_FINISH_LOAD,
-  WBRPC_WC_DID_ATTACH_WEBVIEW
+  WBRPC_WCE_DOM_READY,
+  WBRPC_WCE_DID_FRAME_FINISH_LOAD,
+  WBRPC_WCE_DID_FINISH_LOAD,
+  WBRPC_WCE_DID_ATTACH_WEBVIEW
 } from 'shared/WBRPCEvents'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import { ElectronWebContents } from 'ElectronTools'
@@ -95,20 +95,20 @@ class WBRPCWebContents {
   /* ****************************************************************************/
 
   _handleDomReady = (evt) => {
-    evt.sender.send(WBRPC_WC_DOM_READY, evt.sender.id)
+    evt.sender.send(WBRPC_WCE_DOM_READY, evt.sender.id)
   }
 
   _handleFrameFinishLoad = (evt, isMainFrame) => {
-    evt.sender.send(WBRPC_WC_DID_FRAME_FINISH_LOAD, evt.sender.id, isMainFrame)
+    evt.sender.send(WBRPC_WCE_DID_FRAME_FINISH_LOAD, evt.sender.id, isMainFrame)
   }
 
   _handleDidFinishLoad = (evt) => {
-    evt.sender.send(WBRPC_WC_DID_FINISH_LOAD, evt.sender.id)
+    evt.sender.send(WBRPC_WCE_DID_FINISH_LOAD, evt.sender.id)
   }
 
   _handleDidAttachWebView = (evt, wc) => {
     // evt.sender is confusingly the child, so use the hostWebContents to get the receiver
-    wc.hostWebContents.send(WBRPC_WC_DID_ATTACH_WEBVIEW, wc.hostWebContents.id, wc.id)
+    wc.hostWebContents.send(WBRPC_WCE_DID_ATTACH_WEBVIEW, wc.hostWebContents.id, wc.id)
   }
 
   _handleConsoleMessage = (evt, level, message, line, sourceId) => {

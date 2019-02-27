@@ -115,9 +115,7 @@ class WebView extends React.Component {
     const node = this.getWebviewNode()
     const nwc = node.getWebContents()
     this[privWebviewAttached] = true
-    console.log("attached---", attachedId)
     if (nwc && nwc.id === attachedId) {
-      console.log("Happy")
       if (this.props.onWebContentsAttached) {
         this.props.onWebContentsAttached(attachedId)
       }

@@ -5,10 +5,10 @@ import {
   WBRPC_SEND_INPUT_EVENTS,
   WBRPC_SHOW_ASYNC_MESSAGE_DIALOG,
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
-  WBRPC_WC_DOM_READY,
-  WBRPC_WC_DID_FRAME_FINISH_LOAD,
-  WBRPC_WC_DID_FINISH_LOAD,
-  WBRPC_WC_DID_ATTACH_WEBVIEW
+  WBRPC_WCE_DOM_READY,
+  WBRPC_WCE_DID_FRAME_FINISH_LOAD,
+  WBRPC_WCE_DID_FINISH_LOAD,
+  WBRPC_WCE_DID_ATTACH_WEBVIEW
 } from '../WBRPCEvents'
 
 class WBRPCWebContents extends EventEmitter {
@@ -19,10 +19,10 @@ class WBRPCWebContents extends EventEmitter {
   constructor () {
     super()
 
-    ipcRenderer.on(WBRPC_WC_DOM_READY, this._handleDomReady)
-    ipcRenderer.on(WBRPC_WC_DID_FRAME_FINISH_LOAD, this._handleDidFrameFinishLoad)
-    ipcRenderer.on(WBRPC_WC_DID_FINISH_LOAD, this._handleDidFinishLoad)
-    ipcRenderer.on(WBRPC_WC_DID_ATTACH_WEBVIEW, this._handleDidAttachWebview)
+    ipcRenderer.on(WBRPC_WCE_DOM_READY, this._handleDomReady)
+    ipcRenderer.on(WBRPC_WCE_DID_FRAME_FINISH_LOAD, this._handleDidFrameFinishLoad)
+    ipcRenderer.on(WBRPC_WCE_DID_FINISH_LOAD, this._handleDidFinishLoad)
+    ipcRenderer.on(WBRPC_WCE_DID_ATTACH_WEBVIEW, this._handleDidAttachWebview)
   }
 
   /* ****************************************************************************/

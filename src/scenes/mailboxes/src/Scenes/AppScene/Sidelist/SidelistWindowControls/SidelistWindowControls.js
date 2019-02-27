@@ -1,11 +1,11 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControl from './SidelistWindowControl'
-import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { settingsStore } from 'stores/settings'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'
 const styles = (theme) => ({
@@ -57,30 +57,28 @@ class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    const currentWindow = remote.getCurrentWindow()
     if (HAS_WINDOW_CONTROLS) {
-      currentWindow.on('maximize', this.handleWindowStateChanged)
-      currentWindow.on('unmaximize', this.handleWindowStateChanged)
-      currentWindow.on('enter-full-screen', this.handleWindowStateChanged)
-      currentWindow.on('leave-full-screen', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.on('maximize', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.on('unmaximize', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.on('enter-full-screen', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.on('leave-full-screen', this.handleWindowStateChanged)
       settingsStore.listen(this.settingsChanged)
     } else {
-      currentWindow.on('enter-full-screen', this.handlePlaceholderWindowStateChanged)
-      currentWindow.on('leave-full-screen', this.handlePlaceholderWindowStateChanged)
+      WBRPCRenderer.browserWindow.on('enter-full-screen', this.handlePlaceholderWindowStateChanged)
+      WBRPCRenderer.browserWindow.on('leave-full-screen', this.handlePlaceholderWindowStateChanged)
     }
   }
 
   componentWillUnmount () {
-    const currentWindow = remote.getCurrentWindow()
     if (HAS_WINDOW_CONTROLS) {
-      currentWindow.removeListener('maximize', this.handleWindowStateChanged)
-      currentWindow.removeListener('unmaximize', this.handleWindowStateChanged)
-      currentWindow.removeListener('enter-full-screen', this.handleWindowStateChanged)
-      currentWindow.removeListener('leave-full-screen', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.removeListener('maximize', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.removeListener('unmaximize', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.removeListener('enter-full-screen', this.handleWindowStateChanged)
+      WBRPCRenderer.browserWindow.removeListener('leave-full-screen', this.handleWindowStateChanged)
       settingsStore.unlisten(this.settingsChanged)
     } else {
-      currentWindow.removeListener('enter-full-screen', this.handlePlaceholderWindowStateChanged)
-      currentWindow.removeListener('leave-full-screen', this.handlePlaceholderWindowStateChanged)
+      WBRPCRenderer.browserWindow.removeListener('enter-full-screen', this.handlePlaceholderWindowStateChanged)
+      WBRPCRenderer.browserWindow.removeListener('leave-full-screen', this.handlePlaceholderWindowStateChanged)
     }
   }
 
@@ -89,16 +87,15 @@ class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    const currentWindow = remote.getCurrentWindow()
     if (HAS_WINDOW_CONTROLS) {
       return {
-        isMaximized: currentWindow.isMaximized(),
-        isFullScreen: currentWindow.isFullScreen(),
+        isMaximized: WBRPCRenderer.browserWindow.isMaximizedSync(),
+        isFullScreen: WBRPCRenderer.browserWindow.isFullScreenSync(),
         sidebarSize: settingsStore.getState().ui.sidebarSize
       }
     } else {
       return {
-        isFullScreen: currentWindow.isFullScreen()
+        isFullScreen: WBRPCRenderer.browserWindow.isFullScreenSync()
       }
     }
   })()
@@ -114,17 +111,15 @@ class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
 
   handleWindowStateChanged = () => {
-    const currentWindow = remote.getCurrentWindow()
     this.setState({
-      isMaximized: currentWindow.isMaximized(),
-      isFullScreen: currentWindow.isFullScreen()
+      isMaximized: WBRPCRenderer.browserWindow.isMaximizedSync(),
+      isFullScreen: WBRPCRenderer.browserWindow.isFullScreenSync()
     })
   }
 
   handlePlaceholderWindowStateChanged = () => {
-    const currentWindow = remote.getCurrentWindow()
     this.setState({
-      isFullScreen: currentWindow.isFullScreen()
+      isFullScreen: WBRPCRenderer.browserWindow.isFullScreenSync()
     })
   }
 
@@ -137,7 +132,7 @@ class SidelistWindowControls extends React.Component {
   * @param evt: the event that fired
   */
   handleClose = (evt) => {
-    remote.getCurrentWindow().close()
+    WBRPCRenderer.browserWindow.close()
   }
 
   /**
@@ -145,11 +140,10 @@ class SidelistWindowControls extends React.Component {
   * @param evt: the event that fired
   */
   handleMinimize = (evt) => {
-    const currentWindow = remote.getCurrentWindow()
-    if (currentWindow.isFullScreen()) {
-      currentWindow.setFullScreen(false)
+    if (WBRPCRenderer.browserWindow.isFullScreenSync()) {
+      WBRPCRenderer.browserWindow.setFullScreen(false)
     }
-    currentWindow.minimize()
+    WBRPCRenderer.browserWindow.minimize()
   }
 
   /**
@@ -157,7 +151,7 @@ class SidelistWindowControls extends React.Component {
   * @param evt: the event that fired
   */
   handleMaximize = (evt) => {
-    remote.getCurrentWindow().maximize()
+    WBRPCRenderer.browserWindow.maximize()
   }
 
   /**
@@ -165,11 +159,10 @@ class SidelistWindowControls extends React.Component {
   * @param evt: the event that fired
   */
   handleUnmaximize = (evt) => {
-    const currentWindow = remote.getCurrentWindow()
-    if (currentWindow.isFullScreen()) {
-      currentWindow.setFullScreen(false)
+    if (WBRPCRenderer.browserWindow.isFullScreenSync()) {
+      WBRPCRenderer.browserWindow.setFullScreen(false)
     }
-    currentWindow.unmaximize()
+    WBRPCRenderer.browserWindow.unmaximize()
   }
 
   /* **************************************************************************/

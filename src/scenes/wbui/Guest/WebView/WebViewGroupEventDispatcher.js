@@ -76,12 +76,10 @@ class WebViewGroupEventDispatcher extends EventEmitter {
   /* **************************************************************************/
 
   _handleBrowserWindowFocus = () => {
-    console.log("dp bw focus")
     this.emit('window-focus', { sender: this })
   }
 
   _handleWebContentsAttached = (evt, attachedId) => {
-    console.log("dp wc attached",evt, attachedId)
     this.emit('did-attach-webview', { sender: this }, attachedId)
   }
 }

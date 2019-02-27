@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import MaterialThemeOnly from 'wbui/Themes/MaterialThemeOnly'
 import AppScene from './AppScene'
-import { remote, ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electron'
 import { WB_TRAY_WINDOWED_MODE_CHANGED } from 'shared/ipcEvents'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
 
