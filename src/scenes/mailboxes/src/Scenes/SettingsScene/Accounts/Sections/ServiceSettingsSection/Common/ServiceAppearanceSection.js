@@ -14,9 +14,19 @@ import ColorLensIcon from '@material-ui/icons/ColorLens'
 import SettingsListItemColorPicker from 'wbui/SettingsListItemColorPicker'
 import SettingsListItemAvatarPicker from 'wbui/SettingsListItemAvatarPicker'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import { Button, Avatar } from '@material-ui/core'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
-
+  serviceAvatarButton: {
+    marginLeft: 6
+  },
+  serviceAvatar: {
+    width: 18,
+    height: 18,
+    marginRight: 6,
+    border: '1px solid #CCC'
+  }
 }
 
 @withStyles(styles)
@@ -104,7 +114,8 @@ class ServiceAppearanceSection extends React.Component {
       displayName: service.displayName,
       serviceColor: service.color,
       hasNavigationToolbar: service.hasNavigationToolbar,
-      serviceAvatar: accountState.getAvatar(service.avatarId)
+      serviceAvatar: accountState.getAvatar(service.avatarId),
+      logo: service.humanizedLogoAtSize(128)
     } : {
       hasService: false
     }
@@ -145,7 +156,8 @@ class ServiceAppearanceSection extends React.Component {
       displayName,
       serviceColor,
       serviceAvatar,
-      hasNavigationToolbar
+      hasNavigationToolbar,
+      logo
     } = this.state
     if (!hasService) { return false }
 
@@ -196,7 +208,7 @@ class ServiceAppearanceSection extends React.Component {
             onChange={(col) => accountActions.reduceService(serviceId, ServiceReducer.setColor, col)}
             showClear
             ClearIconClass={NotInterestedIcon}
-            clearLabelText='Reset color'
+            clearLabelText='Reset'
           />
         )
       } : undefined,
@@ -217,8 +229,23 @@ class ServiceAppearanceSection extends React.Component {
               })
             }}
             onClear={() => accountActions.setCustomAvatarOnService(serviceId, undefined)}
-            clearLabel='Reset Account Icon'
-            clearIcon={<NotInterestedIcon />} />
+            clearLabel='Reset'
+            clearIcon={<NotInterestedIcon />}>
+            {logo ? (
+              <Button
+                className={classes.serviceAvatarButton}
+                size='small'
+                variant='contained'
+                onClick={() => {
+                  AccountAvatarProcessor.processBuiltinImage(Resolver.image(logo), (av) => {
+                    accountActions.setCustomAvatarOnService(serviceId, av)
+                  })
+                }}>
+                <Avatar className={classes.serviceAvatar} src={Resolver.image(logo)} />
+                Default
+              </Button>
+            ) : undefined}
+          </SettingsListItemAvatarPicker>
         )
       } : undefined,
       afterAvatar

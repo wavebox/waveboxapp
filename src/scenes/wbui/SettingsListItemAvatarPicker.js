@@ -68,6 +68,7 @@ class SettingsLiteItemAvatarPicker extends React.Component {
       onClear,
       clearLabel,
       clearIcon,
+      children,
       ...passProps
     } = this.props
 
@@ -98,6 +99,7 @@ class SettingsLiteItemAvatarPicker extends React.Component {
           ) : undefined}
           {clearLabel}
         </Button>
+        {children}
       </SettingsListItem>
     )
   }

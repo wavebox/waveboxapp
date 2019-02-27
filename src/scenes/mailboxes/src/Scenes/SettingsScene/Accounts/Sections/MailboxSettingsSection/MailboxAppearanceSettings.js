@@ -188,7 +188,7 @@ class MailboxAppearanceSettings extends React.Component {
             onChange={(col) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setColor, col)}
             showClear
             ClearIconClass={NotInterestedIcon}
-            clearLabelText='Clear color'
+            clearLabelText='Clear'
           />
           <SettingsListItemColorPicker
             labelText='Badge Color'
@@ -207,7 +207,7 @@ class MailboxAppearanceSettings extends React.Component {
               })
             }}
             onClear={() => accountActions.setCustomAvatarOnMailbox(mailboxId, undefined)}
-            clearLabel='Reset Account Icon'
+            clearLabel='Reset'
             clearIcon={<NotInterestedIcon />} />
           <SettingsListItemSwitch
             divider={userHasSleepable}
