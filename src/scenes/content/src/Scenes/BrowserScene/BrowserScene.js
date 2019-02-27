@@ -116,7 +116,6 @@ class BrowserScene extends React.Component {
     if (this.props.url && this.props.url !== 'about:blank') {
       this.handleFocusWebview()
     } else {
-      console.log(">", this.toolbarRef.current)
       this.toolbarRef.current.focusAddress()
     }
   }
