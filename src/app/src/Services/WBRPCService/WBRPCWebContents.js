@@ -2,10 +2,10 @@ import { webContents, ipcMain, dialog, BrowserWindow } from 'electron'
 import { PermissionManager } from 'Permissions'
 import {
   WBRPC_PERMISSION_REQUESTS_CHANGED,
-  WBRPC_RESOLVE_PERMISSION_REQUEST,
-  WBRPC_SEND_INPUT_EVENT,
-  WBRPC_SEND_INPUT_EVENTS,
-  WBRPC_SHOW_ASYNC_MESSAGE_DIALOG,
+  WBRPC_WC_RESOLVE_PERMISSION_REQUEST,
+  WBRPC_WC_SEND_INPUT_EVENT,
+  WBRPC_WC_SEND_INPUT_EVENTS,
+  WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG,
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
   WBRPC_WCE_DOM_READY,
   WBRPC_WCE_DID_FRAME_FINISH_LOAD,
@@ -29,14 +29,14 @@ class WBRPCWebContents {
 
     // Permissions
     PermissionManager.on('unresolved-permission-requests-changed', this._handleUnresolvedPermissionRequestChanged)
-    ipcMain.on(WBRPC_RESOLVE_PERMISSION_REQUEST, this._handleResolvePermissionRequest)
+    ipcMain.on(WBRPC_WC_RESOLVE_PERMISSION_REQUEST, this._handleResolvePermissionRequest)
 
     // WebContent methods
-    ipcMain.on(WBRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
-    ipcMain.on(WBRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
+    ipcMain.on(WBRPC_WC_SEND_INPUT_EVENT, this._handleSendInputEvent)
+    ipcMain.on(WBRPC_WC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
 
     // WebContent utils
-    ipcMain.on(WBRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
+    ipcMain.on(WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
     ipcMain.on(WBRPC_SYNC_GET_INITIAL_HOST_URL, this._handleSyncGetInitialHostUrl)
   }
 

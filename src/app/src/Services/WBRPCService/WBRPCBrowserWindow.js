@@ -1,15 +1,15 @@
 import { ipcMain, webContents, BrowserWindow, systemPreferences } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import {
-  WBRPC_CLOSE_WINDOW,
-  WBRPC_MINIMIZE_WINDOW,
-  WBRPC_MAXIMIZE_WINDOW,
-  WBRPC_UNMAXIMIZE_WINDOW,
-  WBRPC_SET_WINDOW_FULL_SCREEN,
-  WBRPC_WINDOW_IS_FOCUSED_SYNC,
-  WBRPC_WINDOW_IS_MAXIMIZED_SYNC,
-  WBRPC_WINDOW_IS_FULL_SCREEN_SYNC,
-  WBRPC_WINDOW_IS_DARK_MODE_SYNC,
+  WBRPC_BW_CLOSE,
+  WBRPC_BW_MINIMIZE,
+  WBRPC_BW_MAXIMIZE,
+  WBRPC_BW_UNMAXIMIZE,
+  WBRPC_BW_SET_FULL_SCREEN,
+  WBRPC_BW_IS_FOCUSED_SYNC,
+  WBRPC_BW_IS_MAXIMIZED_SYNC,
+  WBRPC_BW_IS_FULL_SCREEN_SYNC,
+  WBRPC_BW_IS_DARK_MODE_SYNC,
   WBRPC_BWE_FOCUS,
   WBRPC_BWE_BLUR,
   WBRPC_BWE_ENTER_FULL_SCREEN,
@@ -28,15 +28,15 @@ class WBRPCBrowserWindow {
 
   constructor () {
     this[privConnected] = new Set()
-    ipcMain.on(WBRPC_CLOSE_WINDOW, this._handleCloseWindow)
-    ipcMain.on(WBRPC_MINIMIZE_WINDOW, this._handleMinimizeWindow)
-    ipcMain.on(WBRPC_MAXIMIZE_WINDOW, this._handleMaximizeWindow)
-    ipcMain.on(WBRPC_UNMAXIMIZE_WINDOW, this._handleUnmaximizeWindow)
-    ipcMain.on(WBRPC_SET_WINDOW_FULL_SCREEN, this._handleSetWindowFullScreen)
-    ipcMain.on(WBRPC_WINDOW_IS_FOCUSED_SYNC, this._handleIsFocusedSync)
-    ipcMain.on(WBRPC_WINDOW_IS_MAXIMIZED_SYNC, this._handleIsMaximized)
-    ipcMain.on(WBRPC_WINDOW_IS_FULL_SCREEN_SYNC, this._handleIsFullScreenSync)
-    ipcMain.on(WBRPC_WINDOW_IS_DARK_MODE_SYNC, this._handleIsDarkModeSync)
+    ipcMain.on(WBRPC_BW_CLOSE, this._handleCloseWindow)
+    ipcMain.on(WBRPC_BW_MINIMIZE, this._handleMinimizeWindow)
+    ipcMain.on(WBRPC_BW_MAXIMIZE, this._handleMaximizeWindow)
+    ipcMain.on(WBRPC_BW_UNMAXIMIZE, this._handleUnmaximizeWindow)
+    ipcMain.on(WBRPC_BW_SET_FULL_SCREEN, this._handleSetWindowFullScreen)
+    ipcMain.on(WBRPC_BW_IS_FOCUSED_SYNC, this._handleIsFocusedSync)
+    ipcMain.on(WBRPC_BW_IS_MAXIMIZED_SYNC, this._handleIsMaximized)
+    ipcMain.on(WBRPC_BW_IS_FULL_SCREEN_SYNC, this._handleIsFullScreenSync)
+    ipcMain.on(WBRPC_BW_IS_DARK_MODE_SYNC, this._handleIsDarkModeSync)
 
     if (process.platform === 'darwin') {
       systemPreferences.subscribeNotification(
@@ -185,7 +185,7 @@ class WBRPCBrowserWindow {
         evt.returnValue = bw.isFocused()
       }
     } catch (ex) {
-      console.error(`Failed to respond to "${WBRPC_WINDOW_IS_FOCUSED_SYNC}" continuing with unknown side effects`, ex)
+      console.error(`Failed to respond to "${WBRPC_BW_IS_FOCUSED_SYNC}" continuing with unknown side effects`, ex)
       evt.returnValue = false
     }
   }
@@ -203,7 +203,7 @@ class WBRPCBrowserWindow {
         evt.returnValue = bw.isMaximized()
       }
     } catch (ex) {
-      console.error(`Failed to respond to "${WBRPC_WINDOW_IS_MAXIMIZED_SYNC}" continuing with unknown side effects`, ex)
+      console.error(`Failed to respond to "${WBRPC_BW_IS_MAXIMIZED_SYNC}" continuing with unknown side effects`, ex)
       evt.returnValue = false
     }
   }
@@ -221,7 +221,7 @@ class WBRPCBrowserWindow {
         evt.returnValue = bw.isFullScreen()
       }
     } catch (ex) {
-      console.error(`Failed to respond to "${WBRPC_WINDOW_IS_FULL_SCREEN_SYNC}" continuing with unknown side effects`, ex)
+      console.error(`Failed to respond to "${WBRPC_BW_IS_FULL_SCREEN_SYNC}" continuing with unknown side effects`, ex)
       evt.returnValue = false
     }
   }
@@ -234,7 +234,7 @@ class WBRPCBrowserWindow {
     try {
       evt.returnValue = systemPreferences.isDarkMode()
     } catch (ex) {
-      console.error(`Failed to respond to "${WBRPC_WINDOW_IS_DARK_MODE_SYNC}" continuing with unknown side effects`, ex)
+      console.error(`Failed to respond to "${WBRPC_BW_IS_DARK_MODE_SYNC}" continuing with unknown side effects`, ex)
       evt.returnValue = false
     }
   }

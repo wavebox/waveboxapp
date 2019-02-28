@@ -6,7 +6,7 @@ import uuid from 'uuid'
 import { ipcRenderer } from 'electron'
 import {
   WBRPC_PERMISSION_REQUESTS_CHANGED,
-  WBRPC_RESOLVE_PERMISSION_REQUEST
+  WBRPC_WC_RESOLVE_PERMISSION_REQUEST
 } from 'shared/WBRPCEvents'
 
 const privPermissionRequests = Symbol('privPermissionRequests')
@@ -113,7 +113,7 @@ export default class BrowserView extends React.Component {
       : undefined
 
     if (webviewWC) {
-      ipcRenderer.send(WBRPC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
+      ipcRenderer.send(WBRPC_WC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
     }
   }
 

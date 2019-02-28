@@ -1,15 +1,15 @@
 import { EventEmitter } from 'events'
 import { ipcRenderer } from 'electron'
 import {
-  WBRPC_CLOSE_WINDOW,
-  WBRPC_MINIMIZE_WINDOW,
-  WBRPC_MAXIMIZE_WINDOW,
-  WBRPC_UNMAXIMIZE_WINDOW,
-  WBRPC_SET_WINDOW_FULL_SCREEN,
-  WBRPC_WINDOW_IS_FOCUSED_SYNC,
-  WBRPC_WINDOW_IS_MAXIMIZED_SYNC,
-  WBRPC_WINDOW_IS_FULL_SCREEN_SYNC,
-  WBRPC_WINDOW_IS_DARK_MODE_SYNC,
+  WBRPC_BW_CLOSE,
+  WBRPC_BW_MINIMIZE,
+  WBRPC_BW_MAXIMIZE,
+  WBRPC_BW_UNMAXIMIZE,
+  WBRPC_BW_SET_FULL_SCREEN,
+  WBRPC_BW_IS_FOCUSED_SYNC,
+  WBRPC_BW_IS_MAXIMIZED_SYNC,
+  WBRPC_BW_IS_FULL_SCREEN_SYNC,
+  WBRPC_BW_IS_DARK_MODE_SYNC,
   WBRPC_BWE_FOCUS,
   WBRPC_BWE_BLUR,
   WBRPC_BWE_ENTER_FULL_SCREEN,
@@ -75,28 +75,28 @@ class WBRPCBrowserWindow extends EventEmitter {
   * Closes the current window
   */
   close () {
-    ipcRenderer.send(WBRPC_CLOSE_WINDOW)
+    ipcRenderer.send(WBRPC_BW_CLOSE)
   }
 
   /**
   * Minimizes the current window
   */
   minimize () {
-    ipcRenderer.send(WBRPC_MINIMIZE_WINDOW)
+    ipcRenderer.send(WBRPC_BW_MINIMIZE)
   }
 
   /**
   * Maximizes the current window
   */
   maximize () {
-    ipcRenderer.send(WBRPC_MAXIMIZE_WINDOW)
+    ipcRenderer.send(WBRPC_BW_MAXIMIZE)
   }
 
   /**
   * Unmaximizes the current window
   */
   unmaximize () {
-    ipcRenderer.send(WBRPC_UNMAXIMIZE_WINDOW)
+    ipcRenderer.send(WBRPC_BW_UNMAXIMIZE)
   }
 
   /**
@@ -104,7 +104,7 @@ class WBRPCBrowserWindow extends EventEmitter {
   * @param fullscreen: true for fullscreen
   */
   setFullScreen (fullscreen) {
-    ipcRenderer.send(WBRPC_SET_WINDOW_FULL_SCREEN, fullscreen)
+    ipcRenderer.send(WBRPC_BW_SET_FULL_SCREEN, fullscreen)
   }
 
   /**
@@ -112,7 +112,7 @@ class WBRPCBrowserWindow extends EventEmitter {
   * @return true if the window is focused, false otherwise
   */
   isFocusedSync () {
-    return ipcRenderer.sendSync(WBRPC_WINDOW_IS_FOCUSED_SYNC)
+    return ipcRenderer.sendSync(WBRPC_BW_IS_FOCUSED_SYNC)
   }
 
   /**
@@ -120,7 +120,7 @@ class WBRPCBrowserWindow extends EventEmitter {
   * @return true if the window is focused, false otherwise
   */
   isMaximizedSync () {
-    return ipcRenderer.sendSync(WBRPC_WINDOW_IS_MAXIMIZED_SYNC)
+    return ipcRenderer.sendSync(WBRPC_BW_IS_MAXIMIZED_SYNC)
   }
 
   /**
@@ -128,7 +128,7 @@ class WBRPCBrowserWindow extends EventEmitter {
   * @return true if the window is focused, false otherwise
   */
   isFullScreenSync () {
-    return ipcRenderer.sendSync(WBRPC_WINDOW_IS_FULL_SCREEN_SYNC)
+    return ipcRenderer.sendSync(WBRPC_BW_IS_FULL_SCREEN_SYNC)
   }
 
   /**
@@ -136,7 +136,7 @@ class WBRPCBrowserWindow extends EventEmitter {
   * @return true if dark mode is enabled, false otherwise
   */
   isDarkModeSync () {
-    return ipcRenderer.sendSync(WBRPC_WINDOW_IS_DARK_MODE_SYNC)
+    return ipcRenderer.sendSync(WBRPC_BW_IS_DARK_MODE_SYNC)
   }
 }
 

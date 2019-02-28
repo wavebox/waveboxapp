@@ -1,9 +1,9 @@
 import { ipcRenderer } from 'electron'
 import { EventEmitter } from 'events'
 import {
-  WBRPC_SEND_INPUT_EVENT,
-  WBRPC_SEND_INPUT_EVENTS,
-  WBRPC_SHOW_ASYNC_MESSAGE_DIALOG,
+  WBRPC_WC_SEND_INPUT_EVENT,
+  WBRPC_WC_SEND_INPUT_EVENTS,
+  WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG,
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
   WBRPC_WCE_DOM_READY,
   WBRPC_WCE_DID_FRAME_FINISH_LOAD,
@@ -54,7 +54,7 @@ class WBRPCWebContents extends EventEmitter {
   * @param events: an array of events to send
   */
   sendInputEvent (event) {
-    ipcRenderer.send(WBRPC_SEND_INPUT_EVENT, event)
+    ipcRenderer.send(WBRPC_WC_SEND_INPUT_EVENT, event)
   }
 
   /**
@@ -62,7 +62,7 @@ class WBRPCWebContents extends EventEmitter {
   * @param events: an array of events to send
   */
   sendInputEvents (events) {
-    ipcRenderer.send(WBRPC_SEND_INPUT_EVENTS, events)
+    ipcRenderer.send(WBRPC_WC_SEND_INPUT_EVENTS, events)
   }
 
   /* ****************************************************************************/
@@ -74,7 +74,7 @@ class WBRPCWebContents extends EventEmitter {
   * @param config: the config for the dialog window
   */
   showAsyncDialogMessage (config) {
-    ipcRenderer.send(WBRPC_SHOW_ASYNC_MESSAGE_DIALOG, config)
+    ipcRenderer.send(WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG, config)
   }
 
   /**
