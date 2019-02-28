@@ -3,6 +3,15 @@ import { EventEmitter } from 'events'
 import {
   WBRPC_WC_SEND_INPUT_EVENT,
   WBRPC_WC_SEND_INPUT_EVENTS,
+  WBRPC_WC_GO_BACK,
+  WBRPC_WC_GO_FORWARD,
+  WBRPC_WC_STOP,
+  WBRPC_WC_RELOAD,
+  WBRPC_WC_LOAD_URL,
+  WBRPC_WC_CAN_GO_BACK_SYNC,
+  WBRPC_WC_CAN_GO_FORWARD_SYNC,
+  WBRPC_WC_GET_URL_SYNC,
+  WBRPC_WC_IS_LOADING_SYNC,
   WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG,
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
   WBRPC_WCE_DOM_READY,
@@ -52,17 +61,92 @@ class WBRPCWebContents extends EventEmitter {
   /**
   * Sends a event to the current webcontents
   * @param events: an array of events to send
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
   */
-  sendInputEvent (event) {
-    ipcRenderer.send(WBRPC_WC_SEND_INPUT_EVENT, event)
+  sendInputEvent (event, wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_SEND_INPUT_EVENT, event, wcId)
   }
 
   /**
   * Sends a set of events to the current webcontents
   * @param events: an array of events to send
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
   */
-  sendInputEvents (events) {
-    ipcRenderer.send(WBRPC_WC_SEND_INPUT_EVENTS, events)
+  sendInputEvents (events, wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_SEND_INPUT_EVENTS, events, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  goBack (wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_GO_BACK, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  goForward (wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_GO_FORWARD, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  stop (wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_STOP, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  reload (wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_RELOAD, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param url: the url to load
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  loadURL (url, wcId = undefined) {
+    ipcRenderer.send(WBRPC_WC_LOAD_URL, url, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  canGoBackSync (wcId = undefined) {
+    return ipcRenderer.sendSync(WBRPC_WC_CAN_GO_BACK_SYNC, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  canGoForwardSync (wcId = undefined) {
+    return ipcRenderer.sendSync(WBRPC_WC_CAN_GO_FORWARD_SYNC, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  getURLSync (wcId = undefined) {
+    return ipcRenderer.sendSync(WBRPC_WC_GET_URL_SYNC, wcId)
+  }
+
+  /**
+  * Navigates back
+  * @param wcId=undefined: undefined for this webcontents, provide id to run another
+  */
+  isLoadingSync (wcId = undefined) {
+    return ipcRenderer.sendSync(WBRPC_WC_IS_LOADING_SYNC, wcId)
   }
 
   /* ****************************************************************************/

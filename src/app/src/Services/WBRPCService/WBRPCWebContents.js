@@ -5,6 +5,15 @@ import {
   WBRPC_WC_RESOLVE_PERMISSION_REQUEST,
   WBRPC_WC_SEND_INPUT_EVENT,
   WBRPC_WC_SEND_INPUT_EVENTS,
+  WBRPC_WC_GO_BACK,
+  WBRPC_WC_GO_FORWARD,
+  WBRPC_WC_STOP,
+  WBRPC_WC_RELOAD,
+  WBRPC_WC_LOAD_URL,
+  WBRPC_WC_CAN_GO_BACK_SYNC,
+  WBRPC_WC_CAN_GO_FORWARD_SYNC,
+  WBRPC_WC_GET_URL_SYNC,
+  WBRPC_WC_IS_LOADING_SYNC,
   WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG,
   WBRPC_SYNC_GET_INITIAL_HOST_URL,
   WBRPC_WCE_DOM_READY,
@@ -34,6 +43,15 @@ class WBRPCWebContents {
     // WebContent methods
     ipcMain.on(WBRPC_WC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WBRPC_WC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
+    ipcMain.on(WBRPC_WC_GO_BACK, this._handleGoBack)
+    ipcMain.on(WBRPC_WC_GO_FORWARD, this._handleGoForward)
+    ipcMain.on(WBRPC_WC_STOP, this._handleStop)
+    ipcMain.on(WBRPC_WC_RELOAD, this._handleReload)
+    ipcMain.on(WBRPC_WC_LOAD_URL, this._handleLoadUrl)
+    ipcMain.on(WBRPC_WC_CAN_GO_BACK_SYNC, this._handleCanGoBackSync)
+    ipcMain.on(WBRPC_WC_CAN_GO_FORWARD_SYNC, this._handleCanGoForwardSync)
+    ipcMain.on(WBRPC_WC_GET_URL_SYNC, this._handleGetUrlSync)
+    ipcMain.on(WBRPC_WC_IS_LOADING_SYNC, this._handleIsLoadingSync)
 
     // WebContent utils
     ipcMain.on(WBRPC_WC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -68,6 +86,21 @@ class WBRPCWebContents {
   }
 
   /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  /**
+  * Gets the ipc target
+  * @param evt: the event that came in
+  * @param wcId: any supplied webcontents
+  * @return the webcontents to run the command on
+  */
+  _getIPCTarget (evt, wcId) {
+    const target = typeof (wcId) === 'number' ? webContents.fromId(wcId) : evt.sender
+    return target.isDestroyed() ? undefined : target
+  }
+
+  /* ****************************************************************************/
   // IPC: WebContent methods
   /* ****************************************************************************/
 
@@ -75,22 +108,164 @@ class WBRPCWebContents {
   * Sends an input event to the webcontents
   * @param evt: the event that fired
   * @param inputEvent: the input event to send
+  * @param wcId: the id of the webcontents to run this on
   */
-  _handleSendInputEvent = (evt, inputEvent) => {
+  _handleSendInputEvent = (evt, inputEvent, wcId) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
-    evt.sender.sendInputEvent(inputEvent)
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      target.sendInputEvent(inputEvent)
+    }
   }
 
   /**
   * Sends a set of input events to the webcontents
   * @param evt: the event that fired
   * @param inputEvents: the input event to send
+  * @param wcId: the id of the webcontents to run this on
   */
-  _handleSendInputEvents = (evt, inputEvents) => {
+  _handleSendInputEvents = (evt, inputEvents, wcId) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
-    inputEvents.forEach((inputEvent) => {
-      evt.sender.sendInputEvent(inputEvent)
-    })
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      inputEvents.forEach((inputEvent) => {
+        target.sendInputEvent(inputEvent)
+      })
+    }
+  }
+
+  /**
+  * Sends the webcontents back
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleGoBack = (evt, wcId) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      target.goBack()
+    }
+  }
+
+  /**
+  * Sends the webcontents forward
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleGoForward = (evt, wcId) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      target.goForward()
+    }
+  }
+
+  /**
+  * Stops the webcontents
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleStop = (evt, wcId) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      target.stop()
+    }
+  }
+
+  /**
+  * Reloads the webcontents
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleReload = (evt, wcId) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      target.reload()
+    }
+  }
+
+  /**
+  * Loads a url in the webcontents
+  * @param evt: the event that fired
+  * @param url: the url to load
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleLoadUrl = (evt, url, wcId) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    const target = this._getIPCTarget(evt, wcId)
+    if (target) {
+      target.loadURL(url)
+    }
+  }
+
+  /**
+  * Checks if the webcontents can go back
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleCanGoBackSync = (evt, wcId) => {
+    try {
+      const target = this._getIPCTarget(evt, wcId)
+      evt.returnValue = target
+        ? target.canGoBack()
+        : false
+    } catch (ex) {
+      console.error(`Failed to respond to "${WBRPC_WC_CAN_GO_BACK_SYNC}" continuing with unknown side effects`, ex)
+      evt.returnValue = false
+    }
+  }
+
+  /**
+  * Checks if the webcontents can go forward
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleCanGoForwardSync = (evt, wcId) => {
+    try {
+      const target = this._getIPCTarget(evt, wcId)
+      evt.returnValue = target
+        ? target.canGoForward()
+        : false
+    } catch (ex) {
+      console.error(`Failed to respond to "${WBRPC_WC_CAN_GO_FORWARD_SYNC}" continuing with unknown side effects`, ex)
+      evt.returnValue = false
+    }
+  }
+
+  /**
+  * Gets the url of the webcontents
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleGetUrlSync = (evt, wcId) => {
+    try {
+      const target = this._getIPCTarget(evt, wcId)
+      evt.returnValue = target
+        ? target.getURL()
+        : ''
+    } catch (ex) {
+      console.error(`Failed to respond to "${WBRPC_WC_GET_URL_SYNC}" continuing with unknown side effects`, ex)
+      evt.returnValue = ''
+    }
+  }
+
+  /**
+  * Checks if the webcontents is loading
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run this on
+  */
+  _handleIsLoadingSync = (evt, wcId) => {
+    try {
+      const target = this._getIPCTarget(evt, wcId)
+      evt.returnValue = target
+        ? target.isLoading()
+        : false
+    } catch (ex) {
+      console.error(`Failed to respond to "${WBRPC_WC_IS_LOADING_SYNC}" continuing with unknown side effects`, ex)
+      evt.returnValue = false
+    }
   }
 
   /* ****************************************************************************/

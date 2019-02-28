@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
 import { remote } from 'electron'
 import BrowserToolbarContent from 'wbui/BrowserToolbarContent'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class ToolbarNavigation extends React.Component {
   /* **************************************************************************/
@@ -92,22 +93,19 @@ class ToolbarNavigation extends React.Component {
   */
   generateFreshState (tabId) {
     if (tabId) {
-      const webContents = remote.webContents.fromId(tabId)
-      if (webContents) {
-        return {
-          isLoading: webContents.isLoading(),
-          currentUrl: webContents.getURL(),
-          canGoBack: webContents.canGoBack(),
-          canGoForward: webContents.canGoForward()
-        }
+      return {
+        isLoading: WBRPCRenderer.webContents.isLoadingSync(tabId),
+        currentUrl: WBRPCRenderer.webContents.getURLSync(tabId),
+        canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+        canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
       }
-    }
-
-    return {
-      isLoading: false,
-      currentUrl: '',
-      canGoBack: false,
-      canGoForward: false
+    } else {
+      return {
+        isLoading: false,
+        currentUrl: '',
+        canGoBack: false,
+        canGoForward: false
+      }
     }
   }
 
@@ -122,10 +120,11 @@ class ToolbarNavigation extends React.Component {
   */
   handleDidStartNavigation = (evt, url, isInPlace, isMainFrame) => {
     if (!isMainFrame) { return }
+    const { tabId } = this.props
     this.setState({
-      currentUrl: evt.sender.getURL(), // Don't use the passed url - the nav might be cancelled
-      canGoBack: evt.sender.canGoBack(),
-      canGoForward: evt.sender.canGoForward()
+      currentUrl: WBRPCRenderer.webContents.getURLSync(tabId), // Don't use the passed url - the nav might be cancelled
+      canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+      canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
     })
   }
 
@@ -153,10 +152,11 @@ class ToolbarNavigation extends React.Component {
   */
   handleDidNavigateInPage = (evt, url, isMainFrame) => {
     if (isMainFrame) {
+      const { tabId } = this.props
       this.setState({
         currentUrl: url,
-        canGoBack: evt.sender.canGoBack(),
-        canGoForward: evt.sender.canGoForward()
+        canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+        canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
       })
     }
   }
@@ -167,10 +167,11 @@ class ToolbarNavigation extends React.Component {
   * @param url: the url
   */
   handleDidNavigate = (evt, url) => {
+    const { tabId } = this.props
     this.setState({
       currentUrl: url,
-      canGoBack: evt.sender.canGoBack(),
-      canGoForward: evt.sender.canGoForward()
+      canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+      canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
     })
   }
 
@@ -188,50 +189,44 @@ class ToolbarNavigation extends React.Component {
     const accountState = accountStore.getState()
     const service = accountState.getService(serviceId)
     if (!service) { return }
-    const webContents = remote.webContents.fromId(tabId)
-    if (!webContents) { return }
 
-    webContents.loadURL(service.url)
+    WBRPCRenderer.webContents.loadURL(service.url, tabId)
   }
 
   /**
   * Navigates back
   */
   handleGoBack = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.goBack()
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.goBack(tabId)
   }
 
   /**
   * Navigates forward
   */
   handleGoForward = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.goForward()
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.goForward(tabId)
   }
 
   /**
   * Stops navigation
   */
   handleStop = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.stop()
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.stop(tabId)
   }
 
   /**
   * Reloads current page
   */
   handleReload = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.reload()
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.reload(tabId)
   }
 
   /**
@@ -256,10 +251,9 @@ class ToolbarNavigation extends React.Component {
   * @param url: the url to open
   */
   handleChangeAddress = (evt, url) => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.loadURL(url)
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.loadURL(url, tabId)
   }
 
   /* **************************************************************************/
