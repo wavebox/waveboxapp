@@ -422,28 +422,6 @@ class WebView extends React.Component {
     })
   }
 
-  /**
-  * Loads the given url
-  * @param url: the url to load
-  */
-  loadURL = (url) => {
-    // Since electron4 moved to oopif calling loadURL on webview with the same url
-    // causes some pages hang, google drive is one example. It looks like it's because
-    // the renderer thread doesn't get restarted and the oopif does some weird stuff.
-    // Keeping the dev console open and trying to reproduce this is tricky.
-    // A few work-arounds when the url is the same are...
-    // 1. Loading about:blank then the url
-    // 2. Loading with { extraHeaders: 'pragma: no-cache\n' }
-    // 3. Doing nothing - it's basically a no-op
-    // Related waveboxapp/issues/952
-    const node = this.getWebviewNode()
-    if (node) {
-      if (node.getWebContents().getURL() !== url) {
-        node.getWebContents().loadURL(url)
-      }
-    }
-  }
-
   /* **************************************************************************/
   // IPC Utils
   /* **************************************************************************/

@@ -10,6 +10,7 @@ import FARFrown from 'wbfa/FARFrown'
 
 const HANDLED_ERROR_CODES = new Set([
   -2, // FAILED
+  -101, // CONNECTION_RESET
   -102, // CONNECTION_REFUSED
   -105, // ERR_NAME_NOT_RESOLVED
   -106, // ERR_INTERNET_DISCONNECTED,
@@ -54,6 +55,7 @@ class ServiceLoadErrorCover extends React.Component {
   renderIconComponent (code) {
     switch (code) {
       case -2: return FARFrown
+      case -101: return FARFrown
       case -102: return FARFrown
       case -105: return FARFrown
       case -106: return WifiOffIcon
@@ -67,6 +69,7 @@ class ServiceLoadErrorCover extends React.Component {
   renderTitle (code) {
     switch (code) {
       case -2: return `Failed to connect`
+      case -101: return `Failed to connect`
       case -102: return `This site can't be reached`
       case -105: return `This site can't be reached`
       case -106: return `No internet`
@@ -83,6 +86,12 @@ class ServiceLoadErrorCover extends React.Component {
     switch (code) {
       case -2: return [
         'Try checking your internet connection and proxy settings',
+        '',
+        description
+      ]
+      case -101: return [
+        'The connection was reset when connecting to the server:',
+        url,
         '',
         description
       ]
@@ -119,6 +128,7 @@ class ServiceLoadErrorCover extends React.Component {
         return undefined
 
       case -2:
+      case -101:
       case -106:
         return (
           <Button variant='contained' onClick={attemptReload}>
@@ -138,7 +148,7 @@ class ServiceLoadErrorCover extends React.Component {
           {...passProps}
           IconComponent={this.renderIconComponent(loadError.code)}
           title={this.renderTitle(loadError.code)}
-          text={this.renderText(loadError.code, loadError.description, loadError.url)}
+          text={this.renderText(loadError.code, loadError.description, loadError.validatedURL || loadError.url)}
           button={this.renderButton(classes, loadError.code, attemptReload)} />
       )
     } else {
