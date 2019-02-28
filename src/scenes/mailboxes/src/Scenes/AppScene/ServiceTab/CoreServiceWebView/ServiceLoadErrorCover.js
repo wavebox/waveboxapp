@@ -7,14 +7,16 @@ import { withStyles } from '@material-ui/core/styles'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import WifiOffIcon from '@material-ui/icons/WifiOff'
 import FARFrown from 'wbfa/FARFrown'
+import FARServer from 'wbfa/FARServer'
 
+// https://cs.chromium.org/chromium/src/net/base/net_error_list.h
 const HANDLED_ERROR_CODES = new Set([
   -2, // FAILED
+  -100, // CONNECTION_CLOSED
   -101, // CONNECTION_RESET
   -102, // CONNECTION_REFUSED
   -105, // ERR_NAME_NOT_RESOLVED
-  -106, // ERR_INTERNET_DISCONNECTED,
-  -130 // PROXY_CONNECTION_FAILED
+  -106 // ERR_INTERNET_DISCONNECTED
 ])
 
 const styles = {
@@ -55,8 +57,9 @@ class ServiceLoadErrorCover extends React.Component {
   renderIconComponent (code) {
     switch (code) {
       case -2: return FARFrown
-      case -101: return FARFrown
-      case -102: return FARFrown
+      case -100: return FARServer
+      case -101: return FARServer
+      case -102: return FARServer
       case -105: return FARFrown
       case -106: return WifiOffIcon
     }
@@ -69,6 +72,7 @@ class ServiceLoadErrorCover extends React.Component {
   renderTitle (code) {
     switch (code) {
       case -2: return `Failed to connect`
+      case -100: return `Connection closed`
       case -101: return `Failed to connect`
       case -102: return `This site can't be reached`
       case -105: return `This site can't be reached`
@@ -86,6 +90,12 @@ class ServiceLoadErrorCover extends React.Component {
     switch (code) {
       case -2: return [
         'Try checking your internet connection and proxy settings',
+        '',
+        description
+      ]
+      case -100: return [
+        'The connection was closed when connecting to the server:',
+        url,
         '',
         description
       ]
@@ -128,6 +138,7 @@ class ServiceLoadErrorCover extends React.Component {
         return undefined
 
       case -2:
+      case -100:
       case -101:
       case -106:
         return (

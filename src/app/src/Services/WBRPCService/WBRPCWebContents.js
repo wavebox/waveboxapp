@@ -16,6 +16,7 @@ import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import { ElectronWebContents } from 'ElectronTools'
 
 const privConnected = Symbol('privConnected')
+const privFailedReloadRetry = Symbol('privFailedReloadRetry')
 
 class WBRPCWebContents {
   /* ****************************************************************************/
@@ -24,6 +25,7 @@ class WBRPCWebContents {
 
   constructor () {
     this[privConnected] = new Set()
+    this[privFailedReloadRetry] = new Map()
 
     // Permissions
     PermissionManager.on('unresolved-permission-requests-changed', this._handleUnresolvedPermissionRequestChanged)
@@ -54,6 +56,7 @@ class WBRPCWebContents {
 
     // WebContent utils
     contents.on('will-prevent-unload', this._handleWillPreventUnload)
+    contents.on('did-fail-load', this._handleFailLoad)
   }
 
   /**
@@ -219,6 +222,44 @@ class WBRPCWebContents {
     if (choice === 0) {
       evt.preventDefault()
     }
+  }
+
+  /**
+  * Handles the webcontents failing to load
+  * @param evt: the event that fired
+  * @param errorCode: the error code
+  * @param errorDescription: the error description
+  * @param validatedURL: the url
+  * @param isMainFrame: true if main frame
+  * @param frameProcessId: id of the process
+  * @param frameRoutingId: routing id of frame
+  */
+  _handleFailLoad = (evt, errorCode, errorDescription, validatedURL, isMainFrame, frameProcessId, frameRoutingId) => {
+    if (!isMainFrame) { return }
+    if ([-100, -101].includes(errorCode) === false) { return }
+    if (!validatedURL) { return }
+
+    const wc = evt.sender
+    const wcId = evt.sender.id
+    if (this[privFailedReloadRetry].get(wcId) === validatedURL) { return }
+
+    // Re-start a load
+    wc.loadURL(validatedURL)
+    this[privFailedReloadRetry].set(wcId, validatedURL)
+
+    // Prepare teardown
+    let clearTO = null
+    const clearFn = () => {
+      this[privFailedReloadRetry].delete(wcId)
+      clearTimeout(clearTO)
+      if (!wc.isDestroyed()) {
+        wc.removeListener('did-finish-load', clearFn)
+        wc.removeListener('destroyed', clearFn)
+      }
+    }
+    wc.once('did-finish-load', clearFn)
+    wc.on('destroyed', clearFn)
+    clearTO = setTimeout(clearFn, 5000)
   }
 }
 
