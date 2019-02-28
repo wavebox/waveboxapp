@@ -88,14 +88,14 @@ class WindowOpeningHandler {
 
     // Setup our state
     let openMode = defaultOpenMode
+    let ignoreUserCommandKeyModifier = false
     let partitionOverride
 
     // Run through our standard config
     try {
-      const mode = WindowOpeningEngine.getRuleForWindowOpen(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
-      if (mode && WINDOW_OPEN_MODES[mode]) {
-        openMode = mode
-      }
+      const rule = WindowOpeningEngine.getRuleForWindowOpen(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+      openMode = rule.mode
+      ignoreUserCommandKeyModifier = rule.ignoreUserCommandKeyModifier
     } catch (ex) {
       console.error(`Failed to process default window opening rules. Continuing with "${openMode}" behaviour...`, ex)
     }
@@ -108,9 +108,10 @@ class WindowOpeningHandler {
           // Create a transient match task and ruleset to test matching
           const matchTask = new WindowOpeningMatchTask(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
           const rules = new WindowOpeningRules(0, mailboxRulesets)
-          const mode = rules.getMatchingMode(matchTask)
-          if (mode && WINDOW_OPEN_MODES[mode]) {
-            openMode = mode
+          const rule = rules.getMatchingRuleConfig(matchTask)
+          if (rule.match && WINDOW_OPEN_MODES[rule.mode]) {
+            openMode = rule.mode
+            ignoreUserCommandKeyModifier = rule.ignoreUserCommandKeyModifier
           }
         } catch (ex) {
           console.error(`Failed to process mailbox "${mailbox.id}" window opening rules. Continuing with "${openMode}" behaviour...`, ex)
@@ -132,11 +133,13 @@ class WindowOpeningHandler {
 
     // Look to see if the user wants to overwrite the behaviour
     const preAppCommandOpenUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
-    if (WaveboxAppCommandKeyTracker.shiftPressed) {
-      openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
-    }
-    if (WaveboxAppCommandKeyTracker.commandOrControlPressed) {
-      openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
+    if (!ignoreUserCommandKeyModifier) {
+      if (WaveboxAppCommandKeyTracker.shiftPressed) {
+        openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
+      }
+      if (WaveboxAppCommandKeyTracker.commandOrControlPressed) {
+        openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
+      }
     }
 
     // Generate some opener info for the new window
@@ -293,10 +296,8 @@ class WindowOpeningHandler {
 
     // Run through our standard config
     try {
-      const mode = WindowOpeningEngine.getRuleForNavigation(currentHostUrl, targetUrl, openingWindowType)
-      if (navigateMode && NAVIGATE_MODES[mode]) {
-        navigateMode = mode
-      }
+      const rule = WindowOpeningEngine.getRuleForNavigation(currentHostUrl, targetUrl, openingWindowType)
+      navigateMode = rule.mode
     } catch (ex) {
       console.error(`Failed to process default navigate rules. Continuing with "${navigateMode}" behaviour...`, ex)
     }
@@ -309,9 +310,9 @@ class WindowOpeningHandler {
           // Create a transient match task and ruleset to test matching
           const matchTask = new WindowOpeningMatchTask(currentHostUrl, targetUrl, openingWindowType)
           const rules = new WindowOpeningRules(0, mailboxRulesets)
-          const mode = rules.getMatchingMode(matchTask)
-          if (mode && NAVIGATE_MODES[mode]) {
-            navigateMode = mode
+          const rule = rules.getMatchingRuleConfig(matchTask)
+          if (rule.match && NAVIGATE_MODES[rule.mode]) {
+            navigateMode = rule.mode
           }
         } catch (ex) {
           console.error(`Failed to process mailbox "${mailbox.id}" window navigate rules. Continuing with "${navigateMode}" behaviour...`, ex)

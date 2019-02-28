@@ -65,11 +65,15 @@ class WindowOpeningEngine {
   */
   getRuleForWindowOpen (currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition) {
     const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
-    const mode = this[privWindowOpenRules].getMatchingMode(matchTask)
-    if (mode && WINDOW_OPEN_MODES[mode]) {
-      return mode
+    const config = this[privWindowOpenRules].getMatchingRuleConfig(matchTask)
+    if (config.match && WINDOW_OPEN_MODES[config.mode]) {
+      return config
     } else {
-      return WINDOW_OPEN_MODES.DEFAULT
+      return {
+        match: false,
+        mode: WINDOW_OPEN_MODES.DEFAULT,
+        ignoreUserCommandKeyModifier: false
+      }
     }
   }
 
@@ -138,11 +142,15 @@ class WindowOpeningEngine {
   */
   getRuleForNavigation (currentUrl, targetUrl, openingWindowType) {
     const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl, openingWindowType)
-    const mode = this[privNavigateRules].getMatchingMode(matchTask)
-    if (mode && NAVIGATE_MODES[mode]) {
-      return mode
+    const config = this[privNavigateRules].getMatchingRuleConfig(matchTask)
+    if (config.match && NAVIGATE_MODES[config.mode]) {
+      return config
     } else {
-      return NAVIGATE_MODES.DEFAULT
+      return {
+        match: false,
+        mode: NAVIGATE_MODES.DEFAULT,
+        ignoreUserCommandKeyModifier: false
+      }
     }
   }
 }
