@@ -80,6 +80,10 @@ class CommandPaletteSearchEngine extends EventEmitter {
   */
   reloadAccounts () {
     this[privSearchable].accountsDirty = true
+
+    if (this[privTerm]) {
+      this.asyncSearch(this[privTerm])
+    }
   }
 
   /**
