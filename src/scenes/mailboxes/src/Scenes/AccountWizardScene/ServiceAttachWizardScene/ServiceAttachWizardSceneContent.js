@@ -134,6 +134,13 @@ class ServiceAttachWizardSceneContent extends React.Component {
   }
 
   /**
+  * Minimizes the auth step
+  */
+  handleMinimizeAuth = () => {
+    window.location.hash = '/'
+  }
+
+  /**
   * Handles the personalise step pressing next
   */
   handleNextFromPersonalise = (serviceJS) => {
@@ -171,7 +178,7 @@ class ServiceAttachWizardSceneContent extends React.Component {
             onRequestNext={this.handleNextFromPersonalise} />
         ) : undefined}
         {currentStep === 1 ? (
-          <WizardAuth />
+          <WizardAuth onRequestMinimize={this.handleMinimizeAuth} />
         ) : undefined}
         {currentStep === 2 ? (
           <WizardConfigure

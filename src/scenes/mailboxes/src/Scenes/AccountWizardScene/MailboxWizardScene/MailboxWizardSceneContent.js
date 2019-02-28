@@ -83,6 +83,14 @@ class MailboxWizardSceneContent extends React.Component {
     window.location.hash = destination
   }
 
+  /**
+  * Minimizes the auth step
+  * @param evt: the event that fired
+  */
+  handleMinimizeAuth = (evt) => {
+    window.location.hash = '/'
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -110,7 +118,7 @@ class MailboxWizardSceneContent extends React.Component {
         )
       case 1:
         return (
-          <WizardAuth />
+          <WizardAuth onRequestMinimize={this.handleMinimizeAuth} />
         )
       case 2:
         return (
