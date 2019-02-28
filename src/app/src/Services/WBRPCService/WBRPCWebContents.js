@@ -235,6 +235,15 @@ class WBRPCWebContents {
   * @param frameRoutingId: routing id of frame
   */
   _handleFailLoad = (evt, errorCode, errorDescription, validatedURL, isMainFrame, frameProcessId, frameRoutingId) => {
+    // @Thomas101 This is a bit of a workaround. It looks like the bug has been
+    // introduced with electron4. Originally reported with wavebox/952 it looks like
+    // when loading drive twice with the same url sometimes it can cause the network to
+    // flake at the tcp level. This has probably been introduced in the new metro loader
+    // so re-look in electron5 to see if it's solved. It's harder to reproduce with devtools
+    // open and is quite flakey to reproduce.
+    //
+    // The work around here is basically to retry once. The user will probably see a flash
+    // of the error message, but this is very much a fringe case and it recovers gracefully
     if (!isMainFrame) { return }
     if ([-100, -101].includes(errorCode) === false) { return }
     if (!validatedURL) { return }
