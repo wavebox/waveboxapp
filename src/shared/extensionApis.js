@@ -7,6 +7,7 @@ const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
 
   ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js',
   GOOGLE_MAIL_WINDOW_OPEN: 'GoogleMailWindowOpen.js',
+  GOOGLE_MAIL_HTTP_WATCHER: 'GoogleMailHTTPWatcher.js',
   GOOGLE_CHAT_WINDOW_OPEN: 'GoogleChatWindowOpen.js',
   FASTMAIL_WINDOW_OPEN: 'FastmailWindowOpen.js',
   SKYPE_WINDOW_OPEN: 'SkypeWindowOpen.js'

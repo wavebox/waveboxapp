@@ -5,12 +5,14 @@ import { accountStore, accountDispatch } from 'stores/account'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
+import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import {
   WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
   WB_BROWSER_OPEN_MESSAGE,
   WB_BROWSER_COMPOSE_MESSAGE,
   WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
-  WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED
+  WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED,
+  WB_BROWSER_GOOGLE_GMAIL_ARCHIVE_FIRING
 } from 'shared/ipcEvents'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
@@ -64,6 +66,7 @@ export default class GoogleMailServiceWebView extends React.Component {
       const service = accountState.getService(nextProps.serviceId)
       this.setState({
         serviceType: service ? service.type : undefined,
+        inboxType: service ? service.inboxType : undefined,
         isActive: accountState.isServiceActive(nextProps.serviceId)
       })
     }
@@ -79,6 +82,7 @@ export default class GoogleMailServiceWebView extends React.Component {
 
     return {
       serviceType: service ? service.type : undefined,
+      inboxType: service ? service.inboxType : undefined,
       isActive: accountState.isServiceActive(this.props.serviceId),
       ui: settingsState.ui
     }
@@ -88,6 +92,7 @@ export default class GoogleMailServiceWebView extends React.Component {
     const service = accountState.getService(this.props.serviceId)
     this.setState({
       serviceType: service ? service.type : undefined,
+      inboxType: service ? service.inboxType : undefined,
       isActive: accountState.isServiceActive(this.props.serviceId)
     })
   }
@@ -157,6 +162,7 @@ export default class GoogleMailServiceWebView extends React.Component {
     switch (evt.channel.type) {
       case WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED: this.handleIPCUnreadCountChanged(evt.channel.data); break
       case WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED: this.handleIPCTopMessageChanged(evt.channel.data); break
+      case WB_BROWSER_GOOGLE_GMAIL_ARCHIVE_FIRING: this.handleIPCArchiveFiring(evt.channel.data); break
       default: break
     }
   }
@@ -184,6 +190,16 @@ export default class GoogleMailServiceWebView extends React.Component {
   */
   handleIPCTopMessageChanged = (evt) => {
     googleActions.syncServiceMessages(this.props.serviceId)
+  }
+
+  /**
+  * Handles the archive call firing
+  */
+  handleIPCArchiveFiring = (evt) => {
+    const { serviceType, inboxType } = this.state
+    if (serviceType === SERVICE_TYPES.GOOGLE_MAIL && inboxType === GoogleMailService.INBOX_TYPES.GMAIL__ALL) {
+      googleActions.syncServiceMessages(this.props.serviceId)
+    }
   }
 
   /* **************************************************************************/
