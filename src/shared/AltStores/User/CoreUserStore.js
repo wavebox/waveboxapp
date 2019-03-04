@@ -183,6 +183,14 @@ class CoreUserStore extends RemoteStore {
       return this.wireConfigExperiments().simpleGoogleAuth === true
     }
 
+    /**
+    * Returns true if we should capture ms http errors
+    * @return true to capture
+    */
+    this.wireConfigCaptureMicrosoftHttpErrors = () => {
+      return this.wireConfigExperiments().captureMicrosoftHttpErrors !== false
+    }
+
     /* ****************************************/
     // Containers
     /* ****************************************/

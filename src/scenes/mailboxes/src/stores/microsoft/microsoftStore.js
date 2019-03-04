@@ -4,6 +4,7 @@ import MicrosoftHTTP from './MicrosoftHTTP'
 import { MICROSOFT_PROFILE_SYNC_INTERVAL, MICROSOFT_UNREAD_SYNC_INTERVAL } from 'shared/constants'
 import uuid from 'uuid'
 import { accountStore, accountActions } from 'stores/account'
+import { userStore } from 'stores/user'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import MicrosoftMailServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/MicrosoftMailServiceDataReducer'
@@ -105,16 +106,33 @@ class MicrosoftStore {
   /**
   * Checks if an error is an invalid grant error
   * @param err: the error that was thrown
+  * @param text: the text content of the error
   * @return true if this error is invalid grant
   */
-  isInvalidGrantError (err) {
-    if (err) {
-      // @Thomas101 disable these checks temporarily as some users have
-      // reported a re-authentication loop. Needs further investigation
-      // if (err.status === 400) { return true }
-      // if (err.status === 401) { return true }
+  isInvalidGrantError (err, text) {
+    if (userStore.getState().wireConfigCaptureMicrosoftHttpErrors()) {
+      if (err && typeof (text) === 'string') {
+        if (err.status === 401 && text.indexOf('InvalidAuthenticationToken') !== -1) { return true }
+      }
     }
     return false
+  }
+
+  /**
+  * Tries to grab the body from an error
+  * @param err: the error to enhance
+  * @param cb: executed with err and text
+  */
+  extractError (err, cb) {
+    Promise.resolve()
+      .then(() => err.text())
+      .then(
+        (text) => Promise.resolve([err, text]),
+        (_) => Promise.resolve([err, undefined])
+      )
+      .then((args) => {
+        cb(...args) // eslint-disable-line
+      })
   }
 
   /* **************************************************************************/
@@ -260,12 +278,15 @@ class MicrosoftStore {
       })
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
-        if (this.isInvalidGrantError(err)) {
-          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
-        } else {
-          console.error(err)
-        }
         this.emitChange()
+
+        this.extractError(err, (err, text) => {
+          if (this.isInvalidGrantError(err, text)) {
+            accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+          } else {
+            console.error(err, text)
+          }
+        })
       })
   }
 
@@ -321,12 +342,14 @@ class MicrosoftStore {
       })
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
-        if (this.isInvalidGrantError(err)) {
-          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
-        } else {
-          console.error(err)
-        }
         this.emitChange()
+        this.extractError(err, (err, text) => {
+          if (this.isInvalidGrantError(err, text)) {
+            accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+          } else {
+            console.error(err, text)
+          }
+        })
       })
   }
 
