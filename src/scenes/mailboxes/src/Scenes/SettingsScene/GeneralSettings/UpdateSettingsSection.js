@@ -13,8 +13,11 @@ import SystemUpdateIcon from '@material-ui/icons/SystemUpdate'
 import { withStyles } from '@material-ui/core/styles'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
 import SettingsListItemText from 'wbui/SettingsListItemText'
-import { GITHUB_RELEASES_URL } from 'shared/constants'
 import blue from '@material-ui/core/colors/blue'
+import {
+  GITHUB_RELEASES_URL,
+  KB_BETA_CHANNEL_URL
+} from 'shared/constants'
 
 const styles = {
   link: {
@@ -65,6 +68,16 @@ class UpdateSettingsSection extends React.Component {
           checked={app.checkForUpdates} />
         <SettingsListItemSelectInline
           label='Update channel'
+          secondary={process.platform === 'linux' ? (
+            <React.Fragment>
+              <span>Remember to&nbsp;</span>
+              <span
+                className={classes.link}
+                onClick={() => WBRPCRenderer.wavebox.openExternal(KB_BETA_CHANNEL_URL)}>
+                change your update repository
+              </span>
+            </React.Fragment>
+          ) : undefined}
           value={app.updateChannel}
           options={[
             { value: AppSettings.UPDATE_CHANNELS.STABLE, label: 'Stable' },
