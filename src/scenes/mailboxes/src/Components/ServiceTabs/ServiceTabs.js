@@ -81,6 +81,32 @@ class ServiceTabs extends React.Component {
   // Lifecycle
   /* **************************************************************************/
 
+  constructor (props) {
+    super(props)
+
+    // On Electron4+ the webview gobbles mouse events when dragging over it
+    // meaning that sidebar items can't be fluidly dragged. We can either
+    // set the pointer-events to be none on the webview, or cover it
+    // with a div.
+    // Fixes #962
+    this.shield = document.createElement('div')
+    this.shield.style.position = 'fixed'
+    this.shield.style.top = '0px'
+    this.shield.style.left = '0px'
+    this.shield.style.right = '0px'
+    this.shield.style.bottom = '0px'
+    this.shield.addEventListener('click', (evt) => {
+      // Fallback
+      try {
+        document.body.removeChild(this.shield)
+      } catch (ex) { }
+    }, false)
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
   componentDidMount () {
     accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
@@ -195,6 +221,9 @@ class ServiceTabs extends React.Component {
             // Fix for https://github.com/wavebox/waveboxapp/issues/762
             if (evt.ctrlKey === true) { return true }
           }}
+          onSortStart={() => {
+            document.body.appendChild(this.shield)
+          }}
           onSortEnd={({ oldIndex, newIndex }) => {
             // Optimistically update the services in the current state. The round trip across
             // the ipc bridge takes a few ms and can cause jank
@@ -209,6 +238,10 @@ class ServiceTabs extends React.Component {
               serviceIds[oldIndex],
               newIndex
             )
+
+            try {
+              document.body.removeChild(this.shield)
+            } catch (ex) { }
           }} />
       </div>
     )
