@@ -11,6 +11,7 @@ const days = function (days) {
   return 1000 * 60 * 60 * 24 * days
 }
 
+const COMMAND_PALETTE_VALID_MODIFIERS_ARRAY = ['/', '?', '#', '@', '$']
 module.exports = Object.freeze({
   // App
   APP_ID: 'wavebox.io',
@@ -138,6 +139,7 @@ module.exports = Object.freeze({
   UPDATE_USER_CHANGELOG_STABLE: 'https://github.com/wavebox/waveboxapp/releases/latest/',
   UPDATE_USER_CHANGELOG_BETA: 'https://github.com/wavebox/waveboxapp/releases/',
 
+  // Capture urls
   WAVEBOX_CAPTURE_URL_HOSTNAMES: [
     'wavebox.io',
     'waveboxio.com'
@@ -152,5 +154,10 @@ module.exports = Object.freeze({
     WAVEBOX_AUTH_AFFILIATE: '/app/redirect/waveboxauth/affiliate',
     WAVEBOX_PRO_BUY: '/app/redirect/pro/buy',
     ADD_MAILBOX: '/app/redirect/mailbox/add'
-  }
+  },
+
+  // Command Palette
+  COMMAND_PALETTE_ALL_TERM: '**',
+  COMMAND_PALETTE_VALID_MODIFIERS: new Set(COMMAND_PALETTE_VALID_MODIFIERS_ARRAY),
+  COMMAND_PALETTE_ALL_COMMAND_TERMS: new Set(COMMAND_PALETTE_VALID_MODIFIERS_ARRAY.map((m) => `${m}*`))
 })

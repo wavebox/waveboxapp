@@ -110,6 +110,12 @@ class ContainerService extends CoreACService {
     }
     return this.__adaptors__
   }
+
+  /* **************************************************************************/
+  // Properties: Commands
+  /* **************************************************************************/
+
+  get commands () { return this.container.commands }
 }
 
 export default ContainerService

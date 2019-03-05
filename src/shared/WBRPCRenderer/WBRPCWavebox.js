@@ -3,6 +3,7 @@ import uuid from 'uuid'
 import {
   WBRPC_OPEN_RECENT_LINK,
   WBRPC_OPEN_READING_QUEUE_LINK,
+  WBRPC_RUN_SERVICE_COMMAND,
   WBRPC_GET_UPDATER_CONFIG,
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
@@ -90,6 +91,15 @@ class WBRPCWavebox {
   */
   openItem (fullPath, fallbackToFolder = false) {
     ipcRenderer.send(WBRPC_OPEN_ITEM, fullPath, fallbackToFolder)
+  }
+
+  /**
+  * Runs a command in a service
+  * @param serviceId: the id of the service
+  * @param commandString: the string the user has entered
+  */
+  runServiceCommand (serviceId, commandString) {
+    ipcRenderer.send(WBRPC_RUN_SERVICE_COMMAND, serviceId, commandString)
   }
 
   /* ****************************************************************************/

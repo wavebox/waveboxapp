@@ -9,17 +9,22 @@ import CommandPaletteSearchEngine from './CommandPaletteSearchEngine'
 import { accountStore } from 'stores/account'
 import CommandPaletteSearchItemService from './CommandPaletteSearchItemService'
 import CommandPaletteSearchItemServiceSub from './CommandPaletteSearchItemServiceSub'
+import CommandPaletteSearchItemCommandSuggestion from './CommandPaletteSearchItemCommandSuggestion'
+import CommandPaletteSearchItemCommand from './CommandPaletteSearchItemCommand'
 import StyleMixins from 'wbui/Styles/StyleMixins'
+import SEARCH_TARGETS from './CommandPaletteSearchEngine/CommandPaletteSearchTargets'
 
 const TOP_HITS_COUNT = 5
 const SEARCH_SIZE = 58
 const SEARCH_ICON_SIZE = 32
 
 const HUMANIZED_SEARCH_TARGETS = {
-  [CommandPaletteSearchEngine.SEARCH_TARGETS.SERVICE]: 'Services',
-  [CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK]: 'Pinned',
-  [CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT]: 'Recent',
-  [CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE]: 'Tasks'
+  [SEARCH_TARGETS.SERVICE]: 'Services',
+  [SEARCH_TARGETS.BOOKMARK]: 'Pinned',
+  [SEARCH_TARGETS.RECENT]: 'Recent',
+  [SEARCH_TARGETS.READING_QUEUE]: 'Tasks',
+  [SEARCH_TARGETS.COMMAND_SUGGESTION]: 'Commands',
+  [SEARCH_TARGETS.COMMAND]: 'Command'
 }
 
 const styles = {
@@ -166,6 +171,30 @@ class CommandPaletteSceneContent extends React.Component {
     window.location.hash = '/'
   }
 
+  /**
+  * Handles prefilling the search term
+  * @param evt: the event that fired
+  * @param item: the full command item
+  */
+  handlePrefillCommandSearch = (evt, item) => {
+    const command = `${item.modifier}${item.keyword}`
+    const prefill = command + (item.helper ? ' ' + item.helper : '')
+
+    this.setState({ searchTerm: prefill })
+    this.search.asyncSearch(prefill)
+
+    const inputEl = ReactDOM.findDOMNode(this.searchInputRef.current)
+    if (inputEl) {
+      inputEl.focus()
+
+      if (item.helper) {
+        setTimeout(() => {
+          inputEl.setSelectionRange(command.length + 1, prefill.length)
+        }, 100)
+      }
+    }
+  }
+
   /* **************************************************************************/
   // UI Events: Keyboard navigation
   /* **************************************************************************/
@@ -261,22 +290,37 @@ class CommandPaletteSceneContent extends React.Component {
     }
 
     switch (item.target) {
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.SERVICE:
+      case SEARCH_TARGETS.SERVICE:
         return (
           <CommandPaletteSearchItemService
             {...commonProps}
             mailboxId={item.parentId}
             serviceId={item.id} />
         )
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK:
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT:
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE:
+      case SEARCH_TARGETS.BOOKMARK:
+      case SEARCH_TARGETS.RECENT:
+      case SEARCH_TARGETS.READING_QUEUE:
         return (
           <CommandPaletteSearchItemServiceSub
             {...commonProps}
             serviceId={item.parentId}
             itemId={item.id}
             searchTarget={item.target} />
+        )
+      case SEARCH_TARGETS.COMMAND_SUGGESTION:
+        return (
+          <CommandPaletteSearchItemCommandSuggestion
+            {...commonProps}
+            item={item}
+            onPrefillSearch={this.handlePrefillCommandSearch} />
+        )
+      case SEARCH_TARGETS.COMMAND:
+        return (
+          <CommandPaletteSearchItemCommand
+            {...commonProps}
+            mailboxId={item.parentId}
+            serviceId={item.id}
+            commandString={this.state.searchTerm} />
         )
     }
   }

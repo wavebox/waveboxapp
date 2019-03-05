@@ -19,7 +19,8 @@ import {
   WB_AUTH_MICROSOFT,
   WB_AUTH_SLACK,
   WB_AUTH_TRELLO,
-  WB_NEW_WINDOW
+  WB_NEW_WINDOW,
+  WB_GUEST_API_SEND_COMMAND
 } from 'shared/ipcEvents'
 import { USER_PROFILE_DEFERED_SYNC_ON_CREATE } from 'shared/constants'
 import { ipcRenderer } from 'electron'
@@ -151,6 +152,7 @@ class AccountStore extends RendererAccountStore {
 
       // Navigation
       handleNavigateAndSwitchToService: actions.NAVIGATE_AND_SWITCH_TO_SERVICE,
+      handleRunCommandAndSwitchToService: actions.RUN_COMMAND_AND_SWITCH_TO_SERVICE,
 
       // Warnings
       handleClearRuntimeWarning: actions.CLEAR_RUNTIME_WARNING,
@@ -317,6 +319,31 @@ class AccountStore extends RendererAccountStore {
     const retrier = setInterval(() => {
       if (accountDispatch.getIsWebviewMounted(serviceId)) {
         accountDispatch.loadUrl(serviceId, url)
+        clearInterval(retrier)
+      } else {
+        tries++
+        if (tries > 20) {
+          clearInterval(retrier)
+        }
+      }
+    }, 200)
+  }
+
+  handleRunCommandAndSwitchToService ({ serviceId, commandString }) {
+    this.preventDefault()
+    if (!this.hasService(serviceId)) { return }
+
+    if (!this.isServiceActive(serviceId)) {
+      actions.changeActiveService.defer(serviceId)
+    } else if (this.isServiceSleeping(serviceId)) {
+      actions.awakenService.defer(serviceId)
+    }
+
+    let tries = 0
+    const retrier = setInterval(() => {
+      const tabId = this.getWebcontentTabId(serviceId)
+      if (tabId !== undefined) {
+        ipcRenderer.send(WB_GUEST_API_SEND_COMMAND, tabId, serviceId, commandString)
         clearInterval(retrier)
       } else {
         tries++

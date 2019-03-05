@@ -1070,6 +1070,44 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /* ****************************************/
+    // Service Commands
+    /* ****************************************/
+
+    /**
+    * Gets all the currently supported service commands
+    * @return an array of commands. Will be reduced to ensure no duplication
+    */
+    this.getAllSupportedServiceCommands = () => {
+      const all = this.allServicesUnordered().reduce((acc, service) => {
+        service.commands.forEach((command) => {
+          acc.set(`${command.modifier}${command.keyword}`, command)
+        })
+        return acc
+      }, new Map())
+      return Array.from(all.values())
+    }
+
+    /**
+    * Gets a list of service ids for a command
+    * @param modifier: the command modifier
+    * @param keyword: the command keyword
+    * @param ordered=false: pass true to pre-order services
+    * @return an array of service ids that support the command
+    */
+    this.getServiceIdsSupportingCommand = (modifier, keyword, ordered = false) => {
+      const services = ordered
+        ? this.allServicesOrdered()
+        : this.allServicesUnordered()
+      return services.reduce((acc, service) => {
+        const command = service.commands.find((command) => command.modifier === modifier && command.keyword === keyword)
+        if (command) {
+          acc.push(service.id)
+        }
+        return acc
+      }, [])
+    }
+
+    /* ****************************************/
     // Misc
     /* ****************************************/
 

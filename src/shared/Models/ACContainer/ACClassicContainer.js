@@ -79,6 +79,12 @@ class ACClassicContainer extends Model {
   get adaptors () { return this._classicServiceValue_('adaptors', []) }
 
   /* **************************************************************************/
+  // Properties: Commands
+  /* **************************************************************************/
+
+  get commands () { return this._classicServiceValue_('commands', []) }
+
+  /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 

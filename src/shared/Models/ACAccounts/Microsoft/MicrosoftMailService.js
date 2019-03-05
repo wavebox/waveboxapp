@@ -69,6 +69,22 @@ class MicrosoftMailService extends MicrosoftService {
   get userFullName () { return this._value_('userFullName') }
   get userId () { return this._value_('userId') }
   get serviceDisplayName () { return this.email || this.userFullName }
+
+  /* **************************************************************************/
+  // Commands
+  /* **************************************************************************/
+
+  get commands () {
+    return [
+      {
+        modifier: '/',
+        keyword: 'email',
+        helper: 'user@wavebox.io My Subject',
+        description: 'Start composing an email',
+        js: String.raw`const argComponents=args.trim().split(" "),to=argComponents[0],subject=argComponents.slice(1).join(" "),qs=[to?"to="+encodeURIComponent(to):void 0,subject?"subject="+encodeURIComponent(subject):void 0].filter(a=>!!a).join("&"),composeUrl=[window.location.protocol,"//",window.location.hostname,"/mail/deeplink/compose?",qs].join("");window.open(composeUrl,"_blank","width=800,height=600");`
+      }
+    ]
+  }
 }
 
 export default MicrosoftMailService

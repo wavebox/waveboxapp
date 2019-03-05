@@ -3,6 +3,7 @@ import { evtMain } from 'AppEvents'
 import {
   WBRPC_OPEN_RECENT_LINK,
   WBRPC_OPEN_READING_QUEUE_LINK,
+  WBRPC_RUN_SERVICE_COMMAND,
   WBRPC_GET_UPDATER_CONFIG,
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
@@ -48,6 +49,7 @@ class WBRPCWavebox {
     // Links & opening
     ipcMain.on(WBRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
     ipcMain.on(WBRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
+    ipcMain.on(WBRPC_RUN_SERVICE_COMMAND, this._handleRunServiceCommand)
     ipcMain.on(WBRPC_OPEN_EXTERNAL, this._handleOpenExternal)
     ipcMain.on(WBRPC_SHOW_ITEM_IN_FOLDER, this._handleShowItemInFolder)
     ipcMain.on(WBRPC_OPEN_ITEM, this._handleOpenItem)
@@ -212,6 +214,17 @@ class WBRPCWavebox {
   _handleOpenReadingQueueLink = (evt, serviceId, readingItem) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     LinkOpener.openReadingQueueLink(evt.sender, serviceId, readingItem)
+  }
+
+  /**
+  * Runs the service command
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service to open in
+  * @param commandString: the full command to run
+  */
+  _handleRunServiceCommand = (evt, serviceId, commandString) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.runServiceCommand(evt.sender, serviceId, commandString)
   }
 
   /**

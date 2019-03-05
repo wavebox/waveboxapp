@@ -1,12 +1,13 @@
-import { ipcMain } from 'electron'
+import { ipcMain, webContents } from 'electron'
 import fs from 'fs-extra'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
-import { accountActions, ServiceDataReducer } from 'stores/account'
+import { accountStore, accountActions, ServiceDataReducer } from 'stores/account'
 import {
   WB_GUEST_API_REQUEST,
-  WB_GUEST_API_READ_SYNC
+  WB_GUEST_API_READ_SYNC,
+  WB_GUEST_API_SEND_COMMAND
 } from 'shared/ipcEvents'
 import {
   VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS
@@ -24,10 +25,11 @@ class WBGApiService {
 
     ipcMain.on(WB_GUEST_API_REQUEST, this._handleGuestApiRequest)
     ipcMain.on(WB_GUEST_API_READ_SYNC, this._handleGuestApiReadSync)
+    ipcMain.on(WB_GUEST_API_SEND_COMMAND, this._handleGuestApiSendCommand)
   }
 
   /* ****************************************************************************/
-  // Event handlers
+  // Event handlers: Guest Api
   /* ****************************************************************************/
 
   /**
@@ -76,7 +78,79 @@ class WBGApiService {
   }
 
   /* ****************************************************************************/
-  // Utils
+  // Event handlers: Command Api
+  /* ****************************************************************************/
+
+  /**
+  * Runs a service command in a webcontents
+  * @param evt: the event that fired
+  * @param wcId: the id of the webcontents to run in
+  * @param serviceId: the id of the service to run in
+  * @param commandString: the command string to run
+  */
+  _handleGuestApiSendCommand = (evt, wcId, serviceId, commandString) => {
+    // Get the webcontents
+    const target = webContents.fromId(wcId)
+    if (!target || target.isDestroyed()) { return }
+
+    // Check the tab info
+    const tabInfo = WaveboxWindow.tabMetaInfo(wcId)
+    if (!tabInfo) { return }
+    if (tabInfo.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return }
+    if (tabInfo.serviceId !== serviceId) { return }
+
+    // Get the service & command
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return }
+    const command = service.getCommandForString(commandString)
+    if (!command) { return }
+
+    // Build our JS
+    const argsString = commandString.substr(command.modifier.length + command.keyword.length).trim()
+    const execJS = !command.js
+      ? undefined
+      : `
+        ;(function (modifier, keyword, args, fullCommand) {
+          ${command.js}
+        })(...${JSON.stringify([command.modifier, command.keyword, argsString, commandString])})
+      `
+
+    // Build our URL
+    const targetUrl = command.url
+      ? command.url.replace(/{{args}}/g, encodeURIComponent(argsString))
+      : undefined
+    let urlIsSame = true
+    if (targetUrl) {
+      try {
+        urlIsSame = new URL(targetUrl).toString() === new URL(target.getURL()).toString()
+      } catch (ex) {
+        urlIsSame = false
+      }
+    }
+
+    // Run the command based on current state
+    if (targetUrl && !urlIsSame) {
+      target.loadURL(targetUrl)
+      if (execJS) {
+        target.once('dom-ready', () => {
+          target.executeJavaScript(execJS)
+        })
+      }
+    } else {
+      if (execJS) {
+        if (target.isLoadingMainFrame()) {
+          target.once('dom-ready', () => {
+            target.executeJavaScript(execJS)
+          })
+        } else {
+          target.executeJavaScript(execJS)
+        }
+      }
+    }
+  }
+
+  /* ****************************************************************************/
+  // Data Utils
   /* ****************************************************************************/
 
   _shapeInt (val, defVal = 0) {
@@ -97,7 +171,7 @@ class WBGApiService {
   }
 
   /* ****************************************************************************/
-  // Api Calls
+  // Guest Api Calls
   /* ****************************************************************************/
 
   _setBadgeCount (serviceId, unsafeCount) {

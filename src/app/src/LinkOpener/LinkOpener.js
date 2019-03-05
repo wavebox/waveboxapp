@@ -192,6 +192,23 @@ class LinkOpener {
       { detached: true, windowsHide: true }
     )
   }
+
+  /* **************************************************************************/
+  // Service Commands
+  /* **************************************************************************/
+
+  /**
+  * Runs a service command
+  * @param contents: the webContents trying to action this
+  * @param serviceId: the id of the service to open in
+  * @param commandSring: the full command string
+  */
+  runServiceCommand (contents, serviceId, commandString) {
+    const mailboxesWindow = MailboxesWindow.getOfType(MailboxesWindow)
+    if (!mailboxesWindow) { return }
+    mailboxesWindow.show().focus()
+    mailboxesWindow.runCommandAndSwitchToService(serviceId, commandString)
+  }
 }
 
 export default new LinkOpener()
