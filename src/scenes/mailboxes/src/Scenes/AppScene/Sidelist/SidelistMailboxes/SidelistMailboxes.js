@@ -21,7 +21,7 @@ const SortableItem = SortableElement(({ mailboxId, sortableGetScrollContainer })
   )
 })
 
-const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrollContainer,...o }) => {
+const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrollContainer }) => {
   return (
     <div>
       {mailboxIds.map((mailboxId, index) => (
