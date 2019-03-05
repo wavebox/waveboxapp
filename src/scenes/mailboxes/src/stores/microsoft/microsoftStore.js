@@ -113,6 +113,7 @@ class MicrosoftStore {
     if (userStore.getState().wireConfigCaptureMicrosoftHttpErrors()) {
       if (err && typeof (text) === 'string') {
         if (err.status === 401 && text.indexOf('InvalidAuthenticationToken') !== -1) { return true }
+        if (err.status === 400 && text.indexOf('invalid_grant') !== -1) { return true }
       }
     }
     return false
