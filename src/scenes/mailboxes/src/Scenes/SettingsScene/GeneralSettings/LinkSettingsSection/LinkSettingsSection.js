@@ -19,6 +19,8 @@ import {
 import CustomLinkProviderEditorDialogContent from './CustomLinkProviderEditorDialogContent'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
+import DistributionConfig from 'Runtime/DistributionConfig'
+import SettingsListTypography from 'wbui/SettingsListTypography'
 
 const LINK_OPEN_OPTIONS = [
   { value: OSSettings.COMMAND_LINK_BEHAVIOUR.DEFAULT, label: 'Default Behaviour' },
@@ -93,6 +95,7 @@ const styles = {
     alignItems: 'center'
   },
   microButton: {
+    whiteSpace: 'nowrap',
     paddingTop: 1,
     paddingBottom: 1,
     '& svg': {
@@ -283,11 +286,18 @@ class LinkSettingsSection extends React.Component {
             onChange={(evt, value) => settingsActions.sub.os.setLinkBehaviourWithShift(value)} />
           <SettingsListItem className={classes.customLinkOpenerContainer}>
             <div className={classes.customLinkOpenerTitle}>
-              <ListItemText primary='Custom link openers (Advanced)' />
+              <ListItemText
+                primary='Custom link openers (Advanced)'
+                secondary={DistributionConfig.isSnapInstall ? (
+                  <SettingsListTypography type='info'>
+                    This featue is currently unavailable with the Snap version of Wavebox
+                  </SettingsListTypography>
+                ) : undefined} />
               <Button
                 className={classes.microButton}
                 size='small'
                 variant='outlined'
+                disabled={DistributionConfig.isSnapInstall}
                 onClick={this.handleOpenCustomLinkProviderAddMenu}>
                 <AddIcon /> Add new
               </Button>
