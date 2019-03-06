@@ -8,13 +8,15 @@ import {
   ANALYTICS_ID,
   CREATED_TIME
 } from 'shared/Models/DeviceKeys'
+import { SAPIExtensionLoader } from 'Extensions/ServiceApi'
 
 class PersistenceBootstrapper {
   /**
+  * Loads the data from the base stores (user, container, extension, wire)
   * Loads all the data from the persistence stores
   * @return all the data from the persistence stores
   */
-  static load () {
+  static loadBaseStoreData () {
     let userData = userPersistence.allJSONItems()
     let didUpdateUserData = false
 
@@ -41,6 +43,17 @@ class PersistenceBootstrapper {
       containerData: containerPersistence.allJSONItems(),
       extensionStoreData: extensionStorePersistence.allJSONItems(),
       wireConfigData: wirePersistence.allJSONItems()
+    }
+  }
+
+  /**
+  * Loads all the data from the persistence stores
+  * @return all the data from the persistence stores
+  */
+  static load () {
+    return {
+      ...this.loadBaseStoreData(),
+      containerSAPI: SAPIExtensionLoader.loadContainersSync()
     }
   }
 }

@@ -75,6 +75,7 @@ class AccountStore extends CoreAccountStore {
 
       // Containers
       handleContainersUpdated: actions.CONTAINERS_UPDATED,
+      handleContainerSAPIUpdated: actions.CONTAINER_SAPIUPDATED,
 
       // Sleep
       handleSleepService: actions.SLEEP_SERVICE,
@@ -251,6 +252,29 @@ class AccountStore extends CoreAccountStore {
   }
 
   /**
+  * Resync's the container service API with the models that are in the stores
+  * @return the ids of the containers that were updated
+  */
+  resyncContainerServiceSAPI () {
+    const updatedIds = []
+    this.allServicesOfType(SERVICE_TYPES.CONTAINER).forEach((service) => {
+      const sapi = this.getContainerSAPI(service.containerId)
+      if (!sapi && !service.hasSAPIConfig) { return }
+
+      const sapiHash = sapi ? JSON.stringify(sapi.cloneForService()) : undefined
+      const serviceSapiHash = service.hasSAPIConfig ? JSON.stringify(service.containerSAPI.cloneForService()) : undefined
+      if (sapiHash !== serviceSapiHash) {
+        updatedIds.push(service.id)
+        this.saveService(service.id, service.changeData({
+          containerSAPI: sapi ? sapi.cloneForService() : undefined
+        }))
+      }
+    })
+
+    return updatedIds
+  }
+
+  /**
   * Saves a local service data ensuring changed time etc update accordingly and data sent up socket
   * @param id: the id of the provider
   * @param serviceDataJS: the new js object for the mailbox or null to remove
@@ -345,6 +369,8 @@ class AccountStore extends CoreAccountStore {
     this.serviceIds().forEach((serviceId) => {
       this.startManagingServiceWithId(serviceId)
     })
+
+    this.resyncContainerServiceSAPI()
   }
 
   /* **************************************************************************/
@@ -800,9 +826,17 @@ class AccountStore extends CoreAccountStore {
 
     services.forEach((service) => {
       this.saveService(service.id, service.changeData({
-        container: this.getContainer(service.containerId).cloneForService()
+        container: this.getContainer(service.containerId).cloneForService(),
+        containerSAPI: this.getContainerSAPIDataForService(service.containerId)
       }))
     })
+  }
+
+  handleContainerSAPIUpdated () {
+    const updated = this.resyncContainerServiceSAPI()
+    if (updated.length === 0) {
+      this.preventDefault()
+    }
   }
 
   /* **************************************************************************/

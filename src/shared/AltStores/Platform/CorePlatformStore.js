@@ -75,6 +75,8 @@ class CorePlatformStore extends RemoteStore {
 
   handleLoad ({ installMethod }) {
     this.installMethod = installMethod
+
+    this.__isStoreLoaded__ = true
   }
 }
 

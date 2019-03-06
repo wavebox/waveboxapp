@@ -4,10 +4,12 @@ import Resolver from 'Runtime/Resolver'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { accountStore, accountActions, ServiceDataReducer } from 'stores/account'
+import { SAPIExtensionLoader, SAPIRunner } from 'Extensions/ServiceApi'
 import {
   WB_GUEST_API_REQUEST,
   WB_GUEST_API_READ_SYNC,
-  WB_GUEST_API_SEND_COMMAND
+  WB_GUEST_API_SEND_COMMAND,
+  WB_GUEST_API_OPEN_CONTAINER_FOLDER
 } from 'shared/ipcEvents'
 import {
   VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS
@@ -15,7 +17,7 @@ import {
 
 const privCachedGuestAPIs = Symbol('privCachedGuestAPIs')
 
-class WBGApiService {
+class WBAPIService {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
@@ -26,10 +28,11 @@ class WBGApiService {
     ipcMain.on(WB_GUEST_API_REQUEST, this._handleGuestApiRequest)
     ipcMain.on(WB_GUEST_API_READ_SYNC, this._handleGuestApiReadSync)
     ipcMain.on(WB_GUEST_API_SEND_COMMAND, this._handleGuestApiSendCommand)
+    ipcMain.on(WB_GUEST_API_OPEN_CONTAINER_FOLDER, this._handleGuestApiOpenContainerFolder)
   }
 
   /* ****************************************************************************/
-  // Event handlers: Guest Api
+  // Event handlers: In-page Guest Api
   /* ****************************************************************************/
 
   /**
@@ -77,6 +80,58 @@ class WBGApiService {
     }
   }
 
+  /**
+  * Sets the badge count on a service
+  * @param serviceId: the id of the service
+  * @param unsafeCount: the unsanitized count
+  */
+  _setBadgeCount (serviceId, unsafeCount) {
+    accountActions.reduceServiceData(
+      serviceId,
+      ServiceDataReducer.setWbgapiUnreadCount,
+      this._shapeInt(unsafeCount, 0)
+    )
+  }
+
+  /**
+  * Sets the badge activity on a service
+  * @param serviceId: the id of the service
+  * @param unsafeHasActivity: the unsanitized activity
+  */
+  _setBadgeHasUnreadActivity (serviceId, unsafeHasActivity) {
+    accountActions.reduceServiceData(
+      serviceId,
+      ServiceDataReducer.setWbgapiHasUnreadActivity,
+      this._shapeBool(unsafeHasActivity, false)
+    )
+  }
+
+  /**
+  * Sets the tray messages on a service
+  * @param serviceId: the id of the service
+  * @param unsafeMessages: the unsanitized messages to set
+  */
+  _setTrayMessages (serviceId, unsafeMessages) {
+    const messages = (Array.isArray(unsafeMessages) ? unsafeMessages : [])
+      .slice(0, 10)
+      .map((unsafeMessage, index) => {
+        return {
+          id: this._shapeStr(unsafeMessage.id || `auto_${index}`, `auto_${index}`, 100),
+          text: this._shapeStr(unsafeMessage.text, 100),
+          date: this._shapeInt(unsafeMessage.date, new Date().getTime()),
+          data: {
+            serviceId: serviceId,
+            open: this._shapeStr(unsafeMessage.open, '', 256)
+          }
+        }
+      })
+    accountActions.reduceServiceData(
+      serviceId,
+      ServiceDataReducer.setWbgapiTrayMessages,
+      messages
+    )
+  }
+
   /* ****************************************************************************/
   // Event handlers: Command Api
   /* ****************************************************************************/
@@ -105,48 +160,15 @@ class WBGApiService {
     const command = service.getCommandForString(commandString)
     if (!command) { return }
 
-    // Build our JS
-    const argsString = commandString.substr(command.modifier.length + command.keyword.length).trim()
-    const execJS = !command.js
-      ? undefined
-      : `
-        ;(function (modifier, keyword, args, fullCommand) {
-          ${command.js}
-        })(...${JSON.stringify([command.modifier, command.keyword, argsString, commandString])})
-      `
+    SAPIRunner.executeCommand(target, service, command, commandString)
+  }
 
-    // Build our URL
-    const targetUrl = command.url
-      ? command.url.replace(/{{args}}/g, encodeURIComponent(argsString))
-      : undefined
-    let urlIsSame = true
-    if (targetUrl) {
-      try {
-        urlIsSame = new URL(targetUrl).toString() === new URL(target.getURL()).toString()
-      } catch (ex) {
-        urlIsSame = false
-      }
-    }
+  /* ****************************************************************************/
+  // Event handlers: SAPI
+  /* ****************************************************************************/
 
-    // Run the command based on current state
-    if (targetUrl && !urlIsSame) {
-      target.loadURL(targetUrl)
-      if (execJS) {
-        target.once('dom-ready', () => {
-          target.executeJavaScript(execJS)
-        })
-      }
-    } else {
-      if (execJS) {
-        if (target.isLoadingMainFrame()) {
-          target.once('dom-ready', () => {
-            target.executeJavaScript(execJS)
-          })
-        } else {
-          target.executeJavaScript(execJS)
-        }
-      }
-    }
+  _handleGuestApiOpenContainerFolder = (evt, containerId) => {
+    SAPIExtensionLoader.openInstallFolderForUser(containerId)
   }
 
   /* ****************************************************************************/
@@ -169,47 +191,6 @@ class WBGApiService {
       return safeVal
     }
   }
-
-  /* ****************************************************************************/
-  // Guest Api Calls
-  /* ****************************************************************************/
-
-  _setBadgeCount (serviceId, unsafeCount) {
-    accountActions.reduceServiceData(
-      serviceId,
-      ServiceDataReducer.setWbgapiUnreadCount,
-      this._shapeInt(unsafeCount, 0)
-    )
-  }
-
-  _setBadgeHasUnreadActivity (serviceId, unsafeHasActivity) {
-    accountActions.reduceServiceData(
-      serviceId,
-      ServiceDataReducer.setWbgapiHasUnreadActivity,
-      this._shapeBool(unsafeHasActivity, false)
-    )
-  }
-
-  _setTrayMessages (serviceId, unsafeMessages) {
-    const messages = (Array.isArray(unsafeMessages) ? unsafeMessages : [])
-      .slice(0, 10)
-      .map((unsafeMessage, index) => {
-        return {
-          id: this._shapeStr(unsafeMessage.id || `auto_${index}`, `auto_${index}`, 100),
-          text: this._shapeStr(unsafeMessage.text, 100),
-          date: this._shapeInt(unsafeMessage.date, new Date().getTime()),
-          data: {
-            serviceId: serviceId,
-            open: this._shapeStr(unsafeMessage.open, '', 256)
-          }
-        }
-      })
-    accountActions.reduceServiceData(
-      serviceId,
-      ServiceDataReducer.setWbgapiTrayMessages,
-      messages
-    )
-  }
 }
 
-export default WBGApiService
+export default WBAPIService

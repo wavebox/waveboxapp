@@ -1,6 +1,6 @@
 import RemoteStore from '../RemoteStore'
 import User from '../../Models/User/User'
-import ACContainer from '../../Models/ACContainer'
+import { ACContainer, ACContainerSAPI } from '../../Models/ACContainer'
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
@@ -35,6 +35,7 @@ class CoreUserStore extends RemoteStore {
     this.extensions = null
     this.wireConfig = null
     this.containers = new Map()
+    this.containerSAPI = new Map()
 
     /* ****************************************/
     // Extensions
@@ -203,6 +204,14 @@ class CoreUserStore extends RemoteStore {
       return this.containers.get(containerId) || null
     }
 
+    /**
+    * @param containerId: the id of the container
+    * @return the container sapi data or null
+    */
+    this.getContainerSAPI = (containerId) => {
+      return this.containerSAPI.get(containerId) || null
+    }
+
     /* ****************************************/
     // Actions
     /* ****************************************/
@@ -221,7 +230,7 @@ class CoreUserStore extends RemoteStore {
   // Loading
   /* **************************************************************************/
 
-  handleLoad ({ userData, containerData, extensionStoreData, wireConfigData }) {
+  handleLoad ({ userData, containerData, containerSAPI, extensionStoreData, wireConfigData }) {
     // Install instance
     this.clientId = userData[CLIENT_ID]
     this.analyticsId = userData[ANALYTICS_ID]
@@ -246,6 +255,13 @@ class CoreUserStore extends RemoteStore {
       acc.set(id, new ACContainer(containerData[id]))
       return acc
     }, new Map())
+
+    this.containerSAPI = Object.keys(containerSAPI || {}).reduce((acc, id) => {
+      acc.set(id, new ACContainerSAPI(containerSAPI[id]))
+      return acc
+    }, new Map())
+
+    this.__isStoreLoaded__ = true
   }
 
   /* **************************************************************************/

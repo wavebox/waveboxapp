@@ -450,6 +450,17 @@ class CoreAccountActions extends RemoteActions {
     }
   }
 
+  /**
+  * Indicates the container service apis have been updated
+  */
+  containerSAPIUpdated (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('containerSAPIUpdated', args)
+    }
+  }
+
   /* **************************************************************************/
   // Sleeping
   /* **************************************************************************/

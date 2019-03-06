@@ -23,6 +23,18 @@ class RendererUserActions extends CoreUserActions {
   remoteSetClientToken (clientToken) {
     return { clientToken }
   }
+
+  /* **************************************************************************/
+  // Remote: Containers
+  /* **************************************************************************/
+
+  /**
+  * Remotely sets all the container SAPI
+  * @param containerSAPI: the container sapi to set
+  */
+  remoteSetContainerSAPI (containerSAPI) {
+    return { containerSAPI }
+  }
 }
 
 export default RendererUserActions

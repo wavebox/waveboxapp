@@ -125,6 +125,7 @@ module.exports = Object.freeze({
   TERMS_URL: 'https://wavebox.io/terms/',
   EULA_URL: 'https://wavebox.io/eula/',
   USER_SCRIPTS_WEB_URL: 'https://github.com/wavebox/wavebox-user-scripts',
+  SERVICE_API_WEB_URL: 'https://github.com/wavebox/wavebox-service-api',
   QUICK_START_WEB_URL: 'https://wavebox.io/quick_start_guide',
   KB_BETA_CHANNEL_URL: 'https://wavebox.io/kb/beta-channel',
 

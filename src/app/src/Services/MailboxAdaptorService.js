@@ -1,8 +1,8 @@
 import { app } from 'electron'
-import UrlPattern from 'url-pattern'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { accountStore } from 'stores/account'
+import { SAPIRunner } from 'Extensions/ServiceApi'
 
 class MailboxAdaptorService {
   /* ****************************************************************************/
@@ -38,40 +38,7 @@ class MailboxAdaptorService {
     const service = accountStore.getState().getService(tabInfo.serviceId)
     if (!service) { return }
 
-    this._executeAdaptors(evt.sender, service)
-  }
-
-  /* ****************************************************************************/
-  // Adaptor exec
-  /* ****************************************************************************/
-
-  /**
-  * Executes an adaptor
-  * @param webContents: the webcontents to execute on
-  * @param service: the service we're executing for
-  */
-  _executeAdaptors (webContents, service) {
-    if (!service.adaptors.length) { return }
-
-    const currentUrl = webContents.getURL()
-    const adaptors = service.adaptors.filter((adaptor) => {
-      const match = adaptor.matches.find((patternStr) => {
-        const pattern = new UrlPattern(patternStr)
-        return pattern.match(currentUrl) !== null
-      })
-      return match !== undefined
-    })
-
-    if (adaptors.length) {
-      adaptors.forEach((adaptor) => {
-        if (adaptor.hasStyles) {
-          webContents.insertCSS(adaptor.styles)
-        }
-        if (adaptor.hasJS) {
-          webContents.executeJavaScript(adaptor.JS)
-        }
-      })
-    }
+    SAPIRunner.executeAdaptors(evt.sender, service)
   }
 }
 

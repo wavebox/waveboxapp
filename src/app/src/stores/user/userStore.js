@@ -10,7 +10,9 @@ import userPersistence from 'Storage/userStorage'
 import wirePersistence from 'Storage/wireStorage'
 import extensionStorePersistence from 'Storage/extensionStoreStorage'
 import containerPersistence from 'Storage/containerStorage'
+import { SAPIExtensionLoader } from 'Extensions/ServiceApi'
 import { evtMain } from 'AppEvents'
+import { ACContainerSAPI } from 'shared/Models/ACContainer'
 import {
   CLIENT_TOKEN,
   USER,
@@ -68,6 +70,14 @@ class UserStore extends CoreUserStore {
 
     ipcMain.on(WB_USER_SET_CLIENT_TOKEN, this.handleIPCSetClientToken)
     ipcMain.on(WB_USER_SET_USER, this.handleIPCSetUser)
+
+    /* ****************************************/
+    // Actions
+    /* ****************************************/
+
+    this.bindActions({
+      handleReloadContainerSAPI: actions.RELOAD_CONTAINER_SAPI
+    })
   }
 
   /* **************************************************************************/
@@ -79,9 +89,16 @@ class UserStore extends CoreUserStore {
   */
   _remoteConnectReturnValue () {
     // This is a bit lazy because it involves going back to the stores for the data
-    // but it should be cached so there shouldn't be a performance toll. On the plus
-    // side it will ensure the launch data is consistent here and in the renderers
-    return PersistenceBootstrapper.load()
+    // but it should be cached so there shouldn't be a performance toll. We're doing
+    // this because we sub-optimally stored the user data and have to load from multiple
+    // storage buckets for this store. Doing it this way just reduces code dupe
+    return {
+      ...PersistenceBootstrapper.loadBaseStoreData(),
+      containerSAPI: Array.from(this.containerSAPI.keys()).reduce((acc, k) => {
+        acc[k] = this.containerSAPI.get(k).cloneData()
+        return acc
+      }, {})
+    }
   }
 
   /* **************************************************************************/
@@ -182,6 +199,15 @@ class UserStore extends CoreUserStore {
     }
 
     return updated
+  }
+
+  handleReloadContainerSAPI () {
+    const containerSAPI = SAPIExtensionLoader.loadContainersSync()
+    this.containerSAPI = Object.keys(containerSAPI || {}).reduce((acc, id) => {
+      acc.set(id, new ACContainerSAPI(containerSAPI[id]))
+      return acc
+    }, new Map())
+    this.dispatchToRemote('remoteSetContainerSAPI', [containerSAPI])
   }
 }
 

@@ -113,6 +113,8 @@ class CoreLocalHistoryStore extends RemoteStore {
       acc.set(k, new Download(downloadsActive[k]))
       return acc
     }, new Map())
+
+    this.__isStoreLoaded__ = true
   }
 
   /* **************************************************************************/

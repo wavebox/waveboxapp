@@ -456,7 +456,8 @@ class AccountStore extends RendererAccountStore {
           ...ServiceClass.createJS(undefined, mailboxId, serviceType),
           ...template.expando,
           container: container.cloneForService(),
-          containerId: containerId
+          containerId: containerId,
+          containerSAPI: this.getContainerSAPIDataForService(containerId)
         }
         serviceId = service.id
         actions.createService.defer(mailboxId, template.servicesUILocation, service)
@@ -652,7 +653,8 @@ class AccountStore extends RendererAccountStore {
         ...CoreACService.createJS(proviso.serviceId, proviso.parentId, proviso.serviceType),
         ...proviso.expando,
         containerId: proviso.accessMode,
-        container: container.cloneForService()
+        container: container.cloneForService(),
+        containerSAPI: this.getContainerSAPIDataForService(proviso.accessMode)
       }
       this._openContainerPostInstallUrl(proviso.parentId, proviso.serviceId, container)
     } else {

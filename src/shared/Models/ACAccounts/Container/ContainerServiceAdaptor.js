@@ -2,6 +2,12 @@ import CoreACServiceAdaptor from '../CoreACServiceAdaptor'
 
 class ContainerServiceAdaptor extends CoreACServiceAdaptor {
   /* **************************************************************************/
+  // Properties: SAPI
+  /* **************************************************************************/
+
+  get isSAPI () { return this._value_('isSAPI', false) }
+
+  /* **************************************************************************/
   // Properties: Match
   /* **************************************************************************/
 

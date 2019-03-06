@@ -1,6 +1,7 @@
 import CoreACService from '../CoreACService'
-import ACContainer from '../../ACContainer'
+import { ACContainer, ACContainerSAPI } from '../../ACContainer'
 import ContainerServiceAdaptor from './ContainerServiceAdaptor'
+import CoreACServiceCommand from '../CoreACServiceCommand'
 
 class ContainerService extends CoreACService {
   /* **************************************************************************/
@@ -24,7 +25,9 @@ class ContainerService extends CoreACService {
     super(data)
 
     this.__adaptors__ = undefined
+    this.__commands__ = undefined
     this.__container__ = new ACContainer(data.container || {})
+    this.__containerSAPI__ = new ACContainerSAPI(data.containerSAPI || {})
   }
 
   /* **************************************************************************/
@@ -32,20 +35,22 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get container () { return this.__container__ }
+  get containerSAPI () { return this.__containerSAPI__ }
   get containerId () { return this._value_('containerId', undefined) }
+  get hasSAPIConfig () { return this.containerSAPI.hasConfig }
 
   /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
-  get supportsUnreadActivity () { return this.container.supportsUnreadActivity }
-  get supportsUnreadCount () { return this.container.supportsUnreadCount }
-  get supportsTrayMessages () { return this.container.supportsTrayMessages }
+  get supportsUnreadActivity () { return this.containerSAPI.getSupportsUnreadActivity(this.container.supportsUnreadActivity) }
+  get supportsUnreadCount () { return this.containerSAPI.getSupportsUnreadCount(this.container.supportsUnreadCount) }
+  get supportsTrayMessages () { return this.containerSAPI.getSupportsTrayMessages(this.container.supportsTrayMessages) }
   get supportsSyncedDiffNotifications () { return false }
   get supportsNativeNotifications () { return false }
-  get supportsGuestNotifications () { return true }
+  get supportsGuestNotifications () { this.containerSAPI.getSupportsGuestNotifications(this.container.supportsGuestNotifications) }
   get supportsSyncWhenSleeping () { return false }
-  get supportsWBGAPI () { return this.container.supportsWBGAPI }
+  get supportsWBGAPI () { return this.containerSAPI.getSupportsWBGAPI(this.container.supportsWBGAPI) }
   get supportedAuthNamespace () { return undefined }
   get similarityNamespaceId () { return `${this.type}:${this.containerId}` }
 
@@ -81,6 +86,8 @@ class ContainerService extends CoreACService {
   get url () { return this.container.getUrlWithSubdomain(this.urlSubdomain) }
   get reloadBehaviour () { return CoreACService.RELOAD_BEHAVIOURS[this.container.reloadBehaviour] || super.reloadBehaviour }
   get urlSubdomain () { return this._value_('urlSubdomain', '') }
+  get useAsyncAlerts () { return this.containerSAPI.getUseAsyncAlerts(this.container.useAsyncAlerts) }
+  get html5NotificationsGenerateUnreadActivity () { return this.containerSAPI.getHtml5NotificationsGenerateUnreadActivity(this.container.html5NotificationsGenerateUnreadActivity) }
 
   /* **************************************************************************/
   // Properties: Badge & Unread
@@ -90,6 +97,9 @@ class ContainerService extends CoreACService {
   get showBadgeCount () { return this._value_('showBadgeCount', this.container.showBadgeCountDefault) }
   get showBadgeCountInApp () { return this._value_('showBadgeCountInApp', this.container.showBadgeCountInAppDefault) }
   get showBadgeActivityInApp () { return this._value_('showBadgeActivityInApp', this.container.showBadgeActivityInAppDefault) }
+  get documentTitleHasUnread () { return this.containerSAPI.getDocumentTitleHasUnread(this.container.documentTitleHasUnread) }
+  get documentTitleUnreadBlinks () { return this.containerSAPI.getDocumentTitleUnreadBlinks(this.container.documentTitleUnreadBlinks) }
+  get faviconUnreadActivityRegexp () { return this.containerSAPI.getFaviconUnreadActivityRegexp(this.container.faviconUnreadActivityRegexp) }
 
   /* **************************************************************************/
   // Properties : Notifications
@@ -104,7 +114,8 @@ class ContainerService extends CoreACService {
   get adaptors () {
     // Lazy load this - most threads wont use it
     if (this.__adaptors__ === undefined) {
-      this.__adaptors__ = this.container.adaptors.map((config) => {
+      const raw = this.containerSAPI.getAdaptors(this.container.adaptors)
+      this.__adaptors__ = raw.map((config) => {
         return new ContainerServiceAdaptor(config)
       })
     }
@@ -115,7 +126,15 @@ class ContainerService extends CoreACService {
   // Properties: Commands
   /* **************************************************************************/
 
-  get commands () { return this.container.commands }
+  get commands () {
+    if (this.__commands__ === undefined) {
+      const raw = this.containerSAPI.getCommands(this.container.commands)
+      this.__commands__ = raw.map((command) => {
+        return new CoreACServiceCommand(command)
+      })
+    }
+    return this.__commands__
+  }
 }
 
 export default ContainerService

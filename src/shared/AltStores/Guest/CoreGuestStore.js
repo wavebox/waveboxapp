@@ -67,6 +67,8 @@ class CoreGuestStore extends RemoteStore {
       acc.set(k, permissions[k])
       return acc
     }, new Map())
+
+    this.__isStoreLoaded__ = true
   }
 }
 

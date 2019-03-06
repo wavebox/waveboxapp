@@ -102,14 +102,14 @@ class WaveboxApp {
     this[privArgv] = yargs.parse(process.argv)
 
     // Start our stores
+    userStore.getState()
+    userActions.load()
     accountStore.getState()
     accountActions.load()
     settingsStore.getState()
     settingsActions.load()
     platformStore.getState()
     platformActions.load()
-    userStore.getState()
-    userActions.load()
     emblinkStore.getState()
     emblinkActions.load()
     localHistoryStore.getState()

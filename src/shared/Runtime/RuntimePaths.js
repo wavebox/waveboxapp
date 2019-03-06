@@ -23,8 +23,8 @@ module.exports = function (pkg, path, AppDirectory) {
     USER_DICTIONARY_WORDS_PATH: path.join(appDirectory.userData(), 'user_dictionary_words.records'),
 
     // Extensions
-    USER_EXTENSION_INSTALL_PATH: path.join(appDirectory.userData(), 'user_extensions'),
     CHROME_EXTENSION_INSTALL_PATH: path.join(appDirectory.userData(), 'extensions/chrome'),
-    CHROME_EXTENSION_DOWNLOAD_PATH: path.join(appDirectory.userData(), 'extensions/chromedownload')
+    CHROME_EXTENSION_DOWNLOAD_PATH: path.join(appDirectory.userData(), 'extensions/chromedownload'),
+    CONTAINER_API_INSTALL_PATH: path.join(appDirectory.userData(), 'extensions/containers')
   }
 }

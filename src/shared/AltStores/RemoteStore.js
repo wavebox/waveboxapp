@@ -20,6 +20,9 @@ class RemoteStore {
       },
       connected: process.type === 'browser' ? new Set() : undefined
     }
+    this.__isStoreLoaded__ = false
+
+    this.isStoreLoaded = () => { return this.__isStoreLoaded__ }
 
     /* ****************************************/
     // Remote

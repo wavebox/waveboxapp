@@ -1159,19 +1159,29 @@ class CoreAccountStore extends RemoteStore {
   /* **************************************************************************/
 
   /**
+  * Locates the user store and gets the current state
+  * @return the user state
+  */
+  _getUserStoreState () {
+    const userStore = this.alt.getStore(AltUserIdentifiers.STORE_NAME)
+    if (!userStore) {
+      throw new Error(`Alt "${STORE_NAME}" is unable to locate "${AltUserIdentifiers.STORE_NAME}". Ensure both have been linked`)
+    }
+
+    const userState = userStore.getState()
+    if (!userState.isStoreLoaded()) {
+      throw new Error(`Alt "${STORE_NAME}" tried to locate "${AltUserIdentifiers.STORE_NAME}" but it is not loaded. Ensure it is loaded first`)
+    }
+
+    return userState
+  }
+
+  /**
   * Tries to source the user from the user store
   * @return the user or a default representation
   */
   getUser () {
-    const userStore = this.alt.getStore(AltUserIdentifiers.STORE_NAME)
-    if (userStore) {
-      const user = userStore.getState().user
-      if (user) {
-        return user
-      }
-    }
-
-    throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltUserIdentifiers.STORE_NAME}". Ensure both have been linked`)
+    return this._getUserStoreState().user
   }
 
   /**
@@ -1180,12 +1190,26 @@ class CoreAccountStore extends RemoteStore {
   * @return the container or undefined if it's unknown
   */
   getContainer (containerId) {
-    const userStore = this.alt.getStore(AltUserIdentifiers.STORE_NAME)
-    if (userStore) {
-      return userStore.getState().getContainer(containerId)
-    }
+    return this._getUserStoreState().getContainer(containerId)
+  }
 
-    throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltUserIdentifiers.STORE_NAME}". Ensure both have been linked`)
+  /**
+  * Gets a container service api from the user store
+  * @param containerId: the container
+  * @return the container data or undefined if it's unknown
+  */
+  getContainerSAPI (containerId) {
+    return this._getUserStoreState().getContainerSAPI(containerId)
+  }
+
+  /**
+  * Gets a clone of the container service api data from the user store
+  * @param containerId: the container id
+  * @return a clone of the data or undefined if not available
+  */
+  getContainerSAPIDataForService (containerId) {
+    const sapi = this.getContainerSAPI(containerId)
+    return sapi ? sapi.cloneForService() : undefined
   }
 
   /* **************************************************************************/
@@ -1248,6 +1272,8 @@ class CoreAccountStore extends RemoteStore {
       acc.set(k, sleepingServices[k])
       return acc
     }, new Map())
+
+    this.__isStoreLoaded__ = true
   }
 
   /* **************************************************************************/
