@@ -24,7 +24,7 @@ module.exports = function (env) {
     },
     plugins: [
       new CleanWebpackPlugin({
-        cleanOnceBeforeBuildPatterns: [ OUT_DIR ],
+        cleanOnceBeforeBuildPatterns: [ path.join(OUT_DIR, OUT_FILENAME) ],
         verbose: isVerboseLog,
         dry: false
       })
