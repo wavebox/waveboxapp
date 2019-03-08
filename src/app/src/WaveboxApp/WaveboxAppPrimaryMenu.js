@@ -7,6 +7,12 @@ import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
 import QuickSwitchAcceleratorHandler from './QuickSwitchAcceleratorHandler'
+let KeyboardLayout
+try {
+  KeyboardLayout = process.platform === 'darwin' ? require('keyboard-layout') : null
+} catch (ex) {
+  KeyboardLayout = null
+}
 
 class WaveboxAppPrimaryMenu {
   /* ****************************************************************************/
@@ -499,22 +505,32 @@ class WaveboxAppPrimaryMenu {
   * @param accelerators: the accelerators to use
   */
   updateHiddenShortcuts (accelerators) {
-    const hiddenZoomInShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
-    if (accelerators.zoomIn === accelerators.zoomInDefault) {
-      if (!this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
-        this._hiddenShortcuts.set(hiddenZoomInShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
+    // On Chrome CmdOrCtrl+= also functions as CmdOrCtrl+Plus. Try to emulate this behaviour
+    const emulatedZoomShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
+    let emulateZoom = true
+    if (accelerators.zoomIn !== accelerators.zoomInDefault) {
+      emulateZoom = false
+    } else if (accelerators.hasLocalAccelerator(['Cmd+=', 'Command+=', 'Ctrl+=', 'Control+=', 'CmdOrCtrl+=', 'CommandOrControl+='])) {
+      emulateZoom = false
+    } else if (process.platform === 'darwin' && KeyboardLayout && KeyboardLayout.getCurrentKeyboardLayout() === 'com.apple.keylayout.Dvorak') {
+      emulateZoom = false
+    }
+
+    if (emulateZoom) {
+      if (!this._hiddenShortcuts.has(emulatedZoomShortcut)) {
+        this._hiddenShortcuts.set(emulatedZoomShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
         if (BrowserWindow.getFocusedWindow()) {
           try {
-            globalShortcut.register(hiddenZoomInShortcut, this._hiddenShortcuts.get(hiddenZoomInShortcut))
+            globalShortcut.register(emulatedZoomShortcut, this._hiddenShortcuts.get(emulatedZoomShortcut))
           } catch (ex) { }
         }
       }
     } else {
-      if (this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
-        this._hiddenShortcuts.delete(hiddenZoomInShortcut)
+      if (this._hiddenShortcuts.has(emulatedZoomShortcut)) {
+        this._hiddenShortcuts.delete(emulatedZoomShortcut)
         if (BrowserWindow.getFocusedWindow()) {
           try {
-            globalShortcut.unregister(hiddenZoomInShortcut)
+            globalShortcut.unregister(emulatedZoomShortcut)
           } catch (ex) { }
         }
       }
