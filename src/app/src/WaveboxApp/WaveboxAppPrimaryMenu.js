@@ -165,7 +165,19 @@ class WaveboxAppPrimaryMenu {
           {
             label: 'Paste and match style',
             click: WaveboxAppPrimaryMenuActions.pasteAndMatchStyle,
-            accelerator: accelerators.pasteAndMatchStyle
+            accelerator: accelerators.pasteAndMatchStyle,
+            // Fix for #967 paste event fires twice in contentEditable and content is pasted twice
+            // Looks like the Slack team had the same problem + this fix: electron/issues/15719
+            //
+            // This only appears to affect win32 and linux, macOS behaves as expected. The actual
+            // bug is with the binding of CmdOrCtrl+Shift+V not the functionality, so if the
+            // accelerator is swapped and used elsewhere you'll see the same bug with it. Really
+            // we should look out for Ctrl+Shift+V on all menu items and capture there too
+            // but it's a fringe case changing doing this & hopefully chromium will fix it on
+            // the next update cycle. I can't see any ill effect from setting registerAccelerator=false
+            // and accelerator to be something else but wouldn't want to optimistacally do it for
+            // all items
+            registerAccelerator: !(process.platform === 'linux' || process.platform === 'win32')
           },
           {
             label: 'Select All',
