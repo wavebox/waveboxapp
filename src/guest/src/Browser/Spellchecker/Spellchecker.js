@@ -4,6 +4,7 @@ import DualSpellcheckProvider from 'shared/SpellcheckProvider/DualSpellcheckProv
 import DictionaryProviderImpl from './DictionaryProviderImpl'
 import settingsStore from 'stores/settingStore'
 import LRU from 'lru-cache'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import {
   WB_SPELLCHECKER_CONNECT,
   WB_SPELLCHECKER_CONFIGURE,
@@ -13,9 +14,6 @@ import {
   WB_SPELLCHECKER_GET_PRIMARY_DICTIONARY_SYNC,
   WB_SPELLCHECKER_GET_SECONDARY_DICTIONARY_SYNC
 } from 'shared/ipcEvents'
-import {
-  WCRPC_DID_FRAME_FINISH_LOAD
-} from 'shared/webContentsRPC'
 
 const MAX_REMOTE_CALL_COUNT = 5
 
@@ -43,7 +41,7 @@ class Spellchecker {
 
     ipcRenderer.on(WB_SPELLCHECKER_CONFIGURE, this._handleRuntimeConfigure)
     ipcRenderer.on(WB_SPELLCHECKER_INIT_CONFIGURE, this._handleRuntimeInitConfigure)
-    ipcRenderer.on(WCRPC_DID_FRAME_FINISH_LOAD, this._handleRebindProvider)
+    WBRPCRenderer.webContents.on('did-frame-finish-load', this._handleRebindProvider)
 
     // Requeue to ensure the bridge is initialized
     setTimeout(() => {
@@ -103,12 +101,8 @@ class Spellchecker {
 
   /**
   * Re-binds the provider
-  * @param evt: the event that fired
-  * @param webContentsId: the id of the webcontents
-  * @param isMainFrame: true if it was the main frame that finished
   */
-  _handleRebindProvider = (evt, webContentsId, isMainFrame) => {
-    if (isMainFrame) { return }
+  _handleRebindProvider = () => {
     if (!this[privWebFrameLanguage]) { return }
     // Fix for https://github.com/electron/electron/issues/11868
     clearTimeout(this[privRebindThrottle])

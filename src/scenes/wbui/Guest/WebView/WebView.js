@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import electron from 'electron'
 import camelCase from './camelCase'
+import WebViewGroupEventDispatcher from './WebViewGroupEventDispatcher'
 import {
   WEBVIEW_EVENTS,
   REACT_WEBVIEW_EVENTS,
@@ -25,6 +26,10 @@ stylesheet.innerHTML = `
   .RC-WebView-Root>webview.first-load-incomplete { visibility: visible !important; }
   .RC-WebView-Root>webview.capture-in-progress { visibility: visible !important; }
 `
+
+const privIpcPromises = Symbol('privIpcPromises')
+const privWatchEventListener = Symbol('privWatchEventListener')
+const privWebviewAttached = Symbol('privWebviewAttached')
 
 class WebView extends React.Component {
   /* **************************************************************************/
@@ -51,8 +56,9 @@ class WebView extends React.Component {
       stylesheetAttached = true
     }
 
-    this.ipcPromises = new Map()
-    this.watchEventListeners = new Set()
+    this[privIpcPromises] = new Map()
+    this[privWatchEventListener] = new Set()
+    this[privWebviewAttached] = false
 
     this.exposeWebviewMethods()
   }
@@ -71,13 +77,13 @@ class WebView extends React.Component {
     this.updateEventListeners()
 
     // Create an artificial onWebContentsAttached event
-    electron.remote.getCurrentWebContents().on('did-attach-webview', this.handleWebContentsAttached)
-    electron.remote.getCurrentWindow().on('focus', this.handleWindowFocused)
+    WebViewGroupEventDispatcher.on('did-attach-webview', this.handleWebContentsAttached)
+    WebViewGroupEventDispatcher.on('window-focus', this.handleWindowFocused)
   }
 
   componentWillUnmount () {
-    electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
-    electron.remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
+    WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
+    WebViewGroupEventDispatcher.removeListener('window-focus', this.handleWindowFocused)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -103,16 +109,17 @@ class WebView extends React.Component {
   /**
   * Handles a webcontents attaching to the dom
   * @param evt: the event that fired
-  * @param wc: the webcontents that did attach
+  * @param attachedId: the id of the webcontents that did attach
   */
-  handleWebContentsAttached = (evt, wc) => {
+  handleWebContentsAttached = (evt, attachedId) => {
     const node = this.getWebviewNode()
     const nwc = node.getWebContents()
-    if (nwc && wc.id === nwc.id) {
+    this[privWebviewAttached] = true
+    if (nwc && nwc.id === attachedId) {
       if (this.props.onWebContentsAttached) {
-        this.props.onWebContentsAttached(wc)
+        this.props.onWebContentsAttached(attachedId)
       }
-      electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
+      WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
     }
   }
 
@@ -208,13 +215,13 @@ class WebView extends React.Component {
   updateEventListeners = () => {
     const node = this.getWebviewNode()
     WEBVIEW_EVENTS.forEach((domName) => {
-      const isListening = this.watchEventListeners.has(domName)
+      const isListening = this[privWatchEventListener].has(domName)
       const hasReactListener = !!this.props[camelCase(domName)] || INTERCEPTED_WEBVIEW_EVENTS.has(domName)
 
       if (isListening !== hasReactListener) {
         if (isListening && !hasReactListener) {
           node.removeEventListener(domName, this.handleWebviewEvent)
-          this.watchEventListeners.delete(domName)
+          this[privWatchEventListener].delete(domName)
         } else if (!isListening && hasReactListener) {
           if (domName === 'will-navigate') {
             /**
@@ -228,7 +235,7 @@ class WebView extends React.Component {
             ].join(' '), this.getWebviewNode())
           }
           node.addEventListener(domName, this.handleWebviewEvent)
-          this.watchEventListeners.add(domName)
+          this[privWatchEventListener].add(domName)
         }
       }
     })
@@ -290,11 +297,11 @@ class WebView extends React.Component {
     if (typeof (evt.channel.type) !== 'string') { return false }
 
     if (evt.channel.type.indexOf(SEND_RESPOND_PREFIX) === 0) {
-      if (this.ipcPromises.has(evt.channel.type)) {
-        const responder = this.ipcPromises.get(evt.channel.type)
+      if (this[privIpcPromises].has(evt.channel.type)) {
+        const responder = this[privIpcPromises].get(evt.channel.type)
         clearTimeout(responder.timeout)
         responder.resolve(evt.channel.data)
-        this.ipcPromises.delete(evt.channel.type)
+        this[privIpcPromises].delete(evt.channel.type)
       }
       return true
     } else {
@@ -366,7 +373,7 @@ class WebView extends React.Component {
       // Run the capture
       setTimeout(() => {
         try {
-          node.capturePage(arg1, (img) => {
+          node.getWebContents().capturePage(arg1, (img) => {
             clearTimeout(timeoutWarn)
             clearTimeout(timeout)
             setTimeout(() => {
@@ -431,16 +438,16 @@ class WebView extends React.Component {
       const id = Math.random().toString()
       const respondName = SEND_RESPOND_PREFIX + ':' + sendName + ':' + id
       const rejectTimeout = setTimeout(() => {
-        this.ipcPromises.delete(respondName)
+        this[privIpcPromises].delete(respondName)
         reject(new Error('Request Timeout'))
       }, timeout)
-      this.ipcPromises.set(respondName, { resolve: resolve, timeout: rejectTimeout })
-      this.getWebviewNode().send(sendName, Object.assign({}, obj, { __respond__: respondName }))
+      this[privIpcPromises].set(respondName, { resolve: resolve, timeout: rejectTimeout })
+      this.getWebviewNode().send(sendName, { ...obj, __respond__: respondName })
     })
   }
 
   /* **************************************************************************/
-  // Rendering
+  // Public
   /* **************************************************************************/
 
   /**
@@ -449,6 +456,17 @@ class WebView extends React.Component {
   getWebviewNode = () => {
     return ReactDOM.findDOMNode(this).getElementsByTagName('webview')[0]
   }
+
+  /**
+  * @return true if the webview is attached
+  */
+  isWebviewAttached = () => {
+    return this[privWebviewAttached]
+  }
+
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
 
   shouldComponentUpdate () {
     // we never want to re-render. We will handle this manually in componentWillReceiveProps

@@ -1,57 +1,24 @@
-import { EventEmitter } from 'events'
 import Fuse from 'fuse.js'
 import fastequal from 'fast-deep-equal'
 import { accountStore } from 'stores/account'
+import SEARCH_TARGETS from './CommandPaletteSearchTargets'
+import { COMMAND_PALETTE_ALL_TERM } from 'shared/constants'
 
-const SEARCH_TARGETS = Object.freeze({
-  SERVICE: 'SERVICE',
-  BOOKMARK: 'BOOKMARK',
-  RECENT: 'RECENT',
-  READING_QUEUE: 'READING_QUEUE'
-})
-const DEFAULT_TICK_WAIT_MS = 100
-const ALL_TERM = '**'
-
-const privTickTime = Symbol('privTickTime')
-const privTick = Symbol('privTick')
 const privFuse = Symbol('privFuse')
-const privTerm = Symbol('privTerm')
 const privSearchable = Symbol('privSearchable')
 
-class CommandPaletteSearchEngine extends EventEmitter {
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  static get SEARCH_TARGETS () { return SEARCH_TARGETS }
-
+class CommandPaletteAccountSearchEngine {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
-  /**
-  * @param tickTime=300: the time between ticks
-  */
-  constructor (tickTime = DEFAULT_TICK_WAIT_MS) {
-    super()
-
-    this[privTickTime] = tickTime
-    this[privTick] = null
+  constructor () {
     this[privFuse] = null
-    this[privTerm] = null
     this[privSearchable] = {
       accounts: [],
       accountsDirty: true
     }
   }
-
-  /* **************************************************************************/
-  // Properties
-  /* **************************************************************************/
-
-  get SEARCH_TARGETS () { return SEARCH_TARGETS }
-  get tickTime () { return this[privTickTime] }
-  get hasTickScheduled () { return this[privTick] !== null }
 
   /* **************************************************************************/
   // Searching: Public
@@ -60,23 +27,28 @@ class CommandPaletteSearchEngine extends EventEmitter {
   /**
   * Runs a search on the next tick
   * @param term: the term to search for
+  * @return an array of results
   */
-  asyncSearch (term) {
-    this[privTerm] = term
-
-    if (this._isSearchTermCheapSearch(term)) {
-      // Overwrite the existing tick
-      clearTimeout(this[privTick])
-      this[privTick] = setTimeout(this._performNextTick.bind(this), 1)
-    } else {
-      if (!this.hasTickScheduled) {
-        this[privTick] = setTimeout(this._performNextTick.bind(this), this.tickTime)
-      }
+  search (term) {
+    if (!term) {
+      return []
     }
+
+    // Prep fuse
+    this._initializeFuse()
+    this._updateFuseCollections()
+
+    // Look for low-cost excapes (part 2)
+    if (term === COMMAND_PALETTE_ALL_TERM) {
+      return this[privFuse].list.map((item) => { return { score: 1.0, item: item } })
+    }
+
+    // Perform the search
+    return this[privFuse].search(term)
   }
 
   /**
-  * Indicates the accounts need to be updaed
+  * Indicates the accounts need to be updated
   */
   reloadAccounts () {
     this[privSearchable].accountsDirty = true
@@ -103,20 +75,8 @@ class CommandPaletteSearchEngine extends EventEmitter {
   }
 
   /* **************************************************************************/
-  // Searching: Heavy lifting
+  // Searching: Fuse Accounts
   /* **************************************************************************/
-
-  /**
-  * Looks to see if the given search term is cheap
-  * @param term: the term to check
-  * @return true if cheap, false otherwise
-  */
-  _isSearchTermCheapSearch (term) {
-    if (!term) { return true }
-    if (term === ALL_TERM) { return true }
-
-    return false
-  }
 
   /**
   * Inits the fuse search if it's not initialized already
@@ -219,56 +179,6 @@ class CommandPaletteSearchEngine extends EventEmitter {
       return false
     }
   }
-
-  /**
-  * Sorts the results into categories
-  * @param results: the results to sort
-  * @return an object with category keys as ids
-  */
-  _sortResultsToTargets (results) {
-    const initial = Object.keys(SEARCH_TARGETS).reduce((acc, k) => {
-      acc[k] = { items: [], target: k, score: 0 }
-      return acc
-    }, {})
-    const targets = results.reduce((acc, res) => {
-      acc[res.item.target].items.push(res)
-      acc[res.item.target].score += res.score
-      return acc
-    }, initial)
-    Object.values(targets).forEach((target) => {
-      target.score = target.score / target.items.length
-    })
-    return targets
-  }
-
-  /**
-  * Runs the search for the next tick
-  */
-  _performNextTick () {
-    clearTimeout(this[privTick])
-    this[privTick] = null
-
-    // Look for low-cost escapes (part 1)
-    if (!this[privTerm]) {
-      this.emit('results-updated', { sender: this }, [], {}, this[privTerm])
-      return
-    }
-
-    // Prep fuse
-    this._initializeFuse()
-    this._updateFuseCollections()
-
-    // Look for low-cost excapes (part 2)
-    if (this[privTerm] === ALL_TERM) {
-      const all = this[privFuse].list.map((item) => { return { score: 1.0, item: item } })
-      this.emit('results-updated', { sender: this }, all, this._sortResultsToTargets(all), this[privTerm])
-      return
-    }
-
-    // Perform the search
-    const results = this[privFuse].search(this[privTerm])
-    this.emit('results-updated', { sender: this }, results, this._sortResultsToTargets(results), this[privTerm])
-  }
 }
 
-export default CommandPaletteSearchEngine
+export default CommandPaletteAccountSearchEngine

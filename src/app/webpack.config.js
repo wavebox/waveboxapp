@@ -27,8 +27,10 @@ module.exports = function (env) {
       return acc
     }, {}),
     plugins: [
-      new CleanWebpackPlugin(['app'], {
-        root: BIN_DIR,
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: [
+          path.join(BIN_DIR, 'app')
+        ],
         verbose: isVerboseLog,
         dry: false
       }),

@@ -10,10 +10,10 @@ import ServiceInfoPanelContent from 'wbui/ServiceInfoPanelContent'
 import ServiceInfoPanelTitle from 'wbui/ServiceInfoPanelTitle'
 import Resolver from 'Runtime/Resolver'
 import blue from '@material-ui/core/colors/blue'
-import electron from 'electron'
 import GoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/GoogleMailServiceReducer'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import { FormControl, InputLabel, Select, MenuItem, Paper } from '@material-ui/core'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   headImgContainer: {
@@ -104,7 +104,7 @@ class GoogleInboxToGmailHelper extends React.Component {
   /* **************************************************************************/
 
   handleOpenInboxTypeKB = (evt) => {
-    electron.remote.shell.openExternal('https://wavebox.io/kb/gmail-inbox-type')
+    WBRPCRenderer.wavebox.openExternal('https://wavebox.io/kb/gmail-inbox-type')
   }
 
   handleChangeInboxType = (evt) => {

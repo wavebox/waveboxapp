@@ -90,6 +90,24 @@ class SidelistMailboxes extends React.Component {
     super(props)
 
     this.instanceId = uuid.v4()
+
+    // On Electron4+ the webview gobbles mouse events when dragging over it
+    // meaning that sidebar items can't be fluidly dragged. We can either
+    // set the pointer-events to be none on the webview, or cover it
+    // with a div.
+    // Fixes #962
+    this.shield = document.createElement('div')
+    this.shield.style.position = 'fixed'
+    this.shield.style.top = '0px'
+    this.shield.style.left = '0px'
+    this.shield.style.right = '0px'
+    this.shield.style.bottom = '0px'
+    this.shield.addEventListener('click', (evt) => {
+      // Fallback
+      try {
+        document.body.removeChild(this.shield)
+      } catch (ex) { }
+    }, false)
   }
 
   /* **************************************************************************/
@@ -164,8 +182,14 @@ class SidelistMailboxes extends React.Component {
             // Fix for https://github.com/wavebox/waveboxapp/issues/762
             if (evt.ctrlKey === true) { return true }
           }}
+          onSortStart={() => {
+            document.body.appendChild(this.shield)
+          }}
           onSortEnd={({ oldIndex, newIndex }) => {
             accountActions.changeMailboxIndex(mailboxIds[oldIndex], newIndex)
+            try {
+              document.body.removeChild(this.shield)
+            } catch (ex) { }
           }} />
       </div>
     )

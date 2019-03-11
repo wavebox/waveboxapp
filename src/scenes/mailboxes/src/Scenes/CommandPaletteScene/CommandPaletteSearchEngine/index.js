@@ -1,0 +1,2 @@
+import CommandPaletteSearchEngine from './CommandPaletteSearchEngine'
+export default CommandPaletteSearchEngine

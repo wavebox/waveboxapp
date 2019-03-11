@@ -29,6 +29,7 @@ import GenericService from 'shared/Models/ACAccounts/Generic/GenericService'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import HtmlMetaService from 'HTTP/HtmlMetaService'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
+import ServicesManager from 'Services'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -74,6 +75,7 @@ class AccountStore extends CoreAccountStore {
 
       // Containers
       handleContainersUpdated: actions.CONTAINERS_UPDATED,
+      handleContainerSAPIUpdated: actions.CONTAINER_SAPIUPDATED,
 
       // Sleep
       handleSleepService: actions.SLEEP_SERVICE,
@@ -250,6 +252,29 @@ class AccountStore extends CoreAccountStore {
   }
 
   /**
+  * Resync's the container service API with the models that are in the stores
+  * @return the ids of the containers that were updated
+  */
+  resyncContainerServiceSAPI () {
+    const updatedIds = []
+    this.allServicesOfType(SERVICE_TYPES.CONTAINER).forEach((service) => {
+      const sapi = this.getContainerSAPI(service.containerId)
+      if (!sapi && !service.hasSAPIConfig) { return }
+
+      const sapiHash = sapi ? JSON.stringify(sapi.cloneForService()) : undefined
+      const serviceSapiHash = service.hasSAPIConfig ? JSON.stringify(service.containerSAPI.cloneForService()) : undefined
+      if (sapiHash !== serviceSapiHash) {
+        updatedIds.push(service.id)
+        this.saveService(service.id, service.changeData({
+          containerSAPI: sapi ? sapi.cloneForService() : undefined
+        }))
+      }
+    })
+
+    return updatedIds
+  }
+
+  /**
   * Saves a local service data ensuring changed time etc update accordingly and data sent up socket
   * @param id: the id of the provider
   * @param serviceDataJS: the new js object for the mailbox or null to remove
@@ -344,6 +369,8 @@ class AccountStore extends CoreAccountStore {
     this.serviceIds().forEach((serviceId) => {
       this.startManagingServiceWithId(serviceId)
     })
+
+    this.resyncContainerServiceSAPI()
   }
 
   /* **************************************************************************/
@@ -799,9 +826,17 @@ class AccountStore extends CoreAccountStore {
 
     services.forEach((service) => {
       this.saveService(service.id, service.changeData({
-        container: this.getContainer(service.containerId).cloneForService()
+        container: this.getContainer(service.containerId).cloneForService(),
+        containerSAPI: this.getContainerSAPIDataForService(service.containerId)
       }))
     })
+  }
+
+  handleContainerSAPIUpdated () {
+    const updated = this.resyncContainerServiceSAPI()
+    if (updated.length === 0) {
+      this.preventDefault()
+    }
   }
 
   /* **************************************************************************/
@@ -885,10 +920,20 @@ class AccountStore extends CoreAccountStore {
       clearTimeout(this._sleepingQueue_.get(id) || null)
       this._sleepingQueue_.delete(id)
 
-      // Record metrics
-      const sleepMetrics = this.generateServiceSleepMetrics(id)
-      this._sleepingMetrics_.set(id, sleepMetrics)
-      this.dispatchToRemote('remoteSetSleepMetrics', [id, sleepMetrics])
+      // Sleep metrics went async after electron 3. We don't want to hold sleep up to generate
+      // the metrics so instead sleep right away and optimistically hope we can generate
+      // metrics. Because the webcontents wont sleep immediately due to ipc and
+      // generating the last screenshot there will normally be time to do this!
+      this._sleepingMetrics_.delete(id)
+      this.dispatchToRemote('remoteSetSleepMetrics', [id, null])
+      Promise.resolve()
+        .then(() => this.generateServiceSleepMetrics(id))
+        .then((metrics) => {
+          this._sleepingMetrics_.set(id, metrics)
+          this.dispatchToRemote('remoteSetSleepMetrics', [id, metrics])
+          this.emitChange()
+        })
+        .catch(() => { /* no-op */ })
 
       // Sleep
       this._sleepingServices_.set(id, true)
@@ -911,15 +956,20 @@ class AccountStore extends CoreAccountStore {
   /**
   * @param mailboxId: the id of the mailbox
   * @param serviceType: the type of service
-  * @return the metrics for the web contents or undefined if not found
+  * @return a promise with the metrics or undefined if not found
   */
   generateServiceSleepMetrics (id) {
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    const metric = mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(id) : undefined
-    return metric ? {
-      ...metric,
-      timestamp: new Date().getTime()
-    } : undefined
+    if (!mailboxesWindow) { return Promise.resolve(undefined) }
+
+    const pid = mailboxesWindow.tabManager.getWebContentsOSProcessId(id)
+    if (pid === undefined) { return Promise.resolve(undefined) }
+
+    return Promise.resolve()
+      .then(() => ServicesManager.metricsService.getMetricsForPid(pid))
+      .then((metric) => {
+        return { ...metric, timestamp: new Date().getTime() }
+      })
   }
 
   /* **************************************************************************/

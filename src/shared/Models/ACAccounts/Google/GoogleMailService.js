@@ -1,4 +1,5 @@
 import CoreGoogleMailService from './CoreGoogleMailService'
+import CoreACServiceCommand from '../CoreACServiceCommand'
 
 class GoogleMailService extends CoreGoogleMailService {
   /* **************************************************************************/
@@ -43,6 +44,15 @@ class GoogleMailService extends CoreGoogleMailService {
   static get humanizedColor () { return 'rgb(220, 75, 75)' }
 
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (...args) {
+    super(...args)
+    this.__commands__ = undefined
+  }
+
+  /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
@@ -80,6 +90,25 @@ class GoogleMailService extends CoreGoogleMailService {
     ])
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
+
+  /* **************************************************************************/
+  // Commands
+  /* **************************************************************************/
+
+  get commands () {
+    if (this.__commands__ === undefined) {
+      this.__commands__ = [
+        new CoreACServiceCommand({
+          modifier: '/',
+          keyword: 'email',
+          helper: 'user@wavebox.io My Subject',
+          description: 'Start composing an email',
+          js: String.raw`const getNewestComposeElements=function(){const a=Array.from(document.querySelectorAll("[name=\"subjectbox\"]")).slice(-1)[0];if(!a)return;const b=a.closest("[role=\"dialog\"]");if(!b)return;const c=b.querySelector("[g_editable=\"true\"][role=\"textbox\"]"),d=b.querySelector("[name=\"to\"]");return{subject:a,dialog:b,body:c,recipient:d}},populateNewestComposeWindow=function(a,b){const c=getNewestComposeElements();if(!c)return!1;let d;return a&&c.recipient&&(c.recipient.value=a,d=c.subject),b&&c.subject&&(c.subject.value=b,d=c.body),d&&setTimeout(()=>d.focus(),500),!0},composeMessage=function(a,b){const c=document.querySelector(".T-I.J-J5-Ji.T-I-KE.L3");if(c){const d=document.createEvent("MouseEvents");d.initEvent("mousedown",!0,!1),c.dispatchEvent(d);const e=document.createEvent("MouseEvents");return e.initEvent("mouseup",!0,!1),c.dispatchEvent(e),(a||b)&&setTimeout(()=>{const c=populateNewestComposeWindow(a,b);if(!c){let c=0;const d=setInterval(()=>{c++;const e=populateNewestComposeWindow(a,b);(e||20<c)&&clearInterval(d)},100)}},1),!0}},argComponents=args.trim().split(" "),to=argComponents[0],subject=argComponents.slice(1).join(" ");composeMessage(to,subject);`
+        })
+      ]
+    }
+    return this.__commands__
+  }
 
   /* **************************************************************************/
   // Google Inbox conversion

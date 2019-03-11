@@ -1,7 +1,6 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Button, Paper, Icon, Grid } from '@material-ui/core'
-import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
 import {
   SUPPORT_URL,
@@ -17,6 +16,7 @@ import FARStarIcon from 'wbfa/FARStar'
 import FASMagicIcon from 'wbfa/FASMagic'
 import FASListAltIcon from 'wbfa/FASListAlt'
 import FASTasksIcon from 'wbfa/FASTasks'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const ROW_HEIGHT = 400
 const V_MARGIN = 16
@@ -91,9 +91,6 @@ const styles = {
   contentContainer: {
     width: '100%',
     height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
     textAlign: 'center'
   },
   titleUnboxed: {
@@ -253,7 +250,7 @@ class SupportSettings extends React.Component {
               'Quick Start Guide',
               'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
               'Quick Start',
-              () => electron.remote.shell.openExternal(QUICK_START_WEB_URL)
+              () => WBRPCRenderer.wavebox.openExternal(QUICK_START_WEB_URL)
             )}
           </Grid>
           <Grid item md={3} sm={6} xs={12}>
@@ -263,7 +260,7 @@ class SupportSettings extends React.Component {
               'Try Wavebox Beta',
               'Be the first to try out the latest features by switching to our beta channel',
               'Try Beta',
-              () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
+              () => WBRPCRenderer.wavebox.openExternal(KB_BETA_CHANNEL_URL)
             )}
           </Grid>
         </Grid>
@@ -276,7 +273,7 @@ class SupportSettings extends React.Component {
               'Find the answers to the most commonly asked questions.',
               'rgb(246, 109, 99)',
               'Knowledge Base',
-              () => electron.remote.shell.openExternal(KB_URL)
+              () => WBRPCRenderer.wavebox.openExternal(KB_URL)
             )}
           </Grid>
           <Grid item md={3} sm={6} xs={12}>
@@ -287,7 +284,7 @@ class SupportSettings extends React.Component {
               'How-to articles and tutorials, plus the latest new from Wavebox HQ.',
               'rgb(82, 145, 149)',
               'Blog',
-              () => electron.remote.shell.openExternal(BLOG_URL)
+              () => WBRPCRenderer.wavebox.openExternal(BLOG_URL)
             )}
           </Grid>
           <Grid item md={3} sm={6} xs={12}>
@@ -298,7 +295,7 @@ class SupportSettings extends React.Component {
               'Join our discussion group on GitHub.',
               'rgb(106, 109, 152)',
               'GitHub',
-              () => electron.remote.shell.openExternal(GITHUB_ISSUE_URL)
+              () => WBRPCRenderer.wavebox.openExternal(GITHUB_ISSUE_URL)
             )}
           </Grid>
           <Grid item md={3} sm={6} xs={12}>
@@ -309,7 +306,7 @@ class SupportSettings extends React.Component {
               'Send feature requests and get help from our support team by email.',
               'rgb(240, 169, 43)',
               'Support',
-              () => electron.remote.shell.openExternal(SUPPORT_URL)
+              () => WBRPCRenderer.wavebox.openExternal(SUPPORT_URL)
             )}
           </Grid>
         </Grid>

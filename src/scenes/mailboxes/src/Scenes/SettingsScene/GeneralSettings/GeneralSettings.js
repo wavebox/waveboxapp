@@ -13,6 +13,7 @@ import TraySettingsSection from './TraySettingsSection'
 import UpdateSettingsSection from './UpdateSettingsSection'
 import AcceleratorSettingsSection from './AcceleratorSettingsSection'
 import DataSettingsSection from './DataSettingsSection'
+import NetworkSettingsSection from './NetworkSettingsSection'
 import AdvancedSettingsSection from './AdvancedSettingsSection'
 import DebugSettingsSection from './DebugSettingsSection'
 import InfoSettingsSection from './InfoSettingsSection'
@@ -37,6 +38,7 @@ import TuneIcon from '@material-ui/icons/Tune'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import HelpIcon from '@material-ui/icons/Help'
 import LinkIcon from '@material-ui/icons/Link'
+import NetworkWifiIcon from '@material-ui/icons/NetworkWifi'
 
 const CONTENT_WIDTH = 600
 const SCROLLSPY_WIDTH = 210
@@ -272,6 +274,9 @@ class GeneralSettings extends React.Component {
           <section id='section-data'>
             {renderBelowFold ? <DataSettingsSection showRestart={showRestart} /> : undefined}
           </section>
+          <section id='section-network'>
+            {renderBelowFold ? <NetworkSettingsSection app={app} showRestart={showRestart} /> : undefined}
+          </section>
           <section id='section-advanced'>
             {renderBelowFold ? (
               <AdvancedSettingsSection
@@ -305,6 +310,7 @@ class GeneralSettings extends React.Component {
                 'section-accelerators',
                 'section-update',
                 'section-data',
+                'section-network',
                 'section-advanced',
                 'section-debug',
                 'section-about'
@@ -396,6 +402,15 @@ class GeneralSettings extends React.Component {
                 onClick={(evt) => this.scrollToSection(evt, 'section-data')}>
                 <StorageIcon className={classes.scrollspyIcon} />
                 Data & Sync
+              </ListItem>
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, 'section-network')}>
+                <NetworkWifiIcon className={classes.scrollspyIcon} />
+                Network
               </ListItem>
               <ListItem
                 divider

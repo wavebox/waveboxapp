@@ -15,6 +15,7 @@ import { withStyles } from '@material-ui/core/styles'
 import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
 import FARStarIcon from 'wbfa/FARStar'
 import FASArrowToBottom from 'wbfa/FASArrowToBottom'
+import FASSpinnerThird from 'wbfa/FASSpinnerThird'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 
 const styles = {
@@ -72,7 +73,8 @@ class ToolbarContextMenuContent extends React.Component {
       sidebarSize: settingsState.ui.sidebarSize,
       showSidebarSupport: settingsState.ui.showSidebarSupport,
       showSidebarNewsfeed: settingsState.ui.showSidebarNewsfeed,
-      showSidebarDownloads: settingsState.ui.showSidebarDownloads
+      showSidebarDownloads: settingsState.ui.showSidebarDownloads,
+      showSidebarBusy: settingsState.ui.showSidebarBusy
     }
   }
 
@@ -143,6 +145,13 @@ class ToolbarContextMenuContent extends React.Component {
     })
   }
 
+  handleToggleShowSidebarBusy = (evt) => {
+    const { showSidebarBusy } = this.state
+    this.closePopover(evt, () => {
+      settingsActions.sub.ui.setShowSidebarBusy(!showSidebarBusy)
+    })
+  }
+
   handleAddService = (evt) => {
     this.closePopover(evt, () => {
       window.location.hash = `/mailbox_wizard/add/${this.props.mailboxId}`
@@ -196,7 +205,8 @@ class ToolbarContextMenuContent extends React.Component {
       sidebarSize,
       showSidebarSupport,
       showSidebarNewsfeed,
-      showSidebarDownloads
+      showSidebarDownloads,
+      showSidebarBusy
     } = this.state
 
     return (
@@ -247,7 +257,7 @@ class ToolbarContextMenuContent extends React.Component {
             ) : undefined}
           </MenuItem>
         ) : undefined}
-        {location === 'sidebar' && (!showSidebarSupport || showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS || showSidebarDownloads !== UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS) ? (<Divider />) : undefined}
+        {location === 'sidebar' ? (<Divider />) : undefined}
         {location === 'sidebar' && showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
           <MenuItem onClick={this.handleShowSidebarNews}>
             <ListItemIcon>
@@ -266,6 +276,18 @@ class ToolbarContextMenuContent extends React.Component {
               </span>
             </ListItemIcon>
             <ListItemText inset primary={`Always show Downloads`} />
+          </MenuItem>
+        ) : undefined}
+        {location === 'sidebar' ? (
+          <MenuItem onClick={this.handleToggleShowSidebarBusy}>
+            <ListItemIcon>
+              <span className={classes.faIconWrapper}>
+                <FASSpinnerThird />
+              </span>
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={showSidebarBusy ? `Hide Activity Indicator` : `Show Activity Indicator`} />
           </MenuItem>
         ) : undefined}
         {location === 'sidebar' && !showSidebarSupport ? (

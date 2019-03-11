@@ -4,7 +4,7 @@ import crxunzip from 'unzip-crx'
 import path from 'path'
 import uuid from 'uuid'
 import querystring from 'querystring'
-import appendQS from 'append-query'
+import { URL } from 'url'
 import {
   CRExtensionVersionParser
 } from 'shared/Models/CRExtension'
@@ -119,7 +119,11 @@ class CRExtensionDownloader {
             .then(() => crxunzip(crxDownloadPath, patchDir))
         } else {
           return Promise.resolve()
-            .then(() => this._downloadFile(appendQS(cwsUrl, { prodversion: this.cwsProdVersion }), crxDownloadPath))
+            .then(() => {
+              const purl = new URL(cwsUrl)
+              purl.searchParams.set('prodversion', this.cwsProdVersion)
+              return this._downloadFile(purl.toString(), crxDownloadPath)
+            })
             .then(() => fs.ensureDir(patchDir))
             .then(() => crxunzip(crxDownloadPath, patchDir))
         }
@@ -139,7 +143,13 @@ class CRExtensionDownloader {
       })
       .then(() => { // Download patches & apply
         return Promise.resolve()
-          .then(() => this._downloadFile(appendQS(patchesUrl, { prodversion: this.cwsProdVersion, extversion: extensionVersion, _: new Date().getTime() }), patchesDownloadPath))
+          .then(() => {
+            const purl = new URL(patchesUrl)
+            purl.searchParams.set('prodversion', this.cwsProdVersion)
+            purl.searchParams.set('extversion', extensionVersion)
+            purl.searchParams.set('_', new Date().getTime())
+            return this._downloadFile(purl.toString(), patchesDownloadPath)
+          })
           .then(() => fs.readJson(patchesDownloadPath))
           .then((patches) => {
             if (patches.manifest) {

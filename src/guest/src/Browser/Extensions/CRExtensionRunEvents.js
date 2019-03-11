@@ -1,5 +1,4 @@
-import { ipcRenderer } from 'electron'
-import { WCRPC_DOM_READY, WCRPC_DID_FINISH_LOAD } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const privStartInterval = Symbol('privStartInterval')
 const privListeners = Symbol('privListeners')
@@ -29,7 +28,7 @@ class CRExtensionRunEvents {
     this[privStartInterval] = null
 
     // Document ended
-    ipcRenderer.once(WCRPC_DOM_READY, () => {
+    WBRPCRenderer.webContents.once('dom-ready', () => {
       this._unbindDocumentStart()
       if (document.readyState === 'complete' && document.documentElement) {
         this._moveToPhase(PHASES.IDLE)
@@ -46,7 +45,7 @@ class CRExtensionRunEvents {
       }
     })
     // Document idle (method 2)
-    ipcRenderer.once(WCRPC_DID_FINISH_LOAD, () => {
+    WBRPCRenderer.webContents.once('did-finish-load', () => {
       if (document.readyState === 'complete' && document.documentElement) {
         this._unbindDocumentStart()
         this._moveToPhase(PHASES.IDLE)

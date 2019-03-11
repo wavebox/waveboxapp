@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import CoreServiceWebView from '../../CoreServiceWebView'
-import { accountDispatch, AccountLinker } from 'stores/account'
+import { accountStore, accountDispatch, AccountLinker } from 'stores/account'
 import { microsoftActions } from 'stores/microsoft'
-
-const REF = 'mailbox_tab'
+import querystring from 'querystring'
 
 export default class MicrosoftMailServiceWebView extends React.Component {
   /* **************************************************************************/
@@ -14,6 +13,16 @@ export default class MicrosoftMailServiceWebView extends React.Component {
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecylce
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.webviewRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -56,13 +65,37 @@ export default class MicrosoftMailServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleComposeMessage = (evt) => {
-    // Note we can't support the full set of compose here because microsoft blocks automated
-    // inputs. Instead we do the best we can - which is bringing up the compose window
-    if (evt.serviceId === this.props.serviceId) {
-      this.refs[REF].getWebContents().sendInputEvent({
-        type: 'keyDown',
-        keyCode: 'N',
-        modifiers: process.platform === 'darwin' ? ['meta'] : ['control']
+    const { serviceId } = this.props
+    if (evt.serviceId === serviceId) {
+      let currentHostname
+      try {
+        currentHostname = new URL(this.webviewRef.current.getURL()).hostname
+      } catch (ex) { }
+
+      let launchUrl
+      if (currentHostname === 'outlook.office365.com') {
+        launchUrl = 'https://outlook.office365.com/mail/deeplink/compose'
+      } else if (currentHostname === 'outlook.live.com') {
+        launchUrl = 'https://outlook.live.com/mail/deeplink/compose'
+      } else {
+        const auth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+        if (auth) {
+          launchUrl = auth.isPersonalAccount
+            ? 'https://outlook.live.com/mail/deeplink/compose'
+            : 'https://outlook.office365.com/mail/deeplink/compose'
+        } else {
+          launchUrl = 'https://outlook.live.com/mail/deeplink/compose'
+        }
+      }
+
+      const qs = querystring.stringify({
+        to: evt.data.recipient,
+        subject: evt.data.subject,
+        body: evt.data.body
+      })
+      AccountLinker.openContentWindow(serviceId, `${launchUrl}?${qs}`, {
+        width: 800,
+        height: 600
       })
     }
   }
@@ -76,7 +109,7 @@ export default class MicrosoftMailServiceWebView extends React.Component {
 
     return (
       <CoreServiceWebView
-        ref={REF}
+        ref={this.webviewRef}
         mailboxId={mailboxId}
         serviceId={serviceId} />
     )

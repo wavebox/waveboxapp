@@ -4,12 +4,13 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { DialogActions, DialogContent, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from '../Common/UpdateModalTitle'
-import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import querystring from 'querystring'
 import Platform from 'shared/Platform'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import classNames from 'classnames'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
   dialogContent: {
@@ -41,6 +42,12 @@ const styles = {
   },
   showAllPackageManagersButton: {
     marginTop: 16
+  },
+  changelogLink: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: blue[600],
+    fontSize: '85%'
   }
 }
 
@@ -117,7 +124,14 @@ class UpdateAvailableSceneContent extends React.Component {
   handleDownloadManual = () => {
     window.location.hash = '/'
     const updaterState = updaterStore.getState()
-    electron.remote.shell.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
+    WBRPCRenderer.wavebox.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
+  }
+
+  /**
+  * Opens a changelog
+  */
+  handleOpenChangelog = () => {
+    WBRPCRenderer.wavebox.openExternal(updaterStore.getState().getChangelogUrl())
   }
 
   /* **************************************************************************/
@@ -320,6 +334,9 @@ class UpdateAvailableSceneContent extends React.Component {
             installMethod,
             osPackageManager
           )}
+          <p className={classes.changelogLink} onClick={this.handleOpenChangelog}>
+            See what's new in this release
+          </p>
         </DialogContent>
         {this.renderActions(classes, provider)}
       </React.Fragment>

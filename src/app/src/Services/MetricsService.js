@@ -8,7 +8,7 @@ import { settingsStore } from 'stores/settings'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
-  WB_METRICS_GET_CHROMIUM_METRICS_SYNC
+  WB_METRICS_FETCH_CHROMIUM_METRICS
 } from 'shared/ipcEvents'
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
 import RuntimePaths from 'Runtime/RuntimePaths'
@@ -35,7 +35,7 @@ class MetricsService {
     settingsStore.listen(this.handleSettingsChanged)
     ipcMain.on(WB_METRICS_OPEN_LOG, this.openMetricsLogLocation)
     ipcMain.on(WB_METRICS_OPEN_MONITOR, this.openMonitorWindow)
-    ipcMain.on(WB_METRICS_GET_CHROMIUM_METRICS_SYNC, this.ipcGetMetricsSync)
+    ipcMain.on(WB_METRICS_FETCH_CHROMIUM_METRICS, this.ipcGetMetrics)
   }
 
   /* ****************************************************************************/
@@ -84,14 +84,19 @@ class MetricsService {
   /**
   * Get the metrics synchronously
   * @param evt: the event that fired
+  * @param returnChannel: the channel to return the response on
   */
-  ipcGetMetricsSync = (evt) => {
-    try {
-      evt.returnValue = this.getChromiumMetricsSync()
-    } catch (ex) {
-      console.error(`Failed to respond to "${WB_METRICS_GET_CHROMIUM_METRICS_SYNC}" continuing with unkown side effects`, ex)
-      evt.returnValue = null
-    }
+  ipcGetMetrics = (evt, returnChannel) => {
+    Promise.resolve()
+      .then(() => this.getMetrics())
+      .then((metrics) => {
+        if (evt.sender.isDestroyed()) { return }
+        evt.sender.send(returnChannel, null, metrics)
+      })
+      .catch((err) => {
+        if (evt.sender.isDestroyed()) { return }
+        evt.sender.send(returnChannel, `${err}`, null)
+      })
   }
 
   /* ****************************************************************************/
@@ -102,11 +107,13 @@ class MetricsService {
   * Updates the metrics log
   */
   updateMetricsLog = () => {
-    const metrics = this.getChromiumMetricsSync()
     const now = new Date()
-    const logEntry = `${now} : ${now.getTime()} : ${JSON.stringify(metrics)}\n`
     Promise.resolve()
-      .then(() => fs.appendFile(RuntimePaths.METRICS_LOG_PATH, logEntry))
+      .then(() => this.getMetrics())
+      .then((metrics) => {
+        return `${now} : ${now.getTime()} : ${JSON.stringify(metrics)}\n`
+      })
+      .then((logEntry) => fs.appendFile(RuntimePaths.METRICS_LOG_PATH, logEntry))
       .then(() => {
         console.log(`${LOG_TAG}[${now}] Log updated`)
       })
@@ -129,10 +136,10 @@ class MetricsService {
   /* ****************************************************************************/
 
   /**
-  * Builds the metrics for the currently running app
-  * @return an array of process infos with as much data salted into each as possible
+  * Gets info about all the webcontents
+  * @return a map of webContent ids to their info
   */
-  getChromiumMetricsSync () {
+  _getWebContentInfo () {
     // Using the tab API we can get more info about each webcontents
     const allTabInfos = WaveboxWindow.all().reduce((acc, win) => {
       win.webContentsProcessInfo().forEach((info) => {
@@ -175,64 +182,93 @@ class MetricsService {
       return acc
     }, new Map())
 
-    // Sort the webcontents and tabs by pid
-    const webContentsByPid = Array.from(allWebContentsInfo.values()).reduce((acc, info) => {
+    return allWebContentsInfo
+  }
+
+  /**
+  * Gets the webcontents info sorted by pid
+  * @return a map containing PID against an array of webcontent infos
+  */
+  _getWebContentInfoByPid () {
+    const allWebContentsInfo = this._getWebContentInfo()
+    return Array.from(allWebContentsInfo.values()).reduce((acc, info) => {
       if (!acc.has(info.pid)) {
         acc.set(info.pid, [])
       }
       acc.get(info.pid).push(info)
       return acc
     }, new Map())
-
-    // Build the final metrics
-    const metrics = app.getAppMetrics().map((metric) => {
-      return {
-        ...metric,
-        webContentsInfo: webContentsByPid.get(metric.pid)
-      }
-    })
-
-    return metrics
   }
 
   /**
-  * Gets extended metrics, including chromium metrics and os metrics
-  * @param silentErrors=true: if set to true, errors will be silent and
-  *       as much info as available will be returned
+  * Gets the metrics
+  * @param extended=false: set to try for additional info
   * @return promise, given the supplied metrics
   */
-  getExtendedMetrics (silentErrors = true) {
-    return new Promise((resolve, reject) => {
-      const metrics = this.getChromiumMetricsSync().map((cMetric) => {
-        return {
-          webContentsInfo: cMetric.webContentsInfo,
-          pid: cMetric.pid,
-          type: cMetric.type,
-          chromium: {
-            ...cMetric,
-            webContentsInfo: undefined
+  getMetrics (extended = false) {
+    return Promise.resolve()
+      .then(() => {
+        const pidInfo = this._getWebContentInfoByPid()
+        const metrics = app.getAppMetrics().map((metric) => {
+          return {
+            ...metric,
+            webContentsInfo: pidInfo.get(metric.pid)
           }
-        }
+        })
+        return Promise.resolve(metrics)
       })
-      const pids = metrics.map((metric) => metric.pid)
-      pidusage(pids, (err, osMetrics) => {
-        if (err) {
-          if (silentErrors) {
-            resolve(metrics)
-          } else {
-            reject(err)
-          }
-        } else {
-          const fullMetrics = metrics.map((cMetric) => {
-            return {
-              ...cMetric,
-              os: osMetrics[cMetric.pid]
-            }
+      .then((baseMetrics) => {
+        const pids = baseMetrics.map((m) => m.pid)
+        return Promise.resolve()
+          .then(() => pidusage(pids))
+          .then((osMetrics) => {
+            const metrics = baseMetrics.map((metric) => {
+              return {
+                ...metric,
+                memory: {
+                  pid: metric.pid,
+                  bytes: (osMetrics[metric.pid] || {}).memory || 0
+                },
+                ...(extended ? { extended: osMetrics[metric.pid] } : undefined)
+              }
+            })
+            return metrics
           })
-          resolve(fullMetrics)
-        }
       })
-    })
+  }
+
+  /**
+  * Gets the metrics for a single pid
+  * @param pid: the pid to get metrics for
+  * @param extended=false: set to try for additional info
+  * @return promise, given the supplied metrics
+  */
+  getMetricsForPid (pid, extended = false) {
+    return Promise.resolve()
+      .then(() => {
+        const pidInfo = this._getWebContentInfoByPid()
+        const metric = app.getAppMetrics().find((metric) => metric.pid === pid)
+        return Promise.resolve({
+          ...metric,
+          webContentsInfo: pidInfo.get(pid),
+          pid: pid
+        })
+      })
+      .then((baseMetric) => {
+        return Promise.resolve()
+          .then(() => pidusage([pid]))
+          .then((osMetric) => {
+            const metric = {
+              ...baseMetric,
+              memory: {
+                pid: osMetric.pid,
+                bytes: (osMetric[pid] || {}).memory || 0
+              },
+              ...(extended ? { extended: osMetric[pid] } : undefined)
+            }
+            return metric
+          })
+      })
   }
 }
 

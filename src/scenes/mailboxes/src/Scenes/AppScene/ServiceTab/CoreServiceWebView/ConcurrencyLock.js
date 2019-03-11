@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events'
 import os from 'os'
 import { settingsStore } from 'stores/settings'
 
@@ -9,6 +10,7 @@ const privRecId = Symbol('privRecId')
 const privRecLoadStartCallback = Symbol('privRecLoadStartCallback')
 const privRecLoadingTimeout = Symbol('privRecLoadingTimeout')
 const privRecStage = Symbol('privRecStage')
+const privDeferEmitChangedEventTimeout = Symbol('privDeferEmitChangedEventTimeout')
 
 const MAX_LOAD_TIME = 30000
 const STAGES = {
@@ -106,14 +108,17 @@ class ConcurrencyRec {
 // ConcurrencyLock
 //
 /* **************************************************************************/
-class ConcurrencyLock {
+class ConcurrencyLock extends EventEmitter {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   constructor () {
+    super()
+
     this[privState] = new Map()
     this[privEmitBatcher] = null
+    this[privDeferEmitChangedEventTimeout] = null
 
     const settingsState = settingsStore.getState()
     this[privMaxConcurrentLoads] = settingsState.launched.app.concurrentServiceLoadLimitIsAuto
@@ -162,10 +167,12 @@ class ConcurrencyLock {
     if (this.hasFreeLockSlot) {
       rec.startLoadingStage(this._generateLoadingTimeout(id))
       this[privState].set(id, rec)
+      this._deferEmitChangedEvent()
       return true
     } else {
       rec.startWaitingStage(lockReadyCallback)
       this[privState].set(id, rec)
+      this._deferEmitChangedEvent()
       return false
     }
   }
@@ -182,6 +189,7 @@ class ConcurrencyLock {
     const rec = new ConcurrencyRec(id)
     rec.startLoadingStage(this._generateLoadingTimeout(id))
     this[privState].set(id, rec)
+    this._deferEmitChangedEvent()
     return true
   }
 
@@ -194,6 +202,7 @@ class ConcurrencyLock {
     if (rec && rec.stage === STAGES.LOADING) {
       rec.startLoadedStage()
       this._emitFreeLockSlots()
+      this._deferEmitChangedEvent()
     }
   }
 
@@ -206,6 +215,7 @@ class ConcurrencyLock {
       this[privState].get(id).destroy()
       this[privState].delete(id)
       this._emitFreeLockSlots()
+      this._deferEmitChangedEvent()
     }
   }
 
@@ -225,6 +235,7 @@ class ConcurrencyLock {
         if (rec.stage === STAGES.LOADING) {
           rec.startLoadedStage()
           this._emitFreeLockSlots()
+          this._deferEmitChangedEvent()
         }
       }
     }, MAX_LOAD_TIME)
@@ -246,12 +257,23 @@ class ConcurrencyLock {
       this.waitingRecs.find((rec) => {
         if (this.hasFreeLockSlot) {
           rec.startLoadingStage(this._generateLoadingTimeout(rec.id))
+          this._deferEmitChangedEvent()
           return false
         } else {
           return true // stop
         }
       })
     })
+  }
+
+  /**
+  * Emits a changed event after a short amount of time
+  */
+  _deferEmitChangedEvent () {
+    clearTimeout(this[privDeferEmitChangedEventTimeout])
+    this[privDeferEmitChangedEventTimeout] = setTimeout(() => {
+      this.emit('changed', { sender: this })
+    }, 10)
   }
 }
 

@@ -8,6 +8,7 @@ import SidelistControlSettings from './SidelistControlSettings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistControlWhatsNew from './SidelistControlWhatsNew'
 import SidelistControlExpander from './SidelistControlExpander'
+import SidelistControlBusy from './SidelistControlBusy'
 import classnames from 'classnames'
 
 export default class SidelistControls extends React.Component {
@@ -63,6 +64,7 @@ export default class SidelistControls extends React.Component {
           onClick={() => { settingsActions.sub.ui.setSidebarControlsCollapsed(!collapsed) }} />
         <div style={{ height: collapsed ? '0' : 'initial' }}>
           <SidelistControlDownloads />
+          <SidelistControlBusy />
           <SidelistControlWhatsNew />
           {showWizard ? (<SidelistControlWizard />) : undefined}
           {showSupport ? (<SidelistControlSupport />) : undefined}

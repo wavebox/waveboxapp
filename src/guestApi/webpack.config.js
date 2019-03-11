@@ -19,8 +19,8 @@ module.exports = function (env) {
       filename: '__.js'
     },
     plugins: [
-      new CleanWebpackPlugin([path.relative(BIN_DIR, OUT_DIR)], {
-        root: BIN_DIR,
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: [ OUT_DIR ],
         verbose: isVerboseLog,
         dry: false
       }),

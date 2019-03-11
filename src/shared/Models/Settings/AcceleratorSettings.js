@@ -1,5 +1,55 @@
 const Model = require('../Model')
 
+const ENUMERABLE_LOCAL_PROPS = [
+  'preferences',
+  'composeMail',
+  'composeMailHere',
+  'closeWindow',
+  'hide',
+  'hideOthers',
+  'quit',
+
+  'undo',
+  'redo',
+  'cut',
+  'copy',
+  'paste',
+  'pasteAndMatchStyle',
+  'selectAll',
+  'copyCurrentTabUrl',
+  'find',
+  'findNext',
+
+  'toggleFullscreen',
+  'toggleSidebar',
+  'toggleMenu',
+  'navigateBack',
+  'navigateForward',
+  'zoomIn',
+  'zoomOut',
+  'zoomReset',
+  'reload',
+  'reloadWavebox',
+  'developerTools',
+  'developerToolsWavebox',
+  'openNextQueueItem',
+  'commandPalette',
+
+  'minimize',
+  'cycleWindows',
+  'previousMailbox',
+  'nextMailbox',
+  'mailboxIndex',
+  'servicePrevious',
+  'serviceNext',
+  'serviceIndex',
+  'nextTab',
+  'prevTab',
+  'toggleWaveboxMini',
+  'quickSwitchNext',
+  'quickSwitchPrev'
+]
+
 class AcceleratorSettings extends Model {
   /* ****************************************************************************/
   // Defaults
@@ -140,6 +190,22 @@ class AcceleratorSettings extends Model {
   get toggleWaveboxMini () { return this._value_('toggleWaveboxMini', this.toggleWaveboxMiniDefault) }
   get quickSwitchNext () { return this._value_('quickSwitchNext', this.quickSwitchNextDefault) }
   get quickSwitchPrev () { return this._value_('quickSwitchPrev', this.quickSwitchPrevDefault) }
+
+  /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  /**
+  * Checks to see if there are any accelerators defined
+  * @param search: an array of exact keycodes to look for
+  */
+  hasLocalAccelerator (search) {
+    const searchSet = new Set(search)
+    const prop = ENUMERABLE_LOCAL_PROPS.find((prop) => {
+      return searchSet.has(this[prop])
+    })
+    return !!prop
+  }
 }
 
 module.exports = AcceleratorSettings

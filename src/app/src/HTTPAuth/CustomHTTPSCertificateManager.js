@@ -46,7 +46,7 @@ class CustomHTTPSCertificateManager {
         if (filename === LOAD_LOG_FILENAME) { return acc }
         try {
           const dataBinary = fs.readFileSync(path.join(RuntimePaths.CUSTOM_CERTIFICATE_PATH, filename))
-          const dataString = dataBinary.toString().replace(/\n/g, '').trim()
+          const dataString = dataBinary.toString().replace(/\n/g, '').replace(/\r/g, '').trim()
           const cert = Certificate.fromPEM(dataBinary)
           acc.set(dataString, cert)
           log.push(`Loaded "${filename}"`)
@@ -89,7 +89,7 @@ class CustomHTTPSCertificateManager {
       this.loadSync()
 
       // Fetch cert
-      const userCert = this[privCerts].get(certificate.data.replace(/\n/g, '').trim())
+      const userCert = this[privCerts].get(certificate.data.replace(/\n/g, '').replace(/\r/g, '').trim())
       if (!userCert) { return false }
 
       // Date check

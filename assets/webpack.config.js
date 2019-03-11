@@ -17,8 +17,12 @@ module.exports = function (env) {
       filename: '__.js'
     },
     plugins: [
-      new CleanWebpackPlugin(['fonts', 'icons', 'images'], {
-        root: BIN_DIR,
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: [
+          path.join(BIN_DIR, 'fonts'),
+          path.join(BIN_DIR, 'icons'),
+          path.join(BIN_DIR, 'images')
+        ],
         verbose: isVerboseLog,
         dry: false
       }),

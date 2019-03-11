@@ -41,6 +41,7 @@ const MAPPING = [
   ['farPenSquare', 'fasPenSquare'],
   ['farClone', 'farClone'],
   ['farFrown', 'farFrown'],
+  ['farServer', 'fasServer'],
 
   ['falWindowClose', 'farWindowClose'],
   ['falWindowMaximize', 'farWindowMaximize'],
@@ -77,6 +78,7 @@ const MAPPING = [
   ['fasMapPin', 'fasMapPin'],
   ['fasArrowToBottom', 'fasArrowDown'],
   ['fasExchangeAlt', 'fasExchangeAlt'],
+  ['fasSpinnerThird', 'fasCircleNotch'],
 
   ['fabSlack', 'fabSlack'],
   ['fabGoogle', 'fabGoogle'],

@@ -55,6 +55,11 @@ export default createMuiTheme({
           icon: {
             color: { default: lightBlue[50], hover: lightBlue[100] }
           }
+        },
+        busy: {
+          icon: {
+            color: { default: lightBlue[50] }
+          }
         }
       },
       toolbar: {

@@ -9,8 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 import ReadingListItem from './ReadingListItem'
-import { ipcRenderer } from 'electron'
-import { WCRPC_OPEN_READING_QUEUE_LINK } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const LIST_ITEM_HEIGHT = 67
 
@@ -121,7 +120,7 @@ class ReadingScene extends React.Component {
   /* **************************************************************************/
 
   handleRecentItemClick = (evt, item) => {
-    ipcRenderer.send(WCRPC_OPEN_READING_QUEUE_LINK, item.serviceId, item)
+    WBRPCRenderer.wavebox.openReadingLink(item.serviceId, item)
   }
 
   /* **************************************************************************/

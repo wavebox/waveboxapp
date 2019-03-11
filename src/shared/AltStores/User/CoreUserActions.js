@@ -90,6 +90,17 @@ class CoreUserActions extends RemoteActions {
       return { containers }
     })
   }
+
+  /**
+  * Reloads the container sapi integrations
+  */
+  reloadContainerSAPI (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('reloadContainerSAPI', args)
+    }
+  }
 }
 
 export default CoreUserActions

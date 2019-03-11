@@ -13,7 +13,8 @@ import {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
 
-  WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE
+  WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE,
+  WB_MAILBOXES_WINDOW_RUN_COMMAND_AND_SWITCH_TO_SERVICE
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
@@ -53,6 +54,15 @@ class AccountActions extends RendererAccountActions {
   */
   navigateAndSwitchToService (serviceId, url) {
     return { serviceId, url }
+  }
+
+  /**
+  * Switches to a service and runs a command string
+  * @param serviceId: the id of the service
+  * @param commandString: the command string to run
+  */
+  runCommandAndSwitchToService (serviceId, commandString) {
+    return { serviceId, commandString }
   }
 
   /* **************************************************************************/
@@ -301,6 +311,9 @@ ipcRenderer.on(WB_WINDOW_FIND_NEXT, () => actions.searchServiceNextTerm())
 // Nav
 ipcRenderer.on(WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE, (evt, serviceId, url) => {
   actions.navigateAndSwitchToService(serviceId, url)
+})
+ipcRenderer.on(WB_MAILBOXES_WINDOW_RUN_COMMAND_AND_SWITCH_TO_SERVICE, (evt, serviceId, commandString) => {
+  actions.runCommandAndSwitchToService(serviceId, commandString)
 })
 
 export default actions

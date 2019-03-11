@@ -1,7 +1,7 @@
 import React from 'react'
-import electron from 'electron'
 import { SUPPORT_URL } from 'shared/constants'
 import pkg from 'package.json'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 // Stick to inline styles here to reduce dependencies for this
 const styles = {
@@ -96,7 +96,7 @@ class TopLevelErrorBoundary extends React.Component {
       '&app_version=' + encodeURIComponent(pkg.version)
     ].join('')
 
-    electron.remote.shell.openExternal(url)
+    WBRPCRenderer.wavebox.openExternal(url)
   }
 
   handleShowError = () => {

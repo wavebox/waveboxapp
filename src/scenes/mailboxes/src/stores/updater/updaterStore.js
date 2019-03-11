@@ -2,7 +2,6 @@ import alt from '../alt'
 import actions from './updaterActions'
 import settingsStore from '../settings/settingsStore'
 import querystring from 'querystring'
-import uuid from 'uuid'
 import {
   UPDATE_CHECK_INTERVAL,
   UPDATE_FEED_MANUAL,
@@ -10,15 +9,15 @@ import {
   UPDATE_FEED_WIN32_IA32,
   UPDATE_FEED_WIN32_X64,
   UPDATE_USER_MANUAL_DOWNLOAD_STABLE,
-  UPDATE_USER_MANUAL_DOWNLOAD_BETA
+  UPDATE_USER_MANUAL_DOWNLOAD_BETA,
+  UPDATE_USER_CHANGELOG_STABLE,
+  UPDATE_USER_CHANGELOG_BETA
 } from 'shared/constants'
 import {
   WB_SQUIRREL_UPDATE_CHECK,
   WB_SQUIRREL_APPLY_UPDATE
 } from 'shared/ipcEvents'
-import {
-  WCRPC_GET_UPDATER_CONFIG
-} from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 import Platform from 'shared/Platform'
 import AppSettings from 'shared/Models/Settings/AppSettings'
 import { ipcRenderer } from 'electron'
@@ -74,6 +73,15 @@ class UpdaterStore {
         return UPDATE_USER_MANUAL_DOWNLOAD_BETA
       } else {
         return UPDATE_USER_MANUAL_DOWNLOAD_STABLE
+      }
+    }
+
+    this.getChangelogUrl = () => {
+      const updateChannel = settingsStore.getState().app.updateChannel
+      if (updateChannel === AppSettings.UPDATE_CHANNELS.BETA) {
+        return UPDATE_USER_CHANGELOG_BETA
+      } else {
+        return UPDATE_USER_CHANGELOG_STABLE
       }
     }
 
@@ -165,29 +173,6 @@ class UpdaterStore {
     })
   }
 
-  /**
-  * Asynchronously fetches the updater config
-  * @return promise
-  */
-  fetchUpdaterConfig () {
-    return new Promise((resolve, reject) => {
-      const ret = `${WCRPC_GET_UPDATER_CONFIG}_${uuid.v4()}`
-      let hasReturned = false
-      const timeout = setTimeout(() => {
-        if (hasReturned) { return }
-        hasReturned = true
-        reject(new Error('Timeout'))
-      }, 2000)
-      ipcRenderer.once(ret, (evt, config) => {
-        if (hasReturned) { return }
-        hasReturned = true
-        clearTimeout(timeout)
-        resolve(config)
-      })
-      ipcRenderer.send(WCRPC_GET_UPDATER_CONFIG, ret)
-    })
-  }
-
   /* **************************************************************************/
   // Handlers: Lifecycle
   /* **************************************************************************/
@@ -196,7 +181,7 @@ class UpdaterStore {
     clearTimeout(this.nextCheckTO)
     this.lastManualDownloadUrl = null
 
-    this.fetchUpdaterConfig().then(
+    WBRPCRenderer.wavebox.fetchUpdaterConfig().then(
       (config) => {
         this.osPackageManager = config.osPackageManager
         this.emitChange()

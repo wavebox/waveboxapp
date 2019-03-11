@@ -5,11 +5,10 @@ import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
 import { ipcRenderer } from 'electron'
 import {
-  WCRPC_PERMISSION_REQUESTS_CHANGED,
-  WCRPC_RESOLVE_PERMISSION_REQUEST
-} from 'shared/webContentsRPC'
+  WBRPC_PERMISSION_REQUESTS_CHANGED,
+  WBRPC_WC_RESOLVE_PERMISSION_REQUEST
+} from 'shared/WBRPCEvents'
 
-const WEBVIEW_REF = 'webview'
 const privPermissionRequests = Symbol('privPermissionRequests')
 
 export default class BrowserView extends React.Component {
@@ -27,7 +26,7 @@ export default class BrowserView extends React.Component {
     searchId: `${Math.random()}`
   }
   static REACT_WEBVIEW_EVENTS = WebView.REACT_WEBVIEW_EVENTS
-  static WEBVIEW_METHODS = [].concat(WebView.WEBVIEW_METHODS, ['getProcessMemoryInfo', 'sendWithResponse', 'getWebviewNode'])
+  static WEBVIEW_METHODS = [].concat(WebView.WEBVIEW_METHODS, ['getProcessMemoryInfo', 'sendWithResponse', 'getWebviewNode', 'isWebviewAttached'])
 
   /* **************************************************************************/
   // Class Lifecycle
@@ -37,13 +36,14 @@ export default class BrowserView extends React.Component {
     super(props)
 
     this[privPermissionRequests] = []
+    this.webviewRef = React.createRef()
 
     // Expose the pass-through methods
     const self = this
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
       if (self[m] !== undefined) { return } // Allow overwriting
-      self[m] = function () {
-        return self.refs[WEBVIEW_REF][m].apply(self.refs[WEBVIEW_REF], Array.from(arguments))
+      self[m] = function (...args) {
+        return self.webviewRef.current[m](...args)
       }
     })
   }
@@ -53,11 +53,11 @@ export default class BrowserView extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    ipcRenderer.on(WCRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
+    ipcRenderer.on(WBRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
   }
 
   componentWillUnmount () {
-    ipcRenderer.removeListener(WCRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
+    ipcRenderer.removeListener(WBRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
   }
 
   /* **************************************************************************/
@@ -73,8 +73,8 @@ export default class BrowserView extends React.Component {
   /* **************************************************************************/
 
   handlePermisionRequestsChanged = (evt, webContentsId, pending) => {
-    const webviewWC = this.refs[WEBVIEW_REF]
-      ? this.refs[WEBVIEW_REF].getWebContents()
+    const webviewWC = this.webviewRef.current
+      ? this.webviewRef.current.getWebContents()
       : undefined
     if (webviewWC && webviewWC.id === webContentsId) {
       this[privPermissionRequests] = pending
@@ -108,12 +108,12 @@ export default class BrowserView extends React.Component {
   * @param permission: the permission mode
   */
   resolvePermissionRequest = (type, permission) => {
-    const webviewWC = this.refs[WEBVIEW_REF]
-      ? this.refs[WEBVIEW_REF].getWebContents()
+    const webviewWC = this.webviewRef.current
+      ? this.webviewRef.current.getWebContents()
       : undefined
 
     if (webviewWC) {
-      ipcRenderer.send(WCRPC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
+      ipcRenderer.send(WBRPC_WC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
     }
   }
 
@@ -132,13 +132,13 @@ export default class BrowserView extends React.Component {
     // Search
     if (prevProps.searchTerm !== searchTerm) {
       if (searchTerm && searchTerm.length) {
-        this.refs[WEBVIEW_REF].findInPage(searchTerm)
+        this.webviewRef.current.findInPage(searchTerm)
       } else {
-        this.refs[WEBVIEW_REF].stopFindInPage('clearSelection')
+        this.webviewRef.current.stopFindInPage('clearSelection')
       }
     } else if (prevProps.searchId !== searchId) {
       if (searchTerm && searchTerm.length) {
-        this.refs[WEBVIEW_REF].findInPage(searchTerm, { findNext: true })
+        this.webviewRef.current.findInPage(searchTerm, { findNext: true })
       }
     }
   }
@@ -149,7 +149,7 @@ export default class BrowserView extends React.Component {
     return (
       <WebView
         {...passProps}
-        ref={WEBVIEW_REF}
+        ref={this.webviewRef}
         key={webViewInstanceKey} />)
   }
 }

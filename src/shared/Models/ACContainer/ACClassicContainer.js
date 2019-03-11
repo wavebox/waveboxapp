@@ -51,6 +51,7 @@ class ACClassicContainer extends Model {
   get urlSubdomainName () { return this._value_('urlSubdomainName', 'subdomain') }
   get urlSubdomainHint () { return this._value_('urlSubdomainHint', '') }
   get hasUrlSubdomain () { return this._value_('hasUrlSubdomain', false) }
+  get urlSubdomainCanBeFullUrl () { return this._value_('urlSubdomainCanBeFullUrl', false) }
   get restoreLastUrlDefault () { return this._classicServiceValue_('restoreLastUrlDefault', false) }
 
   /**
@@ -59,6 +60,12 @@ class ACClassicContainer extends Model {
   */
   getUrlWithSubdomain (subdomain) {
     if (this.hasUrlSubdomain) {
+      if (this.urlSubdomainCanBeFullUrl) {
+        if (subdomain.startsWith('https://') || subdomain.startsWith('http://')) {
+          return subdomain
+        }
+      }
+
       return (this.url || '').replace(/{{subdomain}}/g, subdomain)
     } else {
       return this.url
@@ -70,6 +77,12 @@ class ACClassicContainer extends Model {
   /* **************************************************************************/
 
   get adaptors () { return this._classicServiceValue_('adaptors', []) }
+
+  /* **************************************************************************/
+  // Properties: Commands
+  /* **************************************************************************/
+
+  get commands () { return this._classicServiceValue_('commands', []) }
 
   /* **************************************************************************/
   // Properties: Behaviour

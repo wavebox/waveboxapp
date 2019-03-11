@@ -1,14 +1,37 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { userStore } from 'stores/user'
-import { RELEASE_CHANNELS } from 'shared/constants'
+import {
+  RELEASE_CHANNELS,
+  GITHUB_RELEASES_URL
+} from 'shared/constants'
 import pkg from 'package.json'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import HelpIcon from '@material-ui/icons/Help'
 import DistributionConfig from 'Runtime/DistributionConfig'
+import { withStyles } from '@material-ui/core/styles'
+import blue from '@material-ui/core/colors/blue'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
-export default class InfoSettingsSection extends React.Component {
+const styles = {
+  link: {
+    color: blue[600],
+    textDecoration: 'underline',
+    cursor: 'pointer'
+  }
+}
+
+@withStyles(styles)
+class InfoSettingsSection extends React.Component {
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  _handleOpenReleasePage = () => {
+    WBRPCRenderer.wavebox.openExternal(`${GITHUB_RELEASES_URL}v${pkg.version}`)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -18,9 +41,10 @@ export default class InfoSettingsSection extends React.Component {
   }
 
   render () {
+    const { classes, ...passProps } = this.props
     const wireConfigVersion = userStore.getState().wireConfigVersion()
     return (
-      <SettingsListSection icon={<HelpIcon />} title='About' {...this.props}>
+      <SettingsListSection icon={<HelpIcon />} title='About' {...passProps}>
         {pkg.earlyBuildId ? (
           <SettingsListItemText
             primary={'Early Build Reference'}
@@ -33,7 +57,15 @@ export default class InfoSettingsSection extends React.Component {
         ) : undefined}
         <SettingsListItemText
           primary={'Version'}
-          secondary={`${pkg.version}${pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : ''}`} />
+          secondary={(
+            <React.Fragment>
+              {`${pkg.version}${pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : ''}`}
+              &nbsp;
+              <span className={classes.link} onClick={this._handleOpenReleasePage} >
+                See what's new in this release
+              </span>
+            </React.Fragment>
+          )} />
         <SettingsListItemText
           divider={false}
           primary={'Install method'}
@@ -42,3 +74,5 @@ export default class InfoSettingsSection extends React.Component {
     )
   }
 }
+
+export default InfoSettingsSection

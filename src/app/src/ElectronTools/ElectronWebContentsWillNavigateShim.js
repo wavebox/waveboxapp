@@ -112,7 +112,7 @@ class ElectronWebContentsWillNavigateShim {
     if (!listeners.length) { return responder({}) }
 
     const sender = webContents.fromId(details.webContentsId)
-    if (!sender || sender.isDestroyed) { return responder({}) }
+    if (!sender || sender.isDestroyed()) { return responder({}) }
     if ((sender.getURL() || 'about:blank') === 'about:blank') { return responder({}) }
 
     // Now we have everything run the callbacks

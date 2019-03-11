@@ -1,5 +1,6 @@
 import CoreUserStore from './CoreUserStore'
 import { ACTIONS_NAME } from './AltUserIdentifiers'
+import { ACContainerSAPI } from '../../Models/ACContainer'
 
 class RendererUserStore extends CoreUserStore {
   /* **************************************************************************/
@@ -15,7 +16,8 @@ class RendererUserStore extends CoreUserStore {
 
     const actions = this.alt.getActions(ACTIONS_NAME)
     this.bindActions({
-      handleRemoteSetClientToken: actions.REMOTE_SET_CLIENT_TOKEN
+      handleRemoteSetClientToken: actions.REMOTE_SET_CLIENT_TOKEN,
+      handleRemoteSetContainerSAPI: actions.REMOTE_SET_CONTAINER_SAPI
     })
   }
 
@@ -25,6 +27,13 @@ class RendererUserStore extends CoreUserStore {
 
   handleRemoteSetClientToken ({ clientToken }) {
     this.clientToken = clientToken
+  }
+
+  handleRemoteSetContainerSAPI ({ containerSAPI }) {
+    this.containerSAPI = Object.keys(containerSAPI || {}).reduce((acc, id) => {
+      acc.set(id, new ACContainerSAPI(containerSAPI[id]))
+      return acc
+    }, new Map())
   }
 }
 

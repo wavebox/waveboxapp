@@ -201,11 +201,27 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Disables the proxy detection
-  * @param disable: true to disable
+  * Sets the proxy mode
+  * @param mode: the new mode
   */
-  setDisableProxyDetection (disable) {
-    this.dispatchUpdate('disableProxyDetection', disable)
+  setProxyMode (mode) {
+    this.dispatchUpdate('proxyMode', mode)
+  }
+
+  /**
+  * Sets the proxy server
+  * @param server: the new server
+  */
+  setProxyServer (server) {
+    this.dispatchUpdate('proxyServer', server)
+  }
+
+  /**
+  * Sets the proxy port
+  * @param port: the new port
+  */
+  setProxyPort (port) {
+    this.dispatchUpdate('proxyPort', port)
   }
 
   /**

@@ -97,10 +97,10 @@ export default class ContainerServiceWebView extends React.Component {
     const service = accountState.getService(props.serviceId)
     return {
       ...(service ? {
-        useAsyncAlerts: service.container.useAsyncAlerts,
-        documentTitleHasUnread: service.container.documentTitleHasUnread,
-        documentTitleUnreadBlinks: service.container.documentTitleUnreadBlinks,
-        faviconUnreadActivityRegexp: service.container.faviconUnreadActivityRegexp
+        useAsyncAlerts: service.useAsyncAlerts,
+        documentTitleHasUnread: service.documentTitleHasUnread,
+        documentTitleUnreadBlinks: service.documentTitleUnreadBlinks,
+        faviconUnreadActivityRegexp: service.faviconUnreadActivityRegexp
       } : {
         useAsyncAlerts: true,
         documentTitleHasUnread: false,

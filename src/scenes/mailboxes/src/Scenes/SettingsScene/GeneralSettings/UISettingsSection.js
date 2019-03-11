@@ -42,6 +42,7 @@ export default class UISettingsSection extends React.Component {
         'showSidebarSupport',
         'showSidebarNewsfeed',
         'showSidebarDownloads',
+        'setShowSidebarBusy',
         'showTitlebar',
         'showAppMenu',
         'showTitlebarCount',
@@ -229,6 +230,10 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.SIDEBAR_SIZES.TINY, label: 'Tiny' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setSidebarSize(value)} />
+          <SettingsListItemSwitch
+            label='Show Activity in Sidebar'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarBusy(toggled)}
+            checked={ui.showSidebarBusy} />
           <SettingsListItemSelectInline
             label={`Show Downloads in Sidebar`}
             value={ui.showSidebarDownloads}

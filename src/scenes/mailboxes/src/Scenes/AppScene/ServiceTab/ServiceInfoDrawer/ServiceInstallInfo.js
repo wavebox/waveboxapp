@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import electron from 'electron'
 import { accountActions, accountStore } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -11,6 +10,7 @@ import ServiceInfoPanelBody from 'wbui/ServiceInfoPanelBody'
 import ServiceInfoPanelContent from 'wbui/ServiceInfoPanelContent'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ReactMarkdown from 'react-markdown'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   markdown: {
@@ -30,7 +30,7 @@ class Link extends React.Component {
       <a
         {...passProps}
         href='#'
-        onClick={() => electron.remote.shell.openExternal(href)}>
+        onClick={() => WBRPCRenderer.wavebox.openExternal(href)}>
         {children}
       </a>
     )
@@ -104,7 +104,7 @@ class ServiceInstallInfo extends React.Component {
   * Handles a link being clicked
   */
   handleLinkClick = (url, text, title) => {
-    electron.remote.shell.openExternal(url)
+    WBRPCRenderer.wavebox.openExternal(url)
   }
 
   /* **************************************************************************/

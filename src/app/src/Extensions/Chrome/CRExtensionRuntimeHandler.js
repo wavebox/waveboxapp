@@ -1,6 +1,7 @@
 import { webContents, ipcMain } from 'electron'
 import fs from 'fs-extra'
 import { URL } from 'url'
+import os from 'os'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
@@ -13,6 +14,7 @@ import {
 } from 'shared/extensionApis'
 import {
   CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC,
+  CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC,
   CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED,
   CRX_RUNTIME_SENDMESSAGE,
   CRX_TABS_SENDMESSAGE,
@@ -30,6 +32,7 @@ import { ElectronWebContents } from 'ElectronTools'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 
 const privNextPortId = Symbol('privNextPortId')
+const privPreflightXHRRequests = Symbol('privPreflightXHRRequests')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
 const privCSContexts = Symbol('privCSContexts')
 
@@ -42,6 +45,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     super()
     this.runtimes = new Map()
     this[privNextPortId] = 0
+    this[privPreflightXHRRequests] = new Map()
     this[privOpenXHRRequests] = new Map()
     this[privCSContexts] = new Map()
 
@@ -49,6 +53,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
 
     ipcMain.on(CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC, this._handleProvisionContentScriptContextSync)
+    ipcMain.on(CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC, this._handleContentScriptBenchmarkConfigSync)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
   }
@@ -192,6 +197,18 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     setTimeout(() => {
       evt.returnValue = contextId
     }, 500)
+  }
+
+  /**
+  * Gets the content script benchmarking config
+  * @param evt: the event that fired
+  */
+  _handleContentScriptBenchmarkConfigSync = (evt) => {
+    evt.returnValue = {
+      cscripts: this[privCSContexts].size,
+      runtimes: this.runtimes.size,
+      cpus: os.cpus().length
+    }
   }
 
   /**
@@ -555,43 +572,81 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   }
 
   /**
+  * Checks if the request looks like a preflgith csxhr request
+  * @param method: the request method
+  * @param requestHeaders: the request headers
+  * @return true if this looks preflight
+  */
+  _isPreflightCSXHRRequest (method, requestHeaders) {
+    if (method !== 'OPTIONS') { return false }
+    if (!requestHeaders['Access-Control-Request-Headers']) { return false }
+    if (requestHeaders['Accept'] && requestHeaders['Accept'].indexOf(CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX) !== -1) { return false }
+
+    return true
+  }
+
+  /**
   * Handles the before send headers event on content scripts
   * @param details: the details of the request
   * @return the updated headers or undefined
   */
   updateCSXHRBeforeSendHeaders = (details) => {
-    if (details.resourceType !== 'xhr') { return }
+    if (details.resourceType !== 'xhr') { return undefined }
 
-    // Look to see if we have credentials
-    const { acceptHeader, extensionId, xhrToken } = this._extractCSXHRAcceptHeader(details.requestHeaders)
-    const nextHeaders = {
-      ...details.requestHeaders,
-      'Accept': acceptHeader
-    }
-    if (!extensionId || !xhrToken) { return nextHeaders }
+    if (this._isPreflightCSXHRRequest(details.method, details.requestHeaders)) {
+      if (!details.webContentsId) { return undefined }
+      const requestWebContents = webContents.fromId(details.webContentsId)
+      if (!requestWebContents || requestWebContents.isDestroyed()) { return undefined }
+      const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
+      const matchingRuntime = Array.from(this.runtimes.values()).find((runtime) => {
+        return CRExtensionMatchPatterns.matchUrls(
+          purl.protocol,
+          purl.hostname,
+          purl.pathname,
+          [].concat.apply([],
+            runtime.extension.manifest.contentScripts.map((cs) => cs.matches)
+          )
+        )
+      })
 
-    // Check we have the credentials
-    const runtime = this.runtimes.get(extensionId)
-    if (!runtime || runtime.contentScript.xhrToken !== xhrToken) { return nextHeaders }
+      if (matchingRuntime) {
+        this[privPreflightXHRRequests].set(details.id, details.requestHeaders['Origin'])
+      }
 
-    // Check we are able to match this url
-    const requestWebContents = webContents.fromId(details.webContentsId)
-    if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
-    const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
-    const matches = CRExtensionMatchPatterns.matchUrls(
-      purl.protocol,
-      purl.hostname,
-      purl.pathname,
-      [].concat.apply([],
-        runtime.extension.manifest.contentScripts.map((cs) => cs.matches)
+      return undefined
+    } else {
+      // Look to see if we have credentials
+      const { acceptHeader, extensionId, xhrToken } = this._extractCSXHRAcceptHeader(details.requestHeaders)
+      const nextHeaders = {
+        ...details.requestHeaders,
+        'Accept': acceptHeader
+      }
+      if (!extensionId || !xhrToken) { return nextHeaders }
+
+      // Check we have the credentials
+      const runtime = this.runtimes.get(extensionId)
+      if (!runtime || runtime.contentScript.xhrToken !== xhrToken) { return nextHeaders }
+
+      // Check we are able to match this url
+      if (!details.webContentsId) { return undefined }
+      const requestWebContents = webContents.fromId(details.webContentsId)
+      if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
+      const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
+      const matches = CRExtensionMatchPatterns.matchUrls(
+        purl.protocol,
+        purl.hostname,
+        purl.pathname,
+        [].concat.apply([],
+          runtime.extension.manifest.contentScripts.map((cs) => cs.matches)
+        )
       )
-    )
-    if (!matches) { return nextHeaders }
+      if (!matches) { return nextHeaders }
 
-    // Looks like an extension request
-    this[privOpenXHRRequests].set(details.id, details.requestHeaders['Origin'])
+      // Looks like an extension request
+      this[privOpenXHRRequests].set(details.id, details.requestHeaders['Origin'])
 
-    return nextHeaders
+      return nextHeaders
+    }
   }
 
   /**
@@ -602,17 +657,33 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   updateCSXHROnHeadersReceived = (details) => {
     // Check we are waiting
     if (details.resourceType !== 'xhr') { return }
-    if (!this[privOpenXHRRequests].has(details.id)) { return }
 
-    const headers = details.responseHeaders
-    const updatedHeaders = {
-      ...headers,
-      'access-control-allow-credentials': ['true'],
-      'access-control-allow-origin': [this[privOpenXHRRequests].get(details.id)]
+    // Preflight request
+    if (this[privPreflightXHRRequests].has(details.id)) {
+      const accessControlAllowOrigin = details.responseHeaders['access-control-allow-origin']
+      const updatedHeaders = {
+        ...details.responseHeaders,
+        'access-control-allow-credentials': ['true'],
+        'access-control-allow-origin': !accessControlAllowOrigin || accessControlAllowOrigin[0] === '*'
+          ? [this[privPreflightXHRRequests].get(details.id)]
+          : accessControlAllowOrigin
+      }
+
+      this[privPreflightXHRRequests].delete(details.id)
+      return updatedHeaders
     }
 
-    this[privOpenXHRRequests].delete(details.id)
-    return updatedHeaders
+    // Open request
+    if (this[privOpenXHRRequests].has(details.id)) {
+      const updatedHeaders = {
+        ...details.responseHeaders,
+        'access-control-allow-credentials': ['true'],
+        'access-control-allow-origin': [this[privOpenXHRRequests].get(details.id)]
+      }
+
+      this[privOpenXHRRequests].delete(details.id)
+      return updatedHeaders
+    }
   }
 
   /**
@@ -622,6 +693,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   */
   onCSXHRError = (details) => {
     this[privOpenXHRRequests].delete(details.id)
+    this[privPreflightXHRRequests].delete(details.id)
   }
 
   /* ****************************************************************************/

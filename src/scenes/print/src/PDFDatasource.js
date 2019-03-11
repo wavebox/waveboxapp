@@ -20,7 +20,7 @@ class PDFDatasource {
           })
         })
       })
-      .then((pdfData) => pdfjsLib.getDocument(pdfData))
+      .then((pdfData) => pdfjsLib.getDocument({ data: pdfData, disableFontFace: false }))
   }
 
   /**

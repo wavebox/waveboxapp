@@ -1,11 +1,11 @@
 import React from 'react'
 import dictionariesStore from 'stores/dictionaries/dictionariesStore'
 import dictionariesActions from 'stores/dictionaries/dictionariesActions'
-import electron from 'electron'
 import Spinner from 'wbui/Activity/Spinner'
 import { withStyles } from '@material-ui/core/styles'
 import { Stepper, Step, StepLabel, StepContent, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const STEPS = {
   PICK: 0,
@@ -161,7 +161,14 @@ class DictionaryInstallStepper extends React.Component {
           <StepContent>
             <p>
               <span>Check you're happy with the </span>
-              <a href={(installLanguageInfo || {}).license} onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(installLanguageInfo.license) }}>license</a>
+              <a
+                href={(installLanguageInfo || {}).license}
+                onClick={(evt) => {
+                  evt.preventDefault()
+                  WBRPCRenderer.wavebox.openExternal(installLanguageInfo.license)
+                }}>
+                license
+              </a>
               <span> of the <strong>{(installLanguageInfo || {}).name}</strong> dictionary</span>
             </p>
             <Button variant='contained' color='primary' className={classes.button} onClick={this.handleAgreeLicense}>

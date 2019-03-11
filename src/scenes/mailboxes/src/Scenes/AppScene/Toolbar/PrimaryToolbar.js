@@ -206,12 +206,14 @@ class PrimaryToolbar extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenContextMenu = (evt) => {
-    this.setState({
-      contextMenuAnchor: {
-        anchor: evt.target,
-        anchorPosition: { top: evt.clientY, left: evt.clientX }
-      }
-    })
+    if (evt.target.tagName !== 'INPUT') {
+      this.setState({
+        contextMenuAnchor: {
+          anchor: evt.target,
+          anchorPosition: { top: evt.clientY, left: evt.clientX }
+        }
+      })
+    }
     if (this.props.onContextMenu) {
       this.props.onContextMenu(evt)
     }

@@ -24,6 +24,17 @@ class MailboxReauthenticatingScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Closes the modal
+  */
+  handleClose = () => {
+    window.location.hash = '/'
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -40,6 +51,7 @@ class MailboxReauthenticatingScene extends React.Component {
         disableEnforceFocus
         disableBackdropClick
         disableEscapeKeyDown
+        onClick={this.handleClose}
         classes={{ paper: classes.root }}>
         <MailboxReauthenticatingSceneContent />
       </RouterDialog>

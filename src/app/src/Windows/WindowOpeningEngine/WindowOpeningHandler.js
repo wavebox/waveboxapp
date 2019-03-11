@@ -88,14 +88,14 @@ class WindowOpeningHandler {
 
     // Setup our state
     let openMode = defaultOpenMode
+    let ignoreUserCommandKeyModifier = false
     let partitionOverride
 
     // Run through our standard config
     try {
-      const mode = WindowOpeningEngine.getRuleForWindowOpen(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
-      if (mode && WINDOW_OPEN_MODES[mode]) {
-        openMode = mode
-      }
+      const rule = WindowOpeningEngine.getRuleForWindowOpen(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+      openMode = rule.mode
+      ignoreUserCommandKeyModifier = rule.ignoreUserCommandKeyModifier
     } catch (ex) {
       console.error(`Failed to process default window opening rules. Continuing with "${openMode}" behaviour...`, ex)
     }
@@ -108,9 +108,10 @@ class WindowOpeningHandler {
           // Create a transient match task and ruleset to test matching
           const matchTask = new WindowOpeningMatchTask(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
           const rules = new WindowOpeningRules(0, mailboxRulesets)
-          const mode = rules.getMatchingMode(matchTask)
-          if (mode && WINDOW_OPEN_MODES[mode]) {
-            openMode = mode
+          const rule = rules.getMatchingRuleConfig(matchTask)
+          if (rule.match && WINDOW_OPEN_MODES[rule.mode]) {
+            openMode = rule.mode
+            ignoreUserCommandKeyModifier = rule.ignoreUserCommandKeyModifier
           }
         } catch (ex) {
           console.error(`Failed to process mailbox "${mailbox.id}" window opening rules. Continuing with "${openMode}" behaviour...`, ex)
@@ -131,50 +132,69 @@ class WindowOpeningHandler {
     }
 
     // Look to see if the user wants to overwrite the behaviour
-    if (WaveboxAppCommandKeyTracker.shiftPressed) {
-      openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
-    }
-    if (WaveboxAppCommandKeyTracker.commandOrControlPressed) {
-      openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
+    const preAppCommandOpenUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
+    if (!ignoreUserCommandKeyModifier) {
+      if (WaveboxAppCommandKeyTracker.shiftPressed) {
+        openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
+      }
+      if (WaveboxAppCommandKeyTracker.commandOrControlPressed) {
+        openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
+      }
     }
 
-    // Update the tab meta data
+    // Generate some opener info for the new window
     const saltedTabMetaInfo = this._autosaltTabMetaInfo(tabMetaInfo, currentUrl, webContentsId)
+    const openUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
+    const updatedOptions = {
+      ...options,
+      ...(disposition === 'foreground-tab' // With foreground-tab we want to use the window to decide its sizing (normally derived from its parent)
+        ? { width: undefined, height: undefined, x: undefined, y: undefined }
+        : undefined
+      )
+    }
 
     // Action the window open
-    if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options)
-      evt.newGuest = openedWindow.window
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, provisionalTargetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVISIONAL) {
-      this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, provisionalTargetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
-      evt.sender.downloadURL(targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.CURRENT) {
-      evt.sender.loadURL(targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.CURRENT_PROVISIONAL) {
-      evt.sender.loadURL(provisionalTargetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT) {
-      evt.sender.loadURL('about:blank')
-      evt.sender.loadURL(targetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL) {
-      evt.sender.loadURL('about:blank')
-      evt.sender.loadURL(provisionalTargetUrl)
-    } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
-      /* no-op */
-    } else if (openMode === WINDOW_OPEN_MODES.ASK_USER) {
-      this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride, true)
-    } else {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
+    switch (openMode) {
+      case WINDOW_OPEN_MODES.POPUP_CONTENT:
+        const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions)
+        evt.newGuest = openedWindow.window
+        break
+      case WINDOW_OPEN_MODES.EXTERNAL:
+      case WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL:
+        this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, openUrl)
+        break
+      case WINDOW_OPEN_MODES.DEFAULT:
+      case WINDOW_OPEN_MODES.DEFAULT_IMPORTANT:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
+        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, openUrl, updatedOptions, partitionOverride)
+        break
+      case WINDOW_OPEN_MODES.CONTENT:
+      case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions, partitionOverride)
+        break
+      case WINDOW_OPEN_MODES.DOWNLOAD:
+        evt.sender.downloadURL(openUrl)
+        break
+      case WINDOW_OPEN_MODES.CURRENT:
+      case WINDOW_OPEN_MODES.CURRENT_PROVISIONAL:
+        evt.sender.loadURL(openUrl)
+        break
+      case WINDOW_OPEN_MODES.BLANK_AND_CURRENT:
+      case WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL:
+        evt.sender.loadURL('about:blank')
+        evt.sender.loadURL(openUrl)
+        break
+      case WINDOW_OPEN_MODES.SUPPRESS:
+        /* no-op */
+        break
+      case WINDOW_OPEN_MODES.ASK_USER:
+        // When we ask the user, we can gleem some info about the url from the original open mode we served
+        this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, preAppCommandOpenUrl, updatedOptions, partitionOverride, true)
+        break
+      default:
+        this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, openUrl)
+        break
     }
 
     // If the user wanted to record this, output the info
@@ -218,6 +238,27 @@ class WindowOpeningHandler {
     }
   }
 
+  /**
+  * Gets the url to open from the target url and provisional target url
+  * @param openMode: the open mode
+  * @param targetUrl: the current target url
+  * @param provisionalTargetUrl: the current provisional target url
+  * @return either the targetUrl or provisionalTargetUrl
+  */
+  _getNewWindowUrlFromMode (openMode, targetUrl, provisionalTargetUrl) {
+    switch (openMode) {
+      case WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
+      case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.CURRENT_PROVISIONAL:
+      case WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL:
+        return provisionalTargetUrl
+      default:
+        return targetUrl
+    }
+  }
+
   /* ****************************************************************************/
   // Window navigation handlers
   /* ****************************************************************************/
@@ -255,10 +296,8 @@ class WindowOpeningHandler {
 
     // Run through our standard config
     try {
-      const mode = WindowOpeningEngine.getRuleForNavigation(currentHostUrl, targetUrl, openingWindowType)
-      if (navigateMode && NAVIGATE_MODES[mode]) {
-        navigateMode = mode
-      }
+      const rule = WindowOpeningEngine.getRuleForNavigation(currentHostUrl, targetUrl, openingWindowType)
+      navigateMode = rule.mode
     } catch (ex) {
       console.error(`Failed to process default navigate rules. Continuing with "${navigateMode}" behaviour...`, ex)
     }
@@ -271,9 +310,9 @@ class WindowOpeningHandler {
           // Create a transient match task and ruleset to test matching
           const matchTask = new WindowOpeningMatchTask(currentHostUrl, targetUrl, openingWindowType)
           const rules = new WindowOpeningRules(0, mailboxRulesets)
-          const mode = rules.getMatchingMode(matchTask)
-          if (mode && NAVIGATE_MODES[mode]) {
-            navigateMode = mode
+          const rule = rules.getMatchingRuleConfig(matchTask)
+          if (rule.match && NAVIGATE_MODES[rule.mode]) {
+            navigateMode = rule.mode
           }
         } catch (ex) {
           console.error(`Failed to process mailbox "${mailbox.id}" window navigate rules. Continuing with "${navigateMode}" behaviour...`, ex)

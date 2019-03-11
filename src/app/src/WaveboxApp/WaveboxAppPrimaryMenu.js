@@ -7,6 +7,12 @@ import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
 import QuickSwitchAcceleratorHandler from './QuickSwitchAcceleratorHandler'
+let KeyboardLayout
+try {
+  KeyboardLayout = process.platform === 'darwin' ? require('keyboard-layout') : null
+} catch (ex) {
+  KeyboardLayout = null
+}
 
 class WaveboxAppPrimaryMenu {
   /* ****************************************************************************/
@@ -159,7 +165,19 @@ class WaveboxAppPrimaryMenu {
           {
             label: 'Paste and match style',
             click: WaveboxAppPrimaryMenuActions.pasteAndMatchStyle,
-            accelerator: accelerators.pasteAndMatchStyle
+            accelerator: accelerators.pasteAndMatchStyle,
+            // Fix for #967 paste event fires twice in contentEditable and content is pasted twice
+            // Looks like the Slack team had the same problem + this fix: electron/issues/15719
+            //
+            // This only appears to affect win32 and linux, macOS behaves as expected. The actual
+            // bug is with the binding of CmdOrCtrl+Shift+V not the functionality, so if the
+            // accelerator is swapped and used elsewhere you'll see the same bug with it. Really
+            // we should look out for Ctrl+Shift+V on all menu items and capture there too
+            // but it's a fringe case changing doing this & hopefully chromium will fix it on
+            // the next update cycle. I can't see any ill effect from setting registerAccelerator=false
+            // and accelerator to be something else but wouldn't want to optimistacally do it for
+            // all items
+            registerAccelerator: !(process.platform === 'linux' || process.platform === 'win32')
           },
           {
             label: 'Select All',
@@ -499,22 +517,32 @@ class WaveboxAppPrimaryMenu {
   * @param accelerators: the accelerators to use
   */
   updateHiddenShortcuts (accelerators) {
-    const hiddenZoomInShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
-    if (accelerators.zoomIn === accelerators.zoomInDefault) {
-      if (!this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
-        this._hiddenShortcuts.set(hiddenZoomInShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
+    // On Chrome CmdOrCtrl+= also functions as CmdOrCtrl+Plus. Try to emulate this behaviour
+    const emulatedZoomShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
+    let emulateZoom = true
+    if (accelerators.zoomIn !== accelerators.zoomInDefault) {
+      emulateZoom = false
+    } else if (accelerators.hasLocalAccelerator(['Cmd+=', 'Command+=', 'Ctrl+=', 'Control+=', 'CmdOrCtrl+=', 'CommandOrControl+='])) {
+      emulateZoom = false
+    } else if (process.platform === 'darwin' && KeyboardLayout && KeyboardLayout.getCurrentKeyboardLayout() === 'com.apple.keylayout.Dvorak') {
+      emulateZoom = false
+    }
+
+    if (emulateZoom) {
+      if (!this._hiddenShortcuts.has(emulatedZoomShortcut)) {
+        this._hiddenShortcuts.set(emulatedZoomShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
         if (BrowserWindow.getFocusedWindow()) {
           try {
-            globalShortcut.register(hiddenZoomInShortcut, this._hiddenShortcuts.get(hiddenZoomInShortcut))
+            globalShortcut.register(emulatedZoomShortcut, this._hiddenShortcuts.get(emulatedZoomShortcut))
           } catch (ex) { }
         }
       }
     } else {
-      if (this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
-        this._hiddenShortcuts.delete(hiddenZoomInShortcut)
+      if (this._hiddenShortcuts.has(emulatedZoomShortcut)) {
+        this._hiddenShortcuts.delete(emulatedZoomShortcut)
         if (BrowserWindow.getFocusedWindow()) {
           try {
-            globalShortcut.unregister(hiddenZoomInShortcut)
+            globalShortcut.unregister(emulatedZoomShortcut)
           } catch (ex) { }
         }
       }

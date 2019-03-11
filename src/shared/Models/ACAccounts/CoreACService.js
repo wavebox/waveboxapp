@@ -269,6 +269,28 @@ class CoreACService extends CoreACModel {
   get adaptors () { return [] }
 
   /* **************************************************************************/
+  // Properties: Commands
+  /* **************************************************************************/
+
+  get commands () { return [] }
+
+  /**
+  * Gets a command for a given string
+  * @param commandString: the string to process
+  * @return the relevant command or undefined
+  */
+  getCommandForString (commandString) {
+    if (typeof (commandString) !== 'string') { return undefined }
+
+    const command = commandString.trim().split(' ')[0]
+    const modifier = command[0]
+    const keyword = command.substr(1)
+    return this.commands.find((cmd) => {
+      return cmd.modifier === modifier && cmd.keyword === keyword
+    })
+  }
+
+  /* **************************************************************************/
   // Behaviour
   /* **************************************************************************/
 

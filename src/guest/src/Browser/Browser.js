@@ -1,6 +1,5 @@
 import KeyboardShim from './KeyboardShim'
 import Spellchecker from './Spellchecker'
-import Lifecycle from './Lifecycle'
 import NotificationProvider from './NotificationProvider'
 import DialogProvider from './DialogProvider'
 import ExtensionLoader from './Extensions/ExtensionLoader'
@@ -15,7 +14,6 @@ const privSpellchecker = Symbol('privSpellchecker')
 const privDialogProvider = Symbol('privDialogProvider')
 const privNotificationProvider = Symbol('privNotificationProvider')
 const privUserCodeInjection = Symbol('privUserCodeInjection')
-const privLifecycle = Symbol('privLifecycle')
 const privCRExtensionLoader = Symbol('privCRExtensionLoader')
 const privWaveboxApiProvider = Symbol('privWaveboxApiProvider')
 const privVisualZoomProvider = Symbol('privVisualZoomProvider')
@@ -33,7 +31,6 @@ class Browser {
     this[privDialogProvider] = undefined
     this[privNotificationProvider] = undefined
     this[privUserCodeInjection] = undefined
-    this[privLifecycle] = undefined
     this[privCRExtensionLoader] = undefined
     this[privWaveboxApiProvider] = undefined
     this[privVisualZoomProvider] = undefined
@@ -51,7 +48,6 @@ class Browser {
     this[privDialogProvider] = new DialogProvider()
     this[privNotificationProvider] = new NotificationProvider()
     this[privUserCodeInjection] = new UserCodeInjection()
-    this[privLifecycle] = new Lifecycle()
     this[privWaveboxApiProvider] = new WaveboxApiProvider()
     this[privVisualZoomProvider] = new VisualZoomProvider()
 

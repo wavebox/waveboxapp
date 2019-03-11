@@ -2,12 +2,12 @@ import React from 'react'
 import { DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { settingsActions } from 'stores/settings'
-import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import WidgetsIcon from '@material-ui/icons/Widgets'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import FontDownloadIcon from '@material-ui/icons/FontDownload'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   dialogContent: {
@@ -58,7 +58,7 @@ class LinuxSetupSceneContent extends React.Component {
 
   handleFontsClick = () => {
     this.setState({ hasVisitedFontLink: true })
-    electron.shell.openExternal('https://wavebox.io/kb/installing-linux-fonts')
+    WBRPCRenderer.wavebox.openExternal('https://wavebox.io/kb/installing-linux-fonts')
   }
 
   handleClose = () => {

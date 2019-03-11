@@ -228,6 +228,8 @@ class CoreCRExtensionStore extends RemoteStore {
       .forEach((extensionId) => {
         this.installMeta.set(extensionId, installMeta[extensionId])
       })
+
+    this.__isStoreLoaded__ = true
   }
 
   /* **************************************************************************/

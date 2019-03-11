@@ -33,7 +33,9 @@ class MailboxReauthenticatingSceneContent extends React.Component {
 
     return (
       <DialogContent className={classes.dialogContent}>
-        <AuthenticationInstruction className={classes.instruction} />
+        <AuthenticationInstruction
+          onRequestMinimize={() => { window.location.hash = '/' }}
+          className={classes.instruction} />
       </DialogContent>
     )
   }

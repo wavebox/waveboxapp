@@ -61,9 +61,7 @@ class AdvancedSettingsSection extends React.Component {
         'polyfillUserAgents',
         'concurrentServiceLoadLimit',
         'searchProvider',
-        'rawAppThreadFetchMicrosoftHTTP',
-        'forceWindowPaintOnRestore',
-        'disableProxyDetection'
+        'forceWindowPaintOnRestore'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -132,13 +130,6 @@ class AdvancedSettingsSection extends React.Component {
             checked={app.enableMixedSandboxMode} />
         ) : undefined}
         <SettingsListItemSwitch
-          label='Proxy autodetection (Requires Restart)'
-          onChange={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.app.setDisableProxyDetection(!toggled)
-          }}
-          checked={!app.disableProxyDetection} />
-        <SettingsListItemSwitch
           label='Automatically Polyfill UserAgents (Requires Restart)'
           onChange={(evt, toggled) => {
             showRestart()
@@ -204,10 +195,6 @@ class AdvancedSettingsSection extends React.Component {
           label='Experimental Download Handler'
           onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
           checked={userStore.getState().wceUseAsyncDownloadHandler(os.rawUseAsyncDownloadHandler)} />
-        <SettingsListItemSwitch
-          label='Experimental Microsoft Account Network stack'
-          onChange={(evt, toggled) => settingsActions.sub.app.setAppThreadFetchMicrosoftHTTP(toggled)}
-          checked={userStore.getState().wceUseAppThreadFetchMicrosoftHTTP(app.rawAppThreadFetchMicrosoftHTTP)} />
         <SettingsListItemSwitch
           label='Auto mute notifications when suspended'
           onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsMutedWhenSuspended(toggled)}

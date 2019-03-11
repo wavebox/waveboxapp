@@ -7,7 +7,10 @@ import ServiceSleepingCover from './ServiceSleepingCover'
 import uuid from 'uuid'
 import ConcurrencyLock from './ConcurrencyLock'
 
-let concurrencyLock
+const privQueuedIPCSend = Symbol('privQueuedIPCSend')
+const privInstanceId = Symbol('privInstanceId')
+
+let _concurrencyLock
 class CoreServiceWebViewHibernator extends React.Component {
   /* **************************************************************************/
   // Class
@@ -25,20 +28,40 @@ class CoreServiceWebViewHibernator extends React.Component {
   static REACT_WEBVIEW_EVENTS = CoreServiceWebView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/
+  // ConcurrencyLock
+  /* **************************************************************************/
+
+  /**
+  * Creates or returns the concurrency lock
+  * @return concurrency lock
+  */
+  static getConcurrencyLock () {
+    // Late build this as the concurrency lock needs the stores loaded to grab
+    // the settings
+    if (!_concurrencyLock) {
+      _concurrencyLock = new ConcurrencyLock()
+    }
+    return _concurrencyLock
+  }
+
+  /**
+  * Creates or returns the concurrency lock
+  * @return concurrency lock
+  */
+  getConcurrencyLock () {
+    return this.constructor.getConcurrencyLock()
+  }
+
+  /* **************************************************************************/
   // Class Lifecycle
   /* **************************************************************************/
 
   constructor (props) {
     super(props)
 
-    // Late build this as it needs stores setup
-    if (!concurrencyLock) {
-      concurrencyLock = new ConcurrencyLock()
-    }
-
-    this.mailboxWebviewRef = null
-    this.queuedIPCSend = []
-    this.instanceId = uuid.v4()
+    this.webviewRef = React.createRef()
+    this[privQueuedIPCSend] = []
+    this[privInstanceId] = uuid.v4()
     this.state = this.generateInitialState(props.serviceId)
 
     // Expose the pass-through methods
@@ -46,8 +69,8 @@ class CoreServiceWebViewHibernator extends React.Component {
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
       if (self[m] !== undefined) { return } // Allow overwriting
       self[m] = function (...args) {
-        if (self.mailboxWebviewRef) {
-          return self.mailboxWebviewRef[m](...args)
+        if (self.webviewRef.current) {
+          return self.webviewRef.current[m](...args)
         } else {
           throw new Error(`MailboxWebViewHibernator has slept MailboxWebView. Cannot call ${m}`)
         }
@@ -66,7 +89,7 @@ class CoreServiceWebViewHibernator extends React.Component {
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountUpdated)
-    concurrencyLock.destroyLoadLock(this.instanceId)
+    this.getConcurrencyLock().destroyLoadLock(this[privInstanceId])
   }
 
   componentWillReceiveProps (nextProps) {
@@ -100,7 +123,7 @@ class CoreServiceWebViewHibernator extends React.Component {
   */
   generateInitialState (serviceId) {
     // Tear-down any previous state
-    concurrencyLock.destroyLoadLock(this.instanceId)
+    this.getConcurrencyLock().destroyLoadLock(this[privInstanceId])
 
     const accountState = accountStore.getState()
     const isSleeping = accountState.isServiceSleeping(serviceId)
@@ -110,9 +133,9 @@ class CoreServiceWebViewHibernator extends React.Component {
       isActive: isActive,
       captureRef: null,
       hasLoadLock: !isSleeping && isActive
-        ? concurrencyLock.forceLoadLock(this.instanceId)
+        ? this.getConcurrencyLock().forceLoadLock(this[privInstanceId])
         : !isSleeping
-          ? concurrencyLock.requestLoadLock(this.instanceId, this.loadLockAquired)
+          ? this.getConcurrencyLock().requestLoadLock(this[privInstanceId], this.loadLockAquired)
           : false
     }
   }
@@ -143,7 +166,7 @@ class CoreServiceWebViewHibernator extends React.Component {
       if (prevState.hasLoadLock) {
         if (!prevState.isSleeping && nextState.isSleeping) {
           // Move from awake to asleep
-          concurrencyLock.destroyLoadLock(this.instanceId)
+          this.getConcurrencyLock().destroyLoadLock(this[privInstanceId])
           nextState.hasLoadLock = false
         }
       } else {
@@ -153,8 +176,8 @@ class CoreServiceWebViewHibernator extends React.Component {
 
         if (transitioningToAwake) {
           nextState.hasLoadLock = nextState.isActive
-            ? concurrencyLock.forceLoadLock(this.instanceId)
-            : concurrencyLock.requestLoadLock(this.instanceId, this.loadLockAquired)
+            ? this.getConcurrencyLock().forceLoadLock(this[privInstanceId])
+            : this.getConcurrencyLock().requestLoadLock(this[privInstanceId], this.loadLockAquired)
         }
       }
 
@@ -172,9 +195,9 @@ class CoreServiceWebViewHibernator extends React.Component {
   */
   handleDomReady = (evt) => {
     // Send delayed ipc
-    if (this.queuedIPCSend.length) {
-      const queued = this.queuedIPCSend
-      this.queuedIPCSend = []
+    if (this[privQueuedIPCSend].length) {
+      const queued = this[privQueuedIPCSend]
+      this[privQueuedIPCSend] = []
       queued.forEach((req) => {
         this.send(...req)
       })
@@ -191,7 +214,7 @@ class CoreServiceWebViewHibernator extends React.Component {
   * @param evt: the event that fired
   */
   handleDidStopLoading = (evt) => {
-    concurrencyLock.loadLockLoaded(this.instanceId)
+    this.getConcurrencyLock().loadLockLoaded(this[privInstanceId])
 
     // Call parent
     if (this.props.didStopLoading) {
@@ -204,7 +227,7 @@ class CoreServiceWebViewHibernator extends React.Component {
   * @param evt: the event that fired
   */
   handleCrashed = (evt) => {
-    concurrencyLock.loadLockLoaded(this.instanceId)
+    this.getConcurrencyLock().loadLockLoaded(this[privInstanceId])
 
     // Call parent
     if (this.props.crashed) {
@@ -223,12 +246,12 @@ class CoreServiceWebViewHibernator extends React.Component {
   * @return true if sent immediately, false otherwise
   */
   sendOrQueueIfSleeping (...args) {
-    if (this.state.isSleeping) {
-      this.queuedIPCSend.push(args)
-      return false
-    } else {
-      this.mailboxWebviewRef.send(...args)
+    if (!this.state.isSleeping && this.webviewRef.current && this.webviewRef.current.isWebviewAttached()) {
+      this.webviewRef.current.send(...args)
       return true
+    } else {
+      this[privQueuedIPCSend].push(args)
+      return false
     }
   }
 
@@ -244,7 +267,7 @@ class CoreServiceWebViewHibernator extends React.Component {
     const { serviceId } = this.props
 
     Promise.resolve()
-      .then(() => this.mailboxWebviewRef.capturePagePromise())
+      .then(() => this.webviewRef.current.capturePagePromise())
       .then((nativeImage) => {
         accountActions.setServiceSnapshot(serviceId, nativeImage.toDataURL())
         return Promise.resolve()
@@ -291,7 +314,7 @@ class CoreServiceWebViewHibernator extends React.Component {
     if ((!isSleeping && hasLoadLock) || captureRef !== null) {
       return (
         <CoreServiceWebView
-          innerRef={(n) => { this.mailboxWebviewRef = n }}
+          innerRef={this.webviewRef}
           mailboxId={mailboxId}
           serviceId={serviceId}
           className={className}

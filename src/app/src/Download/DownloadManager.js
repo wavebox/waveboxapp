@@ -169,6 +169,7 @@ class DownloadManager extends EventEmitter {
                   resolve(pickedSavePath)
                 } else {
                   item.cancel()
+                  this._handleUserDownloadFailed(item.downloadId, item, downloadPath)
                   reject(new Error('User cancelled'))
                 }
               })

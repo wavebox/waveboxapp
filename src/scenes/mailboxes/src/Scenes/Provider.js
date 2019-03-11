@@ -16,10 +16,10 @@ import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
 import { AppBadge, WindowTitle } from 'Components'
-import { remote } from 'electron'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import classNames from 'classnames'
 import ProviderIpcDispatcher from './ProviderIpcDispatcher'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -32,8 +32,8 @@ export default class Provider extends React.Component {
 
   componentDidMount () {
     // STEP 0. Maintaining focus
-    remote.getCurrentWindow().on('focus', this.handleFocusWebview)
-    remote.getCurrentWebContents().on('did-attach-webview', this.handleFocusWebview)
+    WBRPCRenderer.browserWindow.on('focus', this.handleFocusWebview)
+    WBRPCRenderer.webContents.on('did-attach-webview', this.handleFocusWebview)
 
     // STEP 1. App services
     Analytics.startAutoreporting()
@@ -58,8 +58,8 @@ export default class Provider extends React.Component {
   }
 
   componentWillUnmount () {
-    remote.getCurrentWindow().removeListener('focus', this.handleFocusWebview)
-    remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleFocusWebview)
+    WBRPCRenderer.browserWindow.removeListener('focus', this.handleFocusWebview)
+    WBRPCRenderer.webContents.removeListener('did-attach-webview', this.handleFocusWebview)
 
     // STEP 1. App services
     Analytics.stopAutoreporting()

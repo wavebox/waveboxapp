@@ -1,7 +1,6 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import classnames from 'classnames'
-import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import styles from './AppSceneWindowTitlebarStyles'
 import FASTimesIcon from 'wbfa/FASTimes'
@@ -9,6 +8,7 @@ import FARTimesIcon from 'wbfa/FARTimes'
 import FARSquareIcon from 'wbfa/FARSquare'
 import FARWindowMinimizeIcon from 'wbfa/FARWindowMinimize'
 import FASMinusIcon from 'wbfa/FASMinus'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 @withStyles(styles)
 class AppSceneWindowTitlebar extends React.Component {
@@ -31,28 +31,21 @@ class AppSceneWindowTitlebar extends React.Component {
   componentDidMount () {
     this.__isMounted__ = true
 
-    const currentWindow = remote.getCurrentWindow()
-    currentWindow.on('focus', this.handleWindowStateChange)
-    currentWindow.on('blur', this.handleWindowStateChange)
+    WBRPCRenderer.browserWindow.on('focus', this.handleWindowStateChange)
+    WBRPCRenderer.browserWindow.on('blur', this.handleWindowStateChange)
     if (process.platform === 'darwin') {
-      this.themeChangeNotifId = remote.systemPreferences.subscribeNotification(
-        'AppleInterfaceThemeChangedNotification',
-        this.handleThemeChanged
-      )
+      WBRPCRenderer.browserWindow.on('dark-mode-changed', this.handleThemeChanged)
     }
   }
 
   componentWillUnmount () {
     this.__isMounted__ = false
 
-    const currentWindow = remote.getCurrentWindow()
-    currentWindow.removeListener('focus', this.handleWindowStateChange)
-    currentWindow.removeListener('blur', this.handleWindowStateChange)
+    WBRPCRenderer.browserWindow.removeListener('focus', this.handleWindowStateChange)
+    WBRPCRenderer.browserWindow.removeListener('blur', this.handleWindowStateChange)
 
     if (process.platform === 'darwin') {
-      remote.systemPreferences.unsubscribeNotification(
-        this.themeChangeNotifId
-      )
+      WBRPCRenderer.browserWindow.removeListener('dark-mode-changed', this.handleThemeChanged)
     }
   }
 
@@ -63,7 +56,7 @@ class AppSceneWindowTitlebar extends React.Component {
   state = (() => {
     return {
       isDarkMode: process.platform === 'darwin'
-        ? remote.systemPreferences.isDarkMode()
+        ? WBRPCRenderer.browserWindow.isDarkModeSync()
         : false,
       ...this.generateWindowState()
     }
@@ -76,12 +69,12 @@ class AppSceneWindowTitlebar extends React.Component {
     this.setState(this.generateWindowState())
   }
 
-  handleThemeChanged = () => {
+  handleThemeChanged = (evt, isDarkMode) => {
     // There's a timing issue here with removing the electron window bindings.
     // They're removed just after the component unmounts
     if (!this.__isMounted__) { return }
 
-    this.setState({ isDarkMode: remote.systemPreferences.isDarkMode() })
+    this.setState({ isDarkMode: isDarkMode })
   }
 
   /**
@@ -89,9 +82,8 @@ class AppSceneWindowTitlebar extends React.Component {
   * @return the window state
   */
   generateWindowState () {
-    const currentWindow = remote.getCurrentWindow()
     return {
-      isFocused: currentWindow.isFocused()
+      isFocused: WBRPCRenderer.browserWindow.isFocusedSync()
     }
   }
 
@@ -104,7 +96,7 @@ class AppSceneWindowTitlebar extends React.Component {
   * @param evt: the event that fired
   */
   handleClose = (evt) => {
-    remote.getCurrentWindow().close()
+    WBRPCRenderer.browserWindow.close()
   }
 
   /**
@@ -112,7 +104,7 @@ class AppSceneWindowTitlebar extends React.Component {
   * @param evt: the event that fired
   */
   handleMinimize = (evt) => {
-    remote.getCurrentWindow().minimize()
+    WBRPCRenderer.browserWindow.minimize()
   }
 
   /* **************************************************************************/

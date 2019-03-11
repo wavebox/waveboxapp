@@ -2,9 +2,9 @@ import SpellcheckService from './SpellcheckService'
 import PDFRenderService from './PDFRenderService'
 import MetricsService from './MetricsService'
 import ContextMenuService from './ContextMenuService'
-import WebContentsRPCService from './WebContentsRPCService'
+import WBRPCService from './WBRPCService'
 import MailboxAdaptorService from './MailboxAdaptorService'
-import WBGApiService from './WBGApiService'
+import WBAPIService from './WBAPIService'
 import AutofillService from './AutofillService'
 import NotificationService from './NotificationService'
 import FetchService from './FetchService'
@@ -17,9 +17,9 @@ const privSpellcheckService = Symbol('privSpellcheckService')
 const privMetricsService = Symbol('privMetricsService')
 const privPdfRenderService = Symbol('privPdfRenderService')
 const privContextMenuService = Symbol('privContextMenuService')
-const privWebContentsRPCService = Symbol('privWebContentsRPCService')
+const privWBRPCService = Symbol('privWBRPCService')
 const privMailboxAdaptorService = Symbol('privMailboxAdaptorService')
-const privWBGApiService = Symbol('privWBGApiService')
+const privWBAPIService = Symbol('privWBAPIService')
 const privAutofillService = Symbol('privAutofillService')
 const privNotificationService = Symbol('privNotificationService')
 const privFetchService = Symbol('privFetchService')
@@ -40,9 +40,9 @@ class ServicesManager {
     this[privContextMenuService] = undefined
     this[privMetricsService] = undefined
     this[privPdfRenderService] = undefined
-    this[privWebContentsRPCService] = undefined
+    this[privWBRPCService] = undefined
     this[privMailboxAdaptorService] = undefined
-    this[privWBGApiService] = undefined
+    this[privWBAPIService] = undefined
     this[privNotificationService] = undefined
     this[privFetchService] = undefined
     this[privTakeoutService] = undefined
@@ -60,9 +60,9 @@ class ServicesManager {
     this[privNotificationService] = new NotificationService()
     this[privMetricsService] = new MetricsService()
     this[privPdfRenderService] = new PDFRenderService()
-    this[privWebContentsRPCService] = new WebContentsRPCService(this[privNotificationService])
+    this[privWBRPCService] = new WBRPCService(this[privNotificationService])
     this[privMailboxAdaptorService] = new MailboxAdaptorService()
-    this[privWBGApiService] = new WBGApiService()
+    this[privWBAPIService] = new WBAPIService()
     this[privFetchService] = new FetchService()
     this[privTakeoutService] = new TakeoutService()
     this[privRecentTrackerService] = new RecentTrackerService()
@@ -78,9 +78,9 @@ class ServicesManager {
   get spellcheckService () { return this[privSpellcheckService] }
   get autofillService () { return this[privAutofillService] }
   get contextMenuService () { return this[privContextMenuService] }
-  get webContentsRPCService () { return this[privWebContentsRPCService] }
+  get waveboxRPCService () { return this[privWBRPCService] }
   get mailboxAdaptorService () { return this[privMailboxAdaptorService] }
-  get wbgapiService () { return this[privWBGApiService] }
+  get waveboxAPIService () { return this[privWBAPIService] }
   get notificationService () { return this[privNotificationService] }
   get fetchService () { return this[privFetchService] }
   get takeoutService () { return this[privTakeoutService] }

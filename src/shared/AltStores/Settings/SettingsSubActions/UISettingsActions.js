@@ -140,6 +140,14 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  *
+  * @param show: true to show the busy indicator in the sidebar
+  */
+  setShowSidebarBusy (show) {
+    this.dispatchUpdate('showSidebarBusy', show)
+  }
+
+  /**
   * @param mode: the mode to set
   */
   setVibrancyMode (mode) {

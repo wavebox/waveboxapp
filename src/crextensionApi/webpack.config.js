@@ -23,11 +23,8 @@ module.exports = function (env) {
     },
     plugins: [
       // Clean out our bin dir
-      new CleanWebpackPlugin([
-        OUT_FILENAME,
-        `${OUT_FILENAME}.map`
-      ], {
-        root: OUT_DIR,
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: [ path.join(OUT_DIR, OUT_FILENAME) ],
         verbose: isVerboseLog,
         dry: false
       })

@@ -1,6 +1,5 @@
 import BaseAdaptor from './BaseAdaptor'
-import { ipcRenderer } from 'electron'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class SlackAdapator extends BaseAdaptor {
   /* **************************************************************************/
@@ -26,7 +25,7 @@ class SlackAdapator extends BaseAdaptor {
 
   executeJS () {
     // Handle slack redirect to app page
-    ipcRenderer.once(WCRPC_DOM_READY, () => {
+    WBRPCRenderer.webContents.once('dom-ready', () => {
       if (window.location.pathname.startsWith('/archives')) {
         const fallback = document.querySelector('.deeplink .fallback > a')
         if (fallback) {

@@ -8,11 +8,7 @@ import { accountStore, accountActions } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ReactDOM from 'react-dom'
-import { ipcRenderer } from 'electron'
-import {
-  WCRPC_OPEN_RECENT_LINK,
-  WCRPC_OPEN_READING_QUEUE_LINK
-} from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class ServiceTooltip extends React.Component {
   /* **************************************************************************/
@@ -181,7 +177,7 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenRecentItem = (evt, serviceId, recentItem) => {
     this.setState({ open: false }, () => {
-      ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, recentItem)
+      WBRPCRenderer.wavebox.openRecentLink(serviceId, recentItem)
     })
   }
 
@@ -207,7 +203,7 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenBookmarkItem = (evt, serviceId, bookmarkItem) => {
     this.setState({ open: false }, () => {
-      ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, bookmarkItem)
+      WBRPCRenderer.wavebox.openRecentLink(serviceId, bookmarkItem)
     })
   }
 
@@ -245,7 +241,7 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenReadingQueueItem = (evt, serviceId, readingItem) => {
     this.setState({ open: false }, () => {
-      ipcRenderer.send(WCRPC_OPEN_READING_QUEUE_LINK, serviceId, readingItem)
+      WBRPCRenderer.wavebox.openReadingQueueLink(serviceId, readingItem)
     })
   }
 

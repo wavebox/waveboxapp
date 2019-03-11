@@ -6,14 +6,11 @@ import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 import Resolver from 'Runtime/Resolver'
-import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
 import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
 import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionRequests'
-
-const SEARCH_REF = 'search'
-const BROWSER_REF = 'browser'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   scene: {
@@ -55,10 +52,22 @@ class BrowserScene extends React.Component {
   // Lifecycle
   /* **************************************************************************/
 
+  constructor (props) {
+    super(props)
+
+    this.toolbarRef = React.createRef()
+    this.searchRef = React.createRef()
+    this.browserRef = React.createRef()
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
 
-    remote.getCurrentWindow().on('focus', this.handleFocusWebview)
+    WBRPCRenderer.browserWindow.on('focus', this.handleFocusWebview)
   }
 
   componentWillUnmount () {
@@ -66,7 +75,7 @@ class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
-    remote.getCurrentWindow().removeListener('focus', this.handleFocusWebview)
+    WBRPCRenderer.browserWindow.removeListener('focus', this.handleFocusWebview)
   }
 
   /* **************************************************************************/
@@ -101,6 +110,17 @@ class BrowserScene extends React.Component {
   /* **************************************************************************/
 
   /**
+  * Handles the webcontents attaching
+  */
+  handleWebContentsAttached = () => {
+    if (this.props.url && this.props.url !== 'about:blank') {
+      this.handleFocusWebview()
+    } else {
+      this.toolbarRef.current.focusAddress()
+    }
+  }
+
+  /**
   * Handles the navigation state changing
   * @param evt: an event which includes a url prop
   */
@@ -110,8 +130,8 @@ class BrowserScene extends React.Component {
       browserActions.setCurrentUrl(evt.url)
     }
     browserActions.updateNavigationControls(
-      this.refs[BROWSER_REF].canGoBack(),
-      this.refs[BROWSER_REF].canGoForward()
+      this.browserRef.current.canGoBack(),
+      this.browserRef.current.canGoForward()
     )
   }
 
@@ -139,7 +159,7 @@ class BrowserScene extends React.Component {
   * @param evt: the event that fired
   */
   handleClose = (evt) => {
-    remote.getCurrentWindow().close()
+    WBRPCRenderer.browserWindow.close()
   }
 
   /**
@@ -148,8 +168,8 @@ class BrowserScene extends React.Component {
   * @param permission: the resolved permission
   */
   handleResolvePermission = (type, permission) => {
-    if (this.refs[BROWSER_REF]) {
-      this.refs[BROWSER_REF].resolvePermissionRequest(type, permission)
+    if (this.browserRef.current) {
+      this.browserRef.current.resolvePermissionRequest(type, permission)
     }
   }
 
@@ -162,7 +182,7 @@ class BrowserScene extends React.Component {
   */
   handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
-      this.refs[BROWSER_REF].focus()
+      this.browserRef.current.focus()
     }
   }
 
@@ -195,15 +215,18 @@ class BrowserScene extends React.Component {
     return (
       <div className={classes.scene}>
         <BrowserToolbar
+          innerRef={this.toolbarRef}
           className={classes.toolbar}
-          handleGoBack={() => this.refs[BROWSER_REF].goBack()}
-          handleGoForward={() => this.refs[BROWSER_REF].goForward()}
-          handleStop={() => this.refs[BROWSER_REF].stop()}
-          handleReload={() => this.refs[BROWSER_REF].reload()} />
+          handleGoBack={() => this.browserRef.current.goBack()}
+          handleGoForward={() => this.browserRef.current.goForward()}
+          handleStop={() => this.browserRef.current.stop()}
+          handleReload={() => this.browserRef.current.reload()}
+          handleDownload={(url) => this.browserRef.current.getWebContents().downloadURL(url)}
+          handleLoadUrl={(url) => this.browserRef.current.loadURL(url)} />
         <div className={classes.webviewContainer}>
           <BrowserView
-            ref={BROWSER_REF}
-            src={url}
+            ref={this.browserRef}
+            src={url || 'about:blank'}
             partition={partition}
             plugins
             allowpopups
@@ -219,7 +242,7 @@ class BrowserScene extends React.Component {
             didStopLoading={(evt) => browserActions.stopLoading()}
             ipcMessage={this.handleBrowserIPCMessage}
             didNavigate={this.navigationStateDidChange}
-            onWebContentsAttached={this.handleFocusWebview}
+            onWebContentsAttached={this.handleWebContentsAttached}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={this.navigationStateDidChange} />
           <BrowserViewLoadBar isLoading={isLoading} />
@@ -228,7 +251,7 @@ class BrowserScene extends React.Component {
             permissionRequests={permissionRequests}
             url={permissionRequestsUrl}
             onResolvePermission={this.handleResolvePermission} />
-          <BrowserSearch ref={SEARCH_REF} />
+          <BrowserSearch ref={this.searchRef} />
         </div>
       </div>
     )

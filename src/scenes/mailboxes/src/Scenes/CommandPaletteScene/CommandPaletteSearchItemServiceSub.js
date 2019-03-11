@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
 import CommandPaletteSearchItem from './CommandPaletteSearchItem'
-import CommandPaletteSearchEngine from './CommandPaletteSearchEngine'
-import { ipcRenderer } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import FASMapPinIcon from 'wbfa/FASMapPin'
 import HistoryIcon from '@material-ui/icons/History'
@@ -12,10 +10,8 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 import classNames from 'classnames'
 import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import Resolver from 'Runtime/Resolver'
-import {
-  WCRPC_OPEN_RECENT_LINK,
-  WCRPC_OPEN_READING_QUEUE_LINK
-} from 'shared/webContentsRPC'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
+import SEARCH_TARGETS from './CommandPaletteSearchEngine/CommandPaletteSearchTargets'
 
 const styles = {
   targetIcon: {
@@ -57,9 +53,9 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
     itemId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired,
     searchTarget: PropTypes.oneOf([
-      CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT,
-      CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK,
-      CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE
+      SEARCH_TARGETS.RECENT,
+      SEARCH_TARGETS.BOOKMARK,
+      SEARCH_TARGETS.READING_QUEUE
     ]).isRequired,
     onRequestClose: PropTypes.func.isRequired
   }
@@ -108,13 +104,13 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
 
     let item
     switch (searchTarget) {
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT:
+      case SEARCH_TARGETS.RECENT:
         item = serviceData.getRecentWithId(itemId)
         break
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK:
+      case SEARCH_TARGETS.BOOKMARK:
         item = service.getBookmarkWithId(itemId)
         break
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE:
+      case SEARCH_TARGETS.READING_QUEUE:
         item = service.getReadingQueueItemWithId(itemId)
         break
     }
@@ -144,14 +140,14 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
     const { serviceId, searchTarget, onRequestClose, onClick } = this.props
     const { item } = this.state
     switch (searchTarget) {
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK:
-        ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, item)
+      case SEARCH_TARGETS.BOOKMARK:
+        WBRPCRenderer.wavebox.openRecentLink(serviceId, item)
         break
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE:
-        ipcRenderer.send(WCRPC_OPEN_READING_QUEUE_LINK, serviceId, item)
+      case SEARCH_TARGETS.READING_QUEUE:
+        WBRPCRenderer.wavebox.openReadingQueueLink(serviceId, item)
         break
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT:
-        ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, item)
+      case SEARCH_TARGETS.RECENT:
+        WBRPCRenderer.wavebox.openRecentLink(serviceId, item)
         break
     }
     onRequestClose()
@@ -176,11 +172,11 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
   */
   renderSearchTargetIcon (classes, searchTarget) {
     switch (searchTarget) {
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.BOOKMARK:
+      case SEARCH_TARGETS.BOOKMARK:
         return (<FASMapPinIcon className={classNames(classes.targetIcon, classes.targetFAIcon)} />)
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.READING_QUEUE:
+      case SEARCH_TARGETS.READING_QUEUE:
         return (<CheckCircleOutlineIcon className={classes.targetIcon} />)
-      case CommandPaletteSearchEngine.SEARCH_TARGETS.RECENT:
+      case SEARCH_TARGETS.RECENT:
         return (<HistoryIcon className={classes.targetIcon} />)
     }
   }

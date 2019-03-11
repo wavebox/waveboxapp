@@ -23,11 +23,8 @@ module.exports = function (env) {
       'fs': 'throw new Error("fs is not available")' // require('fs') is in hunspell-asm but it handles the failure gracefully :)
     },
     plugins: [
-      new CleanWebpackPlugin([
-        OUT_FILENAME,
-        `${OUT_FILENAME}.map`
-      ], {
-        root: OUT_DIR,
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: [ path.join(OUT_DIR, OUT_FILENAME) ],
         verbose: isVerboseLog,
         dry: false
       })

@@ -34,6 +34,7 @@ const ITEM_TYPES = Object.freeze({
   DIVIDER: 'DIVIDER',
   INFO: 'INFO',
   SERVICE_OPEN_NEW: 'SERVICE_OPEN_NEW',
+  SERVICE_OPEN_NEW_BLANK: 'SERVICE_OPEN_NEW_BLANK',
   SERVICE_SLEEP: 'SERVICE_SLEEP',
   MAILBOX_SLEEP: 'MAILBOX_SLEEP',
   SERVICE_RELOAD: 'SERVICE_RELOAD',
@@ -336,6 +337,16 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
     AccountLinker.openContentWindow(serviceId, url)
   }
 
+  /**
+  * Handles opening a blank window in this scope
+  * @param evt: the event that fired
+  */
+  handleOpenBlankWindow = (evt) => {
+    const { serviceId } = this.props
+    this.closePopover(evt)
+    AccountLinker.openContentWindow(serviceId, '')
+  }
+
   handleAddService = (evt) => {
     this.closePopover(evt, () => {
       window.location.hash = `/mailbox_wizard/add/${this.props.mailboxId}`
@@ -444,6 +455,13 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
           <MenuItem onClick={this.handleOpenInWindow}>
             <ListItemIcon><OpenInNewIcon /></ListItemIcon>
             <ListItemText inset primary='Open in New Window' />
+          </MenuItem>
+        )
+      case ITEM_TYPES.SERVICE_OPEN_NEW_BLANK:
+        return (
+          <MenuItem onClick={this.handleOpenBlankWindow}>
+            <ListItemIcon><OpenInNewIcon /></ListItemIcon>
+            <ListItemText inset primary='Open a New Window in this service' />
           </MenuItem>
         )
       case ITEM_TYPES.SERVICE_SLEEP:
@@ -646,6 +664,7 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
         {this.renderItem(ITEM_TYPES.INFO)}
         {serviceType === SERVICE_TYPES.GOOGLE_INBOX ? this.renderItem(ITEM_TYPES.GOOGLE_INBOX_CONVERT) : undefined}
         {service ? this.renderItem(ITEM_TYPES.SERVICE_OPEN_NEW) : undefined}
+        {service ? this.renderItem(ITEM_TYPES.SERVICE_OPEN_NEW_BLANK) : undefined}
 
         {/* Sleep */}
         {userHasSleepable && service ? this.renderItem(ITEM_TYPES.SERVICE_SLEEP) : undefined}

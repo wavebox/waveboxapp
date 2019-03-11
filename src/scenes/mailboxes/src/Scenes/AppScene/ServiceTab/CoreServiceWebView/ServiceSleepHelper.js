@@ -148,7 +148,7 @@ class ServiceSleepHelper extends React.Component {
   }
 
   renderSavingText (memSaving, timeValue, timeUnit) {
-    return `This tab was slept ${timeValue} ${timeUnit}${timeValue !== 1 ? 's' : ''} ago saving ${Math.round((memSaving || 0) / 1024)}MB of memory`
+    return `This tab was slept ${timeValue} ${timeUnit}${timeValue !== 1 ? 's' : ''} ago saving ${Math.round((memSaving || 0) / 1024 / 1024)}MB of memory`
   }
 
   render () {
@@ -179,7 +179,7 @@ class ServiceSleepHelper extends React.Component {
                 <div className={classes.loaderSleepSaving}>
                   <Timeago
                     date={metrics.timestamp}
-                    formatter={(value, unit, suffix) => this.renderSavingText(metrics.memory.workingSetSize, value, unit)} />
+                    formatter={(value, unit, suffix) => this.renderSavingText(metrics.memory.bytes, value, unit)} />
                 </div>
               ) : undefined}
               <div>

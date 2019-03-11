@@ -12,7 +12,7 @@ import orange from '@material-ui/core/colors/orange'
 import blue from '@material-ui/core/colors/blue'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import GoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/GoogleMailServiceReducer'
-import electron from 'electron'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   // Typography
@@ -142,7 +142,7 @@ class WizardConfigureGmail extends React.Component {
   handleOpenKBHelp = (evt) => {
     evt.preventDefault()
 
-    electron.remote.shell.openExternal('https://wavebox.io/kb/gmail-inbox-type')
+    WBRPCRenderer.wavebox.openExternal('https://wavebox.io/kb/gmail-inbox-type')
   }
 
   /* **************************************************************************/

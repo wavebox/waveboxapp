@@ -325,6 +325,9 @@ class DebugTests {
       WB_NEW_WINDOW,
       WB_KEYCHAIN_OPEN
     } = require('shared/ipcEvents')
+    const {
+      CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC
+    } = require('shared/crExtensionIpcEvents')
 
     const sig = '[TEST:FLASH_TEST]'
 
@@ -374,6 +377,7 @@ class DebugTests {
     }
 
     // Extensions
+    const extensionBenchmarkConfig = ipcRenderer.sendSync(CRX_RUNTIME_CONTENTSCRIPT_BENCHMARK_CONFIG_SYNC)
     const extensionId = crextensionStore.getState().extensionIds()[0]
     console.log(`${sig} Extension Background`)
     if (extensionId) {
@@ -406,6 +410,7 @@ class DebugTests {
       `Version: ${pkg.version}`,
       `Channel: ${pkg.releaseChannel}`,
       `WBShell: ${process.versions.wb_shell}`,
+      `WBExt Benchmark: J${JSON.stringify(extensionBenchmarkConfig)}`,
       `Electron: ${process.versions.electron}`,
       `Chrome: ${process.versions.chrome}`,
       `Navigator: ${window.navigator.userAgent}`

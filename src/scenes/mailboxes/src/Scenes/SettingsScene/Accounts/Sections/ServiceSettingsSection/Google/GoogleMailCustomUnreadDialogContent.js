@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { remote } from 'electron'
 import { accountStore, accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
@@ -12,6 +11,7 @@ import {
 } from '@material-ui/core'
 import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
 import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   kbIcon: {
@@ -104,7 +104,7 @@ class GoogleMailUnreadSettings extends React.Component {
   */
   handleOpenKBArticle = (evt) => {
     evt.preventDefault()
-    remote.shell.openExternal('https://wavebox.io/kb/custom-google-unread-counts')
+    WBRPCRenderer.wavebox.openExternal('https://wavebox.io/kb/custom-google-unread-counts')
   }
 
   /**

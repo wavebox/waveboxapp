@@ -24,6 +24,7 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE,
+  WB_MAILBOXES_WINDOW_RUN_COMMAND_AND_SWITCH_TO_SERVICE,
   WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE,
 
   WB_QUICK_SWITCH_NEXT,
@@ -632,6 +633,17 @@ class MailboxesWindow extends WaveboxWindow {
   */
   navigateAndSwitchToService (serviceId, url) {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE, serviceId, url)
+    return this
+  }
+
+  /**
+  * Switches to a service and runs a service command in it
+  * @param serviceId: the id of the service
+  * @param commandString: the full command string
+  * @return this
+  */
+  runCommandAndSwitchToService (serviceId, commandString) {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_RUN_COMMAND_AND_SWITCH_TO_SERVICE, serviceId, commandString)
     return this
   }
 

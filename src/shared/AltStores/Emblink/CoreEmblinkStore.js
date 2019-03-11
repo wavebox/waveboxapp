@@ -82,6 +82,8 @@ class CoreEmblinkStore extends RemoteStore {
     if (open) {
       this.open = Object.freeze(open)
     }
+
+    this.__isStoreLoaded__ = true
   }
 
   /* **************************************************************************/

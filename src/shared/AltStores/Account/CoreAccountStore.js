@@ -1070,6 +1070,44 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /* ****************************************/
+    // Service Commands
+    /* ****************************************/
+
+    /**
+    * Gets all the currently supported service commands
+    * @return an array of commands. Will be reduced to ensure no duplication
+    */
+    this.getAllSupportedServiceCommands = () => {
+      const all = this.allServicesUnordered().reduce((acc, service) => {
+        service.commands.forEach((command) => {
+          acc.set(`${command.modifier}${command.keyword}`, command)
+        })
+        return acc
+      }, new Map())
+      return Array.from(all.values())
+    }
+
+    /**
+    * Gets a list of service ids for a command
+    * @param modifier: the command modifier
+    * @param keyword: the command keyword
+    * @param ordered=false: pass true to pre-order services
+    * @return an array of service ids that support the command
+    */
+    this.getServiceIdsSupportingCommand = (modifier, keyword, ordered = false) => {
+      const services = ordered
+        ? this.allServicesOrdered()
+        : this.allServicesUnordered()
+      return services.reduce((acc, service) => {
+        const command = service.commands.find((command) => command.modifier === modifier && command.keyword === keyword)
+        if (command) {
+          acc.push(service.id)
+        }
+        return acc
+      }, [])
+    }
+
+    /* ****************************************/
     // Misc
     /* ****************************************/
 
@@ -1121,19 +1159,29 @@ class CoreAccountStore extends RemoteStore {
   /* **************************************************************************/
 
   /**
+  * Locates the user store and gets the current state
+  * @return the user state
+  */
+  _getUserStoreState () {
+    const userStore = this.alt.getStore(AltUserIdentifiers.STORE_NAME)
+    if (!userStore) {
+      throw new Error(`Alt "${STORE_NAME}" is unable to locate "${AltUserIdentifiers.STORE_NAME}". Ensure both have been linked`)
+    }
+
+    const userState = userStore.getState()
+    if (!userState.isStoreLoaded()) {
+      throw new Error(`Alt "${STORE_NAME}" tried to locate "${AltUserIdentifiers.STORE_NAME}" but it is not loaded. Ensure it is loaded first`)
+    }
+
+    return userState
+  }
+
+  /**
   * Tries to source the user from the user store
   * @return the user or a default representation
   */
   getUser () {
-    const userStore = this.alt.getStore(AltUserIdentifiers.STORE_NAME)
-    if (userStore) {
-      const user = userStore.getState().user
-      if (user) {
-        return user
-      }
-    }
-
-    throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltUserIdentifiers.STORE_NAME}". Ensure both have been linked`)
+    return this._getUserStoreState().user
   }
 
   /**
@@ -1142,12 +1190,26 @@ class CoreAccountStore extends RemoteStore {
   * @return the container or undefined if it's unknown
   */
   getContainer (containerId) {
-    const userStore = this.alt.getStore(AltUserIdentifiers.STORE_NAME)
-    if (userStore) {
-      return userStore.getState().getContainer(containerId)
-    }
+    return this._getUserStoreState().getContainer(containerId)
+  }
 
-    throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltUserIdentifiers.STORE_NAME}". Ensure both have been linked`)
+  /**
+  * Gets a container service api from the user store
+  * @param containerId: the container
+  * @return the container data or undefined if it's unknown
+  */
+  getContainerSAPI (containerId) {
+    return this._getUserStoreState().getContainerSAPI(containerId)
+  }
+
+  /**
+  * Gets a clone of the container service api data from the user store
+  * @param containerId: the container id
+  * @return a clone of the data or undefined if not available
+  */
+  getContainerSAPIDataForService (containerId) {
+    const sapi = this.getContainerSAPI(containerId)
+    return sapi ? sapi.cloneForService() : undefined
   }
 
   /* **************************************************************************/
@@ -1210,6 +1272,8 @@ class CoreAccountStore extends RemoteStore {
       acc.set(k, sleepingServices[k])
       return acc
     }, new Map())
+
+    this.__isStoreLoaded__ = true
   }
 
   /* **************************************************************************/

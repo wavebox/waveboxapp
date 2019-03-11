@@ -3,67 +3,9 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
 import { remote } from 'electron'
-import { IconButton } from '@material-ui/core'
-import { CHROME_PDF_URL } from 'shared/constants'
-import { URL } from 'url'
-import Spinner from 'wbui/Activity/Spinner'
-import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import HomeIcon from '@material-ui/icons/Home'
-import ArrowBackIcon from '@material-ui/icons/ArrowBack'
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
-import CloseIcon from '@material-ui/icons/Close'
-import RefreshIcon from '@material-ui/icons/Refresh'
-import ThemeTools from 'wbui/Themes/ThemeTools'
+import BrowserToolbarContent from 'wbui/BrowserToolbarContent'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
-const styles = (theme) => ({
-  container: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  group: {
-    display: 'flex'
-  },
-  iconButton: {
-    WebkitAppRegion: 'no-drag'
-  },
-  icon: {
-    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color'),
-    '&:hover': {
-      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'hover')
-    },
-    '&.is-disabled': {
-      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled'),
-      '&:hover': {
-        color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled')
-      }
-    }
-  },
-  addressGroup: {
-    display: 'flex',
-    width: '100%',
-    textAlign: 'left',
-    justifyContent: 'flex-start',
-    overflow: 'hidden'
-  },
-  address: {
-    maxWidth: '100%',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    fontSize: '14px',
-    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.text.color')
-  },
-  loadingContainer: {
-    width: 40,
-    height: 40,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-})
-
-@withStyles(styles, { withTheme: true })
 class ToolbarNavigation extends React.Component {
   /* **************************************************************************/
   // Class
@@ -151,22 +93,19 @@ class ToolbarNavigation extends React.Component {
   */
   generateFreshState (tabId) {
     if (tabId) {
-      const webContents = remote.webContents.fromId(tabId)
-      if (webContents) {
-        return {
-          isLoading: webContents.isLoading(),
-          currentUrl: webContents.getURL(),
-          canGoBack: webContents.canGoBack(),
-          canGoForward: webContents.canGoForward()
-        }
+      return {
+        isLoading: WBRPCRenderer.webContents.isLoadingSync(tabId),
+        currentUrl: WBRPCRenderer.webContents.getURLSync(tabId),
+        canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+        canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
       }
-    }
-
-    return {
-      isLoading: false,
-      currentUrl: '',
-      canGoBack: false,
-      canGoForward: false
+    } else {
+      return {
+        isLoading: false,
+        currentUrl: '',
+        canGoBack: false,
+        canGoForward: false
+      }
     }
   }
 
@@ -181,10 +120,11 @@ class ToolbarNavigation extends React.Component {
   */
   handleDidStartNavigation = (evt, url, isInPlace, isMainFrame) => {
     if (!isMainFrame) { return }
+    const { tabId } = this.props
     this.setState({
-      currentUrl: evt.sender.getURL(), // Don't use the passed url - the nav might be cancelled
-      canGoBack: evt.sender.canGoBack(),
-      canGoForward: evt.sender.canGoForward()
+      currentUrl: WBRPCRenderer.webContents.getURLSync(tabId), // Don't use the passed url - the nav might be cancelled
+      canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+      canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
     })
   }
 
@@ -212,10 +152,11 @@ class ToolbarNavigation extends React.Component {
   */
   handleDidNavigateInPage = (evt, url, isMainFrame) => {
     if (isMainFrame) {
+      const { tabId } = this.props
       this.setState({
         currentUrl: url,
-        canGoBack: evt.sender.canGoBack(),
-        canGoForward: evt.sender.canGoForward()
+        canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+        canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
       })
     }
   }
@@ -226,10 +167,11 @@ class ToolbarNavigation extends React.Component {
   * @param url: the url
   */
   handleDidNavigate = (evt, url) => {
+    const { tabId } = this.props
     this.setState({
       currentUrl: url,
-      canGoBack: evt.sender.canGoBack(),
-      canGoForward: evt.sender.canGoForward()
+      canGoBack: WBRPCRenderer.webContents.canGoBackSync(tabId),
+      canGoForward: WBRPCRenderer.webContents.canGoForwardSync(tabId)
     })
   }
 
@@ -240,76 +182,83 @@ class ToolbarNavigation extends React.Component {
   /**
   * Navigates home
   */
-  onGoHome = () => {
+  handleGoHome = () => {
     const { tabId, serviceId } = this.props
     if (tabId === undefined) { return }
 
     const accountState = accountStore.getState()
     const service = accountState.getService(serviceId)
     if (!service) { return }
-    const webContents = remote.webContents.fromId(tabId)
-    if (!webContents) { return }
 
-    webContents.loadURL(service.url)
+    WBRPCRenderer.webContents.loadURL(service.url, tabId)
   }
 
   /**
   * Navigates back
   */
-  onGoBack = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.goBack()
+  handleGoBack = () => {
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.goBack(tabId)
   }
 
   /**
   * Navigates forward
   */
-  onGoForward = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.goForward()
+  handleGoForward = () => {
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.goForward(tabId)
   }
 
   /**
   * Stops navigation
   */
-  onStop = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.stop()
+  handleStop = () => {
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.stop(tabId)
   }
 
   /**
   * Reloads current page
   */
-  onReload = () => {
-    if (this.props.tabId === undefined) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
-    if (!webContents) { return }
-    webContents.reload()
+  handleReload = () => {
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.reload(tabId)
+  }
+
+  /**
+  * Handles the address field leaving focus
+  */
+  handleBlurAddress = () => {
+    if (window.location.hash.indexOf('keyboardtarget?browserurl=true') !== -1) {
+      window.location.hash = '/'
+    }
+  }
+
+  /**
+  * Handles the address field going into focus
+  */
+  handleFocusAddress = () => {
+    window.location.hash = '/keyboardtarget?browserurl=true'
+  }
+
+  /**
+  * Changes the address
+  * @param evt: the event that fired
+  * @param url: the url to open
+  */
+  handleChangeAddress = (evt, url) => {
+    const { tabId } = this.props
+    if (tabId === undefined) { return }
+    WBRPCRenderer.webContents.loadURL(url, tabId)
   }
 
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
-
-  /**
-  * Converts a url to a url that can be shown and used externally
-  * @param fullUrl: the true url
-  * @return the url to load in external browsers and show to the user
-  */
-  externalUrl (fullUrl) {
-    if (!fullUrl) { return fullUrl }
-    if (fullUrl.startsWith(CHROME_PDF_URL)) {
-      return new URL(fullUrl).searchParams.get('src')
-    } else {
-      return fullUrl
-    }
-  }
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
@@ -321,10 +270,6 @@ class ToolbarNavigation extends React.Component {
       tabId,
       mailboxId,
       serviceId,
-      style,
-      theme,
-      classes,
-      className,
       ...passProps
     } = this.props
     const {
@@ -335,53 +280,28 @@ class ToolbarNavigation extends React.Component {
     } = this.state
 
     return (
-      <div
-        {...passProps}
-        className={classNames(classes.container, className)}
-        style={{ height: toolbarHeight, ...style }}>
-        <div className={classes.group}>
-          <IconButton
-            className={classes.iconButton}
-            onClick={this.onGoHome}>
-            <HomeIcon className={classes.icon} />
-          </IconButton>
-          <IconButton
-            className={classes.iconButton}
-            disableRipple={!canGoBack}
-            onClick={canGoBack ? this.onGoBack : undefined}>
-            <ArrowBackIcon className={classNames(classes.icon, !canGoBack ? 'is-disabled' : undefined)} />
-          </IconButton>
-          <IconButton
-            className={classes.iconButton}
-            disableRipple={!canGoForward}
-            onClick={canGoForward ? this.onGoForward : undefined}>
-            <ArrowForwardIcon className={classNames(classes.icon, !canGoForward ? 'is-disabled' : undefined)} />
-          </IconButton>
-          <IconButton
-            className={classes.iconButton}
-            onClick={isLoading ? this.onStop : this.onReload}>
-            {isLoading ? (
-              <CloseIcon className={classes.icon} />
-            ) : (
-              <RefreshIcon className={classes.icon} />
-            )}
-          </IconButton>
-        </div>
-        <div className={classes.addressGroup}>
-          <div className={classes.address}>
-            {this.externalUrl(currentUrl)}
-          </div>
-        </div>
-        <div className={classes.group}>
-          <div className={classes.loadingContainer}>
-            {isLoading ? (
-              <Spinner
-                size={15}
-                color={ThemeTools.getValue(theme, 'wavebox.toolbar.spinner.color')} />
-            ) : undefined}
-          </div>
-        </div>
-      </div>
+      <BrowserToolbarContent
+        address={currentUrl}
+        isLoading={isLoading}
+        canGoBack={canGoBack}
+        canGoForward={canGoForward}
+        hasGoBack
+        hasGoForward
+        hasStopAndReload
+        hasLoadingSpinner
+        hasHome
+        hasDownload={false}
+        hasSearch={false}
+        hasOpenInBrowser={false}
+        onGoBack={this.handleGoBack}
+        onGoForward={this.handleGoForward}
+        onStop={this.handleStop}
+        onReload={this.handleReload}
+        onHome={this.handleGoHome}
+        onBlurAddress={this.handleBlurAddress}
+        onFocusAddress={this.handleFocusAddress}
+        onChangeAddress={this.handleChangeAddress}
+        {...passProps} />
     )
   }
 }

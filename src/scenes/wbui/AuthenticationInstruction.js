@@ -1,5 +1,6 @@
 import React from 'react'
-import { Paper } from '@material-ui/core'
+import PropTypes from 'prop-types'
+import { Paper, Button } from '@material-ui/core'
 import Spinner from './Activity/Spinner'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
@@ -9,6 +10,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   container: {
+    position: 'relative',
     width: '100%',
     height: '100%',
     display: 'flex',
@@ -75,11 +77,24 @@ const styles = {
     marginBottom: 20,
     marginTop: 10,
     textAlign: 'center'
+  },
+  minimiseButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16
   }
 }
 
 @withStyles(styles)
 class AuthenticationInstruction extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    onRequestMinimize: PropTypes.func
+  }
+
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
@@ -88,12 +103,24 @@ class AuthenticationInstruction extends React.Component {
     ipcRenderer.send(WB_FOCUS_AUTH_WINDOW)
   }
 
+  handleMinimize = (evt) => {
+    evt.stopPropagation()
+    if (this.props.onRequestMinimize) {
+      this.props.onRequestMinimize(evt)
+    }
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
-    const { className, classes, ...passProps } = this.props
+    const {
+      className,
+      classes,
+      onRequestMinimize,
+      ...passProps
+    } = this.props
 
     return (
       <div {...passProps} className={classNames(classes.container, className)} onClick={this.handleClick}>
@@ -118,6 +145,14 @@ class AuthenticationInstruction extends React.Component {
           <div className={classes.textBox} />
           <div className={classes.textBox} />
         </Paper>
+        {onRequestMinimize ? (
+          <Button
+            className={classes.minimiseButton}
+            variant='contained'
+            onClick={this.handleMinimize}>
+            Minimise
+          </Button>
+        ) : undefined}
       </div>
     )
   }

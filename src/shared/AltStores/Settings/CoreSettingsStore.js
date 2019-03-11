@@ -63,6 +63,8 @@ class CoreSettingsStore extends RemoteStore {
       this[segment] = this.modelize(segment, modelData[segment] || {})
       this.launched[segment] = this.modelize(segment, launchedModelData[segment] || {})
     })
+
+    this.__isStoreLoaded__ = true
   }
 
   handleReloadDefaults ({ defaults }) {
