@@ -174,7 +174,7 @@ class AccountSessionManager extends EventEmitter {
         .map((cmp) => {
           if (cmp.startsWith('Chrome/')) {
             // @Thomas101 hack until e2c updates
-            const v = process.versions.electron === '4.0.5' ? '69.0.3497.106' : e2c.fullVersions[process.versions.electron]
+            const v = process.versions.electron === '4.0.8' ? '69.0.3497.128' : e2c.fullVersions[process.versions.electron]
             return `Chrome/${v}`
           } else {
             return cmp
