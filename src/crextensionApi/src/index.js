@@ -2,7 +2,7 @@ import Chrome from './Chrome'
 import { URL } from 'whatwg-url'
 import ExtensionDatasource from './Core/ExtensionDatasource'
 import { CR_RUNTIME_ENVIRONMENTS, CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
-import XMLHttpRequestBuilder from './XMLHttpRequestBuilder'
+import BrowserXHRBuilder from './BrowserXHRBuilder'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 class Loader {
@@ -44,7 +44,8 @@ class Loader {
         : CR_RUNTIME_ENVIRONMENTS.HOSTED
 
       window.chrome = new Chrome(extensionId, environment, extensionDatasource)
-      window.XMLHttpRequest = XMLHttpRequestBuilder.buildHostedXMLHttpRequest(window.XMLHttpRequest)
+      window.XMLHttpRequest = BrowserXHRBuilder.buildHostedXMLHttpRequest(window.XMLHttpRequest)
+      window.fetch = BrowserXHRBuilder.buildHostedFetch(window.fetch)
     }
   }
 
@@ -59,10 +60,15 @@ class Loader {
       if (config && config.hasRuntime) {
         const extensionDatasource = new ExtensionDatasource(extensionId, config.runtimeConfig)
         window.chrome = new Chrome(extensionId, CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT, extensionDatasource)
-        window.XMLHttpRequest = XMLHttpRequestBuilder.buildContentScriptXMLHttpRequest(
+        window.XMLHttpRequest = BrowserXHRBuilder.buildContentScriptXMLHttpRequest(
           extensionId,
           extensionDatasource.xhrToken,
           window.XMLHttpRequest
+        )
+        window.fetch = BrowserXHRBuilder.buildContentScriptFetch(
+          extensionId,
+          extensionDatasource.xhrToken,
+          window.fetch
         )
       }
     }

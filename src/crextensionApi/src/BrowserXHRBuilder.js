@@ -32,6 +32,29 @@ const buildContentScriptXMLHttpRequest = function (extensionId, xhrToken, SuperC
 
 /**
 * Builds a new XMLHTTPRequest
+* @param extensionId: the id of the extension
+* @param xhrToken: the content script token to use
+* @param superFn: the parent function to use
+*/
+const buildContentScriptFetch = function (extensionId, xhrToken, superFn) {
+  return function (url, rawOptions) {
+    const acceptHeader = `${CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX}${extensionId}/${xhrToken}`
+    const options = {
+      ...rawOptions,
+      credentials: (rawOptions || {}).credentials || 'include',
+      headers: {
+        ...(rawOptions ? rawOptions.headers : undefined),
+        'Accept': ((rawOptions || {}).headers || {}).Accept
+          ? `${acceptHeader}, ${rawOptions.headers.Accept}`
+          : acceptHeader
+      }
+    }
+    return superFn(url, options)
+  }
+}
+
+/**
+* Builds a new XMLHTTPRequest
 * @param SuperClass: the parent class to inherit from
 */
 const buildHostedXMLHttpRequest = function (SuperClass) {
@@ -49,7 +72,23 @@ const buildHostedXMLHttpRequest = function (SuperClass) {
   return XMLHttpRequest
 }
 
+/**
+* Builds a new XMLHTTPRequest
+* @param superFn: the parent function to use
+*/
+const buildHostedFetch = function (superFn) {
+  return function (url, rawOptions) {
+    const options = {
+      ...rawOptions,
+      credentials: rawOptions.credentials || 'include'
+    }
+    return superFn(url, options)
+  }
+}
+
 export default {
   buildContentScriptXMLHttpRequest,
-  buildHostedXMLHttpRequest
+  buildContentScriptFetch,
+  buildHostedXMLHttpRequest,
+  buildHostedFetch
 }

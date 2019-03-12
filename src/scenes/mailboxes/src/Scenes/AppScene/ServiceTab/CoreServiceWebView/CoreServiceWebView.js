@@ -558,9 +558,10 @@ class CoreServiceWebView extends React.Component {
 
   /**
   * Handles the webcontents being attached
-  * @param attachedId: the id of the webcontents that were attached
+  * @param evt: the event that fired
   */
-  handleWebContentsAttached = (attachedId) => {
+  handleWebContentsAttached = (evt) => {
+    const attachedId = evt.target.getWebContents().id
     const { mailboxId, serviceId } = this.props
     ipcRenderer.send(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, {
       webContentsId: attachedId,
@@ -716,13 +717,14 @@ class CoreServiceWebView extends React.Component {
             webpreferences={webpreferences}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
-            onWebContentsAttached={this.handleWebContentsAttached}
 
             {...webviewEventProps}
             didFailLoad={(evt) => {
               this.multiCallBrowserEvent([this.handleLoadError, webviewEventProps.didFailLoad], [evt])
             }}
-
+            didAttach={(evt) => {
+              this.multiCallBrowserEvent([this.handleWebContentsAttached, webviewEventProps.didAttach], [evt])
+            }}
             crashed={(evt) => {
               this.multiCallBrowserEvent([this.handleCrashed, webviewEventProps.crashed], [evt])
             }}

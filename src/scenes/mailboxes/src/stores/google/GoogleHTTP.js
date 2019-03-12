@@ -317,9 +317,9 @@ class GoogleHTTP {
         }, {})
       })
       .then((updatedThreads) => {
-        return threadHeaders.map((threadHeader) => {
-          return updatedThreads[threadHeader.id] || knownThreads[threadHeader.id]
-        })
+        return threadHeaders
+          .map((threadHeader) => updatedThreads[threadHeader.id] || knownThreads[threadHeader.id])
+          .filter((v) => !!v)
       })
   }
 

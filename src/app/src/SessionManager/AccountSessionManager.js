@@ -164,7 +164,6 @@ class AccountSessionManager extends EventEmitter {
 
     // Permissions & env
     PermissionManager.setupPermissionHandler(partitionId)
-
     // UA
     if (useCustomUserAgent && customUserAgentString) {
       ses.setUserAgent(customUserAgentString)
@@ -173,9 +172,7 @@ class AccountSessionManager extends EventEmitter {
         .split(' ')
         .map((cmp) => {
           if (cmp.startsWith('Chrome/')) {
-            // @Thomas101 hack until e2c updates
-            const v = process.versions.electron === '4.0.8' ? '69.0.3497.128' : e2c.fullVersions[process.versions.electron]
-            return `Chrome/${v}`
+            return `Chrome/${e2c.fullVersions[process.versions.electron]}`
           } else {
             return cmp
           }

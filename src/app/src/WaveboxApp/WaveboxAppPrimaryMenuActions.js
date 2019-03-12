@@ -39,7 +39,6 @@ class WaveboxAppPrimaryMenuActions {
     const withFocusedDevTools = webContents
       .getAllWebContents()
       .filter((wc) => wc.isDevToolsOpened() && wc.isDevToolsFocused())
-
     if (withFocusedDevTools[0]) {
       return withFocusedDevTools[0].devToolsWebContents
     } else {

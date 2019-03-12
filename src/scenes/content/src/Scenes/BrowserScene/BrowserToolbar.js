@@ -183,10 +183,10 @@ class BrowserToolbar extends React.Component {
           hasDownload
           hasSearch
           hasOpenInBrowser
-          onGoBack={this.handleGoBack}
-          onGoForward={this.handleGoForward}
-          onStop={this.handleStop}
-          onReload={this.handleReload}
+          onGoBack={handleGoBack}
+          onGoForward={handleGoForward}
+          onStop={handleStop}
+          onReload={handleReload}
           onBlurAddress={this.handleBlurAddress}
           onFocusAddress={this.handleFocusAddress}
           onChangeAddress={this.handleChangeAddress}

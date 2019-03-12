@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 const WEBVIEW_EVENTS = [
   'load-commit',
+  'did-attach',
   'did-finish-load',
   'did-fail-load',
   'did-frame-finish-load',

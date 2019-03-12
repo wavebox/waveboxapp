@@ -144,6 +144,19 @@ class Analytics {
     })
   }
 
+  /**
+  * Gets the hostname from a url but captures any error
+  * @param url: the url to get the hostname from
+  * @return the hostname or about:blank
+  */
+  caughtUrlHostname (url) {
+    try {
+      return new URL(url).hostname
+    } catch (ex) {
+      return 'about:blank'
+    }
+  }
+
   /* ****************************************************************************/
   // Events: WB
   /* ****************************************************************************/
@@ -159,7 +172,7 @@ class Analytics {
         type: service.type,
         parentId: service.parentId,
         ...(service.type === SERVICE_TYPES.CONTAINER ? { containerId: service.containerId } : undefined),
-        ...(service.type === SERVICE_TYPES.GENERIC && service.url ? { url: new URL(service.url).hostname } : undefined)
+        ...(service.type === SERVICE_TYPES.GENERIC && service.url ? { url: this.caughtUrlHostname(service.url) } : undefined)
       }
     })
 
@@ -197,7 +210,7 @@ class Analytics {
               webContentsInfo: metric.webContentsInfo.map((wcMetric) => {
                 return {
                   description: wcMetric.description,
-                  url: wcMetric.url ? new URL(wcMetric.url).hostname : undefined
+                  url: wcMetric.url ? this.caughtUrlHostname(wcMetric.url) : undefined
                 }
               })
             }

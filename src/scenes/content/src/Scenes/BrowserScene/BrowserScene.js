@@ -242,7 +242,7 @@ class BrowserScene extends React.Component {
             didStopLoading={(evt) => browserActions.stopLoading()}
             ipcMessage={this.handleBrowserIPCMessage}
             didNavigate={this.navigationStateDidChange}
-            onWebContentsAttached={this.handleWebContentsAttached}
+            didAttach={this.handleWebContentsAttached}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={this.navigationStateDidChange} />
           <BrowserViewLoadBar isLoading={isLoading} />

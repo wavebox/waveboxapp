@@ -3,8 +3,7 @@ import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const privBindings = Symbol('privBindings')
 const supportedListeners = new Set([
-  'window-focus',
-  'did-attach-webview'
+  'window-focus'
 ])
 
 class WebViewGroupEventDispatcher extends EventEmitter {
@@ -41,9 +40,6 @@ class WebViewGroupEventDispatcher extends EventEmitter {
       case 'window-focus':
         WBRPCRenderer.browserWindow.on('focus', this._handleBrowserWindowFocus)
         break
-      case 'did-attach-webview':
-        WBRPCRenderer.webContents.on('did-attach-webview', this._handleWebContentsAttached)
-        break
     }
 
     this[privBindings][eventName] = true
@@ -63,9 +59,6 @@ class WebViewGroupEventDispatcher extends EventEmitter {
       case 'window-focus':
         WBRPCRenderer.browserWindow.removeListener('focus', this._handleBrowserWindowFocus)
         break
-      case 'did-attach-webview':
-        WBRPCRenderer.webContents.removeListener('did-attach-webview', this._handleWebContentsAttached)
-        break
     }
 
     this[privBindings][eventName] = false
@@ -77,10 +70,6 @@ class WebViewGroupEventDispatcher extends EventEmitter {
 
   _handleBrowserWindowFocus = () => {
     this.emit('window-focus', { sender: this })
-  }
-
-  _handleWebContentsAttached = (evt, attachedId) => {
-    this.emit('did-attach-webview', { sender: this }, attachedId)
   }
 }
 
