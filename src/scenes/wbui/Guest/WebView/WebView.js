@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
@@ -16,7 +15,12 @@ import {
 const WARN_CAPTURE_PAGE_TIMEOUT = 3000
 const MAX_CAPTURE_PAGE_TIMEOUT = 4000
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
-const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message', 'dom-ready'])
+const INTERCEPTED_WEBVIEW_EVENTS = new Set([
+  'ipc-message',
+  'console-message',
+  'dom-ready',
+  'did-attach'
+])
 
 let stylesheetAttached = false
 const stylesheet = document.createElement('style')
@@ -36,7 +40,6 @@ class WebView extends React.Component {
   // Class
   /* **************************************************************************/
   static propTypes = {
-    onWebContentsAttached: PropTypes.func,
     ...WEBVIEW_PROPS,
     ...REACT_WEBVIEW_EVENT_PROPS
   }
@@ -76,13 +79,10 @@ class WebView extends React.Component {
     // Bind webview events
     this.updateEventListeners()
 
-    // Create an artificial onWebContentsAttached event
-    WebViewGroupEventDispatcher.on('did-attach-webview', this.handleWebContentsAttached)
     WebViewGroupEventDispatcher.on('window-focus', this.handleWindowFocused)
   }
 
   componentWillUnmount () {
-    WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
     WebViewGroupEventDispatcher.removeListener('window-focus', this.handleWindowFocused)
   }
 
@@ -104,23 +104,6 @@ class WebView extends React.Component {
     const node = this.getWebviewNode()
     node.classList.remove('first-load-incomplete')
     node.removeEventListener('did-finish-load', this.handleFinishFirstLoad)
-  }
-
-  /**
-  * Handles a webcontents attaching to the dom
-  * @param evt: the event that fired
-  * @param attachedId: the id of the webcontents that did attach
-  */
-  handleWebContentsAttached = (evt, attachedId) => {
-    const node = this.getWebviewNode()
-    const nwc = node.getWebContents()
-    this[privWebviewAttached] = true
-    if (nwc && nwc.id === attachedId) {
-      if (this.props.onWebContentsAttached) {
-        this.props.onWebContentsAttached(attachedId)
-      }
-      WebViewGroupEventDispatcher.removeListener('did-attach-webview', this.handleWebContentsAttached)
-    }
   }
 
   /**
@@ -282,6 +265,9 @@ class WebView extends React.Component {
         node.blur()
         node.focus()
       }
+      if (this.props[reactEventName]) { this.props[reactEventName](evt) }
+    } else if (evt.type === 'did-attach') {
+      this[privWebviewAttached] = true
       if (this.props[reactEventName]) { this.props[reactEventName](evt) }
     } else {
       if (this.props[reactEventName]) { this.props[reactEventName](evt) }
