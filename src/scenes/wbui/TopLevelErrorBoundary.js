@@ -86,7 +86,9 @@ class TopLevelErrorBoundary extends React.Component {
   */
   handleSendBugReport = () => {
     const report = [
-      '\n\n--- Error Report ---',
+      '\n\n',
+      'ADD ANY EXTRA INFO ABOVE THIS LINE',
+      '--- Error Report ---',
       this.renderErrorString(this.state.error)
     ].join('\n')
     const url = [

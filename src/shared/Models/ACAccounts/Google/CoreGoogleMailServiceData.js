@@ -9,7 +9,13 @@ class CoreGoogleMailServiceData extends CoreACServiceData {
 
   get historyId () { return this._value_('historyId') }
   get hasHistoryId () { return !!this.historyId }
-  get unreadThreads () { return this._value_('unreadThreads', []) }
+  get unreadThreads () {
+    // We've had reports that null can be set as an array value. Filter those out
+    // so we're always valid. It looks like the null comes from Google, but we
+    // can't confirm. We've also patched upstream in GoogleHTTP.fullyResolveGmailThreadHeaders
+    // so this can probably be removed in a future release
+    return this._value_('unreadThreads', []).filter((v) => !!v)
+  }
   get unreadThreadsIndexed () {
     return this.unreadThreads.reduce((acc, thread) => {
       acc[thread.id] = thread
