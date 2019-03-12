@@ -93,10 +93,13 @@ export default class MicrosoftMailServiceWebView extends React.Component {
         subject: evt.data.subject,
         body: evt.data.body
       })
-      AccountLinker.openContentWindow(serviceId, `${launchUrl}?${qs}`, {
-        width: 800,
-        height: 600
-      })
+      const composeUrl = `${launchUrl}?${qs}`
+
+      // Run this with the correct opener and the window will close after the email is sent :)
+      // Make sure you don't try to return the window object - you'll lock all the threads
+      this.webviewRef.current.executeJavaScriptOrQueueIfSleeping(`setTimeout(() => {
+        window.open('${composeUrl}', '_blank', 'width=800,height=600')
+      })`)
     }
   }
 
