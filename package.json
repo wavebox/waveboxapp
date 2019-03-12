@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "4.8.1",
+  "version": "4.8.2",
   "releaseChannel": "STABLE",
   "description": "Wavebox",
   "scripts": {
