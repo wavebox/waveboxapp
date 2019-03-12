@@ -75,7 +75,7 @@ const styles = {
       animationDelay: `${((CLOUD_ANIMATION_DURATION / 6.5) * -1) * 6}s`,
       animationDuration: `${CLOUD_ANIMATION_DURATION - 48}s`,
       top: '80%',
-      backgroundImage: `url("${Resolver.image('clouds/cloud_mail.png')}")`
+      backgroundImage: `url("${Resolver.image('clouds/cloud_asana.png')}")`
     },
     '&:nth-child(7)': {
       animationDelay: `${((CLOUD_ANIMATION_DURATION / 6.5) * -1) * 7}s`,
