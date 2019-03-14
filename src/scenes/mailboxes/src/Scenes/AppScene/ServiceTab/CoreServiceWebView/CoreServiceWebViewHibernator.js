@@ -8,6 +8,7 @@ import uuid from 'uuid'
 import ConcurrencyLock from './ConcurrencyLock'
 
 const privQueuedIPCSend = Symbol('privQueuedIPCSend')
+const privQueuedExecuteJavaScript = Symbol('privQueuedExecuteJavaScript')
 const privInstanceId = Symbol('privInstanceId')
 
 let _concurrencyLock
@@ -61,6 +62,7 @@ class CoreServiceWebViewHibernator extends React.Component {
 
     this.webviewRef = React.createRef()
     this[privQueuedIPCSend] = []
+    this[privQueuedExecuteJavaScript] = []
     this[privInstanceId] = uuid.v4()
     this.state = this.generateInitialState(props.serviceId)
 
@@ -203,6 +205,18 @@ class CoreServiceWebViewHibernator extends React.Component {
       })
     }
 
+    // Send delayed JavaScript
+    if (this[privQueuedExecuteJavaScript].length) {
+      const queued = this[privQueuedExecuteJavaScript]
+      this[privQueuedExecuteJavaScript] = []
+      queued.forEach(({ args, resolve, reject }) => {
+        this.executeJavaScript(...args).then(
+          (r) => resolve(r),
+          (e) => reject(e)
+        )
+      })
+    }
+
     // Call parent
     if (this.props.domReady) {
       this.props.domReady(evt)
@@ -252,6 +266,21 @@ class CoreServiceWebViewHibernator extends React.Component {
     } else {
       this[privQueuedIPCSend].push(args)
       return false
+    }
+  }
+
+  /**
+  * @param code: the code to execute
+  * @param userGesture: true to supply in a user gesture
+  * @return promise
+  */
+  executeJavaScriptOrQueueIfSleeping (code, userGesture) {
+    if (!this.state.isSleeping && this.webviewRef.current && this.webviewRef.current.isWebviewAttached()) {
+      return this.webviewRef.current.executeJavaScript(code, userGesture)
+    } else {
+      return new Promise((resolve, reject) => {
+        this[privQueuedExecuteJavaScript].push({ args: [code, userGesture], resolve: resolve, reject: reject })
+      })
     }
   }
 
