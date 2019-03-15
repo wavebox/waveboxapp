@@ -1,3 +1,4 @@
+import { app } from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
 import RuntimePaths from 'Runtime/RuntimePaths'
@@ -6,6 +7,7 @@ import {
   CRExtensionI18n,
   CRExtensionVersionParser
 } from 'shared/Models/CRExtension'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
 
 const UNINSTALL_FLAG = '__uninstall__'
 const PURGE_FLAG = '__purge__'
@@ -208,6 +210,53 @@ class CRExtensionFS {
       return versions[0]
     } else {
       return undefined
+    }
+  }
+
+  /**
+  * Previously we namespaced some extensions with extensionid-wavebox we no longer
+  * want to do this, so migrate them and their partition data before launch
+  * Introduced in Wavebox 4.8.3 - 4.8.4
+  * This function will throw on errors
+  * @param info: the loaded extension info
+  * @return the updated info or the original info
+  */
+  static migrateWaveboxNamespacedExtension (info) {
+    const shouldMigrate = [
+      'dheionainndbbpoacpnopgmnihkcmnkl-wavebox',
+      'mdanidgdpmkimeiiojknlnekblgmpdll-wavebox',
+      'elifhakcjgalahccnjkneoccemfahfoa-wavebox'
+    ].includes(info.extensionId)
+    if (!shouldMigrate) { return info }
+
+    const nextExtensionId = info.extensionId.substr(0, info.extensionId.length - 8)
+    const nextPath = path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, nextExtensionId, info.versionString)
+    const nextManifestPath = path.join(nextPath, 'manifest.json')
+
+    // Move the extension
+    fs.moveSync(info.path, nextPath)
+    fs.removeSync(path.dirname(info.path))
+    fs.writeJSONSync(nextManifestPath, {
+      ...fs.readJSONSync(nextManifestPath),
+      wavebox_extension_id: nextExtensionId
+    })
+
+    // Move the extension data
+    const prevPartitionSeg = CRExtensionWebPreferences.partitionIdForExtension(info.extensionId).replace('persist:', '')
+    const nextPartitionSeg = CRExtensionWebPreferences.partitionIdForExtension(nextExtensionId).replace('persist:', '')
+    try {
+      fs.moveSync(
+        path.join(app.getPath('userData'), 'Partitions', encodeURIComponent(prevPartitionSeg)),
+        path.join(app.getPath('userData'), 'Partitions', encodeURIComponent(nextPartitionSeg))
+      )
+    } catch (ex) {
+      // Don't fall over if the partition data isn't available
+    }
+
+    return {
+      ...info,
+      extensionId: nextExtensionId,
+      path: nextPath
     }
   }
 

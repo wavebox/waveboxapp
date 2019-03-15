@@ -204,6 +204,7 @@ class Runtime {
       !targetExtensionId ? this[privExtensionId] : targetExtensionId, // Some extensions like to send falsy values
       connectInfo
     )
+
     return new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
   }
 

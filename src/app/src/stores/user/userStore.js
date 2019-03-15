@@ -4,7 +4,6 @@ import CoreUserStore from 'shared/AltStores/User/CoreUserStore'
 import { STORE_NAME } from 'shared/AltStores/User/AltUserIdentifiers'
 import PersistenceBootstrapper from './PersistenceBootstrapper'
 import actions from './userActions'  // eslint-disable-line
-import pkg from 'package.json'
 import semver from 'semver'
 import userPersistence from 'Storage/userStorage'
 import wirePersistence from 'Storage/wireStorage'
@@ -36,19 +35,6 @@ class UserStore extends CoreUserStore {
     /* ****************************************/
     // Extensions
     /* ****************************************/
-
-    /**
-    * @return all the extensions supported in this version
-    */
-    this.supportedExtensionList = () => {
-      return this.extensionList().filter((ext) => {
-        try {
-          return semver.gte(pkg.version, ext.minVersion)
-        } catch (ex) {
-          return false
-        }
-      })
-    }
 
     /**
     * @return the launch settings

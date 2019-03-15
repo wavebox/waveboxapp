@@ -48,7 +48,7 @@ class Port {
       // Re-queuing this seems to mimic the behaviour of chrome more closely.
       // It can prevent ipc-loops. LP has this problem
       setTimeout(() => {
-        this.onMessage.emit(message, this.sender)
+        this.onMessage.emit(JSON.parse(message), this.sender)
       })
     })
   }
@@ -80,7 +80,7 @@ class Port {
     // Re-queuing this seems to mimic the behaviour of chrome more closely.
     // It can prevent ipc-loops. LP has this problem
     setTimeout(() => {
-      ipcRenderer.sendToAll(this[privTabId], `${CRX_PORT_POSTMESSAGE_}${this[privPortId]}`, message)
+      ipcRenderer.sendToAll(this[privTabId], `${CRX_PORT_POSTMESSAGE_}${this[privPortId]}`, JSON.stringify(message))
     })
   }
 }

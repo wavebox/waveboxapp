@@ -169,6 +169,15 @@ class CRExtensionManager {
       .filter((info) => !disabledIds.has(info.extensionId))
 
     extensions.forEach((info) => {
+      // Migrate first
+      try {
+        info = CRExtensionFS.migrateWaveboxNamespacedExtension(info)
+      } catch (ex) {
+        console.error('Failed to migrate extension. Refusing to load', ex)
+        return
+      }
+
+      // Load into app
       try {
         this.loadExtensionVersion(info.extensionId, info.versionString)
       } catch (ex) {

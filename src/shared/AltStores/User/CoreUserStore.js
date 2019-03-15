@@ -1,6 +1,9 @@
 import RemoteStore from '../RemoteStore'
 import User from '../../Models/User/User'
 import { ACContainer, ACContainerSAPI } from '../../Models/ACContainer'
+import pkg from 'package.json'
+import semver from 'semver'
+
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
@@ -73,6 +76,21 @@ class CoreUserStore extends RemoteStore {
         .filter((ext) => this.user && !this.user.hasExtensionWithLevel(ext.availableTo))
         .map((ext) => ext.id)
       return new Set(ids)
+    }
+
+    /**
+    * @return all the extensions supported in this version
+    */
+    this.supportedExtensionList = () => {
+      return this.extensionList().filter((ext) => {
+        try {
+          const satisfyMinVersion = ext.minVersion ? semver.gte(pkg.version, ext.minVersion) : true
+          const satisfyMaxVersion = ext.maxVersion ? semver.lte(pkg.version, ext.maxVersion) : true
+          return satisfyMinVersion && satisfyMaxVersion
+        } catch (ex) {
+          return false
+        }
+      })
     }
 
     /* ****************************************/

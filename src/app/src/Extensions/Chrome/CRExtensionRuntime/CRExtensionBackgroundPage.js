@@ -11,7 +11,6 @@ import {
 } from 'shared/crExtensionIpcEvents'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
-import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import CRExtensionPopupWindow from './CRExtensionPopupWindow'
 import CRExtensionTab from './CRExtensionTab'
@@ -150,12 +149,6 @@ class CRExtensionBackgroundPage {
       (evt) => evt.preventDefault()
     )
 
-    // Update cors via the extension config
-    SessionManager
-      .webRequestEmitterFromPartitionId(this.partitionId)
-      .beforeSendHeaders
-      .onBlocking(undefined, this._handleBeforeSendHeaders)
-
     // Relax cors for extensions that request it
     SessionManager
       .webRequestEmitterFromPartitionId(this.partitionId)
@@ -202,26 +195,6 @@ class CRExtensionBackgroundPage {
   /* ****************************************************************************/
 
   /**
-  * Handles the before send headers event
-  * @param details: the details of the request
-  * @param responder: function to call with updated headers
-  */
-  _handleBeforeSendHeaders = (details, responder) => {
-    if (this.isRunning && this.webContentsId === details.webContentsId) {
-      if (details.resourceType === 'xhr') {
-        return responder({
-          requestHeaders: {
-            ...details.requestHeaders,
-            'Origin': ['null']
-          }
-        })
-      }
-    }
-
-    responder({})
-  }
-
-  /**
   * Handles the headers being received and updates them if required
   * @param details: the details of the request
   * @param responder: function to call with updated headers
@@ -229,24 +202,21 @@ class CRExtensionBackgroundPage {
   _handleAllUrlHeadersReceived = (details, responder) => {
     if (this.isRunning && this.webContentsId === details.webContentsId) {
       if (details.resourceType === 'xhr') {
-        const { protocol, hostname, pathname } = new URL(details.url)
-        if (CRExtensionMatchPatterns.matchUrls(protocol, hostname, pathname, Array.from(this.extension.manifest.permissions))) {
-          const responseHeaders = details.responseHeaders
-          const requestHeaders = details.headers
-          const updatedHeaders = {
-            ...responseHeaders,
-            'access-control-allow-credentials': responseHeaders['access-control-allow-credentials'] || ['true'],
-            'access-control-allow-headers': [].concat(
-              responseHeaders['access-control-allow-headers'],
-              requestHeaders['Access-Control-Request-Headers'],
-              Object.keys(requestHeaders).filter((k) => k.startsWith('X-'))
-            ),
-            'access-control-allow-origin': [
-              `${CR_EXTENSION_PROTOCOL}://${this.extension.id}`
-            ]
-          }
-          return responder({ responseHeaders: updatedHeaders })
+        const responseHeaders = details.responseHeaders
+        const requestHeaders = details.headers
+        const updatedHeaders = {
+          ...responseHeaders,
+          'access-control-allow-credentials': responseHeaders['access-control-allow-credentials'] || ['true'],
+          'access-control-allow-headers': [].concat(
+            responseHeaders['access-control-allow-headers'],
+            requestHeaders['Access-Control-Request-Headers'],
+            Object.keys(requestHeaders).filter((k) => k.toLowerCase().startsWith('x-'))
+          ),
+          'access-control-allow-origin': [
+            `${CR_EXTENSION_PROTOCOL}://${this.extension.id}`
+          ]
         }
+        return responder({ responseHeaders: updatedHeaders })
       }
     }
     return responder({})
