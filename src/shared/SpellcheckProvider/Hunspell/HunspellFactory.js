@@ -39,7 +39,7 @@ class HunspellFactory {
           if (this[privIsLoading]) { return }
 
           this[privIsLoading] = true
-          loadModule().then((factory) => {
+          loadModule({ timeout: 20000 }).then((factory) => {
             const loadCallbacks = this[privLoadCallbacks]
             this[privFactory] = factory
             this[privIsLoading] = false

@@ -48,7 +48,7 @@ class ContainerService extends CoreACService {
   get supportsTrayMessages () { return this.containerSAPI.getSupportsTrayMessages(this.container.supportsTrayMessages) }
   get supportsSyncedDiffNotifications () { return false }
   get supportsNativeNotifications () { return false }
-  get supportsGuestNotifications () { this.containerSAPI.getSupportsGuestNotifications(this.container.supportsGuestNotifications) }
+  get supportsGuestNotifications () { return this.containerSAPI.getSupportsGuestNotifications(this.container.supportsGuestNotifications) }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return this.containerSAPI.getSupportsWBGAPI(this.container.supportsWBGAPI) }
   get supportedAuthNamespace () { return undefined }

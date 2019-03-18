@@ -322,12 +322,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       // Prepare for teardown
       evt.sender.once('render-view-deleted', () => {
         if (runtime && runtime.backgroundPage && runtime.backgroundPage.isRunning) {
-          runtime.backgroundPage.webContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+          runtime.backgroundPage.webContents.send(`${CRX_PORT_DISCONNECTED_}${portId}`)
         }
       })
 
       // Emit the connect event
-      runtime.backgroundPage.webContents.sendToAll(
+      runtime.backgroundPage.webContents.send(
         `${CRX_PORT_CONNECTED_}${extensionId}`,
         portId,
         {

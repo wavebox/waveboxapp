@@ -4,8 +4,6 @@ import alt from '../alt'
 import actions from './userActions'
 import { WaveboxHTTP } from 'Server'
 import { ipcRenderer } from 'electron'
-import semver from 'semver'
-import pkg from 'package.json'
 import ParallelHttpTracker from 'shared/AltStores/ParallelHttpTracker'
 import TakeoutService from './TakeoutService'
 import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
@@ -41,23 +39,6 @@ class UserStore extends RendererUserStore {
     this.userProfilesFetch = new ParallelHttpTracker(ParallelHttpTracker.PARALLEL_MODES.STRICT_SINGLETON, 'FetchUserProfiles')
     this.userProfileUploadAfter = null
     this.userProfileRetryUpload = null
-
-    /* ****************************************/
-    // Extensions
-    /* ****************************************/
-
-    /**
-    * @return all the extensions supported in this version
-    */
-    this.supportedExtensionList = () => {
-      return this.extensionList().filter((ext) => {
-        try {
-          return semver.gte(pkg.version, ext.minVersion)
-        } catch (ex) {
-          return false
-        }
-      })
-    }
 
     /* ****************************************/
     // Listeners
