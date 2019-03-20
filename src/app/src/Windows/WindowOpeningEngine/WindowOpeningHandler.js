@@ -82,7 +82,10 @@ class WindowOpeningHandler {
 
     // Check if the kill-switch is set for this
     if (settingsState.app.enableWindowOpeningEngine === false) {
-      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, targetUrl)
+      const bestOpenUrl = (!targetUrl || targetUrl === 'about:blank') && provisionalTargetUrl && provisionalTargetUrl !== 'about:blank'
+        ? provisionalTargetUrl
+        : targetUrl
+      this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, bestOpenUrl)
       return
     }
 
