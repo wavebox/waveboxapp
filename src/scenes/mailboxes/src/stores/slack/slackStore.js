@@ -231,7 +231,6 @@ class SlackStore {
 
       PowerMonitorService.querySystemIdleTime()
         .then((idleTime) => {
-          console.log(idleTime)
           if (idleTime * 1000 > SLACK_TICKLE_IDLE_MAX_MS) { return }
           rtm.send('tickle')
         })
