@@ -1,3 +1,4 @@
+import AirtableAdaptor from './Sites/AirtableAdaptor'
 import AsanaAdaptor from './Sites/AsanaAdaptor'
 import GmailGinboxAdaptor from './Sites/GmailGinboxAdaptor'
 import GoogleAlloAdaptor from './Sites/GoogleAlloAdaptor'
@@ -8,6 +9,7 @@ import SlackAdaptor from './Sites/SlackAdaptor'
 import TrelloAdaptor from './Sites/TrelloAdaptor'
 
 const registry = [
+  AirtableAdaptor,
   AsanaAdaptor,
   GmailGinboxAdaptor,
   GoogleAlloAdaptor,
