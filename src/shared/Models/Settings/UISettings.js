@@ -81,6 +81,7 @@ class UISettings extends Model {
   get vibrancyMode () { return this._value_('vibrancyMode', VIBRANCY_MODES.NONE) }
   get electronVibrancyMode () { return ELECTRON_VIBRANCY_MODES[this.vibrancyMode] }
   get warnBeforeKeyboardQuitting () { return this._value_('warnBeforeKeyboardQuitting', true) }
+  get showFullscreenHelper () { return this._value_('showFullscreenHelper', true) }
 
   /* **************************************************************************/
   // Sidebar

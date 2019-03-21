@@ -50,7 +50,8 @@ export default class UISettingsSection extends React.Component {
         'theme',
         'sidebarSize',
         'showSidebarScrollbars',
-        'warnBeforeKeyboardQuitting'
+        'warnBeforeKeyboardQuitting',
+        'showFullscreenHelper'
       ]) ||
       modelCompare(this.props.accelerators, nextProps.accelerators, [
         'toggleSidebar',
@@ -100,6 +101,10 @@ export default class UISettingsSection extends React.Component {
             )}
             onChange={(evt, toggled) => settingsActions.sub.ui.setWarnBeforeKeyboardQuitting(toggled)}
             checked={ui.warnBeforeKeyboardQuitting} />
+          <SettingsListItemSwitch
+            label='Show toast helper when entering fullscreen'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowFullscreenHelper(toggled)}
+            checked={ui.showFullscreenHelper} />
           <SettingsListItemSelectInline
             label='App theme'
             divider={process.platform === 'darwin'}

@@ -162,6 +162,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param show: true to show the fullscreen helper
+  */
+  setShowFullscreenHelper (show) {
+    this.dispatchUpdate('showFullscreenHelper', show)
+  }
+
+  /**
   * @param theme: the theme to set
   */
   setTheme (theme) {
