@@ -12,7 +12,6 @@ import {
 import { UISettings } from 'shared/Models/Settings'
 import settingStore from 'stores/settingStore'
 import LiveConfig from 'LiveConfig'
-import { ExtensionLoader } from 'Browser'
 
 class GmailGinboxAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -51,7 +50,6 @@ class GmailGinboxAdaptor extends BaseAdaptor {
     // Bind our listeners
     ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange)
     ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage)
-    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN)
 
     if (this.isGmail) {
       this.loadGmailAPI()

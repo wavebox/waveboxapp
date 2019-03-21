@@ -81,7 +81,9 @@ class WindowOpeningRules {
       ? {
         match: true,
         mode: match.mode.toUpperCase(),
-        ignoreUserCommandKeyModifier: match.ignoreUserCommandKeyModifier
+        ignoreUserCommandKeyModifier: match.ignoreUserCommandKeyModifier,
+        allowBlankPopupToRewrite: match.allowBlankPopupToRewrite,
+        disallowFromBlankPopup: match.disallowFromBlankPopup
       }
       : { match: false }
   }
@@ -100,7 +102,9 @@ class WindowOpeningRules {
           site: site,
           rule: matchedRule,
           mode: matchedRule.mode,
-          ignoreUserCommandKeyModifier: matchedRule.ignoreUserCommandKeyModifier === true
+          ignoreUserCommandKeyModifier: matchedRule.ignoreUserCommandKeyModifier === true,
+          allowBlankPopupToRewrite: matchedRule.allowBlankPopupToRewrite === true,
+          disallowFromBlankPopup: matchedRule.disallowFromBlankPopup === true
         }
         return true
       } else {

@@ -11,6 +11,7 @@ import { WB_USER_RECORD_NEXT_WINDOW_OPEN_EVENT } from 'shared/ipcEvents'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { OSSettings } from 'shared/Models/Settings'
 import WindowOpeningOpeners from './WindowOpeningOpeners'
+import SessionManager from 'SessionManager/SessionManager'
 
 const privWindowOpeningOpeners = Symbol('privWindowOpeningOpeners')
 const privRecordOpenEvent = Symbol('privRecordOpenEvent')
@@ -82,7 +83,7 @@ class WindowOpeningHandler {
 
     // Check if the kill-switch is set for this
     if (settingsState.app.enableWindowOpeningEngine === false) {
-      const bestOpenUrl = (!targetUrl || targetUrl === 'about:blank') && provisionalTargetUrl && provisionalTargetUrl !== 'about:blank'
+      const bestOpenUrl = (targetUrl || 'about:blank') === 'about:blank' && (provisionalTargetUrl || 'about:blank') !== 'about:blank'
         ? provisionalTargetUrl
         : targetUrl
       this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, bestOpenUrl)
@@ -90,17 +91,20 @@ class WindowOpeningHandler {
     }
 
     // Setup our state
-    let openMode = defaultOpenMode
-    let ignoreUserCommandKeyModifier = false
-    let partitionOverride
+    let openRule = {
+      openMode: defaultOpenMode,
+      ignoreUserCommandKeyModifier: false,
+      partitionOverride: undefined,
+      allowBlankPopupToRewrite: false,
+      disallowFromBlankPopup: false
+    }
 
     // Run through our standard config
     try {
       const rule = WindowOpeningEngine.getRuleForWindowOpen(currentHostUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
-      openMode = rule.mode
-      ignoreUserCommandKeyModifier = rule.ignoreUserCommandKeyModifier
+      openRule = rule
     } catch (ex) {
-      console.error(`Failed to process default window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+      console.error(`Failed to process default window opening rules. Continuing with "${openRule.mode}" behaviour...`, ex)
     }
 
     // Look to see if the mailbox has an override
@@ -113,11 +117,10 @@ class WindowOpeningHandler {
           const rules = new WindowOpeningRules(0, mailboxRulesets)
           const rule = rules.getMatchingRuleConfig(matchTask)
           if (rule.match && WINDOW_OPEN_MODES[rule.mode]) {
-            openMode = rule.mode
-            ignoreUserCommandKeyModifier = rule.ignoreUserCommandKeyModifier
+            openRule = rule
           }
         } catch (ex) {
-          console.error(`Failed to process mailbox "${mailbox.id}" window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+          console.error(`Failed to process mailbox "${mailbox.id}" window opening rules. Continuing with "${openRule.mode}" behaviour...`, ex)
         }
       }
     }
@@ -127,27 +130,26 @@ class WindowOpeningHandler {
     try {
       extensionRule = WindowOpeningEngine.getExtensionRuleForWindowOpen(webContentsId, targetUrl, disposition)
       if (extensionRule.match) {
-        openMode = extensionRule.mode
-        partitionOverride = extensionRule.partitionOverride
+        openRule = extensionRule
       }
     } catch (ex) {
-      console.error(`Failed to process extension window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+      console.error(`Failed to process extension window opening rules. Continuing with "${openRule.mode}" behaviour...`, ex)
     }
 
     // Look to see if the user wants to overwrite the behaviour
-    const preAppCommandOpenUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
-    if (!ignoreUserCommandKeyModifier) {
+    const preAppCommandOpenUrl = this._getNewWindowUrlFromMode(openRule.mode, targetUrl, provisionalTargetUrl)
+    if (!openRule.ignoreUserCommandKeyModifier) {
       if (WaveboxAppCommandKeyTracker.shiftPressed) {
-        openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
+        openRule.mode = this._commandLinkBehaviourToOpenMode(openRule.mode, settingsState.os.linkBehaviourWithShift)
       }
       if (WaveboxAppCommandKeyTracker.commandOrControlPressed) {
-        openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
+        openRule.mode = this._commandLinkBehaviourToOpenMode(openRule.mode, settingsState.os.linkBehaviourWithCmdOrCtrl)
       }
     }
 
     // Generate some opener info for the new window
     const saltedTabMetaInfo = this._autosaltTabMetaInfo(tabMetaInfo, currentUrl, webContentsId)
-    const openUrl = this._getNewWindowUrlFromMode(openMode, targetUrl, provisionalTargetUrl)
+    const openUrl = this._getNewWindowUrlFromMode(openRule.mode, targetUrl, provisionalTargetUrl)
     const updatedOptions = {
       ...options,
       ...(disposition === 'foreground-tab' // With foreground-tab we want to use the window to decide its sizing (normally derived from its parent)
@@ -157,9 +159,114 @@ class WindowOpeningHandler {
     }
 
     // Action the window open
-    switch (openMode) {
+    switch (openRule.mode) {
       case WINDOW_OPEN_MODES.POPUP_CONTENT:
         const openedWindow = this[privWindowOpeningOpeners].openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions)
+
+        // There are instances where sites open about:blank and then JS-write into the window a redirect
+        // via meta-equiv=refresh etc. Normally the goal of this is to lose the referer.
+        //
+        // Back from wmail days, we shimed window.open in some guest pages as we didn't have support for
+        // cross window writing. This stuck around far too long into wavebox and kind of worked, but
+        // there were instances where it did not.
+        //
+        // To support this better, run about:blank in POPUP_CONTENT windows, which allows the guest page
+        // to cross-js write. Check the first redirect and if we've gone from about:blank -> url.com
+        // re-run this through the engine to see if we should do something different with this.
+        //
+        // In Wavebox the referer would be lost here anyway, so at the pages request that still works.
+        // Examples of the behaviour include...
+        //     Gmail -> Github popouts in the subject line
+        //    Google chat -> Open windows
+        //    Skype -> Open links
+        if ((openUrl || 'about:blank') === 'about:blank' && openRule.allowBlankPopupToRewrite && !openedWindow.window.webContents.isDestroyed()) {
+          let timeout = null
+          const oWebContents = openedWindow.window.webContents
+          const webContentsId = oWebContents.id
+          const ses = oWebContents.session
+          const handleFirstRequest = (details, responder) => {
+            if (details.resourceType !== 'mainFrame') { return responder({}) }
+            if (details.webContentsId !== webContentsId) { return responder({}) }
+
+            // We're into the first request - unbind so we only listen once
+            clearTimeout(timeout)
+            SessionManager.webRequestEmitterFromSession(ses).beforeRequest.removeListener(handleFirstRequest)
+
+            // Sanity check something else hasn't happend
+            if (oWebContents.isDestroyed()) { return responder({}) }
+            if ((oWebContents.getURL() || 'about:blank') !== 'about:blank') { return responder({}) }
+
+            // See if we have a matching rule
+            const redirectUrl = details.url
+            let openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
+            let disallow = false
+            try {
+              const rule = WindowOpeningEngine.getRuleForWindowOpen(currentHostUrl, redirectUrl, openedWindow.windowType, '', `blank-popup-rewrite:${disposition}`)
+              openMode = rule.mode
+              disallow = rule.disallowFromBlankPopup
+            } catch (ex) {
+              console.error(`Failed to process default window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+            }
+            if (disallow) { return responder({}) }
+
+            // We only support a subset of modes here, for others allow the request to run
+            if ([
+              WINDOW_OPEN_MODES.POPUP_CONTENT,
+              WINDOW_OPEN_MODES.DOWNLOAD,
+              WINDOW_OPEN_MODES.CURRENT,
+              WINDOW_OPEN_MODES.CURRENT_PROVISIONAL,
+              WINDOW_OPEN_MODES.BLANK_AND_CURRENT,
+              WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL
+            ].includes(openMode)) { return responder({}) }
+
+            responder({ cancel: true })
+
+            setTimeout(() => { // Re-tick
+              if (!openedWindow.isDestroyed()) { openedWindow.close() }
+
+              switch (openMode) {
+                case WINDOW_OPEN_MODES.EXTERNAL:
+                case WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL:
+                  this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, redirectUrl)
+                  break
+                case WINDOW_OPEN_MODES.DEFAULT:
+                case WINDOW_OPEN_MODES.DEFAULT_IMPORTANT:
+                case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
+                case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
+                  this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, redirectUrl, updatedOptions, undefined)
+                  break
+                case WINDOW_OPEN_MODES.CONTENT:
+                case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
+                  this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, redirectUrl, updatedOptions, undefined)
+                  break
+                case WINDOW_OPEN_MODES.SUPPRESS:
+                  /* no-op */
+                  break
+                case WINDOW_OPEN_MODES.ASK_USER:
+                  // When we ask the user, we can gleem some info about the url from the original open mode we served
+                  this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, redirectUrl, updatedOptions, undefined, true)
+                  break
+                default:
+                  this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, redirectUrl)
+                  break
+              }
+            })
+          }
+
+          // Capture timeouts/clears
+          openedWindow.window.webContents.on('destroyed', () => {
+            clearTimeout(timeout)
+            SessionManager.webRequestEmitterFromSession(ses).beforeRequest.removeListener(handleFirstRequest)
+          })
+          timeout = setTimeout(() => {
+            clearTimeout(timeout)
+            SessionManager.webRequestEmitterFromSession(ses).beforeRequest.removeListener(handleFirstRequest)
+          }, 5000)
+
+          // Bind
+          SessionManager.webRequestEmitterFromSession(ses).beforeRequest.onBlocking(undefined, handleFirstRequest)
+        }
+
         evt.newGuest = openedWindow.window
         break
       case WINDOW_OPEN_MODES.EXTERNAL:
@@ -170,11 +277,11 @@ class WindowOpeningHandler {
       case WINDOW_OPEN_MODES.DEFAULT_IMPORTANT:
       case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL:
       case WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT:
-        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, openUrl, updatedOptions, partitionOverride)
+        this[privWindowOpeningOpeners].openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, openUrl, updatedOptions, openRule.partitionOverride)
         break
       case WINDOW_OPEN_MODES.CONTENT:
       case WINDOW_OPEN_MODES.CONTENT_PROVISIONAL:
-        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions, partitionOverride)
+        this[privWindowOpeningOpeners].openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, openUrl, updatedOptions, openRule.partitionOverride)
         break
       case WINDOW_OPEN_MODES.DOWNLOAD:
         evt.sender.downloadURL(openUrl)
@@ -193,7 +300,7 @@ class WindowOpeningHandler {
         break
       case WINDOW_OPEN_MODES.ASK_USER:
         // When we ask the user, we can gleem some info about the url from the original open mode we served
-        this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, preAppCommandOpenUrl, updatedOptions, partitionOverride, true)
+        this[privWindowOpeningOpeners].askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, preAppCommandOpenUrl, updatedOptions, openRule.partitionOverride, true)
         break
       default:
         this[privWindowOpeningOpeners].openWindowExternal(openingBrowserWindow, openUrl)
@@ -213,7 +320,7 @@ class WindowOpeningHandler {
         shiftPressed: WaveboxAppCommandKeyTracker.shiftPressed,
         commandOrControlPressed: WaveboxAppCommandKeyTracker.commandOrControlPressed,
         platform: process.platform,
-        openMode: openMode
+        openMode: openRule.mode
       }
       console.log('Window open event', openEvt)
       dialog.showMessageBox({
