@@ -4,7 +4,8 @@ import {
   WB_GET_POWER_MONITOR_STATE_SYNC,
   WB_POWER_MONITOR_CONNECT_EVENTS,
   WB_POWER_MONITOR_DISCONNECT_EVENTS,
-  WB_POWER_MONITOR_EVENT
+  WB_POWER_MONITOR_EVENT,
+  WB_POWER_MONITOR_QUERY_IDLE_TIME
 } from 'shared/ipcEvents'
 
 const privSuspended = Symbol('privSuspended')
@@ -33,6 +34,7 @@ class PowerMonitorService extends EventEmitter {
     ipcMain.on(WB_GET_POWER_MONITOR_STATE_SYNC, this._handleIpcGetStateSync)
     ipcMain.on(WB_POWER_MONITOR_CONNECT_EVENTS, this._handleIpcConnectEvents)
     ipcMain.on(WB_POWER_MONITOR_DISCONNECT_EVENTS, this._handleIpcDisconnectEvents)
+    ipcMain.on(WB_POWER_MONITOR_QUERY_IDLE_TIME, this._handleIpcQueryIdleTime)
   }
 
   /* ****************************************************************************/
@@ -143,6 +145,18 @@ class PowerMonitorService extends EventEmitter {
   */
   _handleIpcDisconnectEvents = (evt) => {
     this[privConnectedRemote].delete(evt.sender.webContentsId)
+  }
+
+  /**
+  * Handles the ipc channel asking for the idle time
+  * @param evt: the event that fired
+  * @param returnChannel: the return channel to send the response
+  */
+  _handleIpcQueryIdleTime = (evt, returnChannel) => {
+    electron.powerMonitor.querySystemIdleTime((idleTime) => {
+      if (evt.sender.isDestroyed()) { return }
+      evt.sender.send(returnChannel, idleTime)
+    })
   }
 }
 

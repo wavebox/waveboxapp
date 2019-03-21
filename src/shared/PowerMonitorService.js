@@ -3,8 +3,10 @@ import { EventEmitter } from 'events'
 import {
   WB_GET_POWER_MONITOR_STATE_SYNC,
   WB_POWER_MONITOR_CONNECT_EVENTS,
-  WB_POWER_MONITOR_EVENT
+  WB_POWER_MONITOR_EVENT,
+  WB_POWER_MONITOR_QUERY_IDLE_TIME
 } from './ipcEvents'
+import uuid from 'uuid'
 
 const privState = Symbol('privState')
 const privConnected = Symbol('privConnected')
@@ -41,6 +43,31 @@ class PowerMonitorService extends EventEmitter {
 
   get isSuspended () { return this._ensureConnected()[privState].isSuspended }
   get isScreenLocked () { return this._ensureConnected()[privState].isScreenLocked }
+
+  /* **************************************************************************/
+  // Querying
+  /* **************************************************************************/
+
+  /**
+  * Gets the current system idle time
+  * @return promise
+  */
+  querySystemIdleTime () {
+    return new Promise((resolve, reject) => {
+      let timeout = null
+      const returnChannel = `${WB_POWER_MONITOR_QUERY_IDLE_TIME}_${uuid.v4()}`
+      const returnFn = (evt, idleTime) => {
+        clearTimeout(timeout)
+        resolve(idleTime)
+      }
+      timeout = setTimeout(() => {
+        ipcRenderer.removeListener(returnChannel, returnFn)
+        reject(new Error('Timeout'))
+      }, 1000)
+      ipcRenderer.once(returnChannel, returnFn)
+      ipcRenderer.send(WB_POWER_MONITOR_QUERY_IDLE_TIME, returnChannel)
+    })
+  }
 
   /* **************************************************************************/
   // ipc events
