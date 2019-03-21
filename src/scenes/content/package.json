@@ -6,10 +6,10 @@
   "description": "Content UI for Wavebox",
   "dependencies": {
     "@fortawesome/fontawesome": "1.1.8",
-    "@fortawesome/fontawesome-svg-core": "1.2.15",
-    "@fortawesome/free-brands-svg-icons": "5.7.2",
-    "@fortawesome/free-regular-svg-icons": "5.7.2",
-    "@fortawesome/free-solid-svg-icons": "5.7.2",
+    "@fortawesome/fontawesome-svg-core": "1.2.16",
+    "@fortawesome/free-brands-svg-icons": "5.8.0",
+    "@fortawesome/free-regular-svg-icons": "5.8.0",
+    "@fortawesome/free-solid-svg-icons": "5.8.0",
     "@fortawesome/react-fontawesome": "0.1.4",
     "@material-ui/core": "3.9.2",
     "@material-ui/icons": "3.0.2",
@@ -24,13 +24,14 @@
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.8.4",
-    "react-router-dom": "4.3.1",
+    "react-router": "5.0.0",
+    "react-router-dom": "5.0.0",
     "uuid": "3.3.2"
   },
   "optionalDependencies": {
-    "@fortawesome/pro-light-svg-icons": "5.7.2",
-    "@fortawesome/pro-regular-svg-icons": "5.7.2",
-    "@fortawesome/pro-solid-svg-icons": "5.7.2"
+    "@fortawesome/pro-light-svg-icons": "5.8.0",
+    "@fortawesome/pro-regular-svg-icons": "5.8.0",
+    "@fortawesome/pro-solid-svg-icons": "5.8.0"
   },
   "devDependencies": {
     "standard": "12.0.1",
