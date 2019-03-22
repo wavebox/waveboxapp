@@ -15,7 +15,8 @@ class RendererSettingsStore extends CoreSettingsStore {
 
     const actions = this.alt.getActions(ACTIONS_NAME)
     this.bindActions({
-      handleRemoteSetSettingsModel: actions.REMOTE_SET_SETTINGS_MODEL
+      handleRemoteSetSettingsModel: actions.REMOTE_SET_SETTINGS_MODEL,
+      handleRemoteSetAsset: actions.REMOTE_SET_ASSET
     })
   }
 
@@ -25,6 +26,10 @@ class RendererSettingsStore extends CoreSettingsStore {
 
   handleRemoteSetSettingsModel ({ id, modelJS }) {
     this[id] = this.modelize(id, modelJS)
+  }
+
+  handleRemoteSetAsset ({ id, b64Asset }) {
+    this._assets_.set(id, b64Asset)
   }
 }
 

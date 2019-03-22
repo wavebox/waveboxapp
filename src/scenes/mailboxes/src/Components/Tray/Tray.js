@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { BLANK_PNG } from 'shared/b64Assets'
 import { accountStore } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
@@ -39,9 +40,7 @@ export default class Tray extends React.Component {
 
   static propTypes = { // Careful we're strict in shouldComponentUpdate
     unreadCount: PropTypes.number.isRequired,
-    hasUnreadActivity: PropTypes.bool.isRequired,
-    traySettings: PropTypes.object.isRequired,
-    launchTraySettings: PropTypes.object.isRequired
+    hasUnreadActivity: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -51,34 +50,47 @@ export default class Tray extends React.Component {
   constructor (props) {
     super(props)
 
+    const settingsState = settingsStore.getState()
+
+    // Class vars
     this.trayIconInitialized = false
+    this.deferredClickTO = null
+    this.contextMenu = null
+
+    // Build the tray
+    if (IS_GTK_PLATFORM && settingsState.launched.tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
+      const image = remote.nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
+      const resizedImage = image.resize({ width: settingsState.launched.tray.iconSize, height: settingsState.launched.tray.iconSize })
+      this.appTray = this.createTray(resizedImage)
+    } else {
+      this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
+    }
+
+    // Prep context menu renderer
+    this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
+    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
+      this.unreadCtxRenderer.build(accountStore.getState())
+    }
+
+    // Generate state
+    this.state = { // Careful we're strict in shouldComponentUpdate
+      ctxMenuSig: this.unreadCtxRenderer.signature,
+      tray: settingsState.tray,
+      launchTray: settingsState.launched.tray,
+      unreadImage: settingsState.getTrayUnreadImage(),
+      readImage: settingsState.getTrayReadImage()
+    }
   }
 
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
-  componentWillMount () {
-    const {
-      launchTraySettings
-    } = this.props
-
-    if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
-      const image = remote.nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
-      const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
-      this.appTray = this.createTray(resizedImage)
-    } else {
-      this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
-    }
-    this.deferredClickTO = null
-
-    this.contextMenu = null
-  }
-
   componentDidMount () {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       accountStore.listen(this.accountUpdated)
     }
+    settingsStore.listen(this.settingsUpdated)
 
     ipcRenderer.on(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
   }
@@ -89,6 +101,7 @@ export default class Tray extends React.Component {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       accountStore.unlisten(this.accountUpdated)
     }
+    settingsStore.unlisten(this.settingsUpdated)
 
     ipcRenderer.removeListener(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
     ipcRenderer.send(WB_TRAY_ICON_DESTROYED)
@@ -98,16 +111,6 @@ export default class Tray extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => { // Careful we're strict in shouldComponentUpdate
-    this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
-    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      this.unreadCtxRenderer.build(accountStore.getState())
-    }
-    return {
-      ctxMenuSig: this.unreadCtxRenderer.signature
-    }
-  })()
-
   accountUpdated = (accountState) => {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       this.unreadCtxRenderer.build(accountState)
@@ -115,6 +118,15 @@ export default class Tray extends React.Component {
         ctxMenuSig: this.unreadCtxRenderer.signature
       })
     }
+  }
+
+  settingsUpdated = (settingsState) => {
+    this.setState({
+      unreadImage: settingsState.getTrayUnreadImage(),
+      readImage: settingsState.getTrayReadImage(),
+      tray: settingsState.tray
+      // No need to update launchTray
+    })
   }
 
   /* **************************************************************************/
@@ -166,7 +178,7 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleClick = (evt, bounds) => {
-    const { clickAction, doubleClickAction, altClickAction } = this.props.traySettings
+    const { clickAction, doubleClickAction, altClickAction } = this.state.tray
     if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
       // Click and double-click both fire on macOS and win32. To make sure we don't double trigger,
       // delay the click slightly to wait and see if double click comes in waveboxapp#707
@@ -191,7 +203,8 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleRightClick = (evt, bounds) => {
-    this.dispatchClickAction(this.props.traySettings.rightClickAction, bounds)
+    const { rightClickAction } = this.state.tray
+    this.dispatchClickAction(rightClickAction, bounds)
   }
 
   /**
@@ -201,7 +214,8 @@ export default class Tray extends React.Component {
   */
   handleDoubleClick = (evt, bounds) => {
     clearTimeout(this.deferredClickTO)
-    this.dispatchClickAction(this.props.traySettings.doubleClickAction, bounds)
+    const { doubleClickAction } = this.state.tray
+    this.dispatchClickAction(doubleClickAction, bounds)
   }
 
   /**
@@ -301,12 +315,13 @@ export default class Tray extends React.Component {
       'readBackgroundColor',
       'showUnreadCount',
       'dpiMultiplier',
-      'iconSize'
-    ].findIndex((k) => {
-      return this.props.traySettings[k] !== nextProps.traySettings[k]
-    }) !== -1
+      'iconSize',
+      'useCustomImages'
+    ].findIndex((k) => this.state.tray[k] !== nextState.tray[k]) !== -1
     if (trayDiff) { return true }
     if (this.state.ctxMenuSig !== nextState.ctxMenuSig) { return true }
+    if (this.state.readImage !== nextState.readImage) { return true }
+    if (this.state.unreadImage !== nextState.unreadImage) { return true }
 
     return false
   }
@@ -352,26 +367,35 @@ export default class Tray extends React.Component {
   render () {
     const {
       unreadCount,
-      hasUnreadActivity,
-      traySettings,
-      launchTraySettings
+      hasUnreadActivity
     } = this.props
+    const {
+      tray,
+      launchTray,
+      unreadImage,
+      readImage
+    } = this.state
 
     // Making subsequent calls to the promise can cause the return order to change
     // Guard against this using the renderId
     const renderId = uuid.v4()
     this.renderId = renderId
 
-    TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount, hasUnreadActivity)
+    Promise.resolve()
+      .then(() => {
+        return tray.useCustomImages
+          ? TrayRenderer.renderNativeUserImage(tray.iconSize, unreadImage, readImage, Resolver.icon('app_64.png', Resolver.API_TYPES.NODE), unreadCount, hasUnreadActivity)
+          : TrayRenderer.renderNativeImage(tray.iconSize, tray, unreadCount, hasUnreadActivity)
+      })
       .then((image) => {
         if (this.renderId !== renderId) { return } // Someone got in before us
 
         // Update the icon
         if (IS_GTK_PLATFORM) {
-          if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.RECREATE) {
+          if (launchTray.gtkUpdateMode === GTK_UPDATE_MODES.RECREATE) {
             this.appTray = this.destroyTray(this.appTray)
             this.appTray = this.createTray(image)
-          } else if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.UPDATE) {
+          } else if (launchTray.gtkUpdateMode === GTK_UPDATE_MODES.UPDATE) {
             this.appTray.setImage(image)
           } else {
             // We don't update the image on static
@@ -387,11 +411,9 @@ export default class Tray extends React.Component {
           this.contextMenu = this.renderContextMenu()
           this.appTray.setContextMenu(this.contextMenu)
           if (lastContextMenu) {
-            // Wait some time for the linuc dbus-menu to catch up. Not waiting appears to be the
+            // Wait some time for the linux dbus-menu to catch up. Not waiting appears to be the
             // root cause of #790. Shouldn't do any harm on other platforms either
-            setTimeout(() => {
-              lastContextMenu.destroy()
-            }, 1000)
+            setTimeout(() => { lastContextMenu.destroy() }, 1000)
           }
         }
 

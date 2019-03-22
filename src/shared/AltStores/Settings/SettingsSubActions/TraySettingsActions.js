@@ -82,6 +82,13 @@ class TraySettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param use: true to use custom image
+  */
+  setUseCustomImages (use) {
+    this.dispatchUpdate('useCustomImages', use)
+  }
+
+  /**
   * Resets the tray unread colors to be the defaults
   */
   resetTrayUnreadColors () {

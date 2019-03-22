@@ -164,6 +164,36 @@ class CoreSettingsActions extends RemoteActions {
       return this.remoteDispatch('removeCustomLinkProvider', args)
     }
   }
+
+  /* **************************************************************************/
+  // Updates: Tray
+  /* **************************************************************************/
+
+  /**
+  * Sets the unread image for the tray
+  * @param b64Image: the base64 encoded image
+  */
+  setTrayUnreadImage (...args) {
+    if (process.type === 'browser') {
+      const [b64Image] = args
+      return { b64Image }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setTrayUnreadImage', args)
+    }
+  }
+
+  /**
+  * Sets the read image for the tray
+  * @param b64Image: the base64 encoded image
+  */
+  setTrayReadImage (...args) {
+    if (process.type === 'browser') {
+      const [b64Image] = args
+      return { b64Image }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setTrayReadImage', args)
+    }
+  }
 }
 
 export default CoreSettingsActions

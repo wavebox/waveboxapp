@@ -277,7 +277,7 @@ class TrayRenderer {
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
   * @param hasUnreadActivity: true if we have unread activity
-  * @return the native image
+  * @return promise that generates the native image
   */
   static renderNativeImage (size, tray, unreadCount, hasUnreadActivity) {
     return Promise.resolve()
@@ -290,6 +290,27 @@ class TrayRenderer {
           scaleFactor: tray.dpiMultiplier
         }))
       })
+  }
+
+  /**
+  * Renders a users custom image
+  * @param size: the pixel size to render
+  * @param unreadImageB64: the unread image to render (base64)
+  * @param readImageB64: ths read image to render (base64)
+  * @param missingImagePath: the path to the missing image (node path)
+  * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
+  * @return promise that generates the native image
+  */
+  static renderNativeUserImage (size, unreadImageB64, readImageB64, missingImagePath, unreadCount, hasUnreadActivity) {
+    const userImageSrc = unreadCount || hasUnreadActivity
+      ? unreadImageB64
+      : readImageB64
+    const nativeImage = userImageSrc
+      ? electron.remote.nativeImage.createFromDataURL(userImageSrc)
+      : electron.remote.nativeImage.createFromPath(missingImagePath)
+    const sizedNativeImage = nativeImage.resize({ width: size, height: size })
+    return Promise.resolve(sizedNativeImage)
   }
 }
 

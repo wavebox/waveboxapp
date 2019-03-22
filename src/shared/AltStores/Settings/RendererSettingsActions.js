@@ -32,6 +32,19 @@ class RendererSettingsActions extends CoreSettingsActions {
   * @param modelJS: the js of the model
   */
   remoteSetSettingsModel (id, modelJS) { return { id, modelJS } }
+
+  /* **************************************************************************/
+  // Assets
+  /* **************************************************************************/
+
+  /**
+  * Remotely sets an asset
+  * @param id: the id of the avatar
+  * @param b64Asset: the asset to set
+  */
+  remoteSetAsset (id, b64Asset) {
+    return { id, b64Asset }
+  }
 }
 
 export default RendererSettingsActions
