@@ -7,7 +7,7 @@ class SettAssetStorageBucket extends StorageBucket {
   /* ****************************************************************************/
 
   constructor () {
-    super('settassets')
+    super('settasset')
   }
 
   /* ****************************************************************************/
