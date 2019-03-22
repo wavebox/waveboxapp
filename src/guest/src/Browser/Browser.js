@@ -55,7 +55,6 @@ class Browser {
     this[privCRExtensionLoader] = new CRExtensionLoader()
     this[privCRExtensionLoader].load()
     ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.CHROME)
-    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.NAVIGATOR)
   }
 }
 
