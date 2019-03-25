@@ -44,7 +44,10 @@ class CoreACServiceData extends CoreACModel {
     const raw = this._value_('favicons', [])
     return raw
       .map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
-      .filter((f) => f.endsWith('.png') || f.endsWith('.ico') || f.endsWith('.jpg') || f.endsWith('.gif')) // some websites send junk
+      .filter((f) => { // some websites send junk
+        const base = f.split('?')[0]
+        return base.endsWith('.png') || base.endsWith('.ico') || base.endsWith('.jpg') || base.endsWith('.gif')
+      })
   }
   get largestFavicon () {
     const favicons = this.favicons
