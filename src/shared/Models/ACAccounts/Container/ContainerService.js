@@ -83,9 +83,10 @@ class ContainerService extends CoreACService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get url () { return this.container.getUrlWithSubdomain(this.urlSubdomain) }
+  get url () { return this.container.getUrlWithConfig(this.urlOverwrite, this.urlSubdomain) }
   get reloadBehaviour () { return CoreACService.RELOAD_BEHAVIOURS[this.container.reloadBehaviour] || super.reloadBehaviour }
   get urlSubdomain () { return this._value_('urlSubdomain', '') }
+  get urlOverwrite () { return this._value_('urlOverwrite', '') }
   get useAsyncAlerts () { return this.containerSAPI.getUseAsyncAlerts(this.container.useAsyncAlerts) }
   get html5NotificationsGenerateUnreadActivity () { return this.containerSAPI.getHtml5NotificationsGenerateUnreadActivity(this.container.html5NotificationsGenerateUnreadActivity) }
 
