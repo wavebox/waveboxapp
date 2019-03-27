@@ -24,6 +24,18 @@ class CoreGoogleMailServiceReducer extends ServiceReducer {
     })
   }
 
+  // @Thomas101#22
+  static copyProfileInfoFromAuth (service, email, avatar) {
+    const changeset = {}
+    if (email) { changeset.serviceDisplayName = email }
+    if (avatar) { changeset.serviceAvatarURL = avatar }
+    if (Object.keys(changeset).length) {
+      return service.changeData(changeset)
+    } else {
+      return undefined
+    }
+  }
+
   /**
   * Sets the inbox type
   * @param service: the servie to update

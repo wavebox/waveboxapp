@@ -102,7 +102,7 @@ class CoreGoogleMailService extends CoreACService {
   /* **************************************************************************/
 
   get customUnreadQuery () { return this._value_('customUnreadQuery', '').trim() }
-  get hasCustomUnreadQuery () { return !!this.customUnreadQuery }
+  get hasCustomUnreadQuery () { return false }
   get customUnreadLabelWatchString () { return this._value_('customUnreadLabelWatchString', '').trim() }
   get customUnreadLabelWatchArray () {
     return this.customUnreadLabelWatchString

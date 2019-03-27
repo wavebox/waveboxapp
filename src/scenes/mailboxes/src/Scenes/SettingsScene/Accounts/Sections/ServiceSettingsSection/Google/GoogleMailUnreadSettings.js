@@ -3,16 +3,11 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
-import SettingsListItem from 'wbui/SettingsListItem'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import CheckBoxOutlineIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import { accountStore, accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
-import { Button, ListItemSecondaryAction, ListItemText, Dialog } from '@material-ui/core'
 import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
 import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
-import GoogleMailCustomUnreadDialogContent from './GoogleMailCustomUnreadDialogContent'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
@@ -36,6 +31,7 @@ const styles = {
   }
 }
 
+// @Thomas101#4
 @withStyles(styles)
 class GoogleMailUnreadSettings extends React.Component {
   /* **************************************************************************/
@@ -173,32 +169,9 @@ class GoogleMailUnreadSettings extends React.Component {
   * @return an array that can be passed to the list
   */
   renderInboxTypeSettings (serviceType, supportedInboxTypes) {
-    if (serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL) {
-      const userCommon = new Set([
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY
-      ])
-
-      return [].concat(
-        Array.from(userCommon).map((type) => {
-          return { value: type, label: this.humanizeInboxType(type, serviceType) }
-        }),
-        [{ divider: true }],
-        supportedInboxTypes
-          .filter((type) => !userCommon.has(type))
-          .map((type) => {
-            return { value: type, label: this.humanizeInboxType(type, serviceType) }
-          })
-      )
-    } else {
-      // Depricated Google Inbox types
-      return supportedInboxTypes.map((type) => {
-        return { value: type, label: this.humanizeInboxType(type, serviceType) }
-      })
-    }
+    return supportedInboxTypes.map((type) => {
+      return { value: type, label: this.humanizeInboxType(type, serviceType) }
+    })
   }
 
   render () {
@@ -210,16 +183,17 @@ class GoogleMailUnreadSettings extends React.Component {
     const {
       hasService,
       hasCustomQueryConfiguration,
-      customUnreadDialogOpen,
       inboxType,
       supportedInboxTypes,
       serviceType
     } = this.state
     if (!hasService) { return false }
+    if (serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_INBOX) { return false }
 
     return (
       <SettingsListSection title='Unread & Sync' {...passProps}>
         <SettingsListItemSelect
+          divider={false}
           label={serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL ? (
             <React.Fragment>
               Inbox Type <a href='#' className={classes.link} onClick={this.handleOpenInboxTypeKB}>Need some help?</a>
@@ -231,6 +205,7 @@ class GoogleMailUnreadSettings extends React.Component {
           onChange={(evt, value) => {
             accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setInboxType, value)
           }} />
+        {/*
         <SettingsListItem className={classes.customUnreadModeListItem} divider={false}>
           <ListItemText
             primary={(
@@ -263,6 +238,7 @@ class GoogleMailUnreadSettings extends React.Component {
             serviceId={serviceId}
             onRequestClose={this.handleCloseCustomUnreadDialog} />
         </Dialog>
+        */}
       </SettingsListSection>
     )
   }

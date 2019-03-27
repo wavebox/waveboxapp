@@ -8,6 +8,7 @@ const oauth2 = google.oauth2('v2')
 const OAuth2 = google.auth.OAuth2
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = Bootstrap.credentials
 
+// @Thomas101#8
 class GoogleHTTP {
   /* **************************************************************************/
   // Utils
@@ -352,6 +353,104 @@ class GoogleHTTP {
 
         return Promise.resolve(count)
       })
+  }
+
+  static getCountFromAtom (xml) {
+    const element = xml.querySelector('fullcount')
+    if (!element) { return 0 }
+    const count = parseInt(element.textContent)
+    if (isNaN(count)) { return 0 }
+
+    return count
+  }
+
+  static getModifiedFromAtom (xml) {
+    const element = xml.querySelector('modified')
+    if (!element) { return 0 }
+    const timestamp = new Date(element.textContent).getTime()
+    if (isNaN(timestamp)) { return 0 }
+    return timestamp
+  }
+
+  static convertAtomMessageEntryToJSON (element) {
+    let messageId
+    const linkElement = element.querySelector('link')
+    if (linkElement) {
+      const href = linkElement.getAttribute('href')
+      try {
+        const purl = new URL(href)
+        messageId = purl.searchParams.get('message_id')
+      } catch (ex) { }
+    }
+
+    return {
+      version: 2,
+      title: (element.querySelector('title') || {}).textContent,
+      summary: (element.querySelector('summary') || {}).textContent,
+      issued: new Date((element.querySelector('issued') || {}).textContent).getTime(),
+      modified: new Date((element.querySelector('modified') || {}).textContent).getTime(),
+      fromName: (element.querySelector('author>name') || {}).textContent,
+      fromEmail: (element.querySelector('author>email') || {}).textContent,
+      id: messageId
+    }
+  }
+
+  static getMessagesFromAtom (xml) {
+    return Array.from(xml.querySelectorAll('entry')).map((element) => {
+      return this.convertAtomMessageEntryToJSON(element)
+    })
+  }
+
+  static fetchGmailAtomMessages (partitionId, url) {
+    return Promise.resolve()
+      .then(() => FetchService.request(url, partitionId, {
+        credentials: 'include',
+        headers: {
+          'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+          'accept-encoding': 'gzip, deflate, br',
+          'accept-language': window.navigator.languages.length > 1
+            ? `${window.navigator.language};q=0.9,${window.navigator.languages[window.navigator.languages.length - 1]};q=0.8`
+            : window.navigator.language,
+          'upgrade-insecure-requests': '1',
+          'user-agent': window.navigator.userAgent
+        }
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.text())
+      .then((res) => {
+        const parser = new window.DOMParser()
+        const xmlDoc = parser.parseFromString(res, 'text/xml')
+        return Promise.resolve(xmlDoc)
+      })
+      .then((res) => {
+        const count = this.getCountFromAtom(res)
+        const timestamp = this.getModifiedFromAtom(res)
+        const messages = this.getMessagesFromAtom(res)
+
+        return Promise.resolve({
+          count: count,
+          timestamp: timestamp,
+          messages: messages
+        })
+      })
+  }
+
+  static fetchGmailBasicHTML (partitionId) {
+    return Promise.resolve()
+      .then(() => FetchService.request('https://mail.google.com/mail/u/0/h/1pq68r75kzvdr/?v%3Dlui', partitionId, {
+        credentials: 'include',
+        headers: {
+          'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+          'accept-encoding': 'gzip, deflate, br',
+          'accept-language': window.navigator.languages.length > 1
+            ? `${window.navigator.language};q=0.9,${window.navigator.languages[window.navigator.languages.length - 1]};q=0.8`
+            : window.navigator.language,
+          'upgrade-insecure-requests': '1',
+          'user-agent': window.navigator.userAgent
+        }
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.text())
   }
 }
 

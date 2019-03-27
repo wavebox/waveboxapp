@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import userActions from 'stores/user/userActions'
 import googleActions from 'stores/google/googleActions'
+import updaterActions from 'stores/updater/updaterActions'
 import {
   SYNC_SOCKET_URL,
   SYNC_SOCKET_UPGRADE_INTERVAL,
@@ -211,6 +212,11 @@ class ServerVent extends EventEmitter {
       })
     clientChannel.on('userDetails', (data) => { userActions.setUser(data, new Date().getTime()) })
     clientChannel.on('maintenance', this._handleMaintenanceStart)
+    clientChannel.on('squirrel-update-check-now', (data) => {
+      setTimeout(() => {
+        updaterActions.checkForUpdates()
+      }, Math.round(Math.random() * (1000 * 60 * 5)))
+    })
 
     return this
   }

@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const { SRC_DIR } = require('./constants')
 const Colors = require('colors/safe')
-
+// @Thomas101#4
 const MODULE_DIR = path.join(SRC_DIR, 'scenes/mailboxes/node_modules/googleapis/')
 const APIS_DIR = path.join(MODULE_DIR, 'build/src/apis')
 const INDEX_PATH = path.join(MODULE_DIR, 'build/src/index.js')

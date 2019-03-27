@@ -5,6 +5,9 @@
   "license": "MPL-2.0",
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Main thread code for Wavebox",
+  "scripts": {
+    "postinstall": "node ../../scripts/npmlibPatchElectronFetch"
+  },
   "dependencies": {
     "@artemv/auto-launch": "6.0.2",
     "@fidm/x509": "1.2.1",

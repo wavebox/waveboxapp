@@ -19,6 +19,7 @@ class GoogleAuth extends CoreACAuth {
     return (this.authTime || 0) + ((this.authData.expires_in || 0) * 999)
   }
   get authEmail () { return this.authData.email }
+  get authAvatar () { return this.authData.avatar }
   get pushToken () { return this.authData.pushToken }
 
   /* **************************************************************************/
