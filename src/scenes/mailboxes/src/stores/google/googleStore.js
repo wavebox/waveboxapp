@@ -386,13 +386,16 @@ class GoogleStore {
       })
       .then(() => GoogleHTTP.fetchGmailAtomMessages(service.partitionId, atomUrl))
       .then(({ count, messages, timestamp }) => {
-        accountActions.reduceServiceData.defer(
-          serviceId,
-          CoreGoogleMailboxServiceDataReducer.updateUnreadInfo,
-          timestamp,
-          count,
-          messages
-        )
+        // This could be outdated by now, but it's okay
+        if (timestamp !== serviceData.historyId) {
+          accountActions.reduceServiceData.defer(
+            serviceId,
+            CoreGoogleMailboxServiceDataReducer.updateUnreadInfo,
+            timestamp,
+            count,
+            messages
+          )
+        }
       })
       .then(() => {
         this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
