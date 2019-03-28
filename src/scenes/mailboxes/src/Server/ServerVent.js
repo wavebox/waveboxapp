@@ -3,6 +3,7 @@ import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import userActions from 'stores/user/userActions'
 import googleActions from 'stores/google/googleActions'
+import updaterActions from 'stores/updater/updaterActions'
 import {
   SYNC_SOCKET_URL,
   SYNC_SOCKET_UPGRADE_INTERVAL,
