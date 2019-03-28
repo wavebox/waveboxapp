@@ -276,7 +276,7 @@ class KeychainScene extends React.Component {
     return (
       <div {...passProps}>
         <Toolbar className={classes.toolbar}>
-          <Typography variant='title' className={classes.toolbarText}>
+          <Typography variant='h6' className={classes.toolbarText}>
             <span>
               <span className={classes.title}>
                 <strong>Saved passwords for </strong>

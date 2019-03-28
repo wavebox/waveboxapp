@@ -98,8 +98,7 @@ export default class Provider extends React.Component {
       messagesUnreadCount: accountState.userUnreadCountForApp(),
       hasUnreadActivity: accountState.userUnreadActivityForApp(),
       uiSettings: settingsState.ui,
-      traySettings: settingsState.tray,
-      launchTraySettings: settingsState.launched.tray,
+      showTray: settingsState.tray.show,
       activeMailboxId: accountState.activeMailboxId(),
       activeServiceId: accountState.activeServiceId()
     }
@@ -117,7 +116,7 @@ export default class Provider extends React.Component {
   settingsChanged = (settingsState) => {
     this.setState({
       uiSettings: settingsState.ui,
-      traySettings: settingsState.tray
+      showTray: settingsState.tray.show
     })
   }
 
@@ -164,8 +163,7 @@ export default class Provider extends React.Component {
 
   render () {
     const {
-      traySettings,
-      launchTraySettings,
+      showTray,
       uiSettings,
       messagesUnreadCount,
       hasUnreadActivity,
@@ -187,13 +185,11 @@ export default class Provider extends React.Component {
         <ErrorBoundary>
           <WindowTitle />
         </ErrorBoundary>
-        {traySettings.show ? (
+        {showTray ? (
           <ErrorBoundary>
             <Tray
               unreadCount={messagesUnreadCount}
-              hasUnreadActivity={hasUnreadActivity}
-              launchTraySettings={launchTraySettings}
-              traySettings={traySettings} />
+              hasUnreadActivity={hasUnreadActivity} />
           </ErrorBoundary>
         ) : undefined}
         {uiSettings.showAppBadge ? (

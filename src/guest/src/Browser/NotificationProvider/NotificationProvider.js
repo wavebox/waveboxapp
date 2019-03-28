@@ -32,6 +32,22 @@ class NotificationProvider {
   /* **************************************************************************/
 
   /**
+  * Resolves the icon for the current page and simple checks its of valid url
+  * @param iconUrl: the url to the icon provided by the client
+  * @reutrn the resolved url or undefined
+  */
+  resolveIconUrl (iconUrl) {
+    if (!iconUrl) { return undefined }
+    let resolvedUrl
+    try {
+      resolvedUrl = new window.URL(iconUrl, window.location.href).toString()
+    } catch (ex) { }
+    if (!resolvedUrl) { return undefined }
+    if (!resolvedUrl.startsWith('http://') && !resolvedUrl.startsWith('https://')) { return undefined }
+    return resolvedUrl
+  }
+
+  /**
   * Handles a new window message
   * @param evt: the event that fired
   */
@@ -52,10 +68,11 @@ class NotificationProvider {
             notificationId: data.notificationId,
             notification: {
               title: data.notification.title,
-              options: Object.assign(
-                DEFAULT_HTML5_NOTIFICATION_OPTIONS[window.location.host] || {},
-                data.notification.options
-              )
+              options: {
+                ...DEFAULT_HTML5_NOTIFICATION_OPTIONS[window.location.host],
+                ...data.notification.options,
+                icon: this.resolveIconUrl((data.notification.options || {}).icon)
+              }
             }
           })
         }

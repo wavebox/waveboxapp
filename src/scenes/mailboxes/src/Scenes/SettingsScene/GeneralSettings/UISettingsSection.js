@@ -39,6 +39,7 @@ export default class UISettingsSection extends React.Component {
         'accountTooltipInteractive',
         'accountTooltipDelay',
         'sidebarEnabled',
+        'sidebarActiveIndicator',
         'showSidebarSupport',
         'showSidebarNewsfeed',
         'showSidebarDownloads',
@@ -50,7 +51,8 @@ export default class UISettingsSection extends React.Component {
         'theme',
         'sidebarSize',
         'showSidebarScrollbars',
-        'warnBeforeKeyboardQuitting'
+        'warnBeforeKeyboardQuitting',
+        'showFullscreenHelper'
       ]) ||
       modelCompare(this.props.accelerators, nextProps.accelerators, [
         'toggleSidebar',
@@ -100,6 +102,10 @@ export default class UISettingsSection extends React.Component {
             )}
             onChange={(evt, toggled) => settingsActions.sub.ui.setWarnBeforeKeyboardQuitting(toggled)}
             checked={ui.warnBeforeKeyboardQuitting} />
+          <SettingsListItemSwitch
+            label='Show toast helper when entering fullscreen'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowFullscreenHelper(toggled)}
+            checked={ui.showFullscreenHelper} />
           <SettingsListItemSelectInline
             label='App theme'
             divider={process.platform === 'darwin'}
@@ -230,6 +236,15 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.SIDEBAR_SIZES.TINY, label: 'Tiny' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setSidebarSize(value)} />
+          <SettingsListItemSelectInline
+            label='Active account indicator'
+            value={ui.sidebarActiveIndicator}
+            options={[
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.DOT, label: 'Dot' },
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER, label: 'Banner' },
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.NONE, label: 'None' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setSidebarActiveIndicator(value)} />
           <SettingsListItemSwitch
             label='Show Activity in Sidebar'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarBusy(toggled)}

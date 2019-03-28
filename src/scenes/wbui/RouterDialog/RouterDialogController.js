@@ -8,10 +8,6 @@ export default class RouterDialog extends React.Component {
   // Class
   /* **************************************************************************/
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
-
   static propTypes = {
     routeName: PropTypes.string.isRequired,
     manager: PropTypes.object.isRequired,

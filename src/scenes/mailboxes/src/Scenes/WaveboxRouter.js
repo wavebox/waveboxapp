@@ -1,6 +1,7 @@
 import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import { RouterDialogRoute } from 'wbui/RouterDialog'
+import settingsActions from 'stores/settings/settingsActions'
 import AppScene from './AppScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import PrivacyDialog from './PrivacyDialog'
@@ -72,7 +73,8 @@ export default class WaveboxRouter extends React.Component {
             <ReadingQueueSnackbarHelper />
           </ErrorBoundary>
           <ErrorBoundary>
-            <KeyboardQuitSnackbarHelper />
+            <KeyboardQuitSnackbarHelper
+              onRequestAlwaysQuitImmediately={() => settingsActions.sub.ui.setWarnBeforeKeyboardQuitting(false)} />
           </ErrorBoundary>
 
           {/* Dialogs: Switching */}

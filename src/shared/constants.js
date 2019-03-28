@@ -41,6 +41,9 @@ module.exports = Object.freeze({
   SERVICE_LOCAL_AVATAR_PREFIX: 'SERVICE_LOCAL:',
   AVATAR_TIMESTAMP_PREFIX: '__TIMESTAMP__:',
 
+  // Settings
+  SETT_ASSET_TIMESTAMP_PREFIX: '__TIMESTAMP__:',
+
   // Google
   GOOGLE_PROFILE_SYNC_INTERVAL: hours(6),
   GOOGLE_MAILBOX_WATCH_INTERVAL: days(6),
@@ -54,7 +57,8 @@ module.exports = Object.freeze({
   SLACK_FULL_COUNT_SYNC_INTERVAL: minutes(5),
   SLACK_RECONNECT_SOCKET_INTERVAL: minutes(1),
   SLACK_RTM_RETRY_RECONNECT_MS: seconds(15),
-  SLACK_TICKLE_INTERVAL: seconds(30),
+  SLACK_TICKLE_INTERVAL: seconds(60),
+  SLACK_TICKLE_IDLE_MAX_MS: minutes(10),
 
   // Microsoft
   MICROSOFT_PROFILE_SYNC_INTERVAL: hours(6),

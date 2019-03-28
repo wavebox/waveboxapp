@@ -193,6 +193,13 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param show: true to show the persist cookies option for accounts
+  */
+  setShowArtificiallyPersistCookies (show) {
+    this.dispatchUpdate('showArtificiallyPersistCookies', show)
+  }
+
+  /**
   * Sets the search provider
   * @param provider: the new search provider
   */

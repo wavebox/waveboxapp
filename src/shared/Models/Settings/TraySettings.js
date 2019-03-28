@@ -110,6 +110,16 @@ class TraySettings extends Model {
   }
 
   /* **************************************************************************/
+  // Properties: Image replacement
+  /* **************************************************************************/
+
+  get useCustomImages () { return this._value_('useCustomImages', false) }
+  get unreadImageId () { return this._value_('unreadImageId', undefined) }
+  get hasUnreadImageId () { return !!this.unreadImageId }
+  get readImageId () { return this._value_('readImageId', undefined) }
+  get hasReadImageId () { return !!this.readImageId }
+
+  /* **************************************************************************/
   // Properties: Display Config
   /* **************************************************************************/
 

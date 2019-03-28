@@ -1,5 +1,5 @@
 import React from 'react'
-import { settingsStore } from 'stores/settings'
+import { settingsStore, settingsActions } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SharedFullscreenSnackbarHelper from 'wbui/FullscreenSnackbarHelper'
 
@@ -20,14 +20,27 @@ export default class FullscreenSnackbar extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = {
-    accelerator: settingsStore.getState().accelerators.toggleFullscreen
-  }
+  state = (() => {
+    const settingsState = settingsStore.getState()
+    return {
+      accelerator: settingsState.accelerators.toggleFullscreen,
+      show: settingsState.ui.showFullscreenHelper
+    }
+  })()
 
   settingsUpdated = (settingsState) => {
     this.setState({
-      accelerator: settingsState.accelerators.toggleFullscreen
+      accelerator: settingsState.accelerators.toggleFullscreen,
+      show: settingsState.ui.showFullscreenHelper
     })
+  }
+
+  /* **************************************************************************/
+  // UI Actions
+  /* **************************************************************************/
+
+  handleStopShowing = () => {
+    settingsActions.sub.ui.setShowFullscreenHelper(false)
   }
 
   /* **************************************************************************/
@@ -39,9 +52,12 @@ export default class FullscreenSnackbar extends React.Component {
   }
 
   render () {
-    const { accelerator } = this.state
+    const { accelerator, show } = this.state
+    if (!show) { return false }
     return (
-      <SharedFullscreenSnackbarHelper accelerator={accelerator} />
+      <SharedFullscreenSnackbarHelper
+        onRequestStopShowing={this.handleStopShowing}
+        accelerator={accelerator} />
     )
   }
 }

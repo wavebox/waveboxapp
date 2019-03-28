@@ -116,8 +116,13 @@ class WBAPIService {
       .slice(0, 10)
       .map((unsafeMessage, index) => {
         return {
-          id: this._shapeStr(unsafeMessage.id || `auto_${index}`, `auto_${index}`, 100),
-          text: this._shapeStr(unsafeMessage.text, 100),
+          id: this._shapeStr(unsafeMessage.id || `auto_${index}`, `auto_${index}`, '', 100),
+          text: this._shapeStr(unsafeMessage.title, '', 100) || this._shapeStr(unsafeMessage.text, '', 100),
+          ...(unsafeMessage && typeof (unsafeMessage.subtitle) === 'string' ? {
+            extended: {
+              subtitle: this._shapeStr(unsafeMessage.subtitle, '', 100)
+            }
+          } : undefined),
           date: this._shapeInt(unsafeMessage.date, new Date().getTime()),
           data: {
             serviceId: serviceId,

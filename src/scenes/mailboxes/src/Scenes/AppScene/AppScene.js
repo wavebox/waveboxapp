@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
 import MailboxTabManager from './MailboxTabManager'
 import Sidelist from './Sidelist'
 import { PrimaryToolbar, SecondaryToolbar } from './Toolbar'
@@ -92,14 +91,6 @@ const styles = (theme) => ({
 
 @withStyles(styles, { withTheme: true })
 class AppScene extends React.Component {
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
-
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/

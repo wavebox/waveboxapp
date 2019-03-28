@@ -524,6 +524,11 @@ class GoogleStore {
   }
 
   handleSyncServiceMessages ({ serviceId, forceSync }) {
+    if (userStore.getState().wireConfigSimpleGoogleAuth()) {
+      this.preventDefault()
+      return
+    }
+
     // Check we're not already open
     if (this.hasOpenRequest(REQUEST_TYPES.MAIL, serviceId)) {
       this.preventDefault()

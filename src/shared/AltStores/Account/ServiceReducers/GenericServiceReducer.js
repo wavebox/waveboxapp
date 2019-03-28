@@ -22,7 +22,10 @@ class GenericServiceReducer extends ServiceReducer {
     } else {
       const validFavicons = favicons
         .map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
-        .filter((f) => f.endsWith('.png') || f.endsWith('.ico') || f.endsWith('.jpg') || f.endsWith('.gif')) // some websites send junk
+        .filter((f) => { // some websites send junk
+          const base = f.split('?')[0]
+          return base.endsWith('.png') || base.endsWith('.ico') || base.endsWith('.jpg') || base.endsWith('.gif')
+        })
       if (validFavicons.length) {
         const bestFavicon = validFavicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
         return service.changeData({ serviceAvatarURL: bestFavicon })

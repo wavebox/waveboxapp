@@ -67,6 +67,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param mode: the new mode
+  */
+  setSidebarActiveIndicator (mode) {
+    this.dispatchUpdate('sidebarActiveIndicator', mode)
+  }
+
+  /**
   * @param mode: the mode to set for the tooltips
   */
   setAccountTooltipMode (mode) {
@@ -159,6 +166,13 @@ class UISettingsActions extends CoreSettingsActions {
   */
   setWarnBeforeKeyboardQuitting (warn) {
     this.dispatchUpdate('warnBeforeKeyboardQuitting', warn)
+  }
+
+  /**
+  * @param show: true to show the fullscreen helper
+  */
+  setShowFullscreenHelper (show) {
+    this.dispatchUpdate('showFullscreenHelper', show)
   }
 
   /**

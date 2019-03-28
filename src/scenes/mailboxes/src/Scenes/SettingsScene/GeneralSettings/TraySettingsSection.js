@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { TrayIconEditor } from 'Components/Tray'
-import settingsActions from 'stores/settings/settingsActions'
+import { settingsActions, settingsStore } from 'stores/settings'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import {
@@ -19,10 +19,15 @@ import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemTextFieldInline from 'wbui/SettingsListItemTextFieldInline'
+import SettingsListItemAvatarPicker from 'wbui/SettingsListItemAvatarPicker'
+import FileUploadButton from 'wbui/FileUploadButton'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import AdjustIcon from '@material-ui/icons/Adjust'
 import FARInfoCircleIcon from 'wbfa/FARInfoCircle'
+import NotInterestedIcon from '@material-ui/icons/NotInterested'
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
 
 const styles = {
   inputHelpTextInfo: {
@@ -36,10 +41,18 @@ const styles = {
     marginRight: 5
   },
   trayIconEditor: {
-
+    flexDirection: 'column',
+    alignItems: 'flex-start'
   },
   trayIconEditorTitle: {
     fontSize: '85%'
+  },
+  customImagePicker: {
+    paddingLeft: 0,
+    paddingRight: 0
+  },
+  customImageAvatarIcon: {
+    borderRadius: 6
   }
 }
 
@@ -67,6 +80,37 @@ class TraySettingsSection extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    settingsStore.listen(this.settingsUpdated)
+  }
+
+  componentWillUnmount () {
+    settingsStore.unlisten(this.settingsUpdated)
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const settingsState = settingsStore.getState()
+    return {
+      unreadImage: settingsState.getTrayUnreadImage(),
+      readImage: settingsState.getTrayReadImage()
+    }
+  })()
+
+  settingsUpdated = (settingsState) => {
+    this.setState({
+      unreadImage: settingsState.getTrayUnreadImage(),
+      readImage: settingsState.getTrayReadImage()
+    })
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -86,6 +130,9 @@ class TraySettingsSection extends React.Component {
         'altClickAction',
         'rightClickAction',
         'doubleClickAction',
+        'useCustomImages',
+        'unreadImageId',
+        'readImageId',
 
         // These are used in the <TrayIconEditor />
         'readColor',
@@ -104,6 +151,7 @@ class TraySettingsSection extends React.Component {
 
   render () {
     const { tray, showRestart, classes, ...passProps } = this.props
+    const { unreadImage, readImage } = this.state
 
     return (
       <div {...passProps}>
@@ -256,12 +304,55 @@ class TraySettingsSection extends React.Component {
               }
             ]}
             onChange={(evt, value) => settingsActions.sub.tray.setPopoutPosition(value)} />
+          <SettingsListItemSwitch
+            label='Use custom icons'
+            divider={false}
+            onChange={(evt, toggled) => settingsActions.sub.tray.setUseCustomImages(toggled)}
+            checked={tray.useCustomImages} />
           <SettingsListItem className={classes.trayIconEditor} divider={false}>
-            <TrayIconEditor
-              tray={tray}
-              buttonProps={{ size: 'small' }}
-              trayHeadingClassName={classes.trayIconEditorTitle}
-            />
+            {tray.useCustomImages ? (
+              <React.Fragment>
+                <SettingsListItemAvatarPicker
+                  component='div'
+                  className={classes.customImagePicker}
+                  avatarClassName={classes.customImageAvatarIcon}
+                  label='Unread Icon'
+                  divider={false}
+                  disabled={!tray.show}
+                  icon={<IndeterminateCheckBoxIcon />}
+                  preview={unreadImage}
+                  onChange={(evt) => {
+                    FileUploadButton.loadAndFitImageBase64(evt.target.files[0], 150).then((b64Image) => {
+                      settingsActions.setTrayUnreadImage(b64Image)
+                    })
+                  }}
+                  onClear={() => settingsActions.setTrayUnreadImage(undefined)}
+                  clearLabel='Reset'
+                  clearIcon={<NotInterestedIcon />} />
+                <SettingsListItemAvatarPicker
+                  component='div'
+                  className={classes.customImagePicker}
+                  avatarClassName={classes.customImageAvatarIcon}
+                  label='Read Icon'
+                  divider={false}
+                  disabled={!tray.show}
+                  icon={<CheckBoxIcon />}
+                  preview={readImage}
+                  onChange={(evt) => {
+                    FileUploadButton.loadAndFitImageBase64(evt.target.files[0], 150).then((b64Image) => {
+                      settingsActions.setTrayReadImage(b64Image)
+                    })
+                  }}
+                  onClear={() => settingsActions.setTrayReadImage(undefined)}
+                  clearLabel='Reset'
+                  clearIcon={<NotInterestedIcon />} />
+              </React.Fragment>
+            ) : (
+              <TrayIconEditor
+                tray={tray}
+                buttonProps={{ size: 'small' }}
+                trayHeadingClassName={classes.trayIconEditorTitle} />
+            )}
           </SettingsListItem>
         </SettingsListSection>
         <SettingsListSection

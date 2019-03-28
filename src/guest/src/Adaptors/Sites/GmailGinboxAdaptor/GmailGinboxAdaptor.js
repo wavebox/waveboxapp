@@ -51,11 +51,14 @@ class GmailGinboxAdaptor extends BaseAdaptor {
     // Bind our listeners
     ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange)
     ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage)
-    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN)
 
     if (this.isGmail) {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail)
+
+      if (LiveConfig.launchUserSettings.wireConfigSimpleGoogleAuth === true) {
+        ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.GOOGLE_MAIL_NOTIFICATIONS)
+      }
 
       if (LiveConfig.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`

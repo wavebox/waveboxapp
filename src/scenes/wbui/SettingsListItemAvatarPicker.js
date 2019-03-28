@@ -46,7 +46,8 @@ class SettingsLiteItemAvatarPicker extends React.Component {
     onChange: PropTypes.func,
     onClear: PropTypes.func,
     clearLabel: PropTypes.node.isRequired,
-    clearIcon: PropTypes.node
+    clearIcon: PropTypes.node,
+    avatarClassName: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -69,12 +70,13 @@ class SettingsLiteItemAvatarPicker extends React.Component {
       clearLabel,
       clearIcon,
       children,
+      avatarClassName,
       ...passProps
     } = this.props
 
     return (
       <SettingsListItem {...passProps}>
-        <Avatar className={classNames(classes.avatar, disabled ? classes.avatarDisabled : undefined)} src={preview} />
+        <Avatar className={classNames(classes.avatar, disabled ? classes.avatarDisabled : undefined, avatarClassName)} src={preview} />
         <FileUploadButton
           className={classes.fileUploadButton}
           size='small'

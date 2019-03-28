@@ -1,5 +1,6 @@
 import React from 'react'
-import { Snackbar, Button } from '@material-ui/core'
+import PropTypes from 'prop-types'
+import { Snackbar, SnackbarContent, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { ipcRenderer } from 'electron'
 import ElectronAccelerator from './ElectronAccelerator'
@@ -10,6 +11,22 @@ import {
 } from 'shared/ipcEvents'
 
 const styles = {
+  snackbarContentRoot: {
+    flexDirection: 'column'
+  },
+  snackbarContentAction: {
+    width: '100%',
+    justifyContent: 'center',
+    paddingLeft: 0,
+    paddingRight: 0,
+    marginRight: 0,
+    marginLeft: 0,
+    marginTop: 10
+  },
+  snackbarContentMessage: {
+    width: '100%',
+    textAlign: 'center'
+  },
   accelerator: {
     display: 'inline-block',
     margin: '0px 0.5ch'
@@ -30,6 +47,14 @@ const QUIT_CYCLE_LENGTH = 3000
 
 @withStyles(styles)
 class KeyboardQuitSnackbarHelper extends React.Component {
+  /* **************************************************************************/
+  // PropTypes
+  /* **************************************************************************/
+
+  static propTypes = {
+    onRequestAlwaysQuitImmediately: PropTypes.func
+  }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -98,6 +123,16 @@ class KeyboardQuitSnackbarHelper extends React.Component {
     this.setState({ isInQuitCycle: false })
   }
 
+  handleQuitImmediately = () => {
+    this.setState({ isInQuitCycle: false })
+    this.props.onRequestAlwaysQuitImmediately()
+
+    // A little bit bad from a UX perspective, but we need the action to dispatch and write to disk ideally!
+    setTimeout(() => {
+      ipcRenderer.send(WB_QUIT_APP)
+    }, 1000)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -107,7 +142,7 @@ class KeyboardQuitSnackbarHelper extends React.Component {
   }
 
   render () {
-    const { classes } = this.props
+    const { classes, onRequestAlwaysQuitImmediately } = this.props
     const { accelerator, isInQuitCycle } = this.state
     const isValid = ElectronAccelerator.isValid(accelerator)
 
@@ -116,23 +151,36 @@ class KeyboardQuitSnackbarHelper extends React.Component {
         autoHideDuration={QUIT_CYCLE_LENGTH}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={isInQuitCycle && isValid}
-        onClose={this.handleDismiss}
-        action={(
-          <Button color='secondary' size='small' onClick={this.handleDismiss}>
-            Cancel
-          </Button>
-        )}
-        message={(
-          <span>
-            Press
-            <ElectronAccelerator
-              className={classes.accelerator}
-              keyClassName={classes.kbd}
-              accelerator={accelerator} />
-            again to quit
-          </span>
-        )}
-      />
+        onClose={this.handleDismiss}>
+        <SnackbarContent
+          classes={onRequestAlwaysQuitImmediately ? {
+            root: classes.snackbarContentRoot,
+            action: classes.snackbarContentAction,
+            message: classes.snackbarContentMessage
+          } : undefined}
+          action={(
+            <React.Fragment>
+              {onRequestAlwaysQuitImmediately ? (
+                <Button color='secondary' size='small' onClick={this.handleQuitImmediately}>
+                  Always Quit Immediately
+                </Button>
+              ) : undefined}
+              <Button color='secondary' size='small' onClick={this.handleDismiss}>
+                Cancel
+              </Button>
+            </React.Fragment>
+          )}
+          message={(
+            <span>
+              Press
+              <ElectronAccelerator
+                className={classes.accelerator}
+                keyClassName={classes.kbd}
+                accelerator={accelerator} />
+              again to quit
+            </span>
+          )} />
+      </Snackbar>
     )
   }
 }

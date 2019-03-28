@@ -47,16 +47,29 @@ const SortableItem = SortableElement((props) => {
 })
 
 const SortableList = SortableContainer((props) => {
-  const { containerClassName, serviceIds, ...passProps } = props
+  const {
+    containerClassName,
+    serviceIds,
+    mailboxId,
+    uiLocation,
+    sidebarSize,
+    onOpenService,
+    onOpenServiceMenu
+  } = props
+
   return (
     <div className={containerClassName}>
       {serviceIds.map((serviceId, index) => (
         <SortableItem
           key={serviceId}
           index={index}
+          mailboxId={mailboxId}
           serviceId={serviceId}
-          collection={`${props.mailboxId}:${props.uiLocation}`}
-          {...passProps} />
+          uiLocation={uiLocation}
+          sidebarSize={sidebarSize}
+          onOpenService={onOpenService}
+          onOpenServiceMenu={onOpenServiceMenu}
+          collection={`${mailboxId}:${uiLocation}`} />
       ))}
     </div>
   )

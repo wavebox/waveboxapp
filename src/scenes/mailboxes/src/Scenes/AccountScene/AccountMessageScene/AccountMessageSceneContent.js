@@ -5,6 +5,7 @@ import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
 import { settingsActions } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
+import WBRPCRenderer from 'shared/WBRPCRenderer'
 
 const styles = {
   dialogContent: {
@@ -72,10 +73,12 @@ class AccountMessageScene extends React.Component {
   }
 
   handleOpenNewWindow = (evt) => {
-    // Unhandled urls will be handled by the main thread
     const didRoute = WaveboxWebView.routeWaveboxUrl(evt.url)
     if (didRoute) {
       settingsActions.sub.app.setSeenAccountMessageUrl(this.state.url)
+    }
+    if (!didRoute) {
+      WBRPCRenderer.wavebox.openExternal(evt.url)
     }
   }
 

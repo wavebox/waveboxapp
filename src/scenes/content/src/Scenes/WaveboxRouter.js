@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { RouterDialogRoute } from 'wbui/RouterDialog'
+import settingsActions from 'stores/settings/settingsActions'
 import WaveboxRouterErrorBoundary from 'wbui/WaveboxRouter/WaveboxRouterErrorBoundary'
 import WaveboxRouterNoMatch from 'wbui/WaveboxRouter/WaveboxRouterNoMatch'
 import ErrorBoundary from 'wbui/ErrorBoundary'
@@ -27,13 +28,15 @@ export default class WaveboxRouter extends React.Component {
 
   render () {
     const { url, partition } = this.props
+
     return (
       <HashRouter>
         <div>
           <BrowserScene url={url} partition={partition} />
 
           <ErrorBoundary>
-            <KeyboardQuitSnackbarHelper />
+            <KeyboardQuitSnackbarHelper
+              onRequestAlwaysQuitImmediately={() => settingsActions.sub.ui.setWarnBeforeKeyboardQuitting(false)} /> />
           </ErrorBoundary>
 
           {/* Dialogs: link open */}

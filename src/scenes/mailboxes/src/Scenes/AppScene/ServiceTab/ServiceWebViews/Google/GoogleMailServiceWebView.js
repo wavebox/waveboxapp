@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import CoreServiceWebView from '../../CoreServiceWebView'
-import { accountStore, accountDispatch } from 'stores/account'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
+import CoreGoogleMailboxServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/CoreGoogleMailServiceDataReducer'
 import shallowCompare from 'react-addons-shallow-compare'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import {
@@ -182,7 +184,17 @@ export default class GoogleMailServiceWebView extends React.Component {
   * Handles the unread count changing as per the ipc event
   */
   handleIPCUnreadCountChanged = (evt) => {
-    googleActions.mailCountPossiblyChanged(this.props.serviceId, evt.next)
+    if (userStore.getState().wireConfigSimpleGoogleAuth()) {
+      accountActions.reduceServiceData.defer(
+        this.props.serviceId,
+        CoreGoogleMailboxServiceDataReducer.updateUnreadInfo,
+        99117110115,
+        evt.next,
+        []
+      )
+    } else {
+      googleActions.mailCountPossiblyChanged(this.props.serviceId, evt.next)
+    }
   }
 
   /**

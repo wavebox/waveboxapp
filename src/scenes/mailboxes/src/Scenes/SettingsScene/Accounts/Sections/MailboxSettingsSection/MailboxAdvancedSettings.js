@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import TuneIcon from '@material-ui/icons/Tune'
@@ -9,6 +10,8 @@ import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxRedu
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListItemSection from 'wbui/SettingsListItemSection'
+import SettingsListTypography from 'wbui/SettingsListTypography'
+import WarningIcon from '@material-ui/icons/Warning'
 
 export default class MailboxAdvancedSettings extends React.Component {
   /* **************************************************************************/
@@ -26,10 +29,12 @@ export default class MailboxAdvancedSettings extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -46,7 +51,8 @@ export default class MailboxAdvancedSettings extends React.Component {
 
   state = (() => {
     return {
-      ...this.extractStateForMailbox(this.props.mailboxId, accountStore.getState())
+      ...this.extractStateForMailbox(this.props.mailboxId, accountStore.getState()),
+      showArtificiallyPersistCookies: settingsStore.getState().app.showArtificiallyPersistCookies
     }
   })()
 
@@ -54,6 +60,12 @@ export default class MailboxAdvancedSettings extends React.Component {
     this.setState(
       this.extractStateForMailbox(this.props.mailboxId, accountState)
     )
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      showArtificiallyPersistCookies: settingsState.app.showArtificiallyPersistCookies
+    })
   }
 
   /**
@@ -91,20 +103,19 @@ export default class MailboxAdvancedSettings extends React.Component {
     const {
       artificiallyPersistCookies,
       useCustomUserAgent,
-      customUserAgentString
+      customUserAgentString,
+      showArtificiallyPersistCookies
     } = this.state
 
     return (
       <SettingsListSection title='Advanced' icon={<TuneIcon />} {...passProps}>
-        <SettingsListItemSwitch
-          label='Artificially Persist Cookies. (Requires Restart)'
-          secondary={(
-            <span>
-              <small>
-                <span>
-                  Not recommended for most users but helpful if you are signed out every restart. If you enable
-                  this, you may need be logged out and need to&nbsp;
-                </span>
+        {showArtificiallyPersistCookies || artificiallyPersistCookies ? (
+          <SettingsListItemSwitch
+            label='Artificially Persist Cookies (Requires Restart)'
+            secondary={(
+              <SettingsListTypography type={artificiallyPersistCookies ? 'warning' : 'muted'} icon={<WarningIcon />}>
+                Not recommended for most users but helpful if you are signed out every restart. If you enable
+                this, you may need be logged out and need to&nbsp;
                 <a
                   href={artificiallyPersistCookies ? '#' : undefined}
                   disabled={!artificiallyPersistCookies}
@@ -116,14 +127,14 @@ export default class MailboxAdvancedSettings extends React.Component {
                   }}>
                   Clear all cookies manually
                 </a>
-              </small>
-            </span>
-          )}
-          onChange={(evt, toggled) => {
-            showRestart()
-            accountActions.reduceMailbox(mailboxId, MailboxReducer.setArtificiallyPersistCookies, toggled)
-          }}
-          checked={artificiallyPersistCookies} />
+              </SettingsListTypography>
+            )}
+            onChange={(evt, toggled) => {
+              showRestart()
+              accountActions.reduceMailbox(mailboxId, MailboxReducer.setArtificiallyPersistCookies, toggled)
+            }}
+            checked={artificiallyPersistCookies} />
+        ) : undefined}
         <SettingsListItemSection divider={false}>
           <SettingsListItemSwitch
             divider={false}

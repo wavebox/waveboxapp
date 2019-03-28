@@ -15,10 +15,25 @@ class CoreSettingsStore extends RemoteStore {
     super(DISPATCH_NAME, ACTIONS_NAME, STORE_NAME)
     this.defaults = {}
     this.launched = {}
+    this._assets_ = new Map()
     Object.keys(SettingsIdent.SEGMENTS).forEach((k) => {
       this[SettingsIdent.SEGMENTS[k]] = null
       this.launched[SettingsIdent.SEGMENTS[k]] = null
     })
+
+    /* ****************************************/
+    // Getters
+    /* ****************************************/
+
+    /**
+    * @return the base64 image set by the user for unread
+    */
+    this.getTrayUnreadImage = () => { return this._assets_.get(this.tray.unreadImageId) }
+
+    /**
+    * @return the base64 image set by the user for read
+    */
+    this.getTrayReadImage = () => { return this._assets_.get(this.tray.readImageId) }
 
     /* ****************************************/
     // Actions
@@ -52,7 +67,7 @@ class CoreSettingsStore extends RemoteStore {
   // Loading
   /* **************************************************************************/
 
-  handleLoad ({ modelData, launchedModelData, defaults }) {
+  handleLoad ({ modelData, launchedModelData, defaults, assets }) {
     this.defaults = {
       ...this.defaults,
       ...defaults
@@ -63,6 +78,11 @@ class CoreSettingsStore extends RemoteStore {
       this[segment] = this.modelize(segment, modelData[segment] || {})
       this.launched[segment] = this.modelize(segment, launchedModelData[segment] || {})
     })
+
+    this._assets_ = Object.keys(assets).reduce((acc, k) => {
+      acc.set(k, assets[k])
+      return acc
+    }, new Map())
 
     this.__isStoreLoaded__ = true
   }

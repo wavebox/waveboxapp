@@ -2,6 +2,7 @@ import acmailboxStorage from 'Storage/acmailboxStorage'
 import acserviceStorage from 'Storage/acserviceStorage'
 import avatarStorage from 'Storage/avatarStorage'
 import settingStorage from 'Storage/settingStorage'
+import settAssetStorage from 'Storage/settAssetStorage'
 import pkg from 'package.json'
 import { dialog, ipcMain } from 'electron'
 import fs from 'fs-extra'
@@ -23,6 +24,7 @@ const TAKEOUT_STORES = [
   acmailboxStorage,
   acserviceStorage,
   avatarStorage,
+  settAssetStorage,
   settingStorage
 ]
 const MIGRATED_DISK_TAKEOUT_STORES = []

@@ -7,7 +7,8 @@ import {
   SLACK_FULL_COUNT_SYNC_INTERVAL,
   SLACK_RECONNECT_SOCKET_INTERVAL,
   SLACK_RTM_RETRY_RECONNECT_MS,
-  SLACK_TICKLE_INTERVAL
+  SLACK_TICKLE_INTERVAL,
+  SLACK_TICKLE_IDLE_MAX_MS
 } from 'shared/constants'
 import Debug from 'Debug'
 import emoji from 'node-emoji'
@@ -16,7 +17,7 @@ import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import SlackServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/SlackServiceDataReducer'
 import SlackServiceReducer from 'shared/AltStores/Account/ServiceReducers/SlackServiceReducer'
-import { userStore } from 'stores/user'
+import userStore from 'stores/user/userStore'
 import PowerMonitorService from 'shared/PowerMonitorService'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
 
@@ -221,18 +222,22 @@ class SlackStore {
       if (!this.isValidConnection(serviceId, connectionId)) { return }
       const rtm = this.connections.get(serviceId).rtm
       if (!rtm) { return }
+
+      if (PowerMonitorService.isSuspended || PowerMonitorService.isScreenLocked) { return }
+
       const service = accountStore.getState().getService(serviceId)
       if (!service) { return }
+      if (!userStore.getState().wceTickleSlackRTM(service.rawTickleRTM)) { return }
 
-      if (PowerMonitorService.isSuspended || PowerMonitorService.isScreenLocked) {
-        return
-      }
-
-      if (!userStore.getState().wceTickleSlackRTM(service.rawTickleRTM)) {
-        return
-      }
-
-      rtm.send('tickle')
+      PowerMonitorService.querySystemIdleTime()
+        .then((idleTime) => {
+          if (idleTime * 1000 > SLACK_TICKLE_IDLE_MAX_MS) { return }
+          rtm.send('tickle')
+        })
+        .catch((ex) => {
+          // On error, don't send the tickle
+          console.warn('Unable to query system idle time for Slack RTM Socket', ex)
+        })
     }, SLACK_TICKLE_INTERVAL)
 
     // Start up the socket

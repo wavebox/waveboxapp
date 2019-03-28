@@ -1,16 +1,12 @@
 const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
   NOTIFICATION: 'Notification.js',
   CHROME: 'Chrome.js',
-  NAVIGATOR: 'Navigator.js',
   WAVEBOX_API: 'WaveboxApi.js',
   WINDOW_DIALOGS: 'NativeWindowDialogs.js',
 
   ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js',
-  GOOGLE_MAIL_WINDOW_OPEN: 'GoogleMailWindowOpen.js',
   GOOGLE_MAIL_HTTP_WATCHER: 'GoogleMailHTTPWatcher.js',
-  GOOGLE_CHAT_WINDOW_OPEN: 'GoogleChatWindowOpen.js',
-  FASTMAIL_WINDOW_OPEN: 'FastmailWindowOpen.js',
-  SKYPE_WINDOW_OPEN: 'SkypeWindowOpen.js'
+  GOOGLE_MAIL_NOTIFICATIONS: 'GoogleMailNotifications.js'
 }
 const VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS = new Set(Array.from(Object.keys(WAVEBOX_CONTENT_IMPL_ENDPOINTS).map((k) => WAVEBOX_CONTENT_IMPL_ENDPOINTS[k])))
 

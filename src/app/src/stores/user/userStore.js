@@ -42,6 +42,7 @@ class UserStore extends CoreUserStore {
     this.launchSettingsJS = () => {
       return {
         clientId: this.clientId,
+        wireConfigSimpleGoogleAuth: this.wireConfigSimpleGoogleAuth(),
         ...(this.user ? {
           analyticsEnabled: this.user.analyticsEnabled
         } : {
