@@ -217,6 +217,11 @@ class ServerVent extends EventEmitter {
         updaterActions.checkForUpdates()
       }, Math.round(Math.random() * (1000 * 60 * 5)))
     })
+    clientChannel.on('wire-config-update-check-now', (data) => {
+      setTimeout(() => {
+        userActions.updateWireConfig()
+      }, Math.round(Math.random() * (1000 * 60 * 5)))
+    })
 
     return this
   }

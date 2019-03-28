@@ -67,6 +67,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param mode: the new mode
+  */
+  setSidebarActiveIndicator (mode) {
+    this.dispatchUpdate('sidebarActiveIndicator', mode)
+  }
+
+  /**
   * @param mode: the mode to set for the tooltips
   */
   setAccountTooltipMode (mode) {

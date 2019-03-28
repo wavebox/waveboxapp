@@ -72,9 +72,15 @@ class NotificationPermissionManager {
 
   /**
   * @param domain: the domain to query for
-  * @return true if this domain is always disablled, false otherwise
+  * @return true if this domain is always disabled, false otherwise
   */
   _isDomainAlwaysDisallowed (domain) {
+    if (LiveConfig.launchUserSettings.wireConfigSimpleGoogleAuth === true) {
+      if (domain.indexOf('mail.google.com') !== -1 || domain.indexOf('inbox.google.com') !== -1) {
+        return false
+      }
+    }
+
     return !!DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => domain.indexOf(dis) !== -1)
   }
 
@@ -83,6 +89,12 @@ class NotificationPermissionManager {
   * @return true if this domain is always allowed, false otherwise
   */
   _isDomainAlwaysAllowed (domain) {
+    if (LiveConfig.launchUserSettings.wireConfigSimpleGoogleAuth === true) {
+      if (domain.indexOf('mail.google.com') !== -1 || domain.indexOf('inbox.google.com') !== -1) {
+        return true
+      }
+    }
+
     return !!ALLOWED_HTML5_NOTIFICATION_HOSTS.find((all) => domain.indexOf(all) !== -1)
   }
 }

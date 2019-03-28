@@ -102,7 +102,7 @@
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_4_8_0"
+    "ELECTRON_CUSTOM_DIR": "wb_4_8_6"
   },
   "pre-commit": [
     "validate"

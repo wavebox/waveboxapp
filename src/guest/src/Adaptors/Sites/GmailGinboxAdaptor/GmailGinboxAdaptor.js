@@ -12,6 +12,7 @@ import {
 import { UISettings } from 'shared/Models/Settings'
 import settingStore from 'stores/settingStore'
 import LiveConfig from 'LiveConfig'
+import { ExtensionLoader } from 'Browser'
 
 class GmailGinboxAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -54,6 +55,10 @@ class GmailGinboxAdaptor extends BaseAdaptor {
     if (this.isGmail) {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail)
+
+      if (LiveConfig.launchUserSettings.wireConfigSimpleGoogleAuth === true) {
+        ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.GOOGLE_MAIL_NOTIFICATIONS)
+      }
 
       if (LiveConfig.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`
