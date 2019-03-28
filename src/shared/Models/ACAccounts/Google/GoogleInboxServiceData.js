@@ -1,6 +1,6 @@
 import CoreGoogleMailServiceData from './CoreGoogleMailServiceData'
+import addressparser from 'addressparser'
 
-// @Thomas101#6
 class GoogleInboxServiceData extends CoreGoogleMailServiceData {
   /**
   * Generates the open data for the message
@@ -8,18 +8,29 @@ class GoogleInboxServiceData extends CoreGoogleMailServiceData {
   * @param message: the message to open
   */
   generateMessageOpenData (thread, message) {
-    return undefined
+    const data = {
+      serviceId: this.parentId,
+      threadId: thread.id,
+      messageId: message.id
+    }
+
+    let fromAddress
+    try { fromAddress = addressparser(message.from)[0].address } catch (ex) { /* no-op */ }
+    let toAddress
+    try { toAddress = addressparser(message.to)[0].address } catch (ex) { /* no-op */ }
+    const afterDate = new Date(parseInt(message.internalDate))
+    const beforeDate = new Date(parseInt(message.internalDate) + (1000 * 60 * 60 * 24))
+
+    data.search = [
+      fromAddress ? `from:"${fromAddress}"` : undefined,
+      toAddress ? `to:${toAddress}` : undefined,
+      message.subject ? `subject:"${message.subject}"` : undefined,
+      `after:${afterDate.getFullYear()}/${afterDate.getMonth() + 1}/${afterDate.getDate()}`,
+      `before:${beforeDate.getFullYear()}/${beforeDate.getMonth() + 1}/${beforeDate.getDate()}`
+    ].filter((q) => !!q).join(' ')
+
+    return data
   }
-
-  /* **************************************************************************/
-  // Properties
-  /* **************************************************************************/
-
-  get historyId () { return undefined }
-  get unreadThreads () { return [] }
-  get unreadCount () { return 0 }
-  get trayMessages () { return [] }
-  get notifications () { return [] }
 }
 
 export default GoogleInboxServiceData

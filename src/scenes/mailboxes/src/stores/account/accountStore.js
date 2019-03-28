@@ -3,6 +3,7 @@ import { STORE_NAME } from 'shared/AltStores/Account/AltAccountIdentifiers'
 import alt from '../alt'
 import actions from './accountActions'
 import settingsActions from '../settings/settingsActions'
+import GoogleHTTP from '../google/GoogleHTTP'
 import SlackHTTP from '../slack/SlackHTTP'
 import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import TrelloHTTP from '../trello/TrelloHTTP'
@@ -752,45 +753,50 @@ class AccountStore extends RendererAccountStore {
     }
   }
 
-  // @Thomas101#4
   handleAuthGoogleSuccess ({ mode, context, auth }) {
     this.preventDefault()
+    Promise.resolve()
+      .then(() => GoogleHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri))
+      .then((permenantAuth) => {
+        return GoogleHTTP.fetchAccountProfileWithRawAuth(permenantAuth)
+          .then((response) => { // Build the complete auth object
+            return {
+              ...permenantAuth,
+              pushToken: auth.pushToken,
+              email: response.email
+            }
+          })
+      })
+      .then((permenantAuth) => {
+        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+          // Create the auth
+          actions.createAuth.defer(
+            GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
+          )
 
-    const authData = {
-      access_token: '__COOKIE__',
-      refresh_token: '__COOKIE__',
-      date: new Date().getTime(),
-      expires_in: 1000000,
-      pushToken: '__COOKIE__',
-      email: auth.email,
-      avatar: auth.avatar
-    }
+          // Create the account
+          const template = new ACTemplatedAccount(context.template)
+          this._createMailboxFromTemplate(context.mailboxId, template)
+          this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
+          if (this.hasMailboxAuth(context.authId)) {
+            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, permenantAuth)
+          } else {
+            actions.createAuth.defer(
+              GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
+            )
+          }
 
-    if (mode === AUTH_MODES.TEMPLATE_CREATE) {
-      // Create the auth
-      actions.createAuth.defer(
-        GoogleAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
-      )
-
-      // Create the account
-      const template = new ACTemplatedAccount(context.template)
-      this._createMailboxFromTemplate(context.mailboxId, template)
-      this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
-    } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
-      if (this.hasMailboxAuth(context.authId)) {
-        actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, authData)
-      } else {
-        actions.createAuth.defer(
-          GoogleAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
-        )
-      }
-
-      if (mode === AUTH_MODES.REAUTHENTICATE) {
-        this._finalizeReauthentication(context.serviceId)
-      } else if (mode === AUTH_MODES.ATTACH) {
-        actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
-      }
-    }
+          if (mode === AUTH_MODES.REAUTHENTICATE) {
+            this._finalizeReauthentication(context.serviceId)
+          } else if (mode === AUTH_MODES.ATTACH) {
+            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+          }
+        }
+      })
+      .catch((err) => {
+        console.error('[AUTH ERR]', err)
+      })
   }
 
   handleAuthSlackSuccess ({ mode, context, auth }) {

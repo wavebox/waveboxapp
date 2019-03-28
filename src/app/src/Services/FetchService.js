@@ -3,7 +3,6 @@ import fetch from 'electron-fetch'
 import { SessionManager } from 'SessionManager'
 import { WB_FETCH_SERVICE_TEXT } from 'shared/ipcEvents'
 
-// @Thomas101#8
 class FetchService {
   /* ****************************************************************************/
   // Lifecycle
@@ -11,6 +10,36 @@ class FetchService {
 
   constructor () {
     ipcMain.on(WB_FETCH_SERVICE_TEXT, this._handleIPCFetchText)
+  }
+
+  /* ****************************************************************************/
+  // Tools
+  /* ****************************************************************************/
+
+  /**
+  * Builds the headers dictionary
+  * @param ses: the session we're actioning
+  * @param url: the url we're visiting
+  * @param options: the options passed to the request
+  * @return promise: a dictionary of headers key, value
+  */
+  _buildHeaders (ses, url, options) {
+    if (options.credentials === 'include') {
+      return new Promise((resolve, reject) => {
+        ses.cookies.get({ url: url }, (_err, cookies) => {
+          const cookieStr = cookies.reduce((acc, cookie) => {
+            return `${acc}${cookie.name}=${cookie.value};`
+          }, '')
+
+          resolve({
+            ...options.headers,
+            cookie: cookieStr
+          })
+        })
+      })
+    } else {
+      return Promise.resolve(options.headers || {})
+    }
   }
 
   /* ****************************************************************************/
@@ -35,9 +64,14 @@ class FetchService {
 
     Promise.resolve()
       .then(() => {
+        return isSessionlessRequest
+          ? options.headers || {}
+          : this._buildHeaders(ses, url, options)
+      })
+      .then((headers) => {
         return fetch(url, {
           ...options,
-          credentials: isSessionlessRequest ? undefined : options.credentials,
+          headers: headers,
           useElectronNet: true,
           session: ses
         })

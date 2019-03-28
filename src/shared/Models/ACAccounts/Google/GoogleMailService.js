@@ -1,7 +1,6 @@
 import CoreGoogleMailService from './CoreGoogleMailService'
 import CoreACServiceCommand from '../CoreACServiceCommand'
 
-// @Thomas101#9
 class GoogleMailService extends CoreGoogleMailService {
   /* **************************************************************************/
   // Class : Types
@@ -64,36 +63,16 @@ class GoogleMailService extends CoreGoogleMailService {
   /* **************************************************************************/
 
   get inboxType () {
-    let v1InboxTypeVal = this.constructor.INBOX_TYPES.GMAIL_UNREAD
     const val = this._value_('inboxType', undefined)
-    if (val !== undefined) {
-      v1InboxTypeVal = val
-    } else {
-      const depricatedVal = this._value_('unreadMode', undefined)
-      if (depricatedVal !== undefined) {
-        const convertedVal = this.constructor.depricatedUnreadModeToInboxType(depricatedVal)
-        if (convertedVal) {
-          v1InboxTypeVal = convertedVal
-        }
-      }
+    if (val !== undefined) { return val }
+
+    const depricatedVal = this._value_('unreadMode', undefined)
+    if (depricatedVal !== undefined) {
+      const convertedVal = this.constructor.depricatedUnreadModeToInboxType(depricatedVal)
+      if (convertedVal) { return convertedVal }
     }
 
-    switch (v1InboxTypeVal) {
-      case this.constructor.INBOX_TYPES.GMAIL_DEFAULT_ATOM:
-        return this.constructor.INBOX_TYPES.GMAIL_DEFAULT
-      case this.constructor.INBOX_TYPES.GMAIL_IMPORTANT_ATOM:
-        return this.constructor.INBOX_TYPES.GMAIL_IMPORTANT
-      case this.constructor.INBOX_TYPES.GMAIL_UNREAD_ATOM:
-        return this.constructor.INBOX_TYPES.GMAIL_UNREAD
-      case this.constructor.INBOX_TYPES.GMAIL_STARRED_ATOM:
-        return this.constructor.INBOX_TYPES.GMAIL_STARRED
-      case this.constructor.INBOX_TYPES.GMAIL_PRIORITY_ATOM:
-        return this.constructor.INBOX_TYPES.GMAIL_PRIORITY
-      case this.constructor.INBOX_TYPES.GMAIL__ALL:
-        return this.constructor.INBOX_TYPES.GMAIL_UNREAD
-      default:
-        return v1InboxTypeVal
-    }
+    return this.constructor.INBOX_TYPES.GMAIL_UNREAD
   }
   get supportedInboxTypes () {
     return new Set([
@@ -101,15 +80,13 @@ class GoogleMailService extends CoreGoogleMailService {
       this.constructor.INBOX_TYPES.GMAIL_IMPORTANT,
       this.constructor.INBOX_TYPES.GMAIL_UNREAD,
       this.constructor.INBOX_TYPES.GMAIL_STARRED,
-      this.constructor.INBOX_TYPES.GMAIL_PRIORITY
-      /*
+      this.constructor.INBOX_TYPES.GMAIL_PRIORITY,
       this.constructor.INBOX_TYPES.GMAIL_DEFAULT_ATOM,
       this.constructor.INBOX_TYPES.GMAIL_IMPORTANT_ATOM,
       this.constructor.INBOX_TYPES.GMAIL_UNREAD_ATOM,
       this.constructor.INBOX_TYPES.GMAIL_STARRED_ATOM,
       this.constructor.INBOX_TYPES.GMAIL_PRIORITY_ATOM,
       this.constructor.INBOX_TYPES.GMAIL__ALL
-      */
     ])
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }

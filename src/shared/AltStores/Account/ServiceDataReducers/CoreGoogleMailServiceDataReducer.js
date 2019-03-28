@@ -1,6 +1,5 @@
 import ServiceDataReducer from './ServiceDataReducer'
 
-// @Thomas101#3
 class CoreGoogleMailServiceDataReducer extends ServiceDataReducer {
   /* **************************************************************************/
   // Class
@@ -24,8 +23,7 @@ class CoreGoogleMailServiceDataReducer extends ServiceDataReducer {
     return serviceData.changeData({
       historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
       unreadCount: unreadCount,
-      unreadThreads_v2: unreadThreads,
-      unreadThreads: [] // Backwards compatability hack with <=4.8.5
+      unreadThreads: unreadThreads
     })
   }
 
