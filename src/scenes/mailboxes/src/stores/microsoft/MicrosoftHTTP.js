@@ -24,7 +24,7 @@ class MicrosoftHTTP {
     const userState = userStore.getState()
     const settingState = settingsStore.getState()
     if (userState.wceUseAppThreadFetchMicrosoftHTTP(settingState.app.rawAppThreadFetchMicrosoftHTTP)) {
-      return FetchService.request(url, undefined, options)
+      return FetchService.request(url, undefined, { credentials: 'include', ...options })
     } else {
       return window.fetch(url, options)
     }
