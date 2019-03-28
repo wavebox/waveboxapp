@@ -211,6 +211,11 @@ class ServerVent extends EventEmitter {
       })
     clientChannel.on('userDetails', (data) => { userActions.setUser(data, new Date().getTime()) })
     clientChannel.on('maintenance', this._handleMaintenanceStart)
+    clientChannel.on('squirrel-update-check-now', (data) => {
+      setTimeout(() => {
+        updaterActions.checkForUpdates()
+      }, Math.round(Math.random() * (1000 * 60 * 5)))
+    })
 
     return this
   }
