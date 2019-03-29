@@ -1,5 +1,4 @@
 import Chrome from './Chrome'
-import { URL } from 'whatwg-url'
 import ExtensionDatasource from './Core/ExtensionDatasource'
 import { CR_RUNTIME_ENVIRONMENTS, CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import BrowserXHRBuilder from './BrowserXHRBuilder'
@@ -23,7 +22,7 @@ class Loader {
       ? WBRPCRenderer.webContents.getInitialHostUrlSync()
       : window.location.href
 
-    const parsedUrl = new URL(currentUrl)
+    const parsedUrl = new window.URL(currentUrl)
     if (parsedUrl.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
       this._injectExtensionPage(parsedUrl.hostname)
     } else {
