@@ -5,7 +5,7 @@ import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import CoreGoogleMailboxServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/CoreGoogleMailServiceDataReducer'
+import CoreGoogleMailServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/CoreGoogleMailServiceDataReducer'
 import shallowCompare from 'react-addons-shallow-compare'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import {
@@ -187,10 +187,8 @@ export default class GoogleMailServiceWebView extends React.Component {
     if (userStore.getState().wireConfigSimpleGoogleAuth()) {
       accountActions.reduceServiceData.defer(
         this.props.serviceId,
-        CoreGoogleMailboxServiceDataReducer.updateUnreadInfo,
-        99117110115,
-        evt.next,
-        []
+        CoreGoogleMailServiceDataReducer.updateUnreadCount,
+        evt.next
       )
     } else {
       googleActions.mailCountPossiblyChanged(this.props.serviceId, evt.next)

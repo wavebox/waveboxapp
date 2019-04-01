@@ -15,7 +15,8 @@ class ToolbarNavigation extends React.Component {
     toolbarHeight: PropTypes.number.isRequired,
     tabId: PropTypes.number,
     mailboxId: PropTypes.string,
-    serviceId: PropTypes.string
+    serviceId: PropTypes.string,
+    fullWidthAddress: PropTypes.bool
   }
 
   /* **************************************************************************/
@@ -270,6 +271,7 @@ class ToolbarNavigation extends React.Component {
       tabId,
       mailboxId,
       serviceId,
+      fullWidthAddress,
       ...passProps
     } = this.props
     const {
@@ -301,6 +303,7 @@ class ToolbarNavigation extends React.Component {
         onBlurAddress={this.handleBlurAddress}
         onFocusAddress={this.handleFocusAddress}
         onChangeAddress={this.handleChangeAddress}
+        fullWidthAddress={fullWidthAddress}
         {...passProps} />
     )
   }

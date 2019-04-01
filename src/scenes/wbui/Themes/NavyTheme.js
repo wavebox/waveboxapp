@@ -48,6 +48,14 @@ export default createMuiTheme({
           icon: {
             color: { default: teal[300] }
           }
+        },
+        mailbox: {
+          activeIndicator: {
+            banner: {
+              active: '#024F6E',
+              hover: '#024F6E'
+            }
+          }
         }
       },
       toolbar: {

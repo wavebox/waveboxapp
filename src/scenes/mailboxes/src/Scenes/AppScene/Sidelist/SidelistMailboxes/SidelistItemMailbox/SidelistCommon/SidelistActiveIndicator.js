@@ -5,8 +5,17 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { settingsStore } from 'stores/settings'
 import UISettings from 'shared/Models/Settings/UISettings'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const MODE_TO_CLASS = {
+  [UISettings.SIDEBAR_ACTIVE_INDICATOR.DOT]: 'dot',
+  [UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER]: 'banner',
+  [UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER_THEME]: 'banner theme',
+  [UISettings.SIDEBAR_ACTIVE_INDICATOR.BAR]: 'bar',
+  [UISettings.SIDEBAR_ACTIVE_INDICATOR.BAR_THEME]: 'bar theme'
+}
+
+const styles = (theme) => ({
   activeIndicator: {
     position: 'absolute',
     cursor: 'pointer',
@@ -35,12 +44,75 @@ const styles = {
       top: 0,
       left: 0,
       right: 0,
-      bottom: 0
+      bottom: 0,
+
+      '&.theme': {
+        backgroundColor: [ThemeTools.getStateValue(theme, 'wavebox.sidebar.mailbox.activeIndicator.banner', 'active'), '!important'],
+
+        '&:before': {
+          display: 'block',
+          position: 'absolute',
+          content: '""',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.sidebar.mailbox.activeIndicator.bar', 'active')
+        },
+        '&.sidebar-regular': {
+          '&:before': {
+            width: 4
+          }
+        },
+        '&.sidebar-compact': {
+          '&:before': {
+            width: 3
+          }
+        },
+        '&.sidebar-tiny': {
+          '&:before': {
+            width: 2
+          }
+        },
+
+        '&:hover': {
+          backgroundColor: [ThemeTools.getStateValue(theme, 'wavebox.sidebar.mailbox.activeIndicator.banner', 'hover'), '!important'],
+
+          '&:before': {
+            backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.sidebar.mailbox.activeIndicator.bar', 'hover')
+          }
+        }
+      }
+    },
+    '&.bar': {
+      top: 0,
+      left: 0,
+      bottom: 0,
+
+      '&.theme': {
+        backgroundColor: [ThemeTools.getStateValue(theme, 'wavebox.sidebar.mailbox.activeIndicator.bar', 'active'), '!important'],
+        '&:hover': {
+          backgroundColor: [ThemeTools.getStateValue(theme, 'wavebox.sidebar.mailbox.activeIndicator.bar', 'hover'), '!important']
+        }
+      },
+
+      '&.sidebar-regular': {
+        width: 4,
+        borderBottomRightRadius: 4,
+        borderTopRightRadius: 4
+      },
+      '&.sidebar-compact': {
+        width: 3,
+        borderBottomRightRadius: 3,
+        borderTopRightRadius: 3
+      },
+      '&.sidebar-tiny': {
+        width: 2
+      }
     }
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistActiveIndicator extends React.Component {
   /* **************************************************************************/
   // Class
@@ -89,6 +161,7 @@ class SidelistActiveIndicator extends React.Component {
     const {
       color,
       classes,
+      theme,
       className,
       style,
       sidebarSize,
@@ -103,8 +176,7 @@ class SidelistActiveIndicator extends React.Component {
           classes.activeIndicator,
           `sidebar-${sidebarSize.toLowerCase()}`,
           'WB-SidelistItemActiveIndicator',
-          sidebarActiveIndicator === UISettings.SIDEBAR_ACTIVE_INDICATOR.DOT ? 'dot' : undefined,
-          sidebarActiveIndicator === UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER ? 'banner' : undefined,
+          MODE_TO_CLASS[sidebarActiveIndicator],
           className
         )}
         style={{ backgroundColor: color, ...style }}

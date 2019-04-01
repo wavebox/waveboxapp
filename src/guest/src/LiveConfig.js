@@ -1,5 +1,4 @@
 import WBRPCRenderer from 'shared/WBRPCRenderer'
-import { URL } from 'whatwg-url'
 
 const privConfig = Symbol('privConfig')
 
@@ -31,7 +30,7 @@ class LiveConfig {
   get launchUserSettings () { return this.config.launchUserSettings }
   get extensions () { return this.config.extensions }
   get permissionRootUrl () {
-    const purl = new URL(this.hostUrl || 'about:blank')
+    const purl = new window.URL(this.hostUrl || 'about:blank')
     const host = purl.host.startsWith('www.') ? purl.host.replace('www.', '') : purl.host
     return `${purl.protocol}//${host}`
   }

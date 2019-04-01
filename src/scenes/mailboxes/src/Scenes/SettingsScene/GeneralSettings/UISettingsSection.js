@@ -241,7 +241,10 @@ export default class UISettingsSection extends React.Component {
             value={ui.sidebarActiveIndicator}
             options={[
               { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.DOT, label: 'Dot' },
-              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER, label: 'Banner' },
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER, label: 'Banner (Account color)' },
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.BANNER_THEME, label: 'Banner (Theme color)' },
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.BAR, label: 'Bar (Account color)' },
+              { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.BAR_THEME, label: 'Bar (Theme color)' },
               { value: UISettings.SIDEBAR_ACTIVE_INDICATOR.NONE, label: 'None' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setSidebarActiveIndicator(value)} />

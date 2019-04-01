@@ -8,6 +8,9 @@ const SIDEBAR_SIZES = Object.freeze({
 const SIDEBAR_ACTIVE_INDICATOR = Object.freeze({
   DOT: 'DOT',
   BANNER: 'BANNER',
+  BANNER_THEME: 'BANNER_THEME',
+  BAR: 'BAR',
+  BAR_THEME: 'BAR_THEME',
   NONE: 'NONE'
 })
 const SIDEBAR_NEWS_MODES = Object.freeze({

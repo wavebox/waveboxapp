@@ -203,6 +203,32 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
+    * Returns the update interval for simple google auth
+    * @return millis to wait
+    */
+    this.wireConfigSimpleGoogleAuthUpdateInterval = () => {
+      const val = this.wireConfigExperiments().simpleGoogleAuthUpdateInterval
+      if (typeof (val) !== 'number') {
+        return 1000 * 60
+      } else {
+        return val
+      }
+    }
+
+    /**
+    * Returns the update interval for simple google auth
+    * @return millis to wait
+    */
+    this.wireConfigSimpleGoogleAuthUpdateDrift = () => {
+      const val = this.wireConfigExperiments().simpleGoogleAuthUpdateDrift
+      if (typeof (val) !== 'number') {
+        return 0
+      } else {
+        return val
+      }
+    }
+
+    /**
     * Returns true if we should capture ms http errors
     * @return true to capture
     */

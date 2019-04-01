@@ -363,6 +363,19 @@ class AccountStore extends CoreAccountStore {
   handleLoad (payload) {
     super.handleLoad(payload)
 
+    // Version 4.9.0 and older would convert Google Inbox -> Gmail but not the
+    // service data which can cause problems. To fix this, double check the integrity
+    // of Google_mail services and if the data maps out as google_inbox fix it.
+    // This can probably be removed in a future version
+    this.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL).forEach((service) => {
+      const serviceData = this.getServiceData(service.id)
+      if (serviceData && serviceData.parentType === SERVICE_TYPES.GOOGLE_INBOX) {
+        this.saveServiceData(serviceData.id, serviceData.changeData({
+          parentType: SERVICE_TYPES.GOOGLE_MAIL
+        }))
+      }
+    })
+
     this.mailboxIds().forEach((mailboxId) => {
       this.startManagingMailboxWithId(mailboxId)
     })
@@ -1416,6 +1429,12 @@ class AccountStore extends CoreAccountStore {
         inboxType: GoogleMailService.INBOX_TYPES.GMAIL_DEFAULT,
         wasGoogleInboxService: true
       }))
+      const serviceData = this.getServiceData(serviceId)
+      if (serviceData) {
+        this.saveServiceData(serviceData.id, serviceData.changeData({
+          parentType: SERVICE_TYPES.GOOGLE_MAIL
+        }))
+      }
     }
   }
 }
