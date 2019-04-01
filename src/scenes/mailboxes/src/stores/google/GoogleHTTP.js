@@ -328,6 +328,106 @@ class GoogleHTTP {
   /* **************************************************************************/
 
   /**
+  * Get an int from xml
+  * @param el: the element to use
+  * @param selector: the selector to use
+  * @param defaultValue=undefinde: default value if the int is not found or invalid
+  * @return int from the xml
+  */
+  static _atomXMLGetInt (el, selector, defaultValue = undefined) {
+    const target = el.querySelector(selector)
+    if (!target) { return defaultValue }
+
+    const val = parseInt(target.textContent)
+    if (isNaN(val)) { return defaultValue }
+
+    return val
+  }
+
+  /**
+  * Get a date from xml
+  * @param el: the element to use
+  * @param selector: the selector to use
+  * @param defaultValue=undefinde: default value if the int is not found or invalid
+  * @return Date from the xml
+  */
+  static _atomXMLGetDate (el, selector, defaultValue = undefined) {
+    const target = el.querySelector(selector)
+    if (!target) { return defaultValue }
+
+    const val = new Date(target.textContent)
+    if (isNaN(val)) { return defaultValue }
+
+    return val
+  }
+
+  /**
+  * Get a string from xml
+  * @param el: the element to use
+  * @param selector: the selector to use
+  * @param defaultValue=undefinde: default value if the int is not found or invalid
+  * @return string from the xml
+  */
+  static _atomXMLGetString (el, selector, defaultValue = undefined) {
+    const target = el.querySelector(selector)
+    if (!target) { return defaultValue }
+
+    return target.textContent
+  }
+
+  /**
+  * Get a parsed url from xml
+  * @param el: the element to use
+  * @param selector: the selector to use
+  * @param defaultValue: the default value if the url is invalid
+  * @return url from the xml
+  */
+  static _atomXMLGetUrl (el, selector, defaultValue = undefined) {
+    const target = el.querySelector(selector)
+    if (!target) { return defaultValue }
+
+    let url
+    try {
+      url = new window.URL(target.getAttribute('href'))
+    } catch (ex) {
+      return defaultValue
+    }
+
+    return url
+  }
+
+  /**
+  * Converts an atom xml entry to a thread
+  * @param entry: the entry element
+  * @return json structure
+  */
+  static _atomXMLGmailMessageEntryToThread (entry) {
+    const authorEmail = this._atomXMLGetString(entry, 'author>email')
+    const authorString = [
+      this._atomXMLGetString(entry, 'author>name'),
+      authorEmail ? `<${authorEmail}>` : undefined
+    ].filter((c) => !!c).join(' ')
+
+    const modifiedTimestamp = this._atomXMLGetDate(entry, 'modified', new Date()).getTime()
+    const altUrl = this._atomXMLGetUrl(entry, 'link[rel="alternate"]')
+
+    return {
+      historyId: `${modifiedTimestamp}`,
+      id: this._atomXMLGetString(entry, 'id'),
+      latestMessage: {
+        // labelIds: [], these are unavailable
+        from: authorString,
+        historyId: `${modifiedTimestamp}`,
+        id: altUrl ? altUrl.searchParams.get('message_id') : undefined,
+        internalDate: modifiedTimestamp,
+        snippet: this._atomXMLGetString(entry, 'summary', ''),
+        subject: this._atomXMLGetString(entry, 'title', ''),
+        to: altUrl ? altUrl.searchParams.get('account_id') : undefined
+      }
+    }
+  }
+
+  /**
   * Fetches the unread count from the atom feed
   * @param partitionId: the id of the partition to run with
   * @param url: the url to fetch
@@ -347,13 +447,39 @@ class GoogleHTTP {
         return Promise.resolve(xmlDoc)
       })
       .then((res) => {
-        const el = res.getElementsByTagName('fullcount')[0]
-        if (!el) { return Promise.reject(new Error('<fullcount> element not found')) }
+        // TODO test
+        const count = this._atomXMLGetInt(res, 'fullcount')
+        return count === undefined
+          ? Promise.reject(new Error('Count is not a valid'))
+          : Promise.resolve(count)
+      })
+  }
 
-        const count = parseInt(el.textContent)
-        if (isNaN(count)) { return Promise.reject(new Error('Count is not a valid number')) }
-
-        return Promise.resolve(count)
+  /**
+  * Fetches the unread info from the atom feed
+  * @param partitionId: the id of the partition to run with
+  * @param url: the url to fetch
+  * @return promise { count, timestamp, threads } threads are formatted in api format
+  */
+  static fetchGmailAtomUnreadInfo (partitionId, url) {
+    return Promise.resolve()
+      .then(() => FetchService.request(url, partitionId, {
+        credentials: 'include',
+        headers: FetchService.DEFAULT_HEADERS
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.text())
+      .then((res) => {
+        const parser = new window.DOMParser()
+        const xmlDoc = parser.parseFromString(res, 'text/xml')
+        return Promise.resolve(xmlDoc)
+      })
+      .then((xml) => {
+        return Promise.resolve({
+          threads: Array.from(xml.querySelectorAll('entry')).map((el) => this._atomXMLGmailMessageEntryToThread(el)),
+          count: this._atomXMLGetInt(xml, 'fullcount', 0),
+          timestamp: this._atomXMLGetDate(xml, 'modified', new Date()).getTime()
+        })
       })
   }
 }

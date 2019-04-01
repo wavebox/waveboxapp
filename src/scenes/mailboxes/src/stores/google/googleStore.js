@@ -13,7 +13,7 @@ import { userStore } from 'stores/user'
 import Debug from 'Debug'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
-import CoreGoogleMailboxServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/CoreGoogleMailServiceDataReducer'
+import CoreGoogleMailServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/CoreGoogleMailServiceDataReducer'
 import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
 import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
 
@@ -33,6 +33,7 @@ class GoogleStore {
     this.watchPoller = null
     this.openRequests = new Map()
     this.openWatches = new Map()
+    this.simpleUpdaters = new Map()
 
     /* **************************************/
     // Requests
@@ -79,6 +80,82 @@ class GoogleStore {
       handleSyncServiceMessages: actions.SYNC_SERVICE_MESSAGES,
       handleMailHistoryIdChangedFromWatch: actions.MAIL_HISTORY_ID_CHANGED_FROM_WATCH
     })
+  }
+
+  /* **************************************************************************/
+  // Simple
+  /* **************************************************************************/
+
+  /**
+  * Schedules the next simple sync
+  * @param serviceId: the serviceId
+  * @param immediate=false: set to true to run almost immediately
+  * @return the timer ref
+  */
+  _scheduleNextSimpleSync (serviceId, immediate = false) {
+    const userState = userStore.getState()
+    const interval = immediate ? 0 : userState.wireConfigSimpleGoogleAuthUpdateInterval()
+    const mod = Math.random() >= 0.5 ? 1 : -1
+    const drift = Math.floor(Math.random() * userState.wireConfigSimpleGoogleAuthUpdateDrift()) * mod
+    const wait = interval + drift
+
+    return setTimeout(() => {
+      Promise.resolve()
+        .then(() => {
+          return userStore.getState().wireConfigSimpleGoogleAuth()
+            ? this._runSimpleSync(serviceId)
+            : Promise.resolve() // no-op
+        })
+        .then(() => {
+          this.simpleUpdaters.set(serviceId, this._scheduleNextSimpleSync(serviceId))
+        })
+        .catch((ex) => {
+          this.simpleUpdaters.set(serviceId, this._scheduleNextSimpleSync(serviceId))
+        })
+    }, wait)
+  }
+
+  /**
+  * Runs an on-demand simple sync
+  * @param serviceId: the id of the service
+  */
+  _runOnDemandSimpleSync (serviceId) {
+    if (!this.simpleUpdaters.has(serviceId)) { return }
+    clearTimeout(this.simpleUpdaters.get(serviceId))
+    this.simpleUpdaters.set(serviceId, this._scheduleNextSimpleSync(serviceId, true))
+  }
+
+  /**
+  * Runs the simple sync
+  * @param serviceId: the id of the service
+  * @return promise
+  */
+  _runSimpleSync (serviceId) {
+    return Promise.resolve()
+      .then(() => {
+        const service = accountStore.getState().getService(serviceId)
+        return service
+          ? Promise.resolve(service)
+          : Promise.reject(new Error('Service unavailble'))
+      })
+      .then((service) => {
+        const url = this.mailAtomQueryForService(service) || 'https://mail.google.com/mail/feed/atom/'
+        return GoogleHTTP.fetchGmailAtomUnreadInfo(service.partitionId, url)
+      })
+      .then(({ count, timestamp, threads }) => {
+        const serviceData = accountStore.getState().getServiceData(serviceId)
+
+        if (timestamp !== serviceData.historyId) {
+          accountActions.reduceServiceData.defer(serviceId, CoreGoogleMailServiceDataReducer.updateHistoryId, timestamp)
+          accountActions.reduceServiceData.defer(serviceId, CoreGoogleMailServiceDataReducer.updateUnreadThreads, threads)
+        }
+
+        if (accountStore.getState().isServiceSleeping(serviceId)) {
+          accountActions.reduceServiceData.defer(serviceId, CoreGoogleMailServiceDataReducer.updateUnreadCount, count)
+        }
+
+        return Promise.resolve()
+      })
   }
 
   /* **************************************************************************/
@@ -265,11 +342,21 @@ class GoogleStore {
       serviceAuth.authEmail,
       serviceAuth.pushToken
     )
+
+    if (!this.simpleUpdaters.has(serviceId)) {
+      this.simpleUpdaters.set(serviceId, this._scheduleNextSimpleSync(serviceId))
+    }
   }
 
   handleDisconnectService ({ serviceId }) {
     this.preventDefault()
     ServerVent.stopListeningForGooglePushUpdates(serviceId)
+
+    if (this.simpleUpdaters.has(serviceId)) {
+      const timer = this.simpleUpdaters.get(serviceId)
+      clearTimeout(timer)
+      this.simpleUpdaters.delete(serviceId)
+    }
   }
 
   handleRegisterAllServiceWatches () {
@@ -474,12 +561,17 @@ class GoogleStore {
   */
   mailAtomQueryForService (service) {
     switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
       case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM:
         return 'https://mail.google.com/mail/feed/atom/'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY:
       case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM:
       case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM:
       case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM:
         return 'https://mail.google.com/mail/feed/atom/%5Eiim'
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT:
       case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM:
         return 'https://mail.google.com/mail/feed/atom/%5Esq_ig_i_personal'
       default:
@@ -526,6 +618,9 @@ class GoogleStore {
   handleSyncServiceMessages ({ serviceId, forceSync }) {
     if (userStore.getState().wireConfigSimpleGoogleAuth()) {
       this.preventDefault()
+      if (forceSync) { // ForceSync normally comes from a user-action or store based changed (e.g. right-click resync, inboxType change)
+        this._runOnDemandSimpleSync(serviceId)
+      }
       return
     }
 
@@ -669,7 +764,7 @@ class GoogleStore {
 
           accountActions.reduceServiceData.defer(
             serviceId,
-            CoreGoogleMailboxServiceDataReducer.updateUnreadInfo,
+            CoreGoogleMailServiceDataReducer.updateUnreadInfo,
             data.historyId,
             data.unreadCount,
             data.unreadThreads
@@ -677,7 +772,7 @@ class GoogleStore {
         } else {
           accountActions.reduceServiceData.defer(
             serviceId,
-            CoreGoogleMailboxServiceDataReducer.setHistoryId,
+            CoreGoogleMailServiceDataReducer.setHistoryId,
             data.historyId
           )
         }

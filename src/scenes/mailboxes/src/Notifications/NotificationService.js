@@ -2,9 +2,11 @@ import { EventEmitter } from 'events'
 import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/constants'
 import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 import NotificationRenderer from './NotificationRenderer'
 import { WB_FOCUS_APP } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 class NotificationService extends EventEmitter {
   /* **************************************************************************/
@@ -221,7 +223,16 @@ class NotificationService extends EventEmitter {
 
     // Send the notifications we found
     if (pendingNotifications.length) {
+      const simpleGoogleAuth = userStore.getState().wireConfigSimpleGoogleAuth()
       pendingNotifications.forEach(({ mailboxId, serviceId, notification }) => {
+        if (simpleGoogleAuth) {
+          if ([SERVICE_TYPES.GOOGLE_MAIL, SERVICE_TYPES.GOOGLE_INBOX].includes(accountState.getService(serviceId).type)) {
+            if (!accountState.isServiceSleeping(serviceId)) {
+              return
+            }
+          }
+        }
+
         const notificationId = `${serviceId}:${notification.id}`
         const systemNotification = NotificationRenderer.presentMailboxNotification(
           mailboxId,
