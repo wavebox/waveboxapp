@@ -63,7 +63,8 @@ const styles = (theme) => ({
   },
   address: {
     position: 'relative',
-    width: '100%',
+    width: 'auto',
+    minWidth: 100,
     maxWidth: '100%',
     height: 30,
     overflow: 'hidden',
@@ -80,6 +81,7 @@ const styles = (theme) => ({
 
     '&:focus': {
       outline: 'none',
+      width: '100%',
       backgroundColor: '#FFF',
       border: '2px solid #EEE',
       color: '#202124'
@@ -430,6 +432,7 @@ class BrowserToolbar extends React.Component {
             onChange={this.handleChangeAddress}
             onKeyDown={this.handleKeydownAddress}
             type='text'
+            size={`${addressInEdit ? addressEdit : this.humanizeUrl(address)}`.length}
             className={classes.address}
             value={addressInEdit ? addressEdit : this.humanizeUrl(address)} />
         </div>
