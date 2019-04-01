@@ -282,6 +282,7 @@ class PrimaryToolbar extends React.Component {
             className={classes.navigation}
             tabId={activeTabId}
             toolbarHeight={toolbarHeight}
+            fullWidthAddress={false}
             mailboxId={mailboxId}
             serviceId={serviceId} />
         ) : undefined}

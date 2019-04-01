@@ -79,6 +79,10 @@ const styles = (theme) => ({
     paddingRight: 4,
     WebkitAppRegion: 'no-drag',
 
+    '&.fullwidth': {
+      width: '100%'
+    },
+
     '&:focus': {
       outline: 'none',
       width: '100%',
@@ -130,7 +134,8 @@ class BrowserToolbar extends React.Component {
     onOpenInBrowser: PropTypes.func,
     onBlurAddress: PropTypes.func,
     onFocusAddress: PropTypes.func,
-    onChangeAddress: PropTypes.func
+    onChangeAddress: PropTypes.func,
+    fullWidthAddress: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
@@ -141,7 +146,8 @@ class BrowserToolbar extends React.Component {
     hasHome: false,
     hasDownload: false,
     hasSearch: false,
-    hasOpenInBrowser: false
+    hasOpenInBrowser: false,
+    fullWidthAddress: true
   }
 
   /* **************************************************************************/
@@ -383,6 +389,7 @@ class BrowserToolbar extends React.Component {
       onBlurAddress,
       onFocusAddress,
       onChangeAddress,
+      fullWidthAddress,
       ...passProps
     } = this.props
     const {
@@ -433,7 +440,7 @@ class BrowserToolbar extends React.Component {
             onKeyDown={this.handleKeydownAddress}
             type='text'
             size={`${addressInEdit ? addressEdit : this.humanizeUrl(address)}`.length}
-            className={classes.address}
+            className={classNames(classes.address, fullWidthAddress ? 'fullwidth' : undefined)}
             value={addressInEdit ? addressEdit : this.humanizeUrl(address)} />
         </div>
         <div className={classes.group}>
