@@ -335,7 +335,10 @@ class GoogleHTTP {
   */
   static fetchGmailAtomUnreadCount (partitionId, url) {
     return Promise.resolve()
-      .then(() => FetchService.request(url, partitionId, { credentials: 'include' }))
+      .then(() => FetchService.request(url, partitionId, {
+        credentials: 'include',
+        headers: FetchService.DEFAULT_HEADERS
+      }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.text())
       .then((res) => {
