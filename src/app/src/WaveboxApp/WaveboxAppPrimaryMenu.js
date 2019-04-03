@@ -494,9 +494,9 @@ class WaveboxAppPrimaryMenu {
   * Binds the current set of hidden shortcuts
   */
   bindHiddenShortcuts = () => {
-    Array.from(this._hiddenShortcuts.keys()).forEach((shortcut) => {
+    Array.from(this._hiddenShortcuts.values()).forEach(([accel, fn]) => {
       try {
-        globalShortcut.register(shortcut, this._hiddenShortcuts.get(shortcut))
+        globalShortcut.register(accel, fn)
       } catch (ex) { }
     })
   }
@@ -505,11 +505,56 @@ class WaveboxAppPrimaryMenu {
   * Unbinds the current set of hidden shortcuts
   */
   unbindHiddenShortcuts = () => {
-    Array.from(this._hiddenShortcuts.keys()).forEach((shortcut) => {
+    Array.from(this._hiddenShortcuts.values()).forEach(([accel]) => {
       try {
-        globalShortcut.unregister(shortcut)
+        globalShortcut.unregister(accel)
       } catch (ex) { }
     })
+  }
+
+  /**
+  * Adds a hidden shortcut
+  * @param id: the id of the shortcut
+  * @param accel: the accelerator string
+  * @param fn: the accelerator function
+  */
+  _addHiddenShortcut (id, accel, fn) {
+    if (this._hiddenShortcuts.has(id)) {
+      const prev = this._hiddenShortcuts.get(id)
+      if (prev.accel !== accel || prev.fn !== accel) {
+        try { globalShortcut.unregister(prev.accel) } catch (ex) { }
+
+        this._hiddenShortcuts.set(id, [accel, fn])
+        if (BrowserWindow.getFocusedWindow()) {
+          try {
+            globalShortcut.register(accel, fn)
+          } catch (ex) { }
+        }
+      }
+    } else {
+      this._hiddenShortcuts.set(id, [accel, fn])
+      if (BrowserWindow.getFocusedWindow()) {
+        try {
+          globalShortcut.register(accel, fn)
+        } catch (ex) { }
+      }
+    }
+  }
+
+  /**
+  * Adds a hidden shortcut
+  * @param id: the id of the shortcut
+  */
+  _removeHiddenShortcut (id) {
+    if (this._hiddenShortcuts.has(id)) {
+      const prev = this._hiddenShortcuts.get(id)
+      this._hiddenShortcuts.delete(id)
+      if (BrowserWindow.getFocusedWindow()) {
+        try {
+          globalShortcut.unregister(prev[0])
+        } catch (ex) { }
+      }
+    }
   }
 
   /**
@@ -529,23 +574,22 @@ class WaveboxAppPrimaryMenu {
     }
 
     if (emulateZoom) {
-      if (!this._hiddenShortcuts.has(emulatedZoomShortcut)) {
-        this._hiddenShortcuts.set(emulatedZoomShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
-        if (BrowserWindow.getFocusedWindow()) {
-          try {
-            globalShortcut.register(emulatedZoomShortcut, this._hiddenShortcuts.get(emulatedZoomShortcut))
-          } catch (ex) { }
-        }
-      }
+      this._addHiddenShortcut('SYSTEM_zoom', emulatedZoomShortcut, WaveboxAppPrimaryMenuActions.zoomIn)
     } else {
-      if (this._hiddenShortcuts.has(emulatedZoomShortcut)) {
-        this._hiddenShortcuts.delete(emulatedZoomShortcut)
-        if (BrowserWindow.getFocusedWindow()) {
-          try {
-            globalShortcut.unregister(emulatedZoomShortcut)
-          } catch (ex) { }
-        }
-      }
+      this._removeHiddenShortcut('SYSTEM_zoom')
+    }
+
+    // Bind additional alt shortcuts
+    if (accelerators.navigateBackAlt) {
+      this._addHiddenShortcut('navigateBackAlt', accelerators.navigateBackAlt, WaveboxAppPrimaryMenuActions.mailboxNavBack)
+    } else {
+      this._removeHiddenShortcut('navigateBackAlt')
+    }
+
+    if (accelerators.navigateForwardAlt) {
+      this._addHiddenShortcut('navigateForwardAlt', accelerators.navigateForwardAlt, WaveboxAppPrimaryMenuActions.mailboxNavForward)
+    } else {
+      this._removeHiddenShortcut('navigateForwardAlt')
     }
   }
 
