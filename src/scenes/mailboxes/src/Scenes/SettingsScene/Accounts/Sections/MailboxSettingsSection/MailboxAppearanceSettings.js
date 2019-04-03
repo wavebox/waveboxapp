@@ -107,8 +107,8 @@ class MailboxAppearanceSettings extends React.Component {
   */
   extractStateForMailbox (mailboxId, accountState) {
     const mailbox = accountState.getMailbox(mailboxId)
-    const singleService = mailbox && mailbox.hasSingleService
-      ? accountState.getService(mailbox.singleService)
+    const firstService = mailbox && mailbox.hasServices
+      ? accountState.getService(mailbox.allServices[0])
       : undefined
 
     return {
@@ -142,10 +142,10 @@ class MailboxAppearanceSettings extends React.Component {
         mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR,
         mailboxShowExtendedDispayName: true
       }),
-      ...(singleService ? {
-        singleServiceLogo: singleService.humanizedLogoAtSize(128)
+      ...(firstService ? {
+        firstServiceLogo: firstService.humanizedLogoAtSize(128)
       } : {
-        singleServiceLogo: undefined
+        firstServiceLogo: undefined
       }
       )
     }
@@ -177,7 +177,7 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxServiceUiPriority,
       mailboxShowExtendedDispayName,
       resolvedMailboxFullName,
-      singleServiceLogo
+      firstServiceLogo
     } = this.state
 
     return (
@@ -230,17 +230,17 @@ class MailboxAppearanceSettings extends React.Component {
             onClear={() => accountActions.setCustomAvatarOnMailbox(mailboxId, undefined)}
             clearLabel='Reset'
             clearIcon={<NotInterestedIcon />}>
-            {singleServiceLogo ? (
+            {firstServiceLogo ? (
               <Button
                 className={classes.serviceAvatarButton}
                 size='small'
                 variant='contained'
                 onClick={() => {
-                  AccountAvatarProcessor.processBuiltinImage(Resolver.image(singleServiceLogo), (av) => {
+                  AccountAvatarProcessor.processBuiltinImage(Resolver.image(firstServiceLogo), (av) => {
                     accountActions.setCustomAvatarOnMailbox(mailboxId, av)
                   })
                 }}>
-                <Avatar className={classes.serviceAvatar} src={Resolver.image(singleServiceLogo)} />
+                <Avatar className={classes.serviceAvatar} src={Resolver.image(firstServiceLogo)} />
                 Default
               </Button>
             ) : undefined}

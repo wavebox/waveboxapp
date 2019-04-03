@@ -688,7 +688,6 @@ class GoogleStore {
     const unreadFieldInLabel = this.mailLabelUnreadCountField(service)
     const atomQuery = this.mailAtomQueryForService(service)
     const canFetchUnreadFromAtom = this.canFetchUnreadCountFromAtom(service)
-    console.log(">>>>", canFetchUnreadFromAtom)
 
     Promise.resolve()
       .then(() => {
