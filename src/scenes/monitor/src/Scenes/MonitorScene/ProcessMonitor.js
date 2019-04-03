@@ -192,7 +192,7 @@ class ProcessMonitor extends React.Component {
             {this.humanizeBytes(metric.memory.bytes)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizePercent(metric.extended.cpu)}
+            {this.humanizePercent((metric.extended || {}).cpu)}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
             {this.humanizePercent(metric.cpu.percentCPUUsage)}

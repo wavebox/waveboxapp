@@ -7,6 +7,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import { withStyles } from '@material-ui/core/styles'
+import { Button, Avatar } from '@material-ui/core'
 import SmsIcon from '@material-ui/icons/Sms'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
 import NotInterestedIcon from '@material-ui/icons/NotInterested'
@@ -20,9 +21,18 @@ import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItemColorPicker from 'wbui/SettingsListItemColorPicker'
 import SettingsListItemAvatarPicker from 'wbui/SettingsListItemAvatarPicker'
 import SettingsListItemSection from 'wbui/SettingsListItemSection'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
-
+  serviceAvatarButton: {
+    marginLeft: 6
+  },
+  serviceAvatar: {
+    width: 18,
+    height: 18,
+    marginRight: 6,
+    border: '1px solid #CCC'
+  }
 }
 
 @withStyles(styles)
@@ -97,6 +107,10 @@ class MailboxAppearanceSettings extends React.Component {
   */
   extractStateForMailbox (mailboxId, accountState) {
     const mailbox = accountState.getMailbox(mailboxId)
+    const firstService = mailbox && mailbox.hasServices
+      ? accountState.getService(mailbox.allServices[0])
+      : undefined
+
     return {
       resolvedMailboxFullName: [
         accountState.resolvedMailboxBaseDisplayName(mailboxId),
@@ -127,7 +141,13 @@ class MailboxAppearanceSettings extends React.Component {
         mailboxSidebarFirstServicePriority: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
         mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR,
         mailboxShowExtendedDispayName: true
-      })
+      }),
+      ...(firstService ? {
+        firstServiceLogo: firstService.humanizedLogoAtSize(128)
+      } : {
+        firstServiceLogo: undefined
+      }
+      )
     }
   }
 
@@ -156,7 +176,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxSidebarFirstServicePriority,
       mailboxServiceUiPriority,
       mailboxShowExtendedDispayName,
-      resolvedMailboxFullName
+      resolvedMailboxFullName,
+      firstServiceLogo
     } = this.state
 
     return (
@@ -208,7 +229,22 @@ class MailboxAppearanceSettings extends React.Component {
             }}
             onClear={() => accountActions.setCustomAvatarOnMailbox(mailboxId, undefined)}
             clearLabel='Reset'
-            clearIcon={<NotInterestedIcon />} />
+            clearIcon={<NotInterestedIcon />}>
+            {firstServiceLogo ? (
+              <Button
+                className={classes.serviceAvatarButton}
+                size='small'
+                variant='contained'
+                onClick={() => {
+                  AccountAvatarProcessor.processBuiltinImage(Resolver.image(firstServiceLogo), (av) => {
+                    accountActions.setCustomAvatarOnMailbox(mailboxId, av)
+                  })
+                }}>
+                <Avatar className={classes.serviceAvatar} src={Resolver.image(firstServiceLogo)} />
+                Default
+              </Button>
+            ) : undefined}
+          </SettingsListItemAvatarPicker>
           <SettingsListItemSwitch
             divider={userHasSleepable}
             label='Show Account Color around Icon'
