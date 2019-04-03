@@ -88,7 +88,7 @@ const styles = {
     color: blue[600],
     cursor: 'pointer'
   },
-  linkSeperator: {
+  linkSeparator: {
     fontSize: '12px',
     color: grey[600]
   },
@@ -457,7 +457,7 @@ class ExtensionListItem extends React.Component {
                 {websiteUrl ? (
                   <span className={classes.link} onClick={this.handleOpenWebsite}>Website</span>
                 ) : undefined}
-                {websiteUrl && licenseUrl ? (<span className={classes.linkSeperator}> | </span>) : undefined}
+                {websiteUrl && licenseUrl ? (<span className={classes.linkSeparator}> | </span>) : undefined}
                 {licenseUrl ? (
                   <span className={classes.link} onClick={this.handleOpenLicense}>License</span>
                 ) : undefined}

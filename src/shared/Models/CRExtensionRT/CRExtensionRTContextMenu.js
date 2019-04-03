@@ -4,7 +4,7 @@ const ITEM_TYPES = Object.freeze({
   NORMAL: 'normal',
   CHECKBOX: 'checkbox',
   RADIO: 'radio',
-  SEPERATOR: 'seperator'
+  SEPARATOR: 'separator'
 })
 const CONTEXT_TYPES = Object.freeze({
   ALL: 'all',

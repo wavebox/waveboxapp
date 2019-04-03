@@ -805,7 +805,7 @@ class ContextMenuService {
         checked: menuItem.checked,
         click: () => this.extensionOptionSelected(contents, extensionId, menuItem, params)
       }
-    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.SEPERATOR) {
+    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.SEPARATOR) {
       return { type: 'separator' }
     } else {
       return undefined
