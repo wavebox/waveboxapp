@@ -139,13 +139,20 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     if (extensionId === CR_NATIVE_HOOK_EXTENSIONS.LASTPASS) {
       const waveboxConfig = runtime.extension.manifest.wavebox
       if (waveboxConfig.getNativeHook('enableBAPopoutOnCSPopout', false) === true) {
-        if (purl.pathname === waveboxConfig.getNativeHook('csPopoutPath', '')) {
-          const focusedTabId = WaveboxWindow.focusedTabId()
-          if (focusedTabId) {
-            runtime.browserAction.browserActionClicked(focusedTabId)
-          }
+        if (waveboxConfig.getNativeHook('csPopoutPaths', []).includes(purl.pathname)) {
+          setTimeout(() => {
+            const focusedTabId = WaveboxWindow.focusedTabId()
+            if (focusedTabId) {
+              webContents.fromId(focusedTabId).executeJavaScript('document.activeElement.blur()')
+              runtime.browserAction.browserActionClicked(focusedTabId)
+            }
+          })
           return responder(-6)
         }
+      }
+
+      if (waveboxConfig.getNativeHook('blockResources', []).includes(purl.pathname)) {
+        return responder(-6)
       }
     }
 

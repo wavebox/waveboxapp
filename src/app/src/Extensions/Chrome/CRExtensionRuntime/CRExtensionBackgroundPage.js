@@ -14,7 +14,6 @@ import { SessionManager } from 'SessionManager'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import CRExtensionPopupWindow from './CRExtensionPopupWindow'
 import CRExtensionTab from './CRExtensionTab'
-import WaveboxWindow from 'Windows/WaveboxWindow'
 import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
 import { CRExtensionWebPreferences } from 'WebContentsManager'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
@@ -155,14 +154,8 @@ class CRExtensionBackgroundPage {
       .headersReceived
       .onBlocking(undefined, this._handleAllUrlHeadersReceived)
 
-    // Don't load the background page until our first tab has been created. For a number of reasons
-    // 1. Performance - we want to get to tabs ASAP
-    // 2. Some extensions expect a tab active on first launch (LP expects this when calling tabs.query)
-    if (WaveboxWindow.allTabIds().length === 0) {
-      evtMain.once(evtMain.WB_TAB_CREATED, this._loadBackgroundPage)
-    } else {
-      this._loadBackgroundPage()
-    }
+    // Start loading
+    this._loadBackgroundPage()
   }
 
   /**
