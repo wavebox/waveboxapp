@@ -447,7 +447,6 @@ class GoogleHTTP {
         return Promise.resolve(xmlDoc)
       })
       .then((res) => {
-        // TODO test
         const count = this._atomXMLGetInt(res, 'fullcount')
         return count === undefined
           ? Promise.reject(new Error('Count is not a valid'))

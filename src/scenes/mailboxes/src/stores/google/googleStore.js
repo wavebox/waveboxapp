@@ -552,7 +552,26 @@ class GoogleStore {
   * @return true if this service can get the unread count from atom
   */
   canFetchUnreadCountFromAtom (service) {
-    return !this.isUsingCustomSyncConfig(service) && !!this.mailAtomQueryForService(service)
+    return !this.isUsingCustomSyncConfig(service) && this.isUsingAtomQueryForService(service)
+  }
+
+  /**
+  * @param service: the servie we're running a query on
+  * @return true if this is an atom specific query, false otherwise
+  */
+  isUsingAtomQueryForService (service) {
+    switch (service.inboxType) {
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM:
+        return true
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM:
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM:
+        return true
+      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM:
+        return true
+      default:
+        return false
+    }
   }
 
   /**
@@ -669,6 +688,7 @@ class GoogleStore {
     const unreadFieldInLabel = this.mailLabelUnreadCountField(service)
     const atomQuery = this.mailAtomQueryForService(service)
     const canFetchUnreadFromAtom = this.canFetchUnreadCountFromAtom(service)
+    console.log(">>>>", canFetchUnreadFromAtom)
 
     Promise.resolve()
       .then(() => {
