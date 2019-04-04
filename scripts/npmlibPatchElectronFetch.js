@@ -23,3 +23,4 @@ if (src.indexOf('const req = send(options);//patch-electron-fetch=true') !== -1)
   fs.writeFileSync(LIB_PATH, patched)
   console.log(`    ${Colors.green('DONE:')} Patched`)
 }
+
