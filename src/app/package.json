@@ -9,7 +9,7 @@
     "@artemv/auto-launch": "6.0.2",
     "@fidm/x509": "1.2.1",
     "addressparser": "1.0.1",
-    "alt": "0.18.6",
+    "alt": "wavebox/alt#c17dd3044f52f6bf90178534c76f0a5efbeed59f",
     "appdirectory": "0.1.0",
     "content-security-policy-builder": "2.0.0",
     "content-security-policy-parser": "0.1.1",

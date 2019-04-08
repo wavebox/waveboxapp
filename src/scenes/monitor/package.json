@@ -7,7 +7,7 @@
   "dependencies": {
     "@material-ui/core": "3.9.3",
     "@material-ui/icons": "3.0.2",
-    "alt": "0.18.6",
+    "alt": "wavebox/alt#c17dd3044f52f6bf90178534c76f0a5efbeed59f",
     "fbjs": "1.0.0",
     "prop-types": "15.7.2",
     "classnames": "2.2.6",
