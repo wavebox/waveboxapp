@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
 import { userStore } from 'stores/user'
-import GoogleMailServiceWebView from './ServiceWebViews/Google/GoogleMailServiceWebView'
 import GoogleHangoutsServiceWebView from './ServiceWebViews/Google/GoogleHangoutsServiceWebView'
 import GoogleCalendarServiceWebView from './ServiceWebViews/Google/GoogleCalendarServiceWebView'
 import GoogleAlloServiceWebView from './ServiceWebViews/Google/GoogleAlloServiceWebView'
@@ -11,10 +10,12 @@ import SlackServiceWebView from './ServiceWebViews/Slack/SlackServiceWebView'
 import GenericServiceWebView from './ServiceWebViews/Generic/GenericServiceWebView'
 import ContainerServiceWebView from './ServiceWebViews/Container/ContainerServiceWebView'
 import MicrosoftMailServiceWebView from './ServiceWebViews/Microsoft/MicrosoftMailServiceWebView'
+import IEngineWebView from './ServiceWebViews/IEngineWebView'
 import CoreServiceWebView from './CoreServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import { SUPPORTED_WBIE_SERVICE_TYPES } from 'shared/IEngine/IEngineTypes'
 import RestrictedService from './RestrictedService'
 import shallowCompare from 'react-addons-shallow-compare'
 import ServiceErrorBoundary from './ServiceErrorBoundary'
@@ -127,10 +128,10 @@ class ServiceTab extends React.Component {
   * @return the class
   */
   getWebviewClass (serviceType) {
+    if (SUPPORTED_WBIE_SERVICE_TYPES.has(serviceType)) {
+      return IEngineWebView
+    }
     switch (serviceType) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        return GoogleMailServiceWebView
       case SERVICE_TYPES.GOOGLE_HANGOUTS:
         return GoogleHangoutsServiceWebView
       case SERVICE_TYPES.GOOGLE_CALENDAR:

@@ -30,6 +30,7 @@ import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import HtmlMetaService from 'HTTP/HtmlMetaService'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import ServicesManager from 'Services'
+import IEngine from 'IEngine'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -111,7 +112,10 @@ class AccountStore extends CoreAccountStore {
       handleRemoveFromReadingQueue: actions.REMOVE_FROM_READING_QUEUE,
 
       // Google Inbox
-      handleConvertGoogleInboxToGmail: actions.CONVERT_GOOGLE_INBOX_TO_GMAIL
+      handleConvertGoogleInboxToGmail: actions.CONVERT_GOOGLE_INBOX_TO_GMAIL,
+
+      // Sync
+      handleUserRequestsIntegratedServiceSync: actions.USER_REQUESTS_INTEGRATED_SERVICE_SYNC
     })
   }
 
@@ -229,25 +233,34 @@ class AccountStore extends CoreAccountStore {
   * @return the generated model
   */
   saveService (id, serviceJS) {
-    const prevService = this.getService(id)
+    const prev = this.getService(id)
     if (serviceJS === null) {
-      if (!prevService) { return }
+      if (!prev) { return }
 
       servicePersistence.removeItem(id)
       this._services_.delete(id)
       this.dispatchToRemote('remoteSetService', [id, null])
 
-      AccountSessionManager.stopManagingService(prevService)
+      AccountSessionManager.stopManagingService(prev)
+
+      // Auto-disconnect integrated-engine
+      IEngine.disconnectService(id)
 
       return undefined
     } else {
       serviceJS.changedTime = new Date().getTime()
       serviceJS.id = id
-      const model = ServiceFactory.modelizeService(serviceJS)
+      const next = ServiceFactory.modelizeService(serviceJS)
       servicePersistence.setJSONItem(id, serviceJS)
-      this._services_.set(id, model)
+      this._services_.set(id, next)
       this.dispatchToRemote('remoteSetService', [id, serviceJS])
-      return model
+
+      // Auto-connect integrated-engine
+      if (!prev) {
+        IEngine.connectService(next.id, next.type)
+      }
+
+      return next
     }
   }
 
@@ -379,8 +392,9 @@ class AccountStore extends CoreAccountStore {
     this.mailboxIds().forEach((mailboxId) => {
       this.startManagingMailboxWithId(mailboxId)
     })
-    this.serviceIds().forEach((serviceId) => {
-      this.startManagingServiceWithId(serviceId)
+    this.allServicesUnordered().forEach((service) => {
+      this.startManagingServiceWithId(service.id)
+      IEngine.connectService(service.id, service.type)
     })
 
     this.resyncContainerServiceSAPI()
@@ -1437,6 +1451,17 @@ class AccountStore extends CoreAccountStore {
       }
     }
   }
+
+  /* **************************************************************************/
+  // Handlers: Sync
+  /* **************************************************************************/
+
+  handleUserRequestsIntegratedServiceSync ({ serviceId }) {
+    this.preventDefault()
+    IEngine.userRequestsSync(serviceId)
+  }
 }
 
-export default alt.createStore(AccountStore, STORE_NAME)
+const accountStore = alt.createStore(AccountStore, STORE_NAME)
+IEngine.connectAccountStore(accountStore, actions)
+export default accountStore

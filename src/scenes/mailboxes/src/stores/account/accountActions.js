@@ -94,11 +94,7 @@ class AccountActions extends RendererAccountActions {
 
     // We also have some classic mappings to work with
     if (templateType === 'GOOGLE') {
-      if (accessMode === 'GMAIL') {
-        return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
-      } else if (accessMode === 'GINBOX') {
-        return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX, accessMode: accessMode || '_' }
-      }
+      return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
     } else if (templateType === 'MICROSOFT') {
       if (accessMode === 'OUTLOOK') {
         return { templateType: ACCOUNT_TEMPLATE_TYPES.OUTLOOK, accessMode: 'OUTLOOK' }
@@ -133,11 +129,7 @@ class AccountActions extends RendererAccountActions {
 
     // We also have some classic mappings to work with
     if (serviceType === 'GOOGLE') {
-      if (accessMode === 'GMAIL') {
-        return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
-      } else if (accessMode === 'GINBOX') {
-        return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_INBOX, accessMode: accessMode || '_' }
-      }
+      return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
     } else if (serviceType === 'MICROSOFT') {
       return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.MICROSOFT_MAIL, accessMode: accessMode || '_' }
     }
@@ -230,6 +222,29 @@ class AccountActions extends RendererAccountActions {
   */
   fullSyncMailbox (mailboxId) {
     return { mailboxId: mailboxId }
+  }
+
+  /**
+  * Triggers a full sync on a mailbox
+  * @param id: the id of the mailbox
+  */
+  userRequestsMailboxSync (mailboxId) {
+    return { mailboxId: mailboxId }
+  }
+
+  /**
+  * @Thomas101 we need to move over to the main thread sync once all accounts have
+  * moved over to the integrated engine. At the moment this shims into using
+  * "userRequestsIntegratedServiceSync" which runs on the main thread but really
+  * this shouldn't happen.
+  * Once all sync has been moved across to the new integrated this fn call can be
+  * changed to run entirely on the main thread
+  *
+  * Triggers a full sync on a service
+  * @param id: the id of the service
+  */
+  userRequestsServiceSync (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/

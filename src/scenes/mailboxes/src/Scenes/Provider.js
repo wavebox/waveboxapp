@@ -5,7 +5,6 @@ import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
-import { googleActions } from 'stores/google'
 import { trelloActions } from 'stores/trello'
 import { slackActions } from 'stores/slack'
 import { microsoftActions } from 'stores/microsoft'
@@ -42,7 +41,6 @@ export default class Provider extends React.Component {
     updaterActions.load()
 
     // STEP 2. Mailbox connections
-    googleActions.startPollingUpdates()
     trelloActions.startPollingUpdates()
     slackActions.connectAllServices()
     microsoftActions.startPollingUpdates()
@@ -68,7 +66,6 @@ export default class Provider extends React.Component {
     updaterActions.unload()
 
     // STEP 2. Mailbox connections
-    googleActions.stopPollingUpdates()
     trelloActions.stopPollingUpdates()
     slackActions.disconnectAllServices()
     microsoftActions.stopPollingUpdates()

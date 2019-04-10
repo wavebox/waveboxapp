@@ -10,61 +10,6 @@ class DebugTests {
   }
 
   /* **************************************************************************/
-  // Google Sync
-  /* **************************************************************************/
-
-  /**
-  * Fetches a set of unread messages so they can be compared against the ones that
-  * are being searched for
-  */
-  fetchGoogleUnreadMessageLabels () {
-    // Always late require to prevent cyclic references
-    const accountStore = require('stores/account/accountStore').default
-    const GoogleHTTP = require('stores/google/GoogleHTTP').default
-    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
-
-    const sig = '[TEST:GOOGLE_LABELS]'
-    console.log(`${sig} start`)
-    const accountState = accountStore.getState()
-    const services = [].concat(
-      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX),
-      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL)
-    )
-    console.log(`${sig} found ${services.length} Google Mailboxes`)
-
-    services.reduce((acc, service) => {
-      const serviceAuth = accountState.getMailboxAuthForServiceId(service.id)
-      let auth = null
-      return acc
-        .then(() => GoogleHTTP.generateAuth(serviceAuth.accessToken, serviceAuth.refreshToken, serviceAuth.authExpiryTime))
-        .then((fetchedAuth) => {
-          auth = fetchedAuth
-          return Promise.resolve()
-        })
-        .then(() => GoogleHTTP.fetchGmailThreadHeadersList(auth, 'label:inbox label:unread', undefined, 100))
-        .then(({ threads = [] }) => {
-          return GoogleHTTP.fullyResolveGmailThreadHeaders(auth, {}, threads, (t) => t)
-        })
-        .then((threads) => {
-          const info = threads.map((thread) => {
-            const labels = thread.messages.reduce((acc, message) => {
-              message.labelIds.forEach((labelId) => {
-                acc.add(labelId)
-              })
-              return acc
-            }, new Set())
-            return {
-              labels: Array.from(labels),
-              snippet: thread.messages[thread.messages.length - 1].snippet
-            }
-          })
-          const infoStrings = info.map((i) => i.labels.join(',') + ': ' + i.snippet)
-          console.log(`${sig} ${service.displayName} unread messages:\n`, infoStrings.join('\n\n'))
-        })
-    }, Promise.resolve())
-  }
-
-  /* **************************************************************************/
   // Slack
   /* **************************************************************************/
 

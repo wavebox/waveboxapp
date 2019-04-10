@@ -1,5 +1,6 @@
 import SERVICE_TYPES from './ServiceTypes'
 import CoreACServiceData from './CoreACServiceData'
+import IEngineServiceData from './IEngineServiceData'
 
 import TrelloService from './Trello/TrelloService'
 import TrelloServiceData from './Trello/TrelloServiceData'
@@ -27,10 +28,8 @@ import GoogleFiService from './Google/GoogleFiService'
 import GoogleHangoutsService from './Google/GoogleHangoutsService'
 import GoogleHangoutsServiceData from './Google/GoogleHangoutsServiceData'
 import GoogleInboxService from './Google/GoogleInboxService'
-import GoogleInboxServiceData from './Google/GoogleInboxServiceData'
 import GoogleKeepService from './Google/GoogleKeepService'
 import GoogleMailService from './Google/GoogleMailService'
-import GoogleMailServiceData from './Google/GoogleMailServiceData'
 import GoogleMusicService from './Google/GoogleMusicService'
 import GooglePhotosService from './Google/GooglePhotosService'
 import GooglePlusService from './Google/GooglePlusService'
@@ -61,8 +60,8 @@ const MAPPING = {
   [SERVICE_TYPES.TRELLO]: [TrelloService, TrelloServiceData],
 
   // Google
-  [SERVICE_TYPES.GOOGLE_MAIL]: [GoogleMailService, GoogleMailServiceData],
-  [SERVICE_TYPES.GOOGLE_INBOX]: [GoogleInboxService, GoogleInboxServiceData],
+  [SERVICE_TYPES.GOOGLE_MAIL]: [GoogleMailService, IEngineServiceData],
+  [SERVICE_TYPES.GOOGLE_INBOX]: [GoogleInboxService, IEngineServiceData], // Byebye inbox :-(
   [SERVICE_TYPES.GOOGLE_DRIVE]: [GoogleDriveService],
   [SERVICE_TYPES.GOOGLE_CONTACTS]: [GoogleContactsService],
   [SERVICE_TYPES.GOOGLE_KEEP]: [GoogleKeepService],

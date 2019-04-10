@@ -12,7 +12,8 @@ import {
   WBRPC_SHOW_ITEM_IN_FOLDER,
   WBRPC_OPEN_ITEM,
   WBRPC_SYNC_GET_PROXY_SETTINGS,
-  WBRPC_SET_PROXY_SETTINGS
+  WBRPC_SET_PROXY_SETTINGS,
+  WBRPC_CHECK_FOR_IENGINE_UPDATES
 } from 'shared/WBRPCEvents'
 import LinkOpener from 'LinkOpener'
 import AppUpdater from 'AppUpdater'
@@ -25,6 +26,7 @@ import { userStore } from 'stores/user'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import os from 'os'
+import IEngine from 'IEngine'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -56,6 +58,7 @@ class WBRPCWavebox {
 
     // Updates
     ipcMain.on(WBRPC_GET_UPDATER_CONFIG, this._handleGetUpdaterConfig)
+    ipcMain.on(WBRPC_CHECK_FOR_IENGINE_UPDATES, this._handleUpdateIEngine)
 
     // Proxy
     ipcMain.on(WBRPC_SYNC_GET_PROXY_SETTINGS, this._handleSyncGetProxySettings)
@@ -104,7 +107,8 @@ class WBRPCWavebox {
         paths: {},
         platform: process.platform,
         arch: process.arch,
-        osRelease: os.release()
+        osRelease: os.release(),
+        iEngine: IEngine.getForegroundConfiguration(evt.sender.id)
       }
     } catch (ex) {
       console.error(`Failed to respond to "${WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
@@ -290,6 +294,14 @@ class WBRPCWavebox {
           autoupdaterSupportedPlatform: false
         })
       })
+  }
+
+  /**
+  * Causes the iEngine to check for updates
+  * @param evt: the event that fired
+  */
+  _handleUpdateIEngine = (evt) => {
+    IEngine.checkForUpdates()
   }
 
   /* ****************************************************************************/

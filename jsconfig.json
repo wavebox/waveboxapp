@@ -6,6 +6,7 @@
     "node_modules",
     "src/**/node_modules",
     "src/**/**/node_modules",
-    "bin"
+    "bin",
+    "assets/wbie"
   ]
 }

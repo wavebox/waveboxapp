@@ -97,6 +97,7 @@ module.exports = Object.freeze({
   // Live autoupdate
   EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
   WIRE_CONFIG_AUTO_UPDATE_INTERVAL: hours(2),
+  IENGINE_AUTO_UPDATE_INTERVAL: hours(2),
 
   // Cookies
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),

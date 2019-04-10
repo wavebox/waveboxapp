@@ -46,6 +46,28 @@ class ServiceReducer {
     }
   }
 
+  /**
+  * Sets the service display name
+  * @param service: the service to change
+  * @param name: the new name
+  */
+  static setServiceDisplayName (service, name) {
+    if (service.serviceDisplayName !== name) {
+      return service.changeData({ serviceDisplayName: name })
+    }
+  }
+
+  /**
+  * Sets the service avatar url
+  * @param service: the service to change
+  * @param val: the new value
+  */
+  static setServiceAvatarUrl (service, val) {
+    if (service.serviceAvatarURL !== val) {
+      return service.changeData({ serviceAvatarURL: val })
+    }
+  }
+
   /* **************************************************************************/
   // Sleepable
   /* **************************************************************************/

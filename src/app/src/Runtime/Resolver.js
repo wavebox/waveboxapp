@@ -1,4 +1,10 @@
 import path from 'path'
+import pkg from 'package.json'
+import AppDirectory from 'appdirectory'
+const appDirectory = new AppDirectory({
+  appName: pkg.name,
+  useRoaming: true
+})
 
 class Resolver {
   /**
@@ -93,6 +99,22 @@ class Resolver {
   */
   static audio (name) {
     return path.resolve(path.join(this.sourceRoot(), 'audio/', name))
+  }
+
+  /**
+  * @param ...args: additional path elements to append
+  * @return the full path to the file
+  */
+  static wbiePrebuilt (...args) {
+    return path.resolve(path.join(this.sourceRoot(), 'wbie/', ...args))
+  }
+
+  /**
+  * @param ...args: additional path elements to append
+  * @return the full path to the file
+  */
+  static wbieLive (...args) {
+    return path.resolve(path.join(appDirectory.userData(), 'wbie/', ...args))
   }
 }
 

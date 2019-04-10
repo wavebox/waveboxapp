@@ -4,9 +4,6 @@
   "license": "MPL-2.0",
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Mailboxes UI for Wavebox",
-  "scripts": {
-    "postinstall": "node ../../../scripts/npmlibStripGoogleapis"
-  },
   "dependencies": {
     "@fortawesome/fontawesome": "1.1.8",
     "@fortawesome/fontawesome-svg-core": "1.2.17",
@@ -27,7 +24,6 @@
     "fbjs": "1.0.0",
     "fs-extra": "7.0.1",
     "fuse.js": "3.4.4",
-    "googleapis": "39.1.0",
     "home-dir": "1.0.0",
     "mkdirp": "0.5.1",
     "node-emoji": "1.10.0",

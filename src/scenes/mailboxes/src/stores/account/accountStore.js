@@ -3,13 +3,11 @@ import { STORE_NAME } from 'shared/AltStores/Account/AltAccountIdentifiers'
 import alt from '../alt'
 import actions from './accountActions'
 import settingsActions from '../settings/settingsActions'
-import GoogleHTTP from '../google/GoogleHTTP'
 import SlackHTTP from '../slack/SlackHTTP'
 import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import TrelloHTTP from '../trello/TrelloHTTP'
 import accountDispatch from './accountDispatch'
 import Bootstrap from 'R/Bootstrap'
-import googleActions from '../google/googleActions'
 import slackActions from '../slack/slackActions'
 import trelloActions from '../trello/trelloActions'
 import microsoftActions from '../microsoft/microsoftActions'
@@ -178,6 +176,8 @@ class AccountStore extends RendererAccountStore {
       // Connection & Sync
       handleFullSyncService: actions.FULL_SYNC_SERVICE,
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
+      handleUserRequestsMailboxSync: actions.USER_REQUESTS_MAILBOX_SYNC,
+      handleUserRequestsServiceSync: actions.USER_REQUESTS_SERVICE_SYNC,
 
       // Snapshots
       handleSetServiceSnapshot: actions.SET_SERVICE_SNAPSHOT,
@@ -203,10 +203,6 @@ class AccountStore extends RendererAccountStore {
     if (!service) { return }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        googleActions.connectService.defer(service.id)
-        break
       case SERVICE_TYPES.SLACK:
         slackActions.connectService.defer(service.id)
         break
@@ -221,10 +217,6 @@ class AccountStore extends RendererAccountStore {
     if (!service) { return }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        googleActions.disconnectService.defer(service.id)
-        break
       case SERVICE_TYPES.SLACK:
         slackActions.disconnectService.defer(service.id)
         break
@@ -277,10 +269,6 @@ class AccountStore extends RendererAccountStore {
       const changed = next.syncWatchFields.filter((k) => prev[k] !== next[k])
       if (changed.length) {
         switch (next.type) {
-          case SERVICE_TYPES.GOOGLE_MAIL:
-          case SERVICE_TYPES.GOOGLE_INBOX:
-            googleActions.serviceSyncWatchFieldChange.defer(next.id, changed)
-            break
           case SERVICE_TYPES.MICROSOFT:
             microsoftActions.serviceSyncWatchFieldChange.defer(next.id, changed)
             break
@@ -403,7 +391,7 @@ class AccountStore extends RendererAccountStore {
       }
     }
 
-    if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL || template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX) {
+    if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL) {
       window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
       ipcRenderer.send(WB_AUTH_GOOGLE, ipcPayload)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.OUTLOOK || template.templateType === ACCOUNT_TEMPLATE_TYPES.OFFICE365) {
@@ -755,48 +743,40 @@ class AccountStore extends RendererAccountStore {
 
   handleAuthGoogleSuccess ({ mode, context, auth }) {
     this.preventDefault()
-    Promise.resolve()
-      .then(() => GoogleHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri))
-      .then((permenantAuth) => {
-        return GoogleHTTP.fetchAccountProfileWithRawAuth(permenantAuth)
-          .then((response) => { // Build the complete auth object
-            return {
-              ...permenantAuth,
-              pushToken: auth.pushToken,
-              email: response.email
-            }
-          })
-      })
-      .then((permenantAuth) => {
-        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
-          // Create the auth
-          actions.createAuth.defer(
-            GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
-          )
 
-          // Create the account
-          const template = new ACTemplatedAccount(context.template)
-          this._createMailboxFromTemplate(context.mailboxId, template)
-          this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
-        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
-          if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, permenantAuth)
-          } else {
-            actions.createAuth.defer(
-              GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
-            )
-          }
+    const authData = {
+      access_token: '__COOKIE__',
+      refresh_token: '__COOKIE__',
+      date: new Date().getTime(),
+      expires_in: 1000000,
+      pushToken: '__COOKIE__'
+    }
 
-          if (mode === AUTH_MODES.REAUTHENTICATE) {
-            this._finalizeReauthentication(context.serviceId)
-          } else if (mode === AUTH_MODES.ATTACH) {
-            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
-          }
-        }
-      })
-      .catch((err) => {
-        console.error('[AUTH ERR]', err)
-      })
+    if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+      // Create the auth
+      actions.createAuth.defer(
+        GoogleAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
+      )
+
+      // Create the account
+      const template = new ACTemplatedAccount(context.template)
+      this._createMailboxFromTemplate(context.mailboxId, template)
+      this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
+    } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
+      if (this.hasMailboxAuth(context.authId)) {
+        actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, authData)
+      } else {
+        actions.createAuth.defer(
+          GoogleAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
+        )
+      }
+
+      if (mode === AUTH_MODES.REAUTHENTICATE) {
+        this._finalizeReauthentication(context.serviceId)
+      } else if (mode === AUTH_MODES.ATTACH) {
+        actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+      }
+    }
   }
 
   handleAuthSlackSuccess ({ mode, context, auth }) {
@@ -966,13 +946,7 @@ class AccountStore extends RendererAccountStore {
     if (!service) { return }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        googleActions.syncServiceProfile.defer(serviceId)
-        googleActions.connectService.defer(serviceId)
-        googleActions.registerServiceWatch.defer(serviceId)
-        googleActions.syncServiceMessages.defer(serviceId, true)
-        break
+      // @Thomas101 when all have been integrated-engine move this into main thread
       case SERVICE_TYPES.TRELLO:
         trelloActions.syncServiceProfile.defer(serviceId)
         trelloActions.syncServiceNotifications.defer(serviceId)
@@ -996,6 +970,41 @@ class AccountStore extends RendererAccountStore {
     mailbox.allServices.forEach((serviceId) => {
       actions.fullSyncService.defer(serviceId)
     })
+  }
+
+  handleUserRequestsMailboxSync ({ mailboxId }) {
+    this.preventDefault()
+    const mailbox = this.getMailbox(mailboxId)
+    if (!mailbox) { return }
+
+    mailbox.allServices.forEach((serviceId) => {
+      actions.userRequestsServiceSync.defer(serviceId)
+    })
+  }
+
+  handleUserRequestsServiceSync ({ serviceId }) {
+    this.preventDefault()
+    const service = this.getService(serviceId)
+    if (!service) { return }
+
+    switch (service.type) {
+      case SERVICE_TYPES.GOOGLE_MAIL:
+      case SERVICE_TYPES.GOOGLE_INBOX:
+        actions.userRequestsIntegratedServiceSync(serviceId)
+        break
+      case SERVICE_TYPES.TRELLO:
+        trelloActions.syncServiceProfile.defer(serviceId)
+        trelloActions.syncServiceNotifications.defer(serviceId)
+        break
+      case SERVICE_TYPES.SLACK:
+        slackActions.connectService.defer(serviceId)
+        slackActions.updateUnreadCounts.defer(serviceId)
+        break
+      case SERVICE_TYPES.MICROSOFT_MAIL:
+        microsoftActions.syncServiceProfile.defer(serviceId)
+        microsoftActions.syncServiceMail.defer(serviceId)
+        break
+    }
   }
 
   /* **************************************************************************/

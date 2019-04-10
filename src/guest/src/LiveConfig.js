@@ -46,6 +46,8 @@ class LiveConfig {
   get platform () { return this.config.platform }
   get arch () { return this.config.arch }
   get osRelease () { return this.config.osRelease }
+  get iEngine () { return this.config.iEngine }
+  get hasIEngine () { return !!this.iEngine }
 }
 
 export default new LiveConfig()

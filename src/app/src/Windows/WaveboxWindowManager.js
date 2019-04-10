@@ -204,7 +204,7 @@ class WaveboxWindowManager {
         .tabIds()
         .filter((tabId) => {
           const metaInfo = waveboxWindow.tabMetaInfo(tabId)
-          return metaInfo && metaInfo.backingType === backingType
+          return metaInfo && metaInfo.backing === backingType
         })
       return acc.concat(matching)
     }, [])
@@ -219,7 +219,7 @@ class WaveboxWindowManager {
     return this.all().reduce((acc, waveboxWindow) => {
       waveboxWindow.tabIds().forEach((tabId) => {
         const metaInfo = waveboxWindow.tabMetaInfo(tabId)
-        if (metaInfo && metaInfo.backingType === backingType) {
+        if (metaInfo && metaInfo.backing === backingType) {
           acc.set(tabId, metaInfo)
         }
       })
