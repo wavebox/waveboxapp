@@ -4,7 +4,7 @@ import IEngineStoreConnections from './IEngineStoreConnections'
 import IEngineLoader from './IEngineLoader'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
-import { SUPPORTED_WBIE_SERVICE_TYPES } from 'shared/IEngine/IEngineTypes'
+import { IENGINE_ALIASES } from 'shared/IEngine/IEngineTypes'
 
 const privRuntimes = Symbol('privRuntimes')
 const privStoreConnections = Symbol('privStoreConnections')
@@ -43,16 +43,16 @@ class IEngine {
   /**
   * Connects a service
   * @param serviceId: the id of the service
-  * @param serviceType: the type of the service
+  * @param iengineAlias: the alias of the engine
   */
-  connectService (serviceId, serviceType) {
+  connectService (serviceId, iengineAlias) {
     Promise.resolve()
       .then(() => app.whenReady())
       .then(() => {
         if (this[privRuntimes].has(serviceId)) { return }
-        if (!SUPPORTED_WBIE_SERVICE_TYPES.has(serviceType)) { return }
+        if (!IENGINE_ALIASES.has(iengineAlias)) { return }
 
-        const runtime = new IEngineRuntime(serviceId, serviceType, this[privStoreConnections])
+        const runtime = new IEngineRuntime(serviceId, iengineAlias, this[privStoreConnections])
         this[privRuntimes].set(serviceId, runtime)
       })
   }

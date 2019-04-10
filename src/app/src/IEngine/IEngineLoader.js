@@ -5,14 +5,8 @@ import IEngineModuleLoader from 'shared/IEngine/IEngineModuleLoader'
 import fetch from 'electron-fetch'
 import pkg from 'package.json'
 import { userStore } from 'stores/user'
-import {
-  SUPPORTED_WBIE_TYPES,
-  SERVICE_TYPES_TO_WBIE_NAME,
-  WBIE_NAMES_TO_SERVICE_TYPE
-} from 'shared/IEngine/IEngineTypes'
-import {
-  IENGINE_AUTO_UPDATE_INTERVAL
-} from 'shared/constants'
+import { IENGINE_AUTO_UPDATE_INTERVAL } from 'shared/constants'
+import { IENGINE_TYPES } from 'shared/IEngine/IEngineTypes'
 
 const SOURCE_TYPES = {
   PREBUILT: 'PREBUILT',
@@ -36,35 +30,34 @@ class IEngineLoader extends EventEmitter {
 
   /**
   * Loads a string resource
-  * @param serviceType: the type of service to load for
+  * @param iengineType: the type of iengine to load for
   * @param resource: the resource name
   * @return the resource string
   */
-  loadStringResourceSync (serviceType, resource) {
-    return this.loadResourceSync(serviceType, resource).toString('utf8')
+  loadStringResourceSync (iengineType, resource) {
+    return this.loadResourceSync(iengineType, resource).toString('utf8')
   }
 
   /**
   * Loads a json resource
-  * @param serviceType: the type of service to load for
+  * @param iengineType: the type of iengine to load for
   * @param resource: the resource name
   * @return the resource string
   */
-  loadJSONResourceSync (serviceType, resource) {
-    return JSON.parse(this.loadResourceSync(serviceType, resource).toString('utf8'))
+  loadJSONResourceSync (iengineType, resource) {
+    return JSON.parse(this.loadResourceSync(iengineType, resource).toString('utf8'))
   }
 
   /**
   * Loads a module sync
-  * @param serviceType: the type of service to load for
+  * @param iengineType: the type of iengine to load for
   * @param resource: the resource name
   * @return the module
   */
-  loadModuleSync (serviceType, resource) {
-    const wbieName = SERVICE_TYPES_TO_WBIE_NAME[serviceType]
-    const cache = this._ensureLoadCacheSync(wbieName)
+  loadModuleSync (iengineType, resource) {
+    const cache = this._ensureLoadCacheSync(iengineType)
     if (!cache.modules[resource]) {
-      const moduleSource = fs.readFileSync(this._joinResourcePath(wbieName, cache.source, resource), 'utf8')
+      const moduleSource = fs.readFileSync(this._joinResourcePath(iengineType, cache.source, resource), 'utf8')
       const module = IEngineModuleLoader.loadModule(moduleSource)
       cache.modules[resource] = module
     }
@@ -74,14 +67,13 @@ class IEngineLoader extends EventEmitter {
 
   /**
   * Loads a resource
-  * @param serviceType: the type of service to load for
+  * @param iengineType: the type of iengine to load for
   * @param resource: the resource name
   * @return the resource buffer
   */
-  loadResourceSync (serviceType, resource) {
-    const wbieName = SERVICE_TYPES_TO_WBIE_NAME[serviceType]
-    const source = this._ensureLoadCacheSync(wbieName).source
-    return fs.readFileSync(this._joinResourcePath(wbieName, source, resource))
+  loadResourceSync (iengineType, resource) {
+    const source = this._ensureLoadCacheSync(iengineType).source
+    return fs.readFileSync(this._joinResourcePath(iengineType, source, resource))
   }
 
   /**
@@ -89,8 +81,8 @@ class IEngineLoader extends EventEmitter {
   * @return an object of name to current version
   */
   loadVersionNumbersSync () {
-    return Array.from(SUPPORTED_WBIE_TYPES).reduce((acc, wbieName) => {
-      acc[wbieName] = this._ensureLoadCacheSync(wbieName).version
+    return Array.from(IENGINE_TYPES).reduce((acc, type) => {
+      acc[type] = this._ensureLoadCacheSync(type).version
       return acc
     }, {})
   }
@@ -208,6 +200,11 @@ class IEngineLoader extends EventEmitter {
   * @return Promise
   */
   fetchUpdateAndUnpack () {
+    console.log("REQ", {
+      version: pkg.version,
+      channel: pkg.releaseChannel,
+      wbie: this.loadVersionNumbersSync()
+    })
     return Promise.resolve()
       .then(() => {
         const clientId = userStore.getState().clientId
@@ -228,35 +225,30 @@ class IEngineLoader extends EventEmitter {
       .then((res) => res.json())
       .then((res) => {
         const integrations = res.integrations
-        const wbieNames = Object.keys(integrations)
-        if (wbieNames.length) {
+        const iengineTypes = Object.keys(integrations)
+        if (iengineTypes.length) {
           return Promise.resolve()
             .then(() => {
-              return wbieNames.reduce((acc, wbieName) => {
+              return iengineTypes.reduce((acc, type) => {
                 return acc
-                  .then(() => this.extractLivePackFile(wbieName, integrations[wbieName]))
+                  .then(() => this.extractLivePackFile(type, integrations[type]))
                   .catch((ex) => {
-                    console.warn(`Failed to unpack IEngine ${wbieName}`, ex)
+                    console.warn(`Failed to unpack IEngine ${type}`, ex)
                     return Promise.resolve()
                   })
               }, Promise.resolve())
             })
-            .then(() => Promise.resolve(wbieNames))
+            .then(() => Promise.resolve(iengineTypes))
         } else {
           return Promise.resolve([])
         }
       })
-      .then((wbieNames) => {
-        wbieNames.forEach((wbieName) => {
-          this._clearCache(wbieName)
+      .then((iengineTypes) => {
+        console.log("<<", iengineTypes)
+        iengineTypes.forEach((type) => {
+          this._clearCache(type)
         })
-        this.emit(
-          'reload-engines',
-          { sender: this },
-          'update',
-          wbieNames,
-          wbieNames.map((n) => WBIE_NAMES_TO_SERVICE_TYPE[n])
-        )
+        this.emit('reload-engines', { sender: this }, 'update', iengineTypes)
       })
   }
 }

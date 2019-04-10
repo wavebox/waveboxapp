@@ -1,20 +1,20 @@
-import SERVICE_TYPES from '../Models/ACAccounts/ServiceTypes'
+const MANIFEST = {
+  'gmail': [
+    'GOOGLE_MAIL'
+  ]
+}
 
-const SERVICE_TYPES_TO_WBIE_NAME = Object.freeze({
-  [SERVICE_TYPES.GOOGLE_MAIL]: 'gmail'
-})
-const WBIE_NAMES_TO_SERVICE_TYPE = Object.freeze(
-  Object.keys(SERVICE_TYPES_TO_WBIE_NAME).reduce((acc, k) => {
-    acc[SERVICE_TYPES_TO_WBIE_NAME[k]] = k
-    return acc
-  }, {})
-)
-const SUPPORTED_WBIE_TYPES = new Set(Object.keys(WBIE_NAMES_TO_SERVICE_TYPE))
-const SUPPORTED_WBIE_SERVICE_TYPES = new Set(Object.keys(SERVICE_TYPES_TO_WBIE_NAME))
+const IENGINE_TYPES = new Set(Object.keys(MANIFEST))
+const IENGINE_ALIAS_TO_TYPE = Object.keys(MANIFEST).reduce((acc, k) => {
+  MANIFEST[k].forEach((alias) => {
+    acc[alias] = k
+  })
+  return acc
+}, {})
+const IENGINE_ALIASES = new Set(Object.keys(IENGINE_ALIAS_TO_TYPE))
 
 export {
-  SERVICE_TYPES_TO_WBIE_NAME,
-  WBIE_NAMES_TO_SERVICE_TYPE,
-  SUPPORTED_WBIE_SERVICE_TYPES,
-  SUPPORTED_WBIE_TYPES
+  IENGINE_TYPES,
+  IENGINE_ALIASES,
+  IENGINE_ALIAS_TO_TYPE
 }

@@ -10,12 +10,12 @@ import SlackServiceWebView from './ServiceWebViews/Slack/SlackServiceWebView'
 import GenericServiceWebView from './ServiceWebViews/Generic/GenericServiceWebView'
 import ContainerServiceWebView from './ServiceWebViews/Container/ContainerServiceWebView'
 import MicrosoftMailServiceWebView from './ServiceWebViews/Microsoft/MicrosoftMailServiceWebView'
+import { IENGINE_ALIASES } from 'shared/IEngine/IEngineTypes'
 import IEngineWebView from './ServiceWebViews/IEngineWebView'
 import CoreServiceWebView from './CoreServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
-import { SUPPORTED_WBIE_SERVICE_TYPES } from 'shared/IEngine/IEngineTypes'
 import RestrictedService from './RestrictedService'
 import shallowCompare from 'react-addons-shallow-compare'
 import ServiceErrorBoundary from './ServiceErrorBoundary'
@@ -93,10 +93,12 @@ class ServiceTab extends React.Component {
       ...service ? {
         hasService: true,
         serviceType: service.type,
+        iengineAlias: service.iengineAlias,
         mailboxId: service.parentId
       } : {
         hasService: false,
         serviceType: undefined,
+        iengineAlias: undefined,
         mailboxId: undefined
       }
     }
@@ -125,10 +127,11 @@ class ServiceTab extends React.Component {
   /**
   * Gets the class for the mailbox
   * @param serviceType: the service of the tab
+  * @param iengineAlias: the id of the iengine to use
   * @return the class
   */
-  getWebviewClass (serviceType) {
-    if (SUPPORTED_WBIE_SERVICE_TYPES.has(serviceType)) {
+  getWebviewClass (serviceType, iengineAlias) {
+    if (IENGINE_ALIASES.has(iengineAlias)) {
       return IEngineWebView
     }
     switch (serviceType) {
@@ -162,6 +165,7 @@ class ServiceTab extends React.Component {
     } = this.props
     const {
       serviceType,
+      iengineAlias,
       isActive,
       hasService,
       mailboxId,
@@ -169,7 +173,7 @@ class ServiceTab extends React.Component {
     } = this.state
     if (!hasService) { return false }
 
-    const WebviewClass = this.getWebviewClass(serviceType)
+    const WebviewClass = this.getWebviewClass(serviceType, iengineAlias)
     return (
       <div className={classNames(classes.serviceTab, isActive ? 'active' : undefined, className)} {...passProps}>
         {isRestricted ? (

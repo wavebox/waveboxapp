@@ -9,7 +9,8 @@ import {
 } from 'shared/ipcEvents'
 
 const privServiceId = Symbol('privServiceId')
-const privServiceType = Symbol('privServiceType')
+const privIEngineAlias = Symbol('privIEngineAlias')
+const privIEngineType = Symbol('privIEngineType')
 const privApi = Symbol('privApi')
 const privForeground = Symbol('privForeground')
 
@@ -23,7 +24,8 @@ class IEngineRuntime {
   */
   constructor (manifest) {
     this[privServiceId] = manifest.serviceId
-    this[privServiceType] = manifest.serviceType
+    this[privIEngineAlias] = manifest.iengineAlias
+    this[privIEngineType] = manifest.iengineType
     this[privApi] = new IEngineApi(this[privServiceId])
     this[privForeground] = undefined
 
@@ -55,7 +57,7 @@ class IEngineRuntime {
     try {
       return IEngineModuleLoader.loadModule(manifest.js)
     } catch (ex) {
-      console.warn(`Failed to load IEngine foreground.js for ${this[privServiceType]}. Continuing with unknown side effects`, ex)
+      console.warn(`Failed to load IEngine foreground.js for ${this[privIEngineAlias]} ${this[privIEngineType]}. Continuing with unknown side effects`, ex)
       return undefined
     }
   }

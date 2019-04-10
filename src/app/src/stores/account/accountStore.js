@@ -257,7 +257,7 @@ class AccountStore extends CoreAccountStore {
 
       // Auto-connect integrated-engine
       if (!prev) {
-        IEngine.connectService(next.id, next.type)
+        IEngine.connectService(next.id, next.iengineAlias)
       }
 
       return next
@@ -394,7 +394,7 @@ class AccountStore extends CoreAccountStore {
     })
     this.allServicesUnordered().forEach((service) => {
       this.startManagingServiceWithId(service.id)
-      IEngine.connectService(service.id, service.type)
+      IEngine.connectService(service.id, service.iengineAlias)
     })
 
     this.resyncContainerServiceSAPI()

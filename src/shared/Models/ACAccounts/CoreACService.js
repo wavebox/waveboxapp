@@ -84,6 +84,7 @@ class CoreACService extends CoreACModel {
     return `persist:${basePartitionId}`
   }
   get type () { return this.constructor.type }
+  get iengineAlias () { return this.constructor.type }
   get sandboxFromMailbox () { return this._value_('sandboxFromMailbox', false) }
 
   /* **************************************************************************/

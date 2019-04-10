@@ -4,6 +4,9 @@ import {
   WB_IENGINE_MESSAGE_BACKGROUND_,
   WB_IENGINE_RELOAD_FOREGROUND_
 } from 'shared/ipcEvents'
+import {
+  IENGINE_ALIAS_TO_TYPE
+} from 'shared/IEngine/IEngineTypes'
 import deepEqual from 'fast-deep-equal'
 import IEngineLoader from './IEngineLoader'
 
@@ -12,7 +15,8 @@ const privStoreConnections = Symbol('privStoreConnections')
 const privState = Symbol('privState')
 const privApi = Symbol('privApi')
 const privBackground = Symbol('privBackground')
-const privServiceType = Symbol('privServiceType')
+const privIEngineAlias = Symbol('privIEngineAlias')
+const privIEngineType = Symbol('privIEngineType')
 
 class IEngineRuntime {
   /* **************************************************************************/
@@ -21,12 +25,13 @@ class IEngineRuntime {
 
   /**
   * @param serviceId: the id of the service we're working on behalf of
-  * @param serviceType: the type of service that can be used to load the engine
+  * @param iengineAlias: the type of service that can be used to load the engine
   * @param storeConnections: the store connections to use
   */
-  constructor (serviceId, serviceType, storeConnections) {
+  constructor (serviceId, iengineAlias, storeConnections) {
     this[privServiceId] = serviceId
-    this[privServiceType] = serviceType
+    this[privIEngineAlias] = iengineAlias
+    this[privIEngineType] = IENGINE_ALIAS_TO_TYPE[iengineAlias]
     this[privStoreConnections] = storeConnections
     this[privApi] = new IEngineApi(serviceId, storeConnections)
     this[privBackground] = undefined
@@ -84,9 +89,9 @@ class IEngineRuntime {
   */
   _loadBackgroundEngine () {
     try {
-      return IEngineLoader.loadModuleSync(this[privServiceType], 'background.js')
+      return IEngineLoader.loadModuleSync(this[privIEngineType], 'background.js')
     } catch (ex) {
-      console.warn(`Failed to load IEngine background.js for ${this[privServiceType]}. Continuing with unknown side effects`, ex)
+      console.warn(`Failed to load IEngine background.js for ${this[privIEngineAlias]} ${this[privIEngineType]}. Continuing with unknown side effects`, ex)
       return undefined
     }
   }
@@ -97,16 +102,17 @@ class IEngineRuntime {
   */
   _loadForegroundEngineManifest () {
     try {
-      const foreground = IEngineLoader.loadStringResourceSync(this[privServiceType], 'foreground.js')
-      const adaptor = IEngineLoader.loadJSONResourceSync(this[privServiceType], 'foreground-adaptor.json')
+      const foreground = IEngineLoader.loadStringResourceSync(this[privIEngineType], 'foreground.js')
+      const adaptor = IEngineLoader.loadJSONResourceSync(this[privIEngineType], 'foreground-adaptor.json')
       return {
         matches: adaptor.matches,
         js: foreground,
         serviceId: this[privServiceId],
-        serviceType: this[privServiceType]
+        iengineAlias: this[privIEngineAlias],
+        iengineType: this[privIEngineType]
       }
     } catch (ex) {
-      console.warn(`Failed to load IEngine foreground manifest for ${this[privServiceType]}. Continuing with unknown side effects`, ex)
+      console.warn(`Failed to load IEngine foreground manifest for ${this[privIEngineAlias]} ${this[privIEngineType]}. Continuing with unknown side effects`, ex)
       return undefined
     }
   }
@@ -160,11 +166,10 @@ class IEngineRuntime {
   * Handles the updater indicating that engines need to reload
   * @param evt: the event that fired
   * @param reason: the reason for the reload
-  * @param wbieNames: array of names of the wbieEngines
-  * @param serviceTypes: array of service types
+  * @param iengineTypes: array of iengineTypes that need reloading
   */
-  _handleEngineReloadEvent = (evt, reason, wbieNames, serviceTypes) => {
-    if (serviceTypes.includes(this[privServiceType])) {
+  _handleEngineReloadEvent = (evt, reason, iengineTypes) => {
+    if (iengineTypes.includes(this[privIEngineType])) {
       if (this[privBackground]) {
         this[privBackground].destroy()
         this[privBackground] = undefined
