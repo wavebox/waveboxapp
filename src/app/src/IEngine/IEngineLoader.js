@@ -200,11 +200,6 @@ class IEngineLoader extends EventEmitter {
   * @return Promise
   */
   fetchUpdateAndUnpack () {
-    console.log("REQ", {
-      version: pkg.version,
-      channel: pkg.releaseChannel,
-      wbie: this.loadVersionNumbersSync()
-    })
     return Promise.resolve()
       .then(() => {
         const clientId = userStore.getState().clientId
@@ -244,7 +239,6 @@ class IEngineLoader extends EventEmitter {
         }
       })
       .then((iengineTypes) => {
-        console.log("<<", iengineTypes)
         iengineTypes.forEach((type) => {
           this._clearCache(type)
         })
