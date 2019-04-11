@@ -3,12 +3,15 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListTypography from 'wbui/SettingsListTypography'
 import { accountStore, accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
 import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 
 const styles = {
   link: {
@@ -56,7 +59,8 @@ class GoogleMailUnreadSettings extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     return {
-      ...this.extractStateForService(this.props.serviceId, accountState)
+      ...this.extractStateForService(this.props.serviceId, accountState),
+      disableSleepForImmediateSyncOpen: false
     }
   })()
 
@@ -75,8 +79,9 @@ class GoogleMailUnreadSettings extends React.Component {
     const service = accountState.getService(serviceId)
     return service ? {
       hasService: true,
-      serviceType: service.type,
-      inboxType: service.inboxType
+      inboxType: service.inboxType,
+      syncInterval: service.syncInterval,
+      sleepable: service.sleepable
     } : {
       hasService: false
     }
@@ -93,6 +98,49 @@ class GoogleMailUnreadSettings extends React.Component {
   handleOpenInboxTypeKB = (evt) => {
     evt.preventDefault()
     WBRPCRenderer.wavebox.openExternal('https://wavebox.io/kb/gmail-inbox-type')
+  }
+
+  /**
+  * Sets the sync interval
+  * @param evt: the event that fired
+  * @param value: the value
+  */
+  handleSetSyncInterval = (evt, value) => {
+    if (value === 0) {
+      this.setState({ disableSleepForImmediateSyncOpen: true })
+    } else {
+      accountActions.reduceService(
+        this.props.serviceId,
+        CoreGoogleMailServiceReducer.setSyncInterval,
+        value
+      )
+    }
+  }
+
+  /**
+  * Closes the sleep dialog
+  * @param evt: the event that fired
+  */
+  handleSleepDialogClose = (evt) => {
+    this.setState({ disableSleepForImmediateSyncOpen: false })
+  }
+
+  /**
+  * Enables sleep from the dialog and closes it
+  * @param evt: the event that fired
+  */
+  handleDisableSleepFromDialog = (evt) => {
+    this.setState({ disableSleepForImmediateSyncOpen: false })
+    accountActions.reduceService(
+      this.props.serviceId,
+      CoreGoogleMailServiceReducer.setSyncInterval,
+      30000
+    )
+    accountActions.reduceService(
+      this.props.serviceId,
+      CoreGoogleMailServiceReducer.setSleepable,
+      false
+    )
   }
 
   /* **************************************************************************/
@@ -112,30 +160,72 @@ class GoogleMailUnreadSettings extends React.Component {
     const {
       hasService,
       inboxType,
-      serviceType
+      syncInterval,
+      sleepable,
+      disableSleepForImmediateSyncOpen
     } = this.state
     if (!hasService) { return false }
 
     return (
-      <SettingsListSection title='Unread & Sync' {...passProps}>
-        <SettingsListItemSelect
-          label={serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL ? (
-            <React.Fragment>
-              Inbox Type <a href='#' className={classes.link} onClick={this.handleOpenInboxTypeKB}>Need some help?</a>
-            </React.Fragment>
-          ) : ('Inbox Type')}
-          value={inboxType}
-          options={[
-            { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT, label: 'Default (Categories or tabs)' },
-            { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT, label: 'Important first' },
-            { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD, label: 'Unread first' },
-            { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED, label: 'Starred first' },
-            { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY, label: 'Priority Inbox' }
-          ]}
-          onChange={(evt, value) => {
-            accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setInboxType, value)
-          }} />
-      </SettingsListSection>
+      <React.Fragment>
+        <SettingsListSection title='Unread & Sync' {...passProps}>
+          <SettingsListItemSelect
+            label={(
+              <React.Fragment>
+                Inbox Type <a href='#' className={classes.link} onClick={this.handleOpenInboxTypeKB}>Need some help?</a>
+              </React.Fragment>
+            )}
+            value={inboxType}
+            options={[
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT, label: 'Default (Categories or tabs)' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT, label: 'Important first' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD, label: 'Unread first' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED, label: 'Starred first' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY, label: 'Priority Inbox' }
+            ]}
+            onChange={(evt, value) => {
+              accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setInboxType, value)
+            }} />
+          <SettingsListItemSelect
+            divider={false}
+            label='Sync interval'
+            disabled={!sleepable}
+            value={sleepable ? syncInterval : 0}
+            options={[
+              { value: 0, label: 'Immediate' },
+              { value: 30000, label: '30 seconds' },
+              { value: 60000, label: '1 Minute' },
+              { value: 120000, label: '2 Minutes' },
+              { value: 300000, label: '5 minutes' }
+            ]}
+            onChange={this.handleSetSyncInterval}>
+            {sleepable ? undefined : (
+              <SettingsListTypography
+                type='info'
+                variant='select-help'
+                icon={<CheckCircleIcon />}>
+                Sync is immediate when sleep is disabled on this service
+              </SettingsListTypography>
+            )}
+          </SettingsListItemSelect>
+        </SettingsListSection>
+        <Dialog open={disableSleepForImmediateSyncOpen} onClose={this.handleSleepDialogClose}>
+          <DialogTitle>Disable sleep?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Immediate sync is only available when sleep is disabled
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleSleepDialogClose}>
+              Cancel
+            </Button>
+            <Button onClick={this.handleDisableSleepFromDialog} color='primary' autoFocus>
+              Disable Sleep
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </React.Fragment>
     )
   }
 }

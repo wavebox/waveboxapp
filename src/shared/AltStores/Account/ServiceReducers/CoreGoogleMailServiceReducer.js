@@ -22,6 +22,17 @@ class CoreGoogleMailServiceReducer extends ServiceReducer {
     })
   }
 
+  /**
+  * Sets the sync interval
+  * @param service: the servie to update
+  * @param interval: the new interval in ms
+  */
+  static setSyncInterval (service, interval) {
+    return service.changeData({
+      syncInterval: interval
+    })
+  }
+
   /* **************************************************************************/
   // Google Inbox Retirement
   /* **************************************************************************/

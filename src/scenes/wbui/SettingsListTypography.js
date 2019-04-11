@@ -22,6 +22,11 @@ const styles = {
       display: 'block',
       fontSize: '75%',
       marginTop: 10
+    },
+    '&.variant-select-help': {
+      display: 'block',
+      fontSize: '75%',
+      marginTop: 10
     }
   },
   iconWrap: {
@@ -52,7 +57,7 @@ class SettingsListTypography extends React.Component {
 
   static propTypes = {
     type: PropTypes.oneOf(['warning', 'info', 'muted', undefined]),
-    variant: PropTypes.oneOf(['button-help', undefined]),
+    variant: PropTypes.oneOf(['button-help', 'select-help', undefined]),
     icon: PropTypes.node
   }
 

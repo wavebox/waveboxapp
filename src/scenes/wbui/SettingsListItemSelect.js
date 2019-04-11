@@ -5,8 +5,13 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import SettingsListItem from './SettingsListItem'
 import SettingsListItemSelectOptionRenderer from './SettingsListItemSelectOptionRenderer'
+import classNames from 'classnames'
 
 const styles = {
+  root: {
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
   selectRoot: {
     fontSize: '0.8rem',
     marginTop: 20
@@ -41,10 +46,12 @@ class SettingsListItemSelect extends React.Component {
   }
 
   render () {
-    const { classes, disabled, className, label, onChange, value, options, ...passProps } = this.props
+    const { children, classes, disabled, className, label, onChange, value, options, ...passProps } = this.props
 
     return (
-      <SettingsListItem {...passProps}>
+      <SettingsListItem
+        className={classNames(className, classes.root)}
+        {...passProps}>
         <FormControl fullWidth>
           <InputLabel>{label}</InputLabel>
           <Select
@@ -63,6 +70,7 @@ class SettingsListItemSelect extends React.Component {
             {SettingsListItemSelectOptionRenderer.renderOptions(options)}
           </Select>
         </FormControl>
+        {children}
       </SettingsListItem>
     )
   }

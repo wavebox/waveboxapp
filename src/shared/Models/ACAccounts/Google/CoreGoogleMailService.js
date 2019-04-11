@@ -145,7 +145,7 @@ class CoreGoogleMailService extends CoreACService {
   /* **************************************************************************/
 
   get syncWatchFields () {
-    return [ 'inboxType' ]
+    return [ 'inboxType', 'syncInterval' ]
   }
 
   /* **************************************************************************/
@@ -179,6 +179,7 @@ class CoreGoogleMailService extends CoreACService {
     return this.constructor.INBOX_TYPES.GMAIL_UNREAD
   }
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
+  get syncInterval () { return this._value_('syncInterval', 30000) }
 
   /* **************************************************************************/
   // Commands
