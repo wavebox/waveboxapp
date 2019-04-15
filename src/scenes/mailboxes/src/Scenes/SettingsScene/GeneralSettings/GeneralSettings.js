@@ -66,7 +66,9 @@ const styles = {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: SCROLLSPY_WIDTH
+    width: SCROLLSPY_WIDTH,
+    maxHeight: '100%',
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   scrollspyList: {
     paddingTop: 0,
