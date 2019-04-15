@@ -1,6 +1,9 @@
 const MANIFEST = {
   'gmail': [
     'GOOGLE_MAIL'
+  ],
+  'trello': [
+    'TRELLO'
   ]
 }
 

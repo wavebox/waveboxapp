@@ -66,10 +66,11 @@ export default class TrelloServiceSettings extends React.Component {
   */
   extractStateForService (serviceId, accountState) {
     const service = accountState.getService(serviceId)
-    return service ? {
+    const serviceData = accountState.getServiceData(serviceId)
+    return service && serviceData ? {
       hasService: true,
       homeBoardId: service.homeBoardId,
-      boards: Array.from(service.boards)
+      boards: serviceData.shapeExpandoValue('trelloBoards', 'array', [])
     } : {
       hasService: false
     }

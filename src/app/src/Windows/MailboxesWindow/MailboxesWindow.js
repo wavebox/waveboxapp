@@ -7,10 +7,8 @@ import { GuestWebPreferences } from 'WebContentsManager'
 import path from 'path'
 import { URL } from 'url'
 import {
-  AuthGoogle,
   AuthMicrosoft,
   AuthSlack,
-  AuthTrello,
   AuthWavebox
 } from 'AuthProviders'
 import querystring from 'querystring'
@@ -91,8 +89,6 @@ class MailboxesWindow extends WaveboxWindow {
     super('mailbox_window_state')
     singletonAttached = this
 
-    this.authGoogle = new AuthGoogle()
-    this.authTrello = new AuthTrello()
     this.authSlack = new AuthSlack()
     this.authMicrosoft = new AuthMicrosoft()
     this.authWavebox = new AuthWavebox()

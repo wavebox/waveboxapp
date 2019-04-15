@@ -203,7 +203,7 @@ class CoreACService extends CoreACModel {
   get hasServiceAvatarURL () { return !!this.serviceAvatarURL }
   get serviceLocalAvatarId () { return this._value_('serviceLocalAvatarId') }
   get hasServiceLocalAvatarId () { return !!this.serviceLocalAvatarId }
-  get serviceAvatarCharacterDisplay () { return undefined }
+  get serviceAvatarCharacterDisplay () { return this._value_('serviceAvatarCharacterDisplay', undefined) }
 
   /* **************************************************************************/
   // Properties: Badge & Unread

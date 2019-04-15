@@ -1,4 +1,4 @@
-import CoreACServiceData from './CoreACServiceData'
+import CoreACServiceData from '../CoreACServiceData'
 
 class IEngineServiceData extends CoreACServiceData {
   /* **************************************************************************/
@@ -26,11 +26,27 @@ class IEngineServiceData extends CoreACServiceData {
   * Gets a value from the expando model
   * @param key: the key to get
   * @param defaultValue=undefined: the default value if none is found
-   */
+  * @return the value
+  */
   getExpandoValue (key, defaultValue = undefined) {
     return this.expando[key] === undefined
       ? defaultValue
       : this.expando[key]
+  }
+
+  /**
+  * Gets a value from the expando model ensuring type first
+  * @param key: the key to get
+  * @param type: the type (also supports pseudo array)
+  * @param defaultValue=undefined: the default value if none is found or malformed type
+  * @return the value
+  */
+  shapeExpandoValue (key, type, defaultValue = undefined) {
+    const raw = this.expando[key]
+    const rawType = typeof (raw)
+    return (type === rawType) || (type === 'array' && Array.isArray(raw))
+      ? raw
+      : defaultValue
   }
 }
 

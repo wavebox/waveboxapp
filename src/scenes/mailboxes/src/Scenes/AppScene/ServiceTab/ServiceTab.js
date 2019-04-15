@@ -5,7 +5,6 @@ import { userStore } from 'stores/user'
 import GoogleHangoutsServiceWebView from './ServiceWebViews/Google/GoogleHangoutsServiceWebView'
 import GoogleCalendarServiceWebView from './ServiceWebViews/Google/GoogleCalendarServiceWebView'
 import GoogleAlloServiceWebView from './ServiceWebViews/Google/GoogleAlloServiceWebView'
-import TrelloServiceWebView from './ServiceWebViews/Trello/TrelloServiceWebView'
 import SlackServiceWebView from './ServiceWebViews/Slack/SlackServiceWebView'
 import GenericServiceWebView from './ServiceWebViews/Generic/GenericServiceWebView'
 import ContainerServiceWebView from './ServiceWebViews/Container/ContainerServiceWebView'
@@ -141,8 +140,6 @@ class ServiceTab extends React.Component {
         return GoogleCalendarServiceWebView
       case SERVICE_TYPES.GOOGLE_ALLO:
         return GoogleAlloServiceWebView
-      case SERVICE_TYPES.TRELLO:
-        return TrelloServiceWebView
       case SERVICE_TYPES.SLACK:
         return SlackServiceWebView
       case SERVICE_TYPES.GENERIC:

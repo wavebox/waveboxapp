@@ -18,6 +18,7 @@ import FABGoogleIcon from 'wbfa/FABGoogle'
 import FABMicrosoftIcon from 'wbfa/FABMicrosoft'
 import FABSlackIcon from 'wbfa/FABSlack'
 import FABTrelloIcon from 'wbfa/FABTrello'
+import FASCookieIcon from 'wbfa/FASCookie'
 import { ListItemText, ListItemSecondaryAction, Select, MenuItem } from '@material-ui/core'
 import MicrosoftAuthReducer from 'shared/AltStores/Account/AuthReducers/MicrosoftAuthReducer'
 import classNames from 'classnames'
@@ -60,6 +61,9 @@ const styles = {
   * Heading
   */
   typeIcon: {
+    marginRight: 6
+  },
+  cookieIcon: {
     marginRight: 6
   },
 
@@ -164,6 +168,7 @@ class MailboxCredentialItem extends React.Component {
   */
   renderListItemText (classes, auth) {
     let TypeIcon
+
     if (auth.namespace === GoogleAuth.namespace) {
       TypeIcon = FABGoogleIcon
     } else if (auth.namespace === MicrosoftAuth.namespace) {
@@ -187,10 +192,12 @@ class MailboxCredentialItem extends React.Component {
             ) : undefined}
           </span>
         )}
-        secondary={auth.hasHumanizedIdentifier
-          ? auth.humanizedIdentifier
-          : auth.namespace
-        } />
+        secondary={(
+          <React.Fragment>
+            {auth.isAuthFromCookie ? (<FASCookieIcon className={classes.cookieIcon} />) : undefined}
+            {auth.hasHumanizedIdentifier ? auth.humanizedIdentifier : auth.namespace}
+          </React.Fragment>
+        )} />
     )
   }
 

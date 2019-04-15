@@ -1,5 +1,5 @@
-import { ipcMain, webContents } from 'electron'
-import IEngineApi from './IEngineApi'
+import { ipcMain, webContents, powerMonitor } from 'electron'
+import IEngineBackgroundApi from './IEngineBackgroundApi'
 import {
   WB_IENGINE_MESSAGE_BACKGROUND_,
   WB_IENGINE_RELOAD_FOREGROUND_
@@ -33,7 +33,7 @@ class IEngineRuntime {
     this[privIEngineAlias] = iengineAlias
     this[privIEngineType] = IENGINE_ALIAS_TO_TYPE[iengineAlias]
     this[privStoreConnections] = storeConnections
-    this[privApi] = new IEngineApi(serviceId, storeConnections)
+    this[privApi] = new IEngineBackgroundApi(serviceId, storeConnections)
     this[privBackground] = undefined
 
     // Build the initial state
@@ -53,6 +53,8 @@ class IEngineRuntime {
 
     // Listen to app events
     ipcMain.on(`${WB_IENGINE_MESSAGE_BACKGROUND_}${this[privServiceId]}`, this._handleIpcEngineMessage)
+    powerMonitor.on('suspend', this._handleMachineSuspend)
+    powerMonitor.on('resume', this._handleMachineResume)
     IEngineLoader.on('reload-engines', this._handleEngineReloadEvent)
 
     // Connect the background impl
@@ -71,12 +73,15 @@ class IEngineRuntime {
 
     // Unlisten to app events
     ipcMain.removeListener(`${WB_IENGINE_MESSAGE_BACKGROUND_}${this[privServiceId]}`, this._handleIpcEngineMessage)
+    powerMonitor.removeListener('suspend', this._handleMachineSuspend)
+    powerMonitor.removeListener('resume', this._handleMachineResume)
     IEngineLoader.removeListener('reload-engines', this._handleEngineReloadEvent)
 
     // Disconnect background
     if (this[privBackground]) {
       this[privBackground].destroy()
     }
+    this[privApi].destroy()
   }
 
   /* **************************************************************************/
@@ -184,6 +189,20 @@ class IEngineRuntime {
         wc.send(`${WB_IENGINE_RELOAD_FOREGROUND_}${this[privServiceId]}`, reason, this._loadForegroundEngineManifest())
       })
     }
+  }
+
+  /**
+  * Handles the machine suspending
+  */
+  _handleMachineSuspend = () => {
+    this[privApi].emit('machine-suspend', { sender: this[privApi] })
+  }
+
+  /**
+  * Handles the machine resuming
+  */
+  _handleMachineResume = () => {
+    this[privApi].emit('machine-resume', { sender: this[privApi] })
   }
 
   /* **************************************************************************/

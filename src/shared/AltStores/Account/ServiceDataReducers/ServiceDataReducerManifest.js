@@ -10,7 +10,6 @@ import IEngineServiceDataReducer from './IEngineServiceDataReducer'
 import MicrosoftMailServiceDataReducer from './MicrosoftMailServiceDataReducer'
 import MicrosoftTeamsServiceDataReducer from './MicrosoftTeamsServiceDataReducer'
 import SlackServiceDataReducer from './SlackServiceDataReducer'
-import TrelloServiceDataReducer from './TrelloServiceDataReducer'
 
 const manifest = new CoreReducerManifest([
   ServiceDataReducer,
@@ -23,8 +22,7 @@ const manifest = new CoreReducerManifest([
   IEngineServiceDataReducer,
   MicrosoftMailServiceDataReducer,
   MicrosoftTeamsServiceDataReducer,
-  SlackServiceDataReducer,
-  TrelloServiceDataReducer
+  SlackServiceDataReducer
 ])
 
 export default manifest

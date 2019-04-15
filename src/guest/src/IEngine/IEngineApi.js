@@ -5,8 +5,11 @@ import { WB_IENGINE_MESSAGE_BACKGROUND_ } from 'shared/ipcEvents'
 import semver from 'semver'
 import escapeHTML from 'escape-html'
 import uuid from 'uuid'
+import querystring from 'querystring'
+import LiveConfig from 'LiveConfig'
 
 const LIBS = Object.freeze({
+  querystring: querystring,
   semver: semver,
   escapeHTML: escapeHTML,
   uuid: uuid
@@ -43,6 +46,7 @@ class IEngineApi extends EventEmitter {
   /* **************************************************************************/
 
   get appVersion () { return pkg.version }
+  get platform () { return LiveConfig.platform }
   get serviceId () { return this[privServiceId] }
   get LIBS () { return LIBS }
 

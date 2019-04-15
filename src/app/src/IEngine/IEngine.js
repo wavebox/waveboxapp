@@ -1,13 +1,19 @@
-import { app } from 'electron'
+import { app, ipcMain, webContents } from 'electron'
 import IEngineRuntime from './IEngineRuntime'
 import IEngineStoreConnections from './IEngineStoreConnections'
 import IEngineLoader from './IEngineLoader'
+import IEngineAuthRuntime from './IEngineAuthRuntime'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
-import { IENGINE_ALIASES } from 'shared/IEngine/IEngineTypes'
+import { WB_IENGINE_AUTH_SERVICE } from 'shared/ipcEvents'
+import {
+  IENGINE_ALIASES,
+  IENGINE_ALIAS_TO_TYPE
+} from 'shared/IEngine/IEngineTypes'
 
 const privRuntimes = Symbol('privRuntimes')
 const privStoreConnections = Symbol('privStoreConnections')
+const privAuthRuntime = Symbol('privAuthRuntime')
 
 class IEngine {
   /* **************************************************************************/
@@ -17,6 +23,9 @@ class IEngine {
   constructor () {
     this[privRuntimes] = new Map()
     this[privStoreConnections] = new IEngineStoreConnections()
+    this[privAuthRuntime] = new IEngineAuthRuntime()
+
+    ipcMain.on(WB_IENGINE_AUTH_SERVICE, this.handleIPCAuthService)
 
     setTimeout(() => {
       IEngineLoader.pollForUpdates()
@@ -113,6 +122,70 @@ class IEngine {
     IEngineLoader.fetchUpdateAndUnpack().catch((ex) => {
       console.warn(`Failed to fetch and unpack IEngine updates`, ex)
     })
+  }
+
+  /* **************************************************************************/
+  // Auth
+  /* **************************************************************************/
+
+  /**
+  * Auths a service
+  * @param evt: the event that fired
+  * @param returnIpcChannel: the ipc channel to return the response on
+  * @param iengineAlias: the alias of the iengine to auth
+  * @param authConfig: an auth configuration object consisting of
+  *     @param partitionId: the partition to auth with
+  *     @param mode: the authentication mode to use
+  *     @param context: context to return to the sender
+  */
+  handleIPCAuthService = (evt, returnIpcChannel, iengineAlias, authConfig) => {
+    // Grab some context and build some helper functions
+    const senderId = evt.sender.id
+    const returnSuccess = (auth) => {
+      const wc = webContents.fromId(senderId)
+      if (!wc && wc.isDestroyed()) { return }
+      wc.send(returnIpcChannel, undefined, {
+        context: authConfig.context,
+        auth: auth
+      })
+    }
+    const returnError = (ex) => {
+      const wc = webContents.fromId(senderId)
+      if (!wc && wc.isDestroyed()) { return }
+      wc.send(returnIpcChannel, {
+        context: authConfig.context,
+        error: ex && ex.toString
+          ? ex.toString()
+          : 'Unknown Error'
+      }, undefined)
+    }
+
+    // Check we're supported
+    if (!IENGINE_ALIASES.has(iengineAlias)) {
+      return returnError(`Unsupported iengineAlias "${iengineAlias}"`)
+    }
+
+    // Load the iEngine resources
+    const engineType = IENGINE_ALIAS_TO_TYPE[iengineAlias]
+    let adaptor
+    try {
+      adaptor = IEngineLoader.loadJSONResourceSync(engineType, 'auth-adaptor.json')
+    } catch (ex) {
+      return returnError(`Failed to load adaptor for iengine "${iengineAlias}"`)
+    }
+
+    // Run the task
+    if (this[privAuthRuntime].adaptorUsesAuthWindow(adaptor)) {
+      this[privAuthRuntime].startAuthWindow(engineType, authConfig.partitionId)
+        .then(
+          (res) => returnSuccess(res),
+          (ex) => returnError(ex)
+        )
+      return
+    }
+
+    // No specific action found - just return to sender
+    return returnSuccess({})
   }
 }
 
