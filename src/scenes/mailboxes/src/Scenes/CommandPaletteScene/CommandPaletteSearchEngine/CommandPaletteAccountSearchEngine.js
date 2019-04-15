@@ -59,7 +59,18 @@ class CommandPaletteAccountSearchEngine {
   * @param accountState=autoget: the current account state
   */
   generateRecentServiceResults (accountState = accountStore.getState()) {
-    return accountState.lastAccessedServiceIds(false)
+    const activeService = accountState.activeService()
+    const bookmarks = activeService.bookmarks.map((bookmark) => {
+      return {
+        item: {
+          target: SEARCH_TARGETS.BOOKMARK,
+          id: bookmark.id,
+          parentId: activeService.id
+        }
+      }
+    })
+
+    const recents = accountState.lastAccessedServiceIds(false)
       .map((serviceId) => {
         const service = accountState.getService(serviceId)
         if (!service) { return undefined }
@@ -72,6 +83,8 @@ class CommandPaletteAccountSearchEngine {
         }
       })
       .filter((rec) => !!rec)
+
+    return [].concat(bookmarks, recents)
   }
 
   /* **************************************************************************/
