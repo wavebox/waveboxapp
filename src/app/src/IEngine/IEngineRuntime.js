@@ -176,7 +176,11 @@ class IEngineRuntime {
   _handleEngineReloadEvent = (evt, reason, iengineTypes) => {
     if (iengineTypes.includes(this[privIEngineType])) {
       if (this[privBackground]) {
-        this[privBackground].destroy()
+        try {
+          this[privBackground].destroy()
+        } catch (ex) {
+          console.error(`Uncaught exception when destroying WBIE during reload event for service ${this[privServiceId]}`, ex)
+        }
         this[privBackground] = undefined
       }
 

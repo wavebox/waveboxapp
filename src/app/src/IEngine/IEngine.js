@@ -64,6 +64,9 @@ class IEngine {
         const runtime = new IEngineRuntime(serviceId, iengineAlias, this[privStoreConnections])
         this[privRuntimes].set(serviceId, runtime)
       })
+      .catch((ex) => {
+        console.error(`Uncaught exception when creating WBIE for service ${serviceId}`, ex)
+      })
   }
 
   /**
@@ -72,8 +75,12 @@ class IEngine {
   */
   disconnectService (serviceId) {
     if (!this[privRuntimes].has(serviceId)) { return }
-    this[privRuntimes].get(serviceId).destroy()
-    this[privRuntimes].delete(serviceId)
+    try {
+      this[privRuntimes].get(serviceId).destroy()
+      this[privRuntimes].delete(serviceId)
+    } catch (ex) {
+      console.error(`Uncaught exception when destroying WBIE for service ${serviceId}`, ex)
+    }
   }
 
   /* **************************************************************************/
@@ -107,7 +114,11 @@ class IEngine {
   userRequestsSync (serviceId) {
     const runtime = this[privRuntimes].get(serviceId)
     if (runtime) {
-      runtime.userRequestsSync()
+      try {
+        runtime.userRequestsSync()
+      } catch (ex) {
+        console.error(`Uncaught exception when requesting user sync in WBIE for service ${serviceId}`, ex)
+      }
     }
   }
 
