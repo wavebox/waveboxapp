@@ -112,7 +112,7 @@ class CommandPaletteSceneContent extends React.Component {
       searchResults: [],
       searchResultsByTarget: {},
       searchResultsTerm: '',
-      recentServiceRecords: this.search.generateRecentServiceResults(accountState)
+      recommendations: this.search.generateRecomendations(accountState)
     }
   }
 
@@ -138,7 +138,7 @@ class CommandPaletteSceneContent extends React.Component {
 
   accountsChanged = (accountState) => {
     this.setState({
-      recentServiceRecords: this.search.generateRecentServiceResults(accountState)
+      recommendations: this.search.generateRecomendations(accountState)
     })
     this.search.reloadAccounts()
   }
@@ -332,15 +332,26 @@ class CommandPaletteSceneContent extends React.Component {
   * @param searchResults: the full array of search results
   * @param searchResultsByTarget: the results listed by target
   * @param searchResultsTerm: the term that was used to generate the search results
-  * @param recentServiceRecords: the recent service records
+  * @param recommendations: recommendations when there's no search
   * @return jsx
   */
-  renderSearchResults (classes, searchTerm, searchResults, searchResultsByTarget, searchResultsTerm, recentServiceRecords) {
+  renderSearchResults (classes, searchTerm, searchResults, searchResultsByTarget, searchResultsTerm, recommendations) {
     if (!searchResultsTerm) {
-      if (recentServiceRecords.length) {
+      const validRecommendations = recommendations.filter((section) => section.items.length > 0)
+
+      if (validRecommendations.length) {
         return (
           <React.Fragment>
-            {recentServiceRecords.map((res) => this.renderSearchResultItem(res))}
+            {validRecommendations.map(({ target, items }) => {
+              return (
+                <React.Fragment key={`section-${target}`}>
+                  <ListSubheader className={classes.searchResultSectionHeading}>
+                    {HUMANIZED_SEARCH_TARGETS[target]}
+                  </ListSubheader>
+                  {items.map((res) => this.renderSearchResultItem(res))}
+                </React.Fragment>
+              )
+            })}
           </React.Fragment>
         )
       } else {
@@ -402,7 +413,7 @@ class CommandPaletteSceneContent extends React.Component {
       searchResults,
       searchResultsByTarget,
       searchResultsTerm,
-      recentServiceRecords
+      recommendations
     } = this.state
 
     return (
@@ -430,7 +441,7 @@ class CommandPaletteSceneContent extends React.Component {
               searchResults,
               searchResultsByTarget,
               searchResultsTerm,
-              recentServiceRecords
+              recommendations
             )}
           </List>
         </DialogContent>
