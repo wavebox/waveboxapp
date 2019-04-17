@@ -200,7 +200,7 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
     } = this.state
     if (!hasMembers) { return false }
 
-    const faviconUrl = item.favicon || (item.favicons || [])[0]
+    const faviconUrl = item.favicon || (item.favicons || []).slice(-1)[0]
 
     return (
       <CommandPaletteSearchItem
