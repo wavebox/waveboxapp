@@ -1,5 +1,5 @@
 import WaveboxWindow from './WaveboxWindow'
-import { app, webContents, screen } from 'electron'
+import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import Resolver from 'Runtime/Resolver'
 import { WindowOpeningHandler } from './WindowOpeningEngine'
