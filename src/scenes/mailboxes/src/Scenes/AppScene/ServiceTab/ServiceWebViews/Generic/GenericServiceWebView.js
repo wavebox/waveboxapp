@@ -59,7 +59,7 @@ export default class GenericServiceWebView extends React.Component {
           this.webviewRef.current.executeJavaScript(`
             (function () {
               try {
-                return Array.from(document.head.querySelectorAll('link[rel="apple-touch-icon"]')).map((e) => e.href)
+                return Array.from(document.head.querySelectorAll('link[rel="apple-touch-icon"]')).map((e) => e.href).filter((v) => !!v)
               } catch (ex) {
                 return []
               }

@@ -26,6 +26,16 @@ class TrelloService extends CoreACService {
   static get humanizedColor () { return 'rgb(33, 108, 167)' }
 
   /* **************************************************************************/
+  // Properties: Avatar
+  /* **************************************************************************/
+
+  get serviceAvatarURL () {
+    // Prior to 4.9.5 the avatar could be stored in a non-string format
+    const val = super.serviceAvatarURL
+    return typeof (val) === 'string' ? val : undefined
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
