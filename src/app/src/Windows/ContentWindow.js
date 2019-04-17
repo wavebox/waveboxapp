@@ -1,5 +1,5 @@
 import WaveboxWindow from './WaveboxWindow'
-import { app, webContents } from 'electron'
+import { app, webContents, screen } from 'electron'
 import { evtMain } from 'AppEvents'
 import Resolver from 'Runtime/Resolver'
 import { WindowOpeningHandler } from './WindowOpeningEngine'
@@ -67,12 +67,19 @@ class ContentWindow extends WaveboxWindow {
   */
   generateWindowPosition (parentWindow) {
     if (!parentWindow) { return undefined }
-    if (parentWindow.isFullScreen() || parentWindow.isMaximized()) { return { center: true } }
+    if (parentWindow.isFullScreen()) {
+      return { center: true }
+    }
 
     const [x, y] = parentWindow.getPosition()
     const [width, height] = parentWindow.getSize()
 
-    return {
+    return parentWindow.isMaximized() ? {
+      x: x + 40,
+      y: y + 40,
+      width: width - 80,
+      height: height - 80
+    } : {
       x: x + 20,
       y: y + 20,
       width: width,
