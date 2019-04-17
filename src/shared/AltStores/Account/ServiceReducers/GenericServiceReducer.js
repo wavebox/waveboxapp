@@ -15,19 +15,27 @@ class GenericServiceReducer extends ServiceReducer {
   * Sets the page favicons as the avatar
   * @param service: the service to update
   * @param favicons: the list of favicons
+  * @param touchIcons: the list of touch icons
   */
-  static setPageFaviconAvatar (service, favicons) {
-    if (favicons === undefined || favicons.length === 0) {
+  static setPageFaviconAvatar (service, favicons, touchIcons) {
+    if ((favicons === undefined || favicons.length === 0) && (touchIcons === undefined || touchIcons.length === 0)) {
       return service.changeData({ serviceAvatarURL: null })
     } else {
-      const validFavicons = favicons
+      // Use the touch icon over the favicon as it's normally larger
+      const validTouchIcons = (touchIcons || [])
+        .filter((f) => f.split('?')[0].endsWith('.png'))
+      if (validTouchIcons.length) {
+        return service.changeData({ serviceAvatarURL: validTouchIcons.slice(-1)[0] })
+      }
+
+      const validFavicons = (favicons || [])
         .map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
         .filter((f) => { // some websites send junk
           const base = f.split('?')[0]
           return base.endsWith('.png') || base.endsWith('.ico') || base.endsWith('.jpg') || base.endsWith('.gif')
         })
       if (validFavicons.length) {
-        const bestFavicon = validFavicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
+        const bestFavicon = validFavicons.find((f) => f.endsWith('.ico')) || favicons.slice(-1)[0]
         return service.changeData({ serviceAvatarURL: bestFavicon })
       } else {
         return service.changeData({ serviceAvatarURL: null })

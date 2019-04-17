@@ -107,7 +107,7 @@ class ServiceTooltipRecentItem extends React.Component {
           className={classes.favicon}
           style={(
             (recentItem.favicons || []).length
-              ? { backgroundImage: `url("${recentItem.favicons[0]}")` }
+              ? { backgroundImage: `url("${recentItem.favicons.slice(-1)[0]}")` }
               : undefined
           )} />
         <TooltipSectionListItemText
