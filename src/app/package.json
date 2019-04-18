@@ -25,6 +25,7 @@
     "home-dir": "1.0.0",
     "html-metadata": "1.7.0",
     "hunspell-asm": "2.0.0",
+    "jimp": "0.6.1",
     "joi": "14.3.1",
     "keyboard-layout": "2.0.15",
     "keyboardevent-from-electron-accelerator": "1.1.0",

@@ -3,7 +3,10 @@ import { accountStore, accountActions } from 'stores/account'
 import Color from 'color'
 import Resolver from 'Runtime/Resolver'
 import fetch from 'electron-fetch'
+import Jimp from 'jimp'
 const { TouchBarButton } = TouchBar
+
+let _jimpMaskCache
 
 const privWindow = Symbol('privWindow')
 const privMailboxes = Symbol('privState')
@@ -128,17 +131,24 @@ class MailboxesWindowTouchBarProvider {
       return
     }
 
-    // Base64 images skip the cache
-    if (iconUrl.startsWith('data:image/')) {
-      this.injectResolvedImage(mailboxId, iconUrl, nativeImage.createFromDataURL(iconUrl))
-      this[privImageCache].delete(mailboxId)
-    }
-
     const cache = this[privImageCache].get(mailboxId)
     if (cache && cache.url === iconUrl) {
       this.injectResolvedImage(mailboxId, iconUrl, cache.image)
     } else {
-      if (iconUrl.startsWith('http:') || iconUrl.startsWith('https://')) {
+      if (iconUrl.startsWith('data:image/')) {
+        Promise.resolve()
+          .then(() => {
+            const dataIndex = iconUrl.indexOf(',')
+            const data = iconUrl.slice(dataIndex + 1)
+            return this.circlizeImage(Buffer.from(data, 'base64'))
+          })
+          .then((res) => Promise.resolve(nativeImage.createFromBuffer(res)))
+          .catch((e) => Promise.resolve(nativeImage.createFromDataURL(iconUrl)))
+          .then((image) => {
+            this[privImageCache].set(mailboxId, { url: iconUrl, image: image })
+            this.injectResolvedImage(mailboxId, iconUrl, image)
+          })
+      } else if (iconUrl.startsWith('http:') || iconUrl.startsWith('https://')) {
         const ses = session.fromPartition('temp')
         Promise.resolve()
           .then(() => fetch(iconUrl, {
@@ -154,20 +164,44 @@ class MailboxesWindowTouchBarProvider {
           }))
           .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
           .then((res) => res.buffer())
+          .then((res) => {
+            return this.circlizeImage(res).catch(() => Promise.resolve(res))
+          })
           .then((res) => nativeImage.createFromBuffer(res))
           .catch(() => nativeImage.createEmpty())
           .then((image) => {
             this[privImageCache].set(mailboxId, { url: iconUrl, image: image })
             this.injectResolvedImage(mailboxId, iconUrl, image)
           })
-      } else if (iconUrl.startsWith('file://')) {
-        const image = nativeImage.createFromPath(iconUrl)
-        this[privImageCache].set(mailboxId, { url: iconUrl, image: image })
-        this.injectResolvedImage(mailboxId, iconUrl, image)
       } else {
         this[privImageCache].delete(mailboxId)
       }
     }
+  }
+
+  /**
+  * Circles the image
+  * @param img: the input image
+  * @return promise
+  */
+  circlizeImage (img) {
+    return Promise.resolve()
+      .then(() => {
+        return Promise.all([
+          Jimp.read(img),
+          _jimpMaskCache
+            ? Promise.resolve(_jimpMaskCache)
+            : Jimp.read(Resolver.image('touchbar/account_mask_64.png'))
+              .then((mask) => {
+                _jimpMaskCache = mask
+                return Promise.resolve(mask)
+              })
+        ])
+      })
+      .then(([jimg, mask]) => {
+        const masked = jimg.resize(64, 64).mask(mask, 0, 0)
+        return masked.getBufferAsync(Jimp.MIME_PNG)
+      })
   }
 
   /**
