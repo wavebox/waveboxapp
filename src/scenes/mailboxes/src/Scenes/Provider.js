@@ -32,6 +32,7 @@ export default class Provider extends React.Component {
     // STEP 0. Maintaining focus
     WBRPCRenderer.browserWindow.on('focus', this.handleFocusWebview)
     WBRPCRenderer.webContents.on('did-attach-webview', this.handleFocusWebview)
+    this.refocusInterval = setInterval(this.handlePollFocusWebview, 500)
 
     // STEP 1. App services
     Analytics.startAutoreporting()
@@ -56,6 +57,7 @@ export default class Provider extends React.Component {
   componentWillUnmount () {
     WBRPCRenderer.browserWindow.removeListener('focus', this.handleFocusWebview)
     WBRPCRenderer.webContents.removeListener('did-attach-webview', this.handleFocusWebview)
+    clearInterval(this.refocusInterval)
 
     // STEP 1. App services
     Analytics.stopAutoreporting()
@@ -124,6 +126,17 @@ export default class Provider extends React.Component {
   handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
       accountDispatch.refocus()
+    }
+  }
+
+  /**
+  * Handles polling the webview to refocus
+  */
+  handlePollFocusWebview = () => {
+    if (!document.activeElement || document.activeElement.tagName !== 'WEBVIEW') {
+      if (window.location.hash.length <= 2) {
+        accountDispatch.refocus()
+      }
     }
   }
 
