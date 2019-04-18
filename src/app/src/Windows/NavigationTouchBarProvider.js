@@ -123,8 +123,6 @@ class NavigationTouchBarProvider {
       this[privForwardButton].icon = this._getImage(wc.canGoForward() ? 'navigate_forward' : 'navigate_forward_muted')
       this[privReloadStopButton].icon = this._getImage(wc.isLoading() ? 'navigate_stop' : 'navigate_reload')
     }
-
-
   }
 
   /* ****************************************************************************/
