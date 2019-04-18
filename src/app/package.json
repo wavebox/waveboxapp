@@ -11,6 +11,7 @@
     "addressparser": "1.0.1",
     "alt": "wavebox/alt#c17dd3044f52f6bf90178534c76f0a5efbeed59f",
     "appdirectory": "0.1.0",
+    "color": "3.1.0",
     "content-security-policy-builder": "2.0.0",
     "content-security-policy-parser": "0.1.1",
     "decompress": "4.2.0",

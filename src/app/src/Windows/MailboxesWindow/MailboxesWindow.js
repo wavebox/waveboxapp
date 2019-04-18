@@ -55,6 +55,7 @@ import Resolver from 'Runtime/Resolver'
 import MailboxesWindowTabManager from './MailboxesWindowTabManager'
 import MailboxesWindowBehaviour from './MailboxesWindowBehaviour'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
+import MailboxesWindowTouchBarProvider from './MailboxesWindowTouchBarProvider'
 
 const MIN_WINDOW_WIDTH = 400
 const MIN_WINDOW_HEIGHT = 300
@@ -190,6 +191,7 @@ class MailboxesWindow extends WaveboxWindow {
     electron.ipcMain.removeListener(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
 
     singletonAttached = undefined
+
     super.destroy(evt)
   }
 
@@ -237,6 +239,14 @@ class MailboxesWindow extends WaveboxWindow {
   * @return the top level webcontents
   */
   userLinkOpenRequestResponder () { return this.window.webContents }
+
+  /**
+  * Overwrite
+  * @return the touchbar
+  */
+  createTouchbarProvider () {
+    return new MailboxesWindowTouchBarProvider(this.window)
+  }
 
   /* ****************************************************************************/
   // Tab manager handlers

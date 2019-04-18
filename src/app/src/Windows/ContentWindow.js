@@ -9,6 +9,7 @@ import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebConten
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL } from 'shared/ipcEvents'
 import { settingsStore } from 'stores/settings'
+import NavigationTouchBarProvider from './NavigationTouchBarProvider'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
 const privGuestWebPreferences = Symbol('privGuestWebPreferences')
@@ -273,6 +274,14 @@ class ContentWindow extends WaveboxWindow {
   * @return the top level webcontents
   */
   userLinkOpenRequestResponder () { return this.window.webContents }
+
+  /**
+  * Overwrite
+  * @return the touchbar
+  */
+  createTouchbarProvider () {
+    return new NavigationTouchBarProvider(this)
+  }
 
   /* ****************************************************************************/
   // Actions

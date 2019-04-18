@@ -21,6 +21,7 @@ const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
 const privLastTimeInFocus = Symbol('privLastTimeInFocus')
 const privMinMaxLast = Symbol('privMinMaxLast')
+const privTouchBarProvider = Symbol('privTouchBarProvider')
 
 const waveboxWindowManager = new WaveboxWindowManager()
 
@@ -136,6 +137,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   create (url, browserWindowPreferences = {}) {
+    const settingsState = settingsStore.getState()
     const savedLocation = this.locationSaver.getSavedScreenLocation()
     const fullBrowserWindowPreferences = {
       ...this.defaultBrowserWindowPreferences(),
@@ -150,7 +152,7 @@ class WaveboxWindow extends EventEmitter {
     // Create the window & prep for lifecycle
     this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
     this[privBrowserWindowId] = this.window.id
-    this[settingsStore.getState().ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
+    this[settingsState.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
 
     // Bind window event listeners
     this.window.on('close', (evt) => this.emit('close', evt))
@@ -159,7 +161,7 @@ class WaveboxWindow extends EventEmitter {
     this.window.on('blur', this._handleWindowBlurred)
     this.bindMouseNavigation()
 
-    if (settingsStore.getState().launched.app.forceWindowPaintOnRestore) {
+    if (settingsState.launched.app.forceWindowPaintOnRestore) {
       this.window.on('restore', this._forceRestoreRepaint)
       this.window.on('show', this._forceRestoreRepaint)
     }
@@ -204,6 +206,11 @@ class WaveboxWindow extends EventEmitter {
     setTimeout(() => { // Requeue to happen on setup complete
       evtMain.emit(evtMain.WB_WINDOW_CREATED, {}, this.browserWindowId)
     })
+
+    // Touchbar
+    if (process.platform === 'darwin' && settingsState.launched.app.touchBarSupportEnabled) {
+      this[privTouchBarProvider] = this.createTouchbarProvider()
+    }
 
     return this
   }
@@ -278,6 +285,15 @@ class WaveboxWindow extends EventEmitter {
     setTimeout(() => {
       evtMain.emit(evtMain.WB_WINDOW_DESTROYED, {}, this.browserWindowId)
     })
+
+    // Touchbar
+    if (this[privTouchBarProvider]) {
+      if (this[privTouchBarProvider].destroy) {
+        this[privTouchBarProvider].destroy()
+      }
+      this[privTouchBarProvider] = undefined
+    }
+
     this.emit('closed', evt)
   }
 
@@ -314,6 +330,12 @@ class WaveboxWindow extends EventEmitter {
   userLinkOpenRequestResponder () {
     return null
   }
+
+  /**
+  * Hook that gets called to init the touchbar provider
+  * @return an object that can be used to run the touchbar or undefined
+  */
+  createTouchbarProvider () { return undefined }
 
   /* ****************************************************************************/
   // Mouse Navigation
@@ -457,6 +479,35 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(wcId)
     if (!wc) { return }
     wc.reload()
+    return this
+  }
+
+  /**
+  * Stops the current webview
+  * @return this
+  */
+  stop () {
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.stop()
+    return this
+  }
+
+  /**
+  * Stops the webcontents if loading, otherwise reloads
+  */
+  reloadOrStop () {
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    if (wc.isLoading()) {
+      wc.stop()
+    } else {
+      wc.reload()
+    }
     return this
   }
 

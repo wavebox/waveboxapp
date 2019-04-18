@@ -94,6 +94,14 @@ class Resolver {
   }
 
   /**
+  * @param name: the name of the icon file
+  * @return the full path to the file
+  */
+  static image (name) {
+    return path.resolve(path.join(this.sourceRoot(), 'images/', name))
+  }
+
+  /**
   * @param name: the name of the audio file
   * @return the full path to the file
   */
