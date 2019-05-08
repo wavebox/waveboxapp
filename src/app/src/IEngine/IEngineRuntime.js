@@ -1,14 +1,18 @@
-import { ipcMain, webContents, powerMonitor } from 'electron'
+import { ipcMain, webContents, powerMonitor, shell } from 'electron'
 import IEngineBackgroundApi from './IEngineBackgroundApi'
 import {
   WB_IENGINE_MESSAGE_BACKGROUND_,
-  WB_IENGINE_RELOAD_FOREGROUND_
+  WB_IENGINE_RELOAD_FOREGROUND_,
+  WB_IENGINE_LOG_NETWORK_EVENTS_
 } from 'shared/ipcEvents'
 import {
   IENGINE_ALIAS_TO_TYPE
 } from 'shared/IEngine/IEngineTypes'
 import deepEqual from 'fast-deep-equal'
 import IEngineLoader from './IEngineLoader'
+import fs from 'fs-extra'
+import path from 'path'
+import RuntimePaths from 'Runtime/RuntimePaths'
 
 const privServiceId = Symbol('privServiceId')
 const privStoreConnections = Symbol('privStoreConnections')
@@ -17,6 +21,7 @@ const privApi = Symbol('privApi')
 const privBackground = Symbol('privBackground')
 const privIEngineAlias = Symbol('privIEngineAlias')
 const privIEngineType = Symbol('privIEngineType')
+const privLogNetwork = Symbol('privLogNetwork')
 
 class IEngineRuntime {
   /* **************************************************************************/
@@ -29,11 +34,13 @@ class IEngineRuntime {
   * @param storeConnections: the store connections to use
   */
   constructor (serviceId, iengineAlias, storeConnections) {
+    this[privLogNetwork] = false
     this[privServiceId] = serviceId
     this[privIEngineAlias] = iengineAlias
     this[privIEngineType] = IENGINE_ALIAS_TO_TYPE[iengineAlias]
     this[privStoreConnections] = storeConnections
     this[privApi] = new IEngineBackgroundApi(serviceId, storeConnections)
+    this[privApi].on('-network-log', this._handleApiNetworkLog)
     this[privBackground] = undefined
 
     // Build the initial state
@@ -53,6 +60,7 @@ class IEngineRuntime {
 
     // Listen to app events
     ipcMain.on(`${WB_IENGINE_MESSAGE_BACKGROUND_}${this[privServiceId]}`, this._handleIpcEngineMessage)
+    ipcMain.on(`${WB_IENGINE_LOG_NETWORK_EVENTS_}${this[privServiceId]}`, this._handleIpcLogNetworkEvents)
     powerMonitor.on('suspend', this._handleMachineSuspend)
     powerMonitor.on('resume', this._handleMachineResume)
     IEngineLoader.on('reload-engines', this._handleEngineReloadEvent)
@@ -73,6 +81,7 @@ class IEngineRuntime {
 
     // Unlisten to app events
     ipcMain.removeListener(`${WB_IENGINE_MESSAGE_BACKGROUND_}${this[privServiceId]}`, this._handleIpcEngineMessage)
+    ipcMain.removeListener(`${WB_IENGINE_LOG_NETWORK_EVENTS_}${this[privServiceId]}`, this._handleIpcLogNetworkEvents)
     powerMonitor.removeListener('suspend', this._handleMachineSuspend)
     powerMonitor.removeListener('resume', this._handleMachineResume)
     IEngineLoader.removeListener('reload-engines', this._handleEngineReloadEvent)
@@ -81,6 +90,7 @@ class IEngineRuntime {
     if (this[privBackground]) {
       this[privBackground].destroy()
     }
+    this[privApi].removeListener('-network-log', this._handleApiNetworkLog)
     this[privApi].destroy()
   }
 
@@ -223,6 +233,36 @@ class IEngineRuntime {
     if (info.sender === 'foreground') {
       this[privApi].emit('foreground-message', { sender: evt.sender.id }, ...JSON.parse(args))
     }
+  }
+
+  /**
+  * Enables network logging for the iengine
+  * @param evt: the event that fired
+  */
+  _handleIpcLogNetworkEvents = (evt) => {
+    this[privLogNetwork] = true
+
+    const logPath = path.join(RuntimePaths.APP_DATA_PATH, 'logs', `${this[privServiceId]}_network.log`)
+    fs.ensureDirSync(path.dirname(logPath))
+    fs.openSync(logPath, 'w')
+    shell.showItemInFolder(logPath)
+  }
+
+  /* **************************************************************************/
+  // Network loggin
+  /* **************************************************************************/
+
+  /**
+  * Handles an incoming network log
+  * @param evt: the event that fired
+  * @param log: the log entry
+  */
+  _handleApiNetworkLog = (evt, log) => {
+    if (!this[privLogNetwork]) { return }
+
+    const logPath = path.join(RuntimePaths.APP_DATA_PATH, 'logs', `${this[privServiceId]}_network.log`)
+    fs.appendFile(logPath, `${log}\n`).catch(() => { })
+    console.log(log)
   }
 
   /* **************************************************************************/

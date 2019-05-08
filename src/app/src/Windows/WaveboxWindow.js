@@ -1,4 +1,4 @@
-import { BrowserWindow, webContents, screen, ipcMain } from 'electron'
+import electron from 'electron'
 import EventEmitter from 'events'
 import { evtMain } from 'AppEvents'
 import { settingsStore } from 'stores/settings'
@@ -16,6 +16,7 @@ import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
+const { BrowserWindow, webContents, ipcMain } = electron
 const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
@@ -234,7 +235,7 @@ class WaveboxWindow extends EventEmitter {
       // Bound the window to our current screen to ensure it's not off-screen
       if (!this[privWindow].isMaximized() && !this[privWindow].isFullScreen()) {
         const windowBounds = this[privWindow].getBounds()
-        const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
+        const workArea = (electron.screen.getDisplayMatching(windowBounds) || electron.screen.getPrimaryDisplay()).workArea
         // On macOS if the opening window is in fullscreen mode we can end up with Y=0 for the workarea. We
         // can also end up with screen.getMenuBarHeight()=0 as the menu bar is hidden. This can result in
         // the bounding failing and the window titlebar being placed under the menubar which means the
@@ -336,6 +337,43 @@ class WaveboxWindow extends EventEmitter {
   * @return an object that can be used to run the touchbar or undefined
   */
   createTouchbarProvider () { return undefined }
+
+  /* ****************************************************************************/
+  // Mouse Navigation
+  /* ****************************************************************************/
+
+  /**
+  * Shows the basic addressbar in the window
+  */
+  showNativeUI () {
+    // Setup the addressbar
+    if (electron.TextField) {
+      const { View, BoxLayout, TextField } = electron
+      const contentView = new View()
+      const contentLayout = new BoxLayout('vertical')
+      const addressBar = new TextField()
+      const mainView = this.window.getContentView()
+      addressBar.setReadOnly(true)
+      contentView.setLayoutManager(contentLayout)
+      contentView.addChildView(addressBar)
+      contentView.addChildView(mainView)
+      contentLayout.setFlexForView(mainView, 1)
+      this.window.setContentView(contentView)
+
+      addressBar.setText(this.window.webContents.getURL())
+      addressBar.selectStartRange()
+      this.window.webContents.on('did-navigate', (evt, url) => {
+        addressBar.setText(url)
+        addressBar.selectStartRange()
+      })
+      this.window.webContents.on('did-navigate-in-page', (evt, url, isMainFrame) => {
+        if (isMainFrame) {
+          addressBar.setText(url)
+          addressBar.selectStartRange()
+        }
+      })
+    }
+  }
 
   /* ****************************************************************************/
   // Mouse Navigation

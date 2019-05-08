@@ -7,6 +7,10 @@ import ServiceBehaviourSection from '../Common/ServiceBehaviourSection'
 import ServiceNotificationSection from '../Common/ServiceNotificationSection'
 import GoogleMailUnreadSettings from './GoogleMailUnreadSettings'
 import ServiceAdvancedSection from '../Common/ServiceAdvancedSection'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import BugReportIcon from '@material-ui/icons/BugReport'
+import { WB_IENGINE_LOG_NETWORK_EVENTS_ } from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
 
 export default class GoogleMailServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -28,7 +32,12 @@ export default class GoogleMailServiceSettings extends React.Component {
   }
 
   render () {
-    const { serviceId, showRestart, onRequestEditCustomCode, ...passProps } = this.props
+    const {
+      serviceId,
+      showRestart,
+      onRequestEditCustomCode,
+      ...passProps
+    } = this.props
 
     return (
       <div {...passProps}>
@@ -37,7 +46,15 @@ export default class GoogleMailServiceSettings extends React.Component {
         <ServiceBadgeSection serviceId={serviceId} />
         <ServiceBehaviourSection serviceId={serviceId} />
         <ServiceNotificationSection serviceId={serviceId} />
-        <ServiceAdvancedSection serviceId={serviceId} onRequestEditCustomCode={onRequestEditCustomCode} />
+        <ServiceAdvancedSection
+          serviceId={serviceId}
+          onRequestEditCustomCode={onRequestEditCustomCode}>
+          <SettingsListItemButton
+            divider={false}
+            label='Log Sync network requests'
+            icon={<BugReportIcon />}
+            onClick={() => ipcRenderer.send(`${WB_IENGINE_LOG_NETWORK_EVENTS_}${serviceId}`)} />
+        </ServiceAdvancedSection>
       </div>
     )
   }

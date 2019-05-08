@@ -107,6 +107,8 @@ class ContentPopupWindow extends WaveboxWindow {
       evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, webContentsId)
     })
 
+    this.showNativeUI()
+
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
     this.window.webContents.on('did-start-navigation', this.handleWebViewDidStartNavigation)

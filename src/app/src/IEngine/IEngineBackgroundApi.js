@@ -168,6 +168,31 @@ class IEngineBackgroundApi extends EventEmitter {
           session: ses
         })
       })
+      .then(
+        (res) => {
+          this.emit('-network-log', {}, [
+            `${new Date().toLocaleString()}`,
+            `[${this[privServiceId]}:${service.displayName}]`,
+            `${options.method || 'GET'}`,
+            url,
+            `OK`,
+            `${res.ok}`,
+            `${res.status}:${res.statusText}`
+          ].join(' '))
+          return Promise.resolve(res)
+        },
+        (err) => {
+          this.emit('-network-log', {}, [
+            `${new Date().toLocaleString()}`,
+            `[${this[privServiceId]}:${service.displayName}]`,
+            `${options.method || 'GET'}`,
+            url,
+            `FAILED`,
+            `${err}`
+          ].join(' '))
+          return Promise.reject(err)
+        }
+      )
   }
 
   /* **************************************************************************/

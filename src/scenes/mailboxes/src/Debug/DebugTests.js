@@ -348,6 +348,9 @@ class DebugTests {
     if (webFrame.createContextId === undefined) {
       console.warn(`${sig} webFrame.createContextId unavailable`)
     }
+    if (remote.TextField === undefined) {
+      console.warn(`${sig} nativeUI unavailable`)
+    }
 
     // Stats
     console.log([
