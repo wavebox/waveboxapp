@@ -291,7 +291,14 @@ class WaveboxAppPrimaryMenuActions {
   waveboxBlog = () => { shell.openExternal(BLOG_URL) }
   privacy = () => { shell.openExternal(PRIVACY_URL) }
   eula = () => { shell.openExternal(EULA_URL) }
-  support = () => { shell.openExternal(SUPPORT_URL) }
+  support = () => {
+    const url = [
+      SUPPORT_URL,
+      SUPPORT_URL.indexOf('?') === -1 ? '?' : '&',
+      '&app_version=' + encodeURIComponent(pkg.version)
+    ].join('')
+    shell.openExternal(url)
+  }
   knowledgeBase = () => { shell.openExternal(KB_URL) }
 
   /* ****************************************************************************/
