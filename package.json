@@ -74,7 +74,7 @@
     "copy-webpack-plugin": "5.0.3",
     "css-loader": "2.1.1",
     "electron": "4.1.4",
-    "electron-rebuild": "1.8.4",
+    "electron-rebuild": "electron/electron-rebuild#7433977f1995b242a881dfb13ba9277de133f43c",
     "file-loader": "3.0.1",
     "fs-extra": "7.0.1",
     "graceful-fs": "4.1.15",
