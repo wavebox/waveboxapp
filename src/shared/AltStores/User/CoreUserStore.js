@@ -202,6 +202,14 @@ class CoreUserStore extends RemoteStore {
       return this.wireConfigExperiments().captureMicrosoftHttpErrors_2 !== false
     }
 
+    /**
+    * Returns the latest version
+    * @return the latest version or undefined
+    */
+    this.wireConfigLatestCVersion = () => {
+      return this.wireConfigExperiments().latestCVersion
+    }
+
     /* ****************************************/
     // Containers
     /* ****************************************/
