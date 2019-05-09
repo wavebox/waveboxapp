@@ -275,6 +275,7 @@ class MicrosoftStore {
       })
       .then(() => { // Finish-up
         this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
+        accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
         this.emitChange()
       })
       .catch((err) => {
@@ -333,6 +334,7 @@ class MicrosoftStore {
       })
       .then(({ unreadCount, messages }) => {
         this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
+        accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
         accountActions.reduceServiceData(
           serviceId,
           MicrosoftMailServiceDataReducer.setUnreadInfo,

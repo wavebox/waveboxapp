@@ -199,7 +199,7 @@ class CoreUserStore extends RemoteStore {
     * @return true to capture
     */
     this.wireConfigCaptureMicrosoftHttpErrors = () => {
-      return this.wireConfigExperiments().captureMicrosoftHttpErrors !== false
+      return this.wireConfigExperiments().captureMicrosoftHttpErrors_2 !== false
     }
 
     /* ****************************************/
