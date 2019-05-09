@@ -348,6 +348,7 @@ class WaveboxWindow extends EventEmitter {
   showNativeUI () {
     // Setup the addressbar
     if (electron.TextField) {
+      const menuBarVisible = this.window.isMenuBarVisible()
       const { View, BoxLayout, TextField } = electron
       const contentView = new View()
       const contentLayout = new BoxLayout('vertical')
@@ -372,6 +373,7 @@ class WaveboxWindow extends EventEmitter {
           addressBar.selectStartRange()
         }
       })
+      this.window.setMenuBarVisibility(menuBarVisible)
     }
   }
 
