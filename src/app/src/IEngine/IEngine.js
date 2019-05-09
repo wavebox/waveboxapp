@@ -1,4 +1,4 @@
-import { app, ipcMain, webContents } from 'electron'
+import { app, ipcMain, webContents, session } from 'electron'
 import IEngineRuntime from './IEngineRuntime'
 import IEngineStoreConnections from './IEngineStoreConnections'
 import IEngineLoader from './IEngineLoader'
@@ -10,6 +10,7 @@ import {
   IENGINE_ALIASES,
   IENGINE_ALIAS_TO_TYPE
 } from 'shared/IEngine/IEngineTypes'
+import IENGINE_AUTH_MODES from 'shared/IEngine/IEngineAuthModes'
 
 const privRuntimes = Symbol('privRuntimes')
 const privStoreConnections = Symbol('privStoreConnections')
@@ -185,18 +186,31 @@ class IEngine {
       return returnError(`Failed to load adaptor for iengine "${iengineAlias}"`)
     }
 
-    // Run the task
-    if (this[privAuthRuntime].adaptorUsesAuthWindow(adaptor)) {
-      this[privAuthRuntime].startAuthWindow(engineType, authConfig.partitionId)
-        .then(
-          (res) => returnSuccess(res),
-          (ex) => returnError(ex)
-        )
-      return
-    }
-
-    // No specific action found - just return to sender
-    return returnSuccess({})
+    // Run the tasks
+    Promise.resolve()
+      .then(() => {
+        if (authConfig.authMode === IENGINE_AUTH_MODES.REAUTHENTICATE) {
+          if (this[privAuthRuntime].adaptorClearsCookiesOnReauthenticate(adaptor)) {
+            const ses = session.fromPartition(authConfig.partitionId)
+            return Promise.resolve()
+              .then(() => { return new Promise((resolve) => { ses.clearStorageData(resolve) }) })
+              .then(() => { return new Promise((resolve) => { ses.clearCache(resolve) }) })
+              .catch((ex) => Promise.resolve()) // gobble
+          }
+        }
+        return Promise.resolve()
+      })
+      .then(() => {
+        if (this[privAuthRuntime].adaptorUsesAuthWindow(adaptor)) {
+          return this[privAuthRuntime].startAuthWindow(engineType, authConfig.partitionId, authConfig.authMode)
+        } else {
+          return Promise.resolve()
+        }
+      })
+      .then(
+        (res) => returnSuccess(res),
+        (ex) => returnError(ex)
+      )
   }
 }
 

@@ -34,6 +34,7 @@ import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
 import ACCOUNT_WARNING_TYPES from 'shared/Models/ACAccounts/AccountWarningTypes'
 import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
+import IENGINE_AUTH_MODES from 'shared/IEngine/IEngineAuthModes'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
@@ -448,6 +449,7 @@ class AccountStore extends RendererAccountStore {
         window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
         return this._iengineAuthServicePromise(serviceType, {
           partitionId: `persist:${mailboxId}`,
+          authMode: IENGINE_AUTH_MODES.TEMPLATE_CREATE,
           context: {
             mailboxId: mailboxId,
             template: template.cloneData()
@@ -697,6 +699,7 @@ class AccountStore extends RendererAccountStore {
               window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
               return this._iengineAuthServicePromise(serviceType, {
                 partitionId: `persist:${attachTarget}`,
+                authMode: IENGINE_AUTH_MODES.ATTACH,
                 context: {
                   mailboxId: attachTarget,
                   authId: authId
@@ -974,6 +977,7 @@ class AccountStore extends RendererAccountStore {
         window.location.hash = '/mailbox/reauthenticating'
         return this._iengineAuthServicePromise(service.type, {
           partitionId: service.partitionId,
+          authMode: IENGINE_AUTH_MODES.REAUTHENTICATE,
           context: {
             mailboxId: service.parentId,
             authId: CoreACAuth.compositeIdFromService(service),
