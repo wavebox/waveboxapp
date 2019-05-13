@@ -76,11 +76,12 @@ class CommandPaletteSearchEngine extends EventEmitter {
   }
 
   /**
-  * Generates a set of recent services
+  * Generates a set of recommended results
   * @param accountState=autoget: the current account state
+  * @return the recommendations
   */
-  generateRecentServiceResults (...args) {
-    return this[privAccountSearch].generateRecentServiceResults(...args)
+  generateRecomendations (...args) {
+    return this[privAccountSearch].generateRecomendations(...args)
   }
 
   /* **************************************************************************/

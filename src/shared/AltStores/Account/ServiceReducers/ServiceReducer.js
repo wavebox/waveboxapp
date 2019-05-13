@@ -46,6 +46,62 @@ class ServiceReducer {
     }
   }
 
+  /**
+  * Sets the service display name
+  * @param service: the service to change
+  * @param name: the new name
+  */
+  static setServiceDisplayName (service, name) {
+    if (service.serviceDisplayName !== name) {
+      return service.changeData({ serviceDisplayName: name })
+    }
+  }
+
+  /**
+  * Sets the service avatar url
+  * @param service: the service to change
+  * @param val: the new value
+  */
+  static setServiceAvatarUrl (service, val) {
+    if (service.serviceAvatarURL !== val) {
+      return service.changeData({ serviceAvatarURL: val })
+    }
+  }
+
+  /**
+  * Sets the avatar character display
+  * @param service: the service to change
+  * @param val: the new value
+  */
+  static setServiceAvatarCharacterDisplay (service, val) {
+    if (service.serviceAvatarCharacterDisplay !== val) {
+      return service.changeData({ serviceAvatarCharacterDisplay: val })
+    }
+  }
+
+  /**
+  * Sets all the service display settings
+  * @param service: the service to change
+  * @param displayName: the new display name
+  * @param avatarURL: the new avatar url
+  * @param avatarCharacterDisplay: the new avatar character display
+  */
+  static setAllServiceDisplay (service, displayName, avatarURL, avatarCharacterDisplay) {
+    const changeset = {}
+    if (service.serviceDisplayName !== displayName) {
+      changeset.serviceDisplayName = displayName
+    }
+    if (service.serviceAvatarURL !== avatarURL) {
+      changeset.serviceAvatarURL = avatarURL
+    }
+    if (service.serviceAvatarCharacterDisplay !== avatarCharacterDisplay) {
+      changeset.serviceAvatarCharacterDisplay = avatarCharacterDisplay
+    }
+    if (Object.keys(changeset).length) {
+      return service.changeData(changeset)
+    }
+  }
+
   /* **************************************************************************/
   // Sleepable
   /* **************************************************************************/

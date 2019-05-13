@@ -5,11 +5,7 @@ import { accountActions } from 'stores/account'
 import GenericServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GenericServiceDataReducer'
 import GenericServiceReducer from 'shared/AltStores/Account/ServiceReducers/GenericServiceReducer'
 import shallowCompare from 'react-addons-shallow-compare'
-import {
-  WB_BROWSER_NOTIFICATION_PRESENT
-} from 'shared/ipcEvents'
-
-const REF = 'mailbox_tab'
+import { WB_BROWSER_NOTIFICATION_PRESENT } from 'shared/ipcEvents'
 
 export default class GenericServiceWebView extends React.Component {
   /* **************************************************************************/
@@ -19,6 +15,16 @@ export default class GenericServiceWebView extends React.Component {
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.webviewRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -41,11 +47,38 @@ export default class GenericServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleFaviconUpdated = (evt) => {
-    accountActions.reduceService(
-      this.props.serviceId,
-      GenericServiceReducer.setPageFaviconAvatar,
-      evt.favicons
-    )
+    const favicons = evt.favicons
+    const serviceId = this.props.serviceId
+
+    Promise.resolve()
+      .then(() => {
+        return new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Timeout'))
+          }, 1000)
+          this.webviewRef.current.executeJavaScript(`
+            (function () {
+              try {
+                return Array.from(document.head.querySelectorAll('link[rel="apple-touch-icon"]')).map((e) => e.href).filter((v) => !!v)
+              } catch (ex) {
+                return []
+              }
+            })()
+          `, (touchIcons) => {
+            clearTimeout(timeout)
+            resolve(touchIcons)
+          })
+        })
+      })
+      .catch((ex) => Promise.resolve([]))
+      .then((touchIcons) => {
+        accountActions.reduceService(
+          serviceId,
+          GenericServiceReducer.setPageFaviconAvatar,
+          favicons,
+          touchIcons
+        )
+      })
   }
 
   /**
@@ -71,7 +104,7 @@ export default class GenericServiceWebView extends React.Component {
 
     return (
       <CoreServiceWebView
-        ref={REF}
+        ref={this.webviewRef}
         mailboxId={mailboxId}
         serviceId={serviceId}
         pageFaviconUpdated={this.handleFaviconUpdated}

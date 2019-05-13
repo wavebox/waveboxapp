@@ -25,6 +25,8 @@ const ENUMERABLE_LOCAL_PROPS = [
   'toggleMenu',
   'navigateBack',
   'navigateForward',
+  'navigateBackAlt',
+  'navigateForwardAlt',
   'zoomIn',
   'zoomOut',
   'zoomReset',
@@ -96,6 +98,8 @@ class AcceleratorSettings extends Model {
   get toggleMenuDefault () { return 'CmdOrCtrl+\\' }
   get navigateBackDefault () { return process.platform === 'darwin' ? 'CmdOrCtrl+Left' : 'Alt+Left' }
   get navigateForwardDefault () { return process.platform === 'darwin' ? 'CmdOrCtrl+Right' : 'Alt+Right' }
+  get navigateBackAltDefault () { return process.platform === 'darwin' ? 'Cmd+[' : undefined }
+  get navigateForwardAltDefault () { return process.platform === 'darwin' ? 'Cmd+]' : undefined }
   get zoomInDefault () { return 'CmdOrCtrl+Plus' }
   get zoomOutDefault () { return 'CmdOrCtrl+-' }
   get zoomResetDefault () { return 'CmdOrCtrl+0' }
@@ -166,6 +170,8 @@ class AcceleratorSettings extends Model {
   get toggleMenu () { return this._value_('toggleMenu', this.toggleMenuDefault) }
   get navigateBack () { return this._value_('navigateBack', this.navigateBackDefault) }
   get navigateForward () { return this._value_('navigateForward', this.navigateForwardDefault) }
+  get navigateBackAlt () { return this._value_('navigateBackAlt', this.navigateBackAltDefault) }
+  get navigateForwardAlt () { return this._value_('navigateForwardAlt', this.navigateForwardAltDefault) }
   get zoomIn () { return this._value_('zoomIn', this.zoomInDefault) }
   get zoomOut () { return this._value_('zoomOut', this.zoomOutDefault) }
   get zoomReset () { return this._value_('zoomReset', this.zoomResetDefault) }

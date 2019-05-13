@@ -6,16 +6,6 @@ class GoogleInboxServiceReducer extends CoreGoogleMailServiceReducer {
   /* **************************************************************************/
 
   static get name () { return 'GoogleInboxServiceReducer' }
-
-  /* **************************************************************************/
-  // Retirement
-  /* **************************************************************************/
-
-  static setGinboxSeenRetirementVersion (service, version) {
-    return service.changeData({
-      ginboxSeenRetirementVersion: version
-    })
-  }
 }
 
 export default GoogleInboxServiceReducer

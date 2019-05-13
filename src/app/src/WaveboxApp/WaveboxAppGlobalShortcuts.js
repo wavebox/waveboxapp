@@ -3,6 +3,7 @@ import { settingsStore } from 'stores/settings'
 import { accountStore, accountActions } from 'stores/account'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
+import TrayPopout from 'Tray/TrayPopout'
 
 const privConfig = Symbol('privConfig')
 const privState = Symbol('privState')
@@ -107,19 +108,28 @@ class WaveboxAppGlobalShortcuts {
   * Toggles the main mailboxes window in the same way the tray does
   */
   _handleToggle = () => {
-    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    if (mailboxesWindow.isVisible() && !mailboxesWindow.isMinimized()) {
+    const focusedWindow = WaveboxWindow.focused()
+    if (focusedWindow || (TrayPopout.isVisible && TrayPopout.isWindowedMode && TrayPopout.isFocused)) {
       if (process.platform === 'win32') {
         WaveboxWindow.all().forEach((win) => { win.minimize() })
       } else if (process.platform === 'darwin') {
-        WaveboxWindow.all().forEach((win) => { win.hide() })
         app.hide()
       } else if (process.platform === 'linux') {
         WaveboxWindow.all().forEach((win) => { win.hide() })
       }
     } else {
-      mailboxesWindow.show()
-      mailboxesWindow.focus()
+      if (process.platform === 'darwin') {
+        app.show()
+        const lastFocused = WaveboxWindow.lastFocused()
+        if (lastFocused) {
+          lastFocused.show()
+          lastFocused.focus()
+        }
+      } else {
+        const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+        mailboxesWindow.show()
+        mailboxesWindow.focus()
+      }
     }
   }
 

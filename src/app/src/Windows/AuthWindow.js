@@ -30,6 +30,8 @@ class AuthWindow extends WaveboxWindow {
       evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, webContentsId)
     })
 
+    this.showNativeUI()
+
     return this
   }
 

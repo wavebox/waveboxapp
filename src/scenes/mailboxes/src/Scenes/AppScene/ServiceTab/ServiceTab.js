@@ -2,15 +2,15 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
 import { userStore } from 'stores/user'
-import GoogleMailServiceWebView from './ServiceWebViews/Google/GoogleMailServiceWebView'
 import GoogleHangoutsServiceWebView from './ServiceWebViews/Google/GoogleHangoutsServiceWebView'
 import GoogleCalendarServiceWebView from './ServiceWebViews/Google/GoogleCalendarServiceWebView'
 import GoogleAlloServiceWebView from './ServiceWebViews/Google/GoogleAlloServiceWebView'
-import TrelloServiceWebView from './ServiceWebViews/Trello/TrelloServiceWebView'
 import SlackServiceWebView from './ServiceWebViews/Slack/SlackServiceWebView'
 import GenericServiceWebView from './ServiceWebViews/Generic/GenericServiceWebView'
 import ContainerServiceWebView from './ServiceWebViews/Container/ContainerServiceWebView'
 import MicrosoftMailServiceWebView from './ServiceWebViews/Microsoft/MicrosoftMailServiceWebView'
+import { IENGINE_ALIASES } from 'shared/IEngine/IEngineTypes'
+import IEngineWebView from './ServiceWebViews/IEngineWebView'
 import CoreServiceWebView from './CoreServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
@@ -92,10 +92,12 @@ class ServiceTab extends React.Component {
       ...service ? {
         hasService: true,
         serviceType: service.type,
+        iengineAlias: service.iengineAlias,
         mailboxId: service.parentId
       } : {
         hasService: false,
         serviceType: undefined,
+        iengineAlias: undefined,
         mailboxId: undefined
       }
     }
@@ -124,21 +126,20 @@ class ServiceTab extends React.Component {
   /**
   * Gets the class for the mailbox
   * @param serviceType: the service of the tab
+  * @param iengineAlias: the id of the iengine to use
   * @return the class
   */
-  getWebviewClass (serviceType) {
+  getWebviewClass (serviceType, iengineAlias) {
+    if (IENGINE_ALIASES.has(iengineAlias)) {
+      return IEngineWebView
+    }
     switch (serviceType) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        return GoogleMailServiceWebView
       case SERVICE_TYPES.GOOGLE_HANGOUTS:
         return GoogleHangoutsServiceWebView
       case SERVICE_TYPES.GOOGLE_CALENDAR:
         return GoogleCalendarServiceWebView
       case SERVICE_TYPES.GOOGLE_ALLO:
         return GoogleAlloServiceWebView
-      case SERVICE_TYPES.TRELLO:
-        return TrelloServiceWebView
       case SERVICE_TYPES.SLACK:
         return SlackServiceWebView
       case SERVICE_TYPES.GENERIC:
@@ -161,6 +162,7 @@ class ServiceTab extends React.Component {
     } = this.props
     const {
       serviceType,
+      iengineAlias,
       isActive,
       hasService,
       mailboxId,
@@ -168,7 +170,7 @@ class ServiceTab extends React.Component {
     } = this.state
     if (!hasService) { return false }
 
-    const WebviewClass = this.getWebviewClass(serviceType)
+    const WebviewClass = this.getWebviewClass(serviceType, iengineAlias)
     return (
       <div className={classNames(classes.serviceTab, isActive ? 'active' : undefined, className)} {...passProps}>
         {isRestricted ? (

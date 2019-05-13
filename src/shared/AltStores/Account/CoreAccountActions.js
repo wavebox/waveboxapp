@@ -803,6 +803,29 @@ class CoreAccountActions extends RemoteActions {
       return this.remoteDispatch('convertGoogleInboxToGmail', args)
     }
   }
+
+  /* **************************************************************************/
+  // Sync
+  /* **************************************************************************/
+
+  /**
+  * @Thomas101 this is only triggered off from the mailboxes window, but uses
+  * the "userRequestsServiceSync" call. That then decides if it should call this.
+  * Once all sync has been moved across to the new integrated this fn call can be
+  * changed to be the single point of trigger as sync happens on the main thread
+  *
+  *
+  * Indicates that a user want's a service to sync
+  * @param serviceId: the id of the service
+  */
+  userRequestsIntegratedServiceSync (...args) {
+    if (process.type === 'browser') {
+      const [serviceId] = args
+      return { serviceId }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('userRequestsIntegratedServiceSync', args)
+    }
+  }
 }
 
 export default CoreAccountActions

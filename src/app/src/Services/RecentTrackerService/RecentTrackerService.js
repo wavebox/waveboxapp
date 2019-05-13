@@ -100,7 +100,31 @@ class RecentTrackerService {
   handleTabFaviconUpdated = (evt, favicons) => {
     const connection = this[privConnected].get(evt.sender.id)
     if (!connection) { return }
-    connection.setFavicons(favicons)
+
+    Promise.resolve()
+      .then(() => {
+        return new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Timeout'))
+          }, 1000)
+          evt.sender.executeJavaScript(`
+            (function () {
+              try {
+                return Array.from(document.head.querySelectorAll('link[rel="apple-touch-icon"]')).map((e) => e.href).filter((v) => !!v)
+              } catch (ex) {
+                return []
+              }
+            })()
+          `, (touchIcons) => {
+            clearTimeout(timeout)
+            resolve(touchIcons)
+          })
+        })
+      })
+      .catch((ex) => Promise.resolve([]))
+      .then((touchIcons) => {
+        connection.setFavicons([].concat(favicons, touchIcons))
+      })
   }
 
   /**

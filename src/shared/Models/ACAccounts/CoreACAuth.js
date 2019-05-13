@@ -77,13 +77,16 @@ class CoreACAuth extends CoreACModel {
   get isAuthInvalid () { return this._value_('isAuthInvalid', false) }
   get hasAuth () { return this._value_('hasAuth', false) }
   get authData () { return this._value_('authData', {}) }
+  get isAuthFromCookie () { return this.authData.__cookie__ === true }
+  get authScopes () { return this._value_('scopes', []) }
+  get userId () { return this._value_('userId', undefined) }
 
   /* **************************************************************************/
   // Properties: Identification
   /* **************************************************************************/
 
   get humanizedNamespace () { return this.constructor.humanizedNamespace }
-  get humanizedIdentifier () { SubclassNotImplementedError('CoreACAuth.humanizedIdentifier') }
+  get humanizedIdentifier () { return this.userId }
   get hasHumanizedIdentifier () { return !!this.humanizedIdentifier }
 }
 

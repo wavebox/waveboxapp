@@ -1,4 +1,4 @@
-import { session, app } from 'electron'
+import { session, app, webContents } from 'electron'
 import { EventEmitter } from 'events'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
@@ -9,12 +9,15 @@ import { DownloadManager } from 'Download'
 import { PermissionManager } from 'Permissions'
 import SessionManager from './SessionManager'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 import e2c from 'electron-to-chromium'
 
 const privManaged = Symbol('privManaged')
 const privEarlyManaged = Symbol('privEarlyManaged')
 const privSetup = Symbol('privSetup')
 const privPersistCookieThrottle = Symbol('privPersistCookieThrottle')
+const privActiveCVersion = Symbol('privActiveCVersion')
+const privManagedUsingCustomUA = Symbol('privManagedUsingCustomUA')
 
 class AccountSessionManager extends EventEmitter {
   /* ****************************************************************************/
@@ -26,6 +29,8 @@ class AccountSessionManager extends EventEmitter {
     this[privSetup] = false
     this[privPersistCookieThrottle] = {}
     this[privManaged] = new Set()
+    this[privManagedUsingCustomUA] = new Set()
+    this[privActiveCVersion] = undefined
     this.setMaxListeners(0)
 
     // Sessions can only be accessed once the app is ready. We have eager classes trying
@@ -46,7 +51,59 @@ class AccountSessionManager extends EventEmitter {
   */
   start () {
     if (this[privSetup]) { return }
+
+    const userState = userStore.getState()
+    if (userState.wireConfigLatestCVersion()) {
+      this[privActiveCVersion] = userState.wireConfigLatestCVersion()
+      app.userAgentFallback = this._replaceUAChromeVersion(app.userAgentFallback, this[privActiveCVersion])
+    }
+    userStore.listen(this.userStoreUpdated)
+
     this[privSetup] = true
+  }
+
+  /* ****************************************************************************/
+  // Data lifecycle
+  /* ****************************************************************************/
+
+  userStoreUpdated = (userState) => {
+    if (userState.wireConfigLatestCVersion() !== this[privActiveCVersion]) {
+      this[privActiveCVersion] = userState.wireConfigLatestCVersion()
+      app.userAgentFallback = this._replaceUAChromeVersion(app.userAgentFallback, this[privActiveCVersion])
+
+      this[privManaged].forEach((partitionId) => {
+        const ses = session.fromPartition(partitionId)
+
+        if (this[privManagedUsingCustomUA].has(partitionId)) {
+          // no-op
+        } else if (!settingsStore.getState().launched.app.polyfillUserAgents) {
+          // no-op
+        } else if (userState.wireConfigLatestCVersion()) {
+          const ua = this._replaceUAChromeVersion(ses.getUserAgent(), userState.wireConfigLatestCVersion())
+          ses.setUserAgent(ua)
+          webContents.getAllWebContents().forEach((wc) => {
+            if (wc.session === ses) { wc.setUserAgent(ua) }
+          })
+        }
+      })
+    }
+  }
+
+  /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  /**
+  * Replaces the chrome version in a useragent
+  * @param ua: the useragent to replace in
+  * @param version: the version to set
+  * @return the updated UA
+  */
+  _replaceUAChromeVersion (ua, version) {
+    if (!version) { return ua }
+    return ua.split(' ').map((cmp) => {
+      return cmp.startsWith('Chrome/') ? `Chrome/${version}` : cmp
+    }).join(' ')
   }
 
   /* ****************************************************************************/
@@ -154,9 +211,12 @@ class AccountSessionManager extends EventEmitter {
     // Check if we can init
     if (this[privManaged].has(partitionId)) { return }
     if (!app.isReady()) {
-      this[privEarlyManaged].set(partitionId, args); return
+      this[privEarlyManaged].set(partitionId, args)
+      return
     }
 
+    const settingsState = settingsStore.getState()
+    const userState = userStore.getState()
     const ses = session.fromPartition(partitionId)
 
     // Downloads
@@ -164,21 +224,15 @@ class AccountSessionManager extends EventEmitter {
 
     // Permissions & env
     PermissionManager.setupPermissionHandler(partitionId)
+
     // UA
     if (useCustomUserAgent && customUserAgentString) {
       ses.setUserAgent(customUserAgentString)
-    } else if (!settingsStore.getState().launched.app.polyfillUserAgents) {
-      const defaultUA = ses.getUserAgent()
-        .split(' ')
-        .map((cmp) => {
-          if (cmp.startsWith('Chrome/')) {
-            return `Chrome/${e2c.fullVersions[process.versions.electron]}`
-          } else {
-            return cmp
-          }
-        })
-        .join(' ')
-      ses.setUserAgent(defaultUA)
+      this[privManagedUsingCustomUA].add(partitionId)
+    } else if (!settingsState.launched.app.polyfillUserAgents) {
+      ses.setUserAgent(this._replaceUAChromeVersion(ses.getUserAgent(), e2c.fullVersions[process.versions.electron]))
+    } else if (userState.wireConfigLatestCVersion()) {
+      ses.setUserAgent(this._replaceUAChromeVersion(ses.getUserAgent(), userState.wireConfigLatestCVersion()))
     }
 
     // Cookies

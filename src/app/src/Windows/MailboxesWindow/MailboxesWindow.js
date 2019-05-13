@@ -7,10 +7,8 @@ import { GuestWebPreferences } from 'WebContentsManager'
 import path from 'path'
 import { URL } from 'url'
 import {
-  AuthGoogle,
   AuthMicrosoft,
   AuthSlack,
-  AuthTrello,
   AuthWavebox
 } from 'AuthProviders'
 import querystring from 'querystring'
@@ -57,6 +55,7 @@ import Resolver from 'Runtime/Resolver'
 import MailboxesWindowTabManager from './MailboxesWindowTabManager'
 import MailboxesWindowBehaviour from './MailboxesWindowBehaviour'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
+import MailboxesWindowTouchBarProvider from './MailboxesWindowTouchBarProvider'
 
 const MIN_WINDOW_WIDTH = 400
 const MIN_WINDOW_HEIGHT = 300
@@ -91,8 +90,6 @@ class MailboxesWindow extends WaveboxWindow {
     super('mailbox_window_state')
     singletonAttached = this
 
-    this.authGoogle = new AuthGoogle()
-    this.authTrello = new AuthTrello()
     this.authSlack = new AuthSlack()
     this.authMicrosoft = new AuthMicrosoft()
     this.authWavebox = new AuthWavebox()
@@ -194,6 +191,7 @@ class MailboxesWindow extends WaveboxWindow {
     electron.ipcMain.removeListener(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
 
     singletonAttached = undefined
+
     super.destroy(evt)
   }
 
@@ -241,6 +239,14 @@ class MailboxesWindow extends WaveboxWindow {
   * @return the top level webcontents
   */
   userLinkOpenRequestResponder () { return this.window.webContents }
+
+  /**
+  * Overwrite
+  * @return the touchbar
+  */
+  createTouchbarProvider () {
+    return new MailboxesWindowTouchBarProvider(this.window)
+  }
 
   /* ****************************************************************************/
   // Tab manager handlers

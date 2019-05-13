@@ -34,6 +34,7 @@ class ContainerService extends CoreACService {
   // Properties
   /* **************************************************************************/
 
+  get iengineAlias () { return `${this.type}:${this.containerId}` }
   get container () { return this.__container__ }
   get containerSAPI () { return this.__containerSAPI__ }
   get containerId () { return this._value_('containerId', undefined) }

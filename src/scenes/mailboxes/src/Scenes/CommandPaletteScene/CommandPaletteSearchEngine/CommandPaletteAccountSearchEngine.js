@@ -55,11 +55,29 @@ class CommandPaletteAccountSearchEngine {
   }
 
   /**
-  * Generates a set of recent services
+  * Generates a recommended set of results
   * @param accountState=autoget: the current account state
+  * @return results sorted into targets
   */
-  generateRecentServiceResults (accountState = accountStore.getState()) {
-    return accountState.lastAccessedServiceIds(false)
+  generateRecomendations (accountState = accountStore.getState()) {
+    const recommended = []
+    const activeService = accountState.activeService()
+    if (activeService) {
+      recommended.push({
+        target: SEARCH_TARGETS.BOOKMARK,
+        items: activeService.bookmarks.map((bookmark) => {
+          return {
+            item: {
+              target: SEARCH_TARGETS.BOOKMARK,
+              id: bookmark.id,
+              parentId: activeService.id
+            }
+          }
+        })
+      })
+    }
+
+    const recents = accountState.lastAccessedServiceIds(false)
       .map((serviceId) => {
         const service = accountState.getService(serviceId)
         if (!service) { return undefined }
@@ -72,6 +90,12 @@ class CommandPaletteAccountSearchEngine {
         }
       })
       .filter((rec) => !!rec)
+    recommended.push({
+      target: SEARCH_TARGETS.SERVICE,
+      items: recents
+    })
+
+    return recommended
   }
 
   /* **************************************************************************/

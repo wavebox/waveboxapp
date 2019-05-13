@@ -79,6 +79,7 @@ const MAPPING = [
   ['fasArrowToBottom', 'fasArrowDown'],
   ['fasExchangeAlt', 'fasExchangeAlt'],
   ['fasSpinnerThird', 'fasCircleNotch'],
+  ['fasCookie', 'fasCookie'],
 
   ['fabSlack', 'fabSlack'],
   ['fabGoogle', 'fabGoogle'],

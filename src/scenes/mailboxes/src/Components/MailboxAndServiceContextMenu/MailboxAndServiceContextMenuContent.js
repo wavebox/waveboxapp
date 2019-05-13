@@ -235,7 +235,7 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleResyncMailbox = (evt) => {
-    accountActions.fullSyncMailbox(this.props.mailboxId)
+    accountActions.userRequestsMailboxSync(this.props.mailboxId)
     this.closePopover(evt)
   }
 
@@ -245,7 +245,7 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   */
   handleResyncService = (evt) => {
     if (this.props.serviceId) {
-      accountActions.fullSyncService(this.props.serviceId)
+      accountActions.userRequestsServiceSync(this.props.serviceId)
     }
     this.closePopover(evt)
   }

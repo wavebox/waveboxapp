@@ -116,6 +116,7 @@ class AppSettings extends Model {
   get rawAppThreadFetchMicrosoftHTTP () { return this._value_('appThreadFetchMicrosoftHTTP', undefined) }
   get forceWindowPaintOnRestore () { return this._value_('forceWindowPaintOnRestore', false) }
   get showArtificiallyPersistCookies () { return this._value_('showArtificiallyPersistCookies', false) }
+  get touchBarSupportEnabled () { return this._value_('touchBarSupportEnabled', false) }
 
   /* **************************************************************************/
   // Properties: Search

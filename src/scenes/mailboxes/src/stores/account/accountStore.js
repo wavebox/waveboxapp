@@ -3,24 +3,19 @@ import { STORE_NAME } from 'shared/AltStores/Account/AltAccountIdentifiers'
 import alt from '../alt'
 import actions from './accountActions'
 import settingsActions from '../settings/settingsActions'
-import GoogleHTTP from '../google/GoogleHTTP'
 import SlackHTTP from '../slack/SlackHTTP'
 import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
-import TrelloHTTP from '../trello/TrelloHTTP'
 import accountDispatch from './accountDispatch'
 import Bootstrap from 'R/Bootstrap'
-import googleActions from '../google/googleActions'
 import slackActions from '../slack/slackActions'
-import trelloActions from '../trello/trelloActions'
 import microsoftActions from '../microsoft/microsoftActions'
 import userActions from '../user/userActions'
 import {
-  WB_AUTH_GOOGLE,
   WB_AUTH_MICROSOFT,
   WB_AUTH_SLACK,
-  WB_AUTH_TRELLO,
   WB_NEW_WINDOW,
-  WB_GUEST_API_SEND_COMMAND
+  WB_GUEST_API_SEND_COMMAND,
+  WB_IENGINE_AUTH_SERVICE
 } from 'shared/ipcEvents'
 import { USER_PROFILE_DEFERED_SYNC_ON_CREATE } from 'shared/constants'
 import { ipcRenderer } from 'electron'
@@ -39,6 +34,7 @@ import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
 import ACCOUNT_WARNING_TYPES from 'shared/Models/ACAccounts/AccountWarningTypes'
 import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
+import IENGINE_AUTH_MODES from 'shared/IEngine/IEngineAuthModes'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
@@ -167,9 +163,7 @@ class AccountStore extends RendererAccountStore {
 
       // Mailbox auth callbacks
       handleAuthFailure: actions.AUTH_FAILURE,
-      handleAuthGoogleSuccess: actions.AUTH_GOOGLE_SUCCESS,
       handleAuthSlackSuccess: actions.AUTH_SLACK_SUCCESS,
-      handleAuthTrelloSuccess: actions.AUTH_TRELLO_SUCCESS,
       handleAuthMicrosoftSuccess: actions.AUTH_MICROSOFT_SUCCESS,
 
       // Re-auth
@@ -178,6 +172,8 @@ class AccountStore extends RendererAccountStore {
       // Connection & Sync
       handleFullSyncService: actions.FULL_SYNC_SERVICE,
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
+      handleUserRequestsMailboxSync: actions.USER_REQUESTS_MAILBOX_SYNC,
+      handleUserRequestsServiceSync: actions.USER_REQUESTS_SERVICE_SYNC,
 
       // Snapshots
       handleSetServiceSnapshot: actions.SET_SERVICE_SNAPSHOT,
@@ -203,10 +199,6 @@ class AccountStore extends RendererAccountStore {
     if (!service) { return }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        googleActions.connectService.defer(service.id)
-        break
       case SERVICE_TYPES.SLACK:
         slackActions.connectService.defer(service.id)
         break
@@ -221,14 +213,28 @@ class AccountStore extends RendererAccountStore {
     if (!service) { return }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        googleActions.disconnectService.defer(service.id)
-        break
       case SERVICE_TYPES.SLACK:
         slackActions.disconnectService.defer(service.id)
         break
     }
+  }
+
+  /* **************************************************************************/
+  // Utils: IEngine
+  /* **************************************************************************/
+
+  /**
+  * Makes a request to the main thread to authenticate a iengine service
+  * @param serviceType: the service to act for
+  * @param authConfig: the config to pass
+  * @return promise
+  */
+  _iengineAuthServicePromise (serviceType, authConfig) {
+    return new Promise((resolve, reject) => {
+      const ret = `${WB_IENGINE_AUTH_SERVICE}_${uuid.v4()}`
+      ipcRenderer.once(ret, (evt, err, payload) => { err ? reject(err) : resolve(payload) })
+      ipcRenderer.send(WB_IENGINE_AUTH_SERVICE, ret, serviceType, authConfig)
+    })
   }
 
   /* **************************************************************************/
@@ -277,10 +283,6 @@ class AccountStore extends RendererAccountStore {
       const changed = next.syncWatchFields.filter((k) => prev[k] !== next[k])
       if (changed.length) {
         switch (next.type) {
-          case SERVICE_TYPES.GOOGLE_MAIL:
-          case SERVICE_TYPES.GOOGLE_INBOX:
-            googleActions.serviceSyncWatchFieldChange.defer(next.id, changed)
-            break
           case SERVICE_TYPES.MICROSOFT:
             microsoftActions.serviceSyncWatchFieldChange.defer(next.id, changed)
             break
@@ -390,6 +392,12 @@ class AccountStore extends RendererAccountStore {
 
   handleAuthMailboxGroupFromTemplate ({ template }) {
     this.preventDefault()
+
+    if ([ACCOUNT_TEMPLATE_TYPES.TRELLO, ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL].includes(template.templateType)) {
+      this._iengineAuthMailboxGroupFromTemplate(template)
+      return
+    }
+
     const mailboxId = uuid.v4()
 
     // Optimistically create this to avoid duplication
@@ -403,25 +411,68 @@ class AccountStore extends RendererAccountStore {
       }
     }
 
-    if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL || template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX) {
-      window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_GOOGLE, ipcPayload)
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.OUTLOOK || template.templateType === ACCOUNT_TEMPLATE_TYPES.OFFICE365) {
-      window.location.hash = `/mailbox_wizard/${template.templateType}/${template.accessMode}/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_MICROSOFT, ipcPayload)
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.TRELLO) {
-      window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_TRELLO, ipcPayload)
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.SLACK) {
-      window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_SLACK, ipcPayload)
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
-      this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
-      this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+    switch (template.templateType) {
+      case ACCOUNT_TEMPLATE_TYPES.OUTLOOK:
+      case ACCOUNT_TEMPLATE_TYPES.OFFICE365:
+        window.location.hash = `/mailbox_wizard/${template.templateType}/${template.accessMode}/1/${mailboxId}`
+        ipcRenderer.send(WB_AUTH_MICROSOFT, ipcPayload)
+        break
+      case ACCOUNT_TEMPLATE_TYPES.SLACK:
+        window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
+        ipcRenderer.send(WB_AUTH_SLACK, ipcPayload)
+        break
+      case ACCOUNT_TEMPLATE_TYPES.CONTAINER:
+        this._createMailboxFromTemplate(mailboxId, template)
+        this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+        break
+      case ACCOUNT_TEMPLATE_TYPES.GENERIC:
+        this._createMailboxFromTemplate(mailboxId, template)
+        this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+        break
     }
+  }
+
+  _iengineAuthMailboxGroupFromTemplate (template) {
+    const mailboxId = uuid.v4()
+    let serviceType
+    switch (template.templateType) {
+      case ACCOUNT_TEMPLATE_TYPES.TRELLO:
+        serviceType = SERVICE_TYPES.TRELLO
+        break
+      case ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL:
+        serviceType = SERVICE_TYPES.GOOGLE_MAIL
+        break
+    }
+
+    Promise.resolve()
+      .then(() => {
+        window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
+        return this._iengineAuthServicePromise(serviceType, {
+          partitionId: `persist:${mailboxId}`,
+          authMode: IENGINE_AUTH_MODES.TEMPLATE_CREATE,
+          context: {
+            mailboxId: mailboxId,
+            template: template.cloneData()
+          }
+        })
+      })
+      .then(({ context, auth }) => {
+        let nextUrl
+        if (template.templateType === ACCOUNT_TEMPLATE_TYPES.TRELLO) {
+          actions.createAuth.defer(TrelloAuth.createJS(context.mailboxId, auth))
+        } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL) {
+          actions.createAuth.defer(GoogleAuth.createJS(context.mailboxId, auth))
+          nextUrl = `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`
+        }
+
+        const templatedAccount = new ACTemplatedAccount(context.template)
+        this._createMailboxFromTemplate(context.mailboxId, templatedAccount)
+        this._finalizeCreateAccountFromTemplate(context.mailboxId, nextUrl)
+      })
+      .catch((e) => {
+        console.error('Uncaught auth template error', e)
+        window.location.hash = '/'
+      })
   }
 
   /* **************************************************************************/
@@ -560,6 +611,11 @@ class AccountStore extends RendererAccountStore {
   handleStartAttachNewService ({ attachTarget, serviceType, accessMode }) {
     this.preventDefault()
 
+    if ([SERVICE_TYPES.TRELLO, SERVICE_TYPES.GOOGLE_MAIL].includes(serviceType)) {
+      this._iengineAttachNewService(attachTarget, serviceType, accessMode)
+      return
+    }
+
     // Optimistically create this to avoid lots of duplication
     const proviso = new ACProvisoService({
       serviceId: uuid.v4(),
@@ -578,17 +634,7 @@ class AccountStore extends RendererAccountStore {
       }
     }
 
-    if (serviceType === SERVICE_TYPES.GOOGLE_MAIL || serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
-      const authId = CoreACAuth.compositeId(attachTarget, GoogleAuth.namespace)
-      const auth = this.getMailboxAuth(authId)
-      if (auth && auth.hasAuth && !auth.isAuthInvalid) {
-        actions.authNewServiceFromProviso.defer(proviso)
-      } else {
-        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
-        baseIpcPayload.context.authId = authId
-        ipcRenderer.send(WB_AUTH_GOOGLE, baseIpcPayload)
-      }
-    } else if (serviceType === SERVICE_TYPES.MICROSOFT_MAIL) {
+    if (serviceType === SERVICE_TYPES.MICROSOFT_MAIL) {
       const authId = CoreACAuth.compositeId(attachTarget, MicrosoftAuth.namespace)
       const auth = this.getMailboxAuth(authId)
       if (auth && auth.hasAuth && !auth.isAuthInvalid) {
@@ -608,16 +654,6 @@ class AccountStore extends RendererAccountStore {
         baseIpcPayload.context.authId = authId
         ipcRenderer.send(WB_AUTH_SLACK, baseIpcPayload)
       }
-    } else if (serviceType === SERVICE_TYPES.TRELLO) {
-      const authId = CoreACAuth.compositeId(attachTarget, TrelloAuth.namespace)
-      const auth = this.getMailboxAuth(authId)
-      if (auth && auth.hasAuth && !auth.isAuthInvalid) {
-        actions.authNewServiceFromProviso.defer(proviso)
-      } else {
-        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
-        baseIpcPayload.context.authId = authId
-        ipcRenderer.send(WB_AUTH_TRELLO, baseIpcPayload)
-      }
     } else if (serviceType === SERVICE_TYPES.GENERIC) {
       window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
     } else if (serviceType === SERVICE_TYPES.CONTAINER) {
@@ -632,6 +668,69 @@ class AccountStore extends RendererAccountStore {
         actions.authNewServiceFromProviso.defer(proviso)
       }
     }
+  }
+
+  _iengineAttachNewService (attachTarget, serviceType, accessMode) {
+    let authId
+    switch (serviceType) {
+      case SERVICE_TYPES.TRELLO:
+        authId = CoreACAuth.compositeId(attachTarget, TrelloAuth.namespace)
+        break
+      case SERVICE_TYPES.GOOGLE_MAIL:
+        authId = CoreACAuth.compositeId(attachTarget, GoogleAuth.namespace)
+        break
+    }
+
+    const proviso = new ACProvisoService({
+      serviceId: uuid.v4(),
+      accessMode: accessMode,
+      serviceType: serviceType,
+      parentId: attachTarget
+    })
+
+    Promise.resolve()
+      .then(() => {
+        const auth = this.getMailboxAuth(authId)
+        if (auth && auth.hasAuth && !auth.isAuthInvalid) {
+          return Promise.resolve()
+        } else {
+          return Promise.resolve()
+            .then(() => {
+              window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
+              return this._iengineAuthServicePromise(serviceType, {
+                partitionId: `persist:${attachTarget}`,
+                authMode: IENGINE_AUTH_MODES.ATTACH,
+                context: {
+                  mailboxId: attachTarget,
+                  authId: authId
+                }
+              })
+            })
+            .then(({ context, auth }) => {
+              window.location.hash = '/'
+              if (this.hasMailboxAuth(authId)) {
+                actions.reduceAuth(authId, AuthReducer.setAuthData, auth)
+              } else {
+                switch (serviceType) {
+                  case SERVICE_TYPES.TRELLO:
+                    actions.createAuth(TrelloAuth.createJS(attachTarget, auth))
+                    break
+                  case SERVICE_TYPES.GOOGLE_MAIL:
+                    actions.createAuth(GoogleAuth.createJS(context.mailboxId, auth))
+                    break
+                }
+              }
+              return Promise.resolve()
+            })
+        }
+      })
+      .then(() => {
+        actions.authNewServiceFromProviso(proviso)
+      })
+      .catch((e) => {
+        console.error('Uncaught attach service error', e)
+        window.location.hash = '/'
+      })
   }
 
   handleAuthNewServiceFromProviso ({ proviso }) {
@@ -753,52 +852,6 @@ class AccountStore extends RendererAccountStore {
     }
   }
 
-  handleAuthGoogleSuccess ({ mode, context, auth }) {
-    this.preventDefault()
-    Promise.resolve()
-      .then(() => GoogleHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri))
-      .then((permenantAuth) => {
-        return GoogleHTTP.fetchAccountProfileWithRawAuth(permenantAuth)
-          .then((response) => { // Build the complete auth object
-            return {
-              ...permenantAuth,
-              pushToken: auth.pushToken,
-              email: response.email
-            }
-          })
-      })
-      .then((permenantAuth) => {
-        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
-          // Create the auth
-          actions.createAuth.defer(
-            GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
-          )
-
-          // Create the account
-          const template = new ACTemplatedAccount(context.template)
-          this._createMailboxFromTemplate(context.mailboxId, template)
-          this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
-        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
-          if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, permenantAuth)
-          } else {
-            actions.createAuth.defer(
-              GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
-            )
-          }
-
-          if (mode === AUTH_MODES.REAUTHENTICATE) {
-            this._finalizeReauthentication(context.serviceId)
-          } else if (mode === AUTH_MODES.ATTACH) {
-            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
-          }
-        }
-      })
-      .catch((err) => {
-        console.error('[AUTH ERR]', err)
-      })
-  }
-
   handleAuthSlackSuccess ({ mode, context, auth }) {
     this.preventDefault()
     Promise.resolve()
@@ -840,40 +893,6 @@ class AccountStore extends RendererAccountStore {
       })
       .catch((err) => {
         console.error('[AUTH ERR]', err)
-      })
-  }
-
-  handleAuthTrelloSuccess ({ mode, context, auth }) {
-    this.preventDefault()
-
-    Promise.resolve()
-      .then(() => TrelloHTTP.fetchAuthInfo(auth.appKey, auth.token))
-      .then((authData) => {
-        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
-          // Create the auth
-          actions.createAuth.defer(
-            TrelloAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
-          )
-
-          // Create the account
-          const template = new ACTemplatedAccount(context.template)
-          this._createMailboxFromTemplate(context.mailboxId, template)
-          this._finalizeCreateAccountFromTemplate(context.mailboxId)
-        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
-          if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, authData)
-          } else {
-            actions.createAuth.defer(
-              TrelloAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
-            )
-          }
-
-          if (mode === AUTH_MODES.REAUTHENTICATE) {
-            this._finalizeReauthentication(context.serviceId)
-          } else if (mode === AUTH_MODES.ATTACH) {
-            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
-          }
-        }
       })
   }
 
@@ -921,6 +940,11 @@ class AccountStore extends RendererAccountStore {
     const service = this.getService(serviceId)
     if (!service) { return }
 
+    if ([SERVICE_TYPES.TRELLO, SERVICE_TYPES.GOOGLE_MAIL, SERVICE_TYPES.GOOGLE_INBOX].includes(service.type)) {
+      this._iengineReauthenticateServce(service)
+      return
+    }
+
     const ipcPayload = {
       partitionId: service.partitionId,
       credentials: Bootstrap.credentials,
@@ -936,11 +960,6 @@ class AccountStore extends RendererAccountStore {
     }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_INBOX:
-      case SERVICE_TYPES.GOOGLE_MAIL:
-        window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_GOOGLE, ipcPayload)
-        break
       case SERVICE_TYPES.MICROSOFT_MAIL:
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_MICROSOFT, ipcPayload)
@@ -949,11 +968,47 @@ class AccountStore extends RendererAccountStore {
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_SLACK, ipcPayload)
         break
-      case SERVICE_TYPES.TRELLO:
-        window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_TRELLO, ipcPayload)
-        break
     }
+  }
+
+  _iengineReauthenticateServce (service) {
+    Promise.resolve()
+      .then(() => {
+        window.location.hash = '/mailbox/reauthenticating'
+        return this._iengineAuthServicePromise(service.type, {
+          partitionId: service.partitionId,
+          authMode: IENGINE_AUTH_MODES.REAUTHENTICATE,
+          context: {
+            mailboxId: service.parentId,
+            authId: CoreACAuth.compositeIdFromService(service),
+            serviceId: service.id,
+            sandboxedPartitionId: service.sandboxFromMailbox
+              ? service.partitionId
+              : undefined
+          }
+        })
+      })
+      .then(({ context, auth }) => {
+        if (this.hasMailboxAuth(context.authId)) {
+          actions.reduceAuth(context.authId, AuthReducer.setAuthData, auth)
+        } else {
+          switch (service.type) {
+            case SERVICE_TYPES.TRELLO:
+              actions.createAuth(TrelloAuth.createJS(context.mailboxId, auth, context.sandboxedPartitionId))
+              break
+            case SERVICE_TYPES.GOOGLE_MAIL:
+            case SERVICE_TYPES.GOOGLE_INBOX:
+              actions.createAuth(GoogleAuth.createJS(context.mailboxId, auth, context.sandboxedPartitionId))
+              break
+          }
+        }
+
+        this._finalizeReauthentication(context.serviceId)
+      })
+      .catch((e) => {
+        console.error('Uncaught reauthenticate error', e)
+        window.location.hash = '/'
+      })
   }
 
   /* **************************************************************************/
@@ -966,17 +1021,7 @@ class AccountStore extends RendererAccountStore {
     if (!service) { return }
 
     switch (service.type) {
-      case SERVICE_TYPES.GOOGLE_MAIL:
-      case SERVICE_TYPES.GOOGLE_INBOX:
-        googleActions.syncServiceProfile.defer(serviceId)
-        googleActions.connectService.defer(serviceId)
-        googleActions.registerServiceWatch.defer(serviceId)
-        googleActions.syncServiceMessages.defer(serviceId, true)
-        break
-      case SERVICE_TYPES.TRELLO:
-        trelloActions.syncServiceProfile.defer(serviceId)
-        trelloActions.syncServiceNotifications.defer(serviceId)
-        break
+      // @Thomas101 when all have been integrated-engine move this into main thread
       case SERVICE_TYPES.SLACK:
         slackActions.connectService.defer(serviceId)
         slackActions.updateUnreadCounts.defer(serviceId)
@@ -996,6 +1041,38 @@ class AccountStore extends RendererAccountStore {
     mailbox.allServices.forEach((serviceId) => {
       actions.fullSyncService.defer(serviceId)
     })
+  }
+
+  handleUserRequestsMailboxSync ({ mailboxId }) {
+    this.preventDefault()
+    const mailbox = this.getMailbox(mailboxId)
+    if (!mailbox) { return }
+
+    mailbox.allServices.forEach((serviceId) => {
+      actions.userRequestsServiceSync.defer(serviceId)
+    })
+  }
+
+  handleUserRequestsServiceSync ({ serviceId }) {
+    this.preventDefault()
+    const service = this.getService(serviceId)
+    if (!service) { return }
+
+    switch (service.type) {
+      case SERVICE_TYPES.GOOGLE_MAIL:
+      case SERVICE_TYPES.GOOGLE_INBOX:
+      case SERVICE_TYPES.TRELLO:
+        actions.userRequestsIntegratedServiceSync(serviceId)
+        break
+      case SERVICE_TYPES.SLACK:
+        slackActions.connectService.defer(serviceId)
+        slackActions.updateUnreadCounts.defer(serviceId)
+        break
+      case SERVICE_TYPES.MICROSOFT_MAIL:
+        microsoftActions.syncServiceProfile.defer(serviceId)
+        microsoftActions.syncServiceMail.defer(serviceId)
+        break
+    }
   }
 
   /* **************************************************************************/

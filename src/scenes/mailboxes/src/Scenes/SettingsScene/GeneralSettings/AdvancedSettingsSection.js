@@ -62,7 +62,8 @@ class AdvancedSettingsSection extends React.Component {
         'concurrentServiceLoadLimit',
         'searchProvider',
         'forceWindowPaintOnRestore',
-        'showArtificiallyPersistCookies'
+        'showArtificiallyPersistCookies',
+        'touchBarSupportEnabled'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -202,12 +203,24 @@ class AdvancedSettingsSection extends React.Component {
           checked={userStore.getState().wceNotificationsMutedWhenSuspended(os.rawNotificationsMutedWhenSuspended)} />
         <SettingsListItemSwitch
           label='Force window repaint on restore (Requires Restart)'
-          onChange={(evt, toggled) => settingsActions.sub.app.setForceWindowPaintOnRestore(toggled)}
+          onChange={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setForceWindowPaintOnRestore(toggled)
+          }}
           checked={app.forceWindowPaintOnRestore} />
         <SettingsListItemSwitch
           label='Show "Artificially Persist Cookies" option on accounts'
           onChange={(evt, toggled) => settingsActions.sub.app.setShowArtificiallyPersistCookies(toggled)}
           checked={app.showArtificiallyPersistCookies} />
+        {process.platform === 'darwin' ? (
+          <SettingsListItemSwitch
+            label='Experimental touchbar support (Requires Restart)'
+            onChange={(evt, toggled) => {
+              showRestart()
+              settingsActions.sub.app.setTouchBarSupportEnabled(toggled)
+            }}
+            checked={app.touchBarSupportEnabled} />
+        ) : undefined}
         <SettingsListItemSelectInline
           label='Concurrent service load limit (Requires Restart)'
           value={app.concurrentServiceLoadLimit}

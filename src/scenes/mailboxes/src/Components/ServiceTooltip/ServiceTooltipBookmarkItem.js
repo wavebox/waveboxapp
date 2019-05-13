@@ -120,7 +120,7 @@ class ServiceTooltipBookmarkItem extends React.Component {
           className={classes.favicon}
           style={(
             (bookmark.favicons || []).length
-              ? { backgroundImage: `url("${bookmark.favicons[0]}")` }
+              ? { backgroundImage: `url("${bookmark.favicons.slice(-1)[0]}")` }
               : undefined
           )} />
         <TooltipSectionListItemText

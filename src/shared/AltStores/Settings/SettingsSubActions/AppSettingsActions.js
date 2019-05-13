@@ -200,6 +200,13 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param enabled: true if we should enable support
+  */
+  setTouchBarSupportEnabled (enabled) {
+    this.dispatchUpdate('touchBarSupportEnabled', enabled)
+  }
+
+  /**
   * Sets the search provider
   * @param provider: the new search provider
   */

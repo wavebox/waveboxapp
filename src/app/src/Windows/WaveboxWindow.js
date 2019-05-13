@@ -1,4 +1,4 @@
-import { BrowserWindow, webContents, screen, ipcMain } from 'electron'
+import electron from 'electron'
 import EventEmitter from 'events'
 import { evtMain } from 'AppEvents'
 import { settingsStore } from 'stores/settings'
@@ -16,11 +16,13 @@ import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
+const { BrowserWindow, webContents, ipcMain } = electron
 const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
 const privLastTimeInFocus = Symbol('privLastTimeInFocus')
 const privMinMaxLast = Symbol('privMinMaxLast')
+const privTouchBarProvider = Symbol('privTouchBarProvider')
 
 const waveboxWindowManager = new WaveboxWindowManager()
 
@@ -136,6 +138,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   create (url, browserWindowPreferences = {}) {
+    const settingsState = settingsStore.getState()
     const savedLocation = this.locationSaver.getSavedScreenLocation()
     const fullBrowserWindowPreferences = {
       ...this.defaultBrowserWindowPreferences(),
@@ -150,7 +153,7 @@ class WaveboxWindow extends EventEmitter {
     // Create the window & prep for lifecycle
     this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
     this[privBrowserWindowId] = this.window.id
-    this[settingsStore.getState().ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
+    this[settingsState.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
 
     // Bind window event listeners
     this.window.on('close', (evt) => this.emit('close', evt))
@@ -159,7 +162,7 @@ class WaveboxWindow extends EventEmitter {
     this.window.on('blur', this._handleWindowBlurred)
     this.bindMouseNavigation()
 
-    if (settingsStore.getState().launched.app.forceWindowPaintOnRestore) {
+    if (settingsState.launched.app.forceWindowPaintOnRestore) {
       this.window.on('restore', this._forceRestoreRepaint)
       this.window.on('show', this._forceRestoreRepaint)
     }
@@ -205,6 +208,11 @@ class WaveboxWindow extends EventEmitter {
       evtMain.emit(evtMain.WB_WINDOW_CREATED, {}, this.browserWindowId)
     })
 
+    // Touchbar
+    if (process.platform === 'darwin' && settingsState.launched.app.touchBarSupportEnabled) {
+      this[privTouchBarProvider] = this.createTouchbarProvider()
+    }
+
     return this
   }
 
@@ -227,7 +235,7 @@ class WaveboxWindow extends EventEmitter {
       // Bound the window to our current screen to ensure it's not off-screen
       if (!this[privWindow].isMaximized() && !this[privWindow].isFullScreen()) {
         const windowBounds = this[privWindow].getBounds()
-        const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
+        const workArea = (electron.screen.getDisplayMatching(windowBounds) || electron.screen.getPrimaryDisplay()).workArea
         // On macOS if the opening window is in fullscreen mode we can end up with Y=0 for the workarea. We
         // can also end up with screen.getMenuBarHeight()=0 as the menu bar is hidden. This can result in
         // the bounding failing and the window titlebar being placed under the menubar which means the
@@ -278,6 +286,15 @@ class WaveboxWindow extends EventEmitter {
     setTimeout(() => {
       evtMain.emit(evtMain.WB_WINDOW_DESTROYED, {}, this.browserWindowId)
     })
+
+    // Touchbar
+    if (this[privTouchBarProvider]) {
+      if (this[privTouchBarProvider].destroy) {
+        this[privTouchBarProvider].destroy()
+      }
+      this[privTouchBarProvider] = undefined
+    }
+
     this.emit('closed', evt)
   }
 
@@ -313,6 +330,50 @@ class WaveboxWindow extends EventEmitter {
   */
   userLinkOpenRequestResponder () {
     return null
+  }
+
+  /**
+  * Hook that gets called to init the touchbar provider
+  * @return an object that can be used to run the touchbar or undefined
+  */
+  createTouchbarProvider () { return undefined }
+
+  /* ****************************************************************************/
+  // Mouse Navigation
+  /* ****************************************************************************/
+
+  /**
+  * Shows the basic addressbar in the window
+  */
+  showNativeUI () {
+    // Setup the addressbar
+    if (electron.TextField) {
+      const { View, BoxLayout, TextField } = electron
+      const contentView = new View()
+      const contentLayout = new BoxLayout('vertical')
+      const addressBar = new TextField()
+      const mainView = this.window.getContentView()
+      addressBar.setReadOnly(true)
+      contentView.setLayoutManager(contentLayout)
+      contentView.addChildView(addressBar)
+      contentView.addChildView(mainView)
+      contentLayout.setFlexForView(mainView, 1)
+      this.window.setContentView(contentView)
+
+      addressBar.setText(this.window.webContents.getURL())
+      addressBar.selectStartRange()
+      this.window.webContents.on('did-navigate', (evt, url) => {
+        addressBar.setText(url)
+        addressBar.selectStartRange()
+      })
+      this.window.webContents.on('did-navigate-in-page', (evt, url, isMainFrame) => {
+        if (isMainFrame) {
+          addressBar.setText(url)
+          addressBar.selectStartRange()
+        }
+      })
+      this.window.setMenuBarVisibility(false)
+    }
   }
 
   /* ****************************************************************************/
@@ -457,6 +518,35 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(wcId)
     if (!wc) { return }
     wc.reload()
+    return this
+  }
+
+  /**
+  * Stops the current webview
+  * @return this
+  */
+  stop () {
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.stop()
+    return this
+  }
+
+  /**
+  * Stops the webcontents if loading, otherwise reloads
+  */
+  reloadOrStop () {
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    if (wc.isLoading()) {
+      wc.stop()
+    } else {
+      wc.reload()
+    }
     return this
   }
 

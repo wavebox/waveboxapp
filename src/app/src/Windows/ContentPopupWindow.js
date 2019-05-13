@@ -6,6 +6,7 @@ import { WindowOpeningHandler, WINDOW_OPEN_MODES } from './WindowOpeningEngine'
 import { PermissionManager } from 'Permissions'
 import { URL } from 'url'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import NavigationTouchBarProvider from './NavigationTouchBarProvider'
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 class ContentPopupWindow extends WaveboxWindow {
@@ -106,6 +107,8 @@ class ContentPopupWindow extends WaveboxWindow {
       evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, webContentsId)
     })
 
+    this.showNativeUI()
+
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
     this.window.webContents.on('did-start-navigation', this.handleWebViewDidStartNavigation)
@@ -137,6 +140,14 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   allowNavigate (evt, browserWindow, nextUrl) {
     return true
+  }
+
+  /**
+  * Overwrite
+  * @return the touchbar
+  */
+  createTouchbarProvider () {
+    return new NavigationTouchBarProvider(this)
   }
 
   /* ****************************************************************************/

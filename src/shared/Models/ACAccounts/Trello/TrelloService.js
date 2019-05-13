@@ -26,6 +26,16 @@ class TrelloService extends CoreACService {
   static get humanizedColor () { return 'rgb(33, 108, 167)' }
 
   /* **************************************************************************/
+  // Properties: Avatar
+  /* **************************************************************************/
+
+  get serviceAvatarURL () {
+    // Prior to 4.9.5 the avatar could be stored in a non-string format
+    const val = super.serviceAvatarURL
+    return typeof (val) === 'string' ? val : undefined
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -44,59 +54,16 @@ class TrelloService extends CoreACService {
   /* **************************************************************************/
 
   get url () {
-    if (this.homeBoardId !== undefined) {
-      const board = this.boards.find((board) => board.id === this.homeBoardId)
-      if (board) { return board.shortUrl }
-    }
-    return 'https://trello.com'
+    return !this.homeBoardId
+      ? 'https://trello.com'
+      : `https://trello.com/b/${this.homeBoardId}/`
   }
-
-  /* **************************************************************************/
-  // Properties: Display
-  /* **************************************************************************/
-
-  get serviceDisplayName () {
-    if (this.fullName && this.username) {
-      if (this.fullName === this.username) {
-        return this.username
-      } else {
-        return `${this.username} - ${this.fullName}`
-      }
-    } else if (this.username) {
-      return this.username
-    } else {
-      return this.humanizedType
-    }
-  }
-
-  /* **************************************************************************/
-  // Properties: Avatar
-  /* **************************************************************************/
-
-  get serviceAvatarURL () {
-    const data = this._value_('serviceAvatarURL')
-    if (data && data.avatarSource === 'upload') {
-      return `https://trello-avatars.s3.amazonaws.com/${data.avatarHash}/170.png`
-    }
-    return undefined
-  }
-  get serviceAvatarCharacterDisplay () { return this.initials || super.avatarCharacterDisplay }
 
   /* **************************************************************************/
   // Properties : Trello Boards
   /* **************************************************************************/
 
   get homeBoardId () { return this._value_('homeBoardId', undefined) }
-  get boards () { return this._value_('boards', []) }
-
-  /* **************************************************************************/
-  // Properties : Trello details
-  /* **************************************************************************/
-
-  get email () { return this._value_('email') }
-  get username () { return this._value_('username') }
-  get fullName () { return this._value_('fullName') }
-  get initials () { return this._value_('initials') }
 }
 
 export default TrelloService

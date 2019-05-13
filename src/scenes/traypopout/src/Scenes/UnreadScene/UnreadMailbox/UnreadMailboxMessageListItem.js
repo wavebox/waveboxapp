@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
-import { Avatar, ListItem } from '@material-ui/core'
+import { Avatar, ListItem, ListItemText } from '@material-ui/core'
 import red from '@material-ui/core/colors/red'
 import pink from '@material-ui/core/colors/pink'
 import purple from '@material-ui/core/colors/purple'
@@ -76,12 +76,6 @@ const styles = {
   },
   messageText: {
     marginLeft: 75
-  },
-  primaryMessageText: {
-    fontSize: 14
-  },
-  secondaryMessageText: {
-    fontSize: 13
   }
 }
 
@@ -179,18 +173,16 @@ class UnreadMailboxMessageListItem extends React.Component {
   render () {
     const { message, classes, className, ...passProps } = this.props
     const { avatar } = this.state
-
     return (
       <ListItem className={classNames(classes.listItem, className)} button {...passProps}>
         <span className={classes.avatarContainer}>
           {this.renderAvatar(classes, message.extended, avatar)}
         </span>
-        <span>
-          <span className={classes.primaryMessageText}>{message.text}</span>
-          {message.extended ? (
-            <div className={classes.secondaryMessageText}>{message.extended.subtitle}</div>
-          ) : undefined}
-        </span>
+        <ListItemText
+          primary={message.text}
+          primaryTypographyProps={{ noWrap: true }}
+          secondary={message.extended ? message.extended.subtitle : undefined}
+          secondaryTypographyProps={{ noWrap: true }} />
       </ListItem>
     )
   }

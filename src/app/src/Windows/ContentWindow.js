@@ -9,6 +9,7 @@ import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebConten
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL } from 'shared/ipcEvents'
 import { settingsStore } from 'stores/settings'
+import NavigationTouchBarProvider from './NavigationTouchBarProvider'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
 const privGuestWebPreferences = Symbol('privGuestWebPreferences')
@@ -67,12 +68,19 @@ class ContentWindow extends WaveboxWindow {
   */
   generateWindowPosition (parentWindow) {
     if (!parentWindow) { return undefined }
-    if (parentWindow.isFullScreen() || parentWindow.isMaximized()) { return { center: true } }
+    if (parentWindow.isFullScreen()) {
+      return { center: true }
+    }
 
     const [x, y] = parentWindow.getPosition()
     const [width, height] = parentWindow.getSize()
 
-    return {
+    return parentWindow.isMaximized() ? {
+      x: x + 40,
+      y: y + 40,
+      width: width - 80,
+      height: height - 80
+    } : {
       x: x + 20,
       y: y + 20,
       width: width,
@@ -266,6 +274,14 @@ class ContentWindow extends WaveboxWindow {
   * @return the top level webcontents
   */
   userLinkOpenRequestResponder () { return this.window.webContents }
+
+  /**
+  * Overwrite
+  * @return the touchbar
+  */
+  createTouchbarProvider () {
+    return new NavigationTouchBarProvider(this)
+  }
 
   /* ****************************************************************************/
   // Actions

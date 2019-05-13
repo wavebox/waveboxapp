@@ -30,6 +30,17 @@ class AuthReducer {
   }
 
   /**
+  * Sets the user id in the auth object
+  * @param auth: the auth object
+  * @param userId: the id of the user
+  */
+  static setUserId (auth, userId) {
+    if (auth.userId !== userId) {
+      return auth.changeData({ userId: userId })
+    }
+  }
+
+  /**
   * Indicates there is auth info
   * @param auth: the auth object
   */

@@ -2,6 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Button, Paper, Icon, Grid } from '@material-ui/core'
 import Resolver from 'Runtime/Resolver'
+import pkg from 'package.json'
 import {
   SUPPORT_URL,
   BLOG_URL,
@@ -306,7 +307,14 @@ class SupportSettings extends React.Component {
               'Send feature requests and get help from our support team by email.',
               'rgb(240, 169, 43)',
               'Support',
-              () => WBRPCRenderer.wavebox.openExternal(SUPPORT_URL)
+              () => {
+                const url = [
+                  SUPPORT_URL,
+                  SUPPORT_URL.indexOf('?') === -1 ? '?' : '&',
+                  '&app_version=' + encodeURIComponent(pkg.version)
+                ].join('')
+                WBRPCRenderer.wavebox.openExternal(url)
+              }
             )}
           </Grid>
         </Grid>

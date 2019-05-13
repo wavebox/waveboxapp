@@ -160,7 +160,7 @@ class RecentListItem extends React.Component {
         <div
           className={classes.favicon}
           style={(recentItem.favicons && recentItem.favicons.length
-            ? { backgroundImage: `url("${recentItem.favicons[0]}")` }
+            ? { backgroundImage: `url("${recentItem.favicons.slice(-1)[0]}")` }
             : undefined)} />
         <ListItemText
           primary={(<div className={classes.primaryText}>{recentItem.title}</div>)}

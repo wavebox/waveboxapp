@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { accountStore } from 'stores/account'
 import WizardConfigureGeneric from '../../Common/WizardConfigure/WizardConfigureGeneric'
 import WizardConfigureGmail from '../../Common/WizardConfigure/WizardConfigureGmail'
-import WizardConfigureGinbox from '../../Common/WizardConfigure/WizardConfigureGinbox'
 import WizardConfigureMicrosoft from '../../Common/WizardConfigure/WizardConfigureMicrosoft'
 import WizardConfigureContainer from '../../Common/WizardConfigure/WizardConfigureContainer'
 import WizardConfigureDefaultLayout from '../../Common/WizardConfigure/WizardConfigureDefaultLayout'
@@ -85,10 +84,8 @@ export default class WizardConfigure extends React.Component {
         RenderClass = WizardConfigureGeneric
         break
       case ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL:
-        RenderClass = WizardConfigureGmail
-        break
       case ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX:
-        RenderClass = WizardConfigureGinbox
+        RenderClass = WizardConfigureGmail
         break
       case ACCOUNT_TEMPLATE_TYPES.OUTLOOK:
       case ACCOUNT_TEMPLATE_TYPES.OFFICE365:

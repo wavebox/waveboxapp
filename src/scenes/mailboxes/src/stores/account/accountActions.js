@@ -1,14 +1,10 @@
 import RendererAccountActions from 'shared/AltStores/Account/RendererAccountActions'
 import alt from '../alt'
 import {
-  WB_AUTH_GOOGLE_COMPLETE,
-  WB_AUTH_GOOGLE_ERROR,
   WB_AUTH_MICROSOFT_COMPLETE,
   WB_AUTH_MICROSOFT_ERROR,
   WB_AUTH_SLACK_COMPLETE,
   WB_AUTH_SLACK_ERROR,
-  WB_AUTH_TRELLO_COMPLETE,
-  WB_AUTH_TRELLO_ERROR,
 
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
@@ -94,11 +90,7 @@ class AccountActions extends RendererAccountActions {
 
     // We also have some classic mappings to work with
     if (templateType === 'GOOGLE') {
-      if (accessMode === 'GMAIL') {
-        return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
-      } else if (accessMode === 'GINBOX') {
-        return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX, accessMode: accessMode || '_' }
-      }
+      return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
     } else if (templateType === 'MICROSOFT') {
       if (accessMode === 'OUTLOOK') {
         return { templateType: ACCOUNT_TEMPLATE_TYPES.OUTLOOK, accessMode: 'OUTLOOK' }
@@ -133,11 +125,7 @@ class AccountActions extends RendererAccountActions {
 
     // We also have some classic mappings to work with
     if (serviceType === 'GOOGLE') {
-      if (accessMode === 'GMAIL') {
-        return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
-      } else if (accessMode === 'GINBOX') {
-        return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_INBOX, accessMode: accessMode || '_' }
-      }
+      return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
     } else if (serviceType === 'MICROSOFT') {
       return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.MICROSOFT_MAIL, accessMode: accessMode || '_' }
     }
@@ -165,29 +153,11 @@ class AccountActions extends RendererAccountActions {
   }
 
   /**
-  * Handles a Google account authenticating
-  * @param evt: the event that came over the ipc
-  * @param payload: the data that came across the ipc
-  */
-  authGoogleSuccess (evt, payload) {
-    return payload
-  }
-
-  /**
   * Handles a Slack account authenticating
   * @param evt: the event that came over the ipc
   * @param payload: the data that came across the ipc
   */
   authSlackSuccess (evt, payload) {
-    return payload
-  }
-
-  /**
-  * Handles a Trello account authenticating
-  * @param evt: the event that came over the ipc
-  * @param payload: the data that came across the ipc
-  */
-  authTrelloSuccess (evt, payload) {
     return payload
   }
 
@@ -230,6 +200,29 @@ class AccountActions extends RendererAccountActions {
   */
   fullSyncMailbox (mailboxId) {
     return { mailboxId: mailboxId }
+  }
+
+  /**
+  * Triggers a full sync on a mailbox
+  * @param id: the id of the mailbox
+  */
+  userRequestsMailboxSync (mailboxId) {
+    return { mailboxId: mailboxId }
+  }
+
+  /**
+  * @Thomas101 we need to move over to the main thread sync once all accounts have
+  * moved over to the integrated engine. At the moment this shims into using
+  * "userRequestsIntegratedServiceSync" which runs on the main thread but really
+  * this shouldn't happen.
+  * Once all sync has been moved across to the new integrated this fn call can be
+  * changed to run entirely on the main thread
+  *
+  * Triggers a full sync on a service
+  * @param id: the id of the service
+  */
+  userRequestsServiceSync (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/
@@ -294,13 +287,9 @@ class AccountActions extends RendererAccountActions {
 
 const actions = alt.createActions(AccountActions)
 
-// Auth
-ipcRenderer.on(WB_AUTH_GOOGLE_COMPLETE, actions.authGoogleSuccess)
-ipcRenderer.on(WB_AUTH_GOOGLE_ERROR, actions.authFailure)
+// Aut
 ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackSuccess)
 ipcRenderer.on(WB_AUTH_SLACK_ERROR, actions.authFailure)
-ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloSuccess)
-ipcRenderer.on(WB_AUTH_TRELLO_ERROR, actions.authFailure)
 ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftSuccess)
 ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authFailure)
 

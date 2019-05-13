@@ -5,8 +5,6 @@ import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
-import { googleActions } from 'stores/google'
-import { trelloActions } from 'stores/trello'
 import { slackActions } from 'stores/slack'
 import { microsoftActions } from 'stores/microsoft'
 import { updaterActions } from 'stores/updater'
@@ -34,6 +32,7 @@ export default class Provider extends React.Component {
     // STEP 0. Maintaining focus
     WBRPCRenderer.browserWindow.on('focus', this.handleFocusWebview)
     WBRPCRenderer.webContents.on('did-attach-webview', this.handleFocusWebview)
+    this.refocusInterval = setInterval(this.handlePollFocusWebview, 500)
 
     // STEP 1. App services
     Analytics.startAutoreporting()
@@ -42,8 +41,6 @@ export default class Provider extends React.Component {
     updaterActions.load()
 
     // STEP 2. Mailbox connections
-    googleActions.startPollingUpdates()
-    trelloActions.startPollingUpdates()
     slackActions.connectAllServices()
     microsoftActions.startPollingUpdates()
 
@@ -60,6 +57,7 @@ export default class Provider extends React.Component {
   componentWillUnmount () {
     WBRPCRenderer.browserWindow.removeListener('focus', this.handleFocusWebview)
     WBRPCRenderer.webContents.removeListener('did-attach-webview', this.handleFocusWebview)
+    clearInterval(this.refocusInterval)
 
     // STEP 1. App services
     Analytics.stopAutoreporting()
@@ -68,8 +66,6 @@ export default class Provider extends React.Component {
     updaterActions.unload()
 
     // STEP 2. Mailbox connections
-    googleActions.stopPollingUpdates()
-    trelloActions.stopPollingUpdates()
     slackActions.disconnectAllServices()
     microsoftActions.stopPollingUpdates()
 
@@ -130,6 +126,17 @@ export default class Provider extends React.Component {
   handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
       accountDispatch.refocus()
+    }
+  }
+
+  /**
+  * Handles polling the webview to refocus
+  */
+  handlePollFocusWebview = () => {
+    if (!document.activeElement || document.activeElement.tagName !== 'WEBVIEW') {
+      if (window.location.hash.length <= 2) {
+        accountDispatch.refocus()
+      }
     }
   }
 

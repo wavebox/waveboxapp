@@ -44,15 +44,6 @@ module.exports = Object.freeze({
   // Settings
   SETT_ASSET_TIMESTAMP_PREFIX: '__TIMESTAMP__:',
 
-  // Google
-  GOOGLE_PROFILE_SYNC_INTERVAL: hours(6),
-  GOOGLE_MAILBOX_WATCH_INTERVAL: days(6),
-  GOOGLE_MAILBOX_WATCH_THROTTLE: hours(1),
-
-  // Trello
-  TRELLO_PROFILE_SYNC_INTERVAL: hours(6),
-  TRELLO_NOTIFICATION_SYNC_INTERVAL: seconds(30),
-
   // Slack
   SLACK_FULL_COUNT_SYNC_INTERVAL: minutes(5),
   SLACK_RECONNECT_SOCKET_INTERVAL: minutes(1),
@@ -97,6 +88,7 @@ module.exports = Object.freeze({
   // Live autoupdate
   EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
   WIRE_CONFIG_AUTO_UPDATE_INTERVAL: hours(2),
+  IENGINE_AUTO_UPDATE_INTERVAL: hours(2),
 
   // Cookies
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),

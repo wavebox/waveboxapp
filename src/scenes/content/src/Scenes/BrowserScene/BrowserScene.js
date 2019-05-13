@@ -68,6 +68,7 @@ class BrowserScene extends React.Component {
     browserStore.listen(this.browserUpdated)
 
     WBRPCRenderer.browserWindow.on('focus', this.handleFocusWebview)
+    this.refocusInterval = setInterval(this.handlePollFocusWebview, 500)
   }
 
   componentWillUnmount () {
@@ -76,6 +77,7 @@ class BrowserScene extends React.Component {
       this.mouseNavigator.unregister()
     }
     WBRPCRenderer.browserWindow.removeListener('focus', this.handleFocusWebview)
+    clearInterval(this.refocusInterval)
   }
 
   /* **************************************************************************/
@@ -183,6 +185,17 @@ class BrowserScene extends React.Component {
   handleFocusWebview = () => {
     if (window.location.hash.length <= 2) {
       this.browserRef.current.focus()
+    }
+  }
+
+  /**
+  * Handles polling the webview to refocus
+  */
+  handlePollFocusWebview = () => {
+    if (!document.activeElement || document.activeElement.tagName !== 'WEBVIEW') {
+      if (window.location.hash.length <= 2) {
+        this.browserRef.current.focus()
+      }
     }
   }
 

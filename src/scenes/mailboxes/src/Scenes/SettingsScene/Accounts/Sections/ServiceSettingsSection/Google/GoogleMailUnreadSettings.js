@@ -3,32 +3,17 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
-import SettingsListItem from 'wbui/SettingsListItem'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import CheckBoxOutlineIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import SettingsListTypography from 'wbui/SettingsListTypography'
 import { accountStore, accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
-import { Button, ListItemSecondaryAction, ListItemText, Dialog } from '@material-ui/core'
 import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
 import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
-import GoogleMailCustomUnreadDialogContent from './GoogleMailCustomUnreadDialogContent'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@material-ui/core'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 
 const styles = {
-  customUnreadModeListItem: {
-    paddingRight: 80
-  },
-  customUnreadModeIndicator: {
-    display: 'inline-block',
-    marginTop: 10
-  },
-  customUnreadModeIconIndicator: {
-    width: 18,
-    height: 18,
-    marginRight: 6,
-    verticalAlign: 'bottom'
-  },
   link: {
     textDecoration: 'underline',
     cursor: 'pointer',
@@ -74,8 +59,8 @@ class GoogleMailUnreadSettings extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     return {
-      customUnreadDialogOpen: false,
-      ...this.extractStateForService(this.props.serviceId, accountState)
+      ...this.extractStateForService(this.props.serviceId, accountState),
+      disableSleepForImmediateSyncOpen: false
     }
   })()
 
@@ -94,10 +79,9 @@ class GoogleMailUnreadSettings extends React.Component {
     const service = accountState.getService(serviceId)
     return service ? {
       hasService: true,
-      serviceType: service.type,
       inboxType: service.inboxType,
-      supportedInboxTypes: Array.from(service.supportedInboxTypes),
-      hasCustomQueryConfiguration: !!service.customUnreadQuery || !!service.customUnreadLabelWatchString
+      syncInterval: service.syncInterval,
+      sleepable: service.sleepable
     } : {
       hasService: false
     }
@@ -117,17 +101,46 @@ class GoogleMailUnreadSettings extends React.Component {
   }
 
   /**
-  * Opens the custom unread dialog
+  * Sets the sync interval
+  * @param evt: the event that fired
+  * @param value: the value
   */
-  handleOpenCustomUnreadDialog = () => {
-    this.setState({ customUnreadDialogOpen: true })
+  handleSetSyncInterval = (evt, value) => {
+    if (value === 0) {
+      this.setState({ disableSleepForImmediateSyncOpen: true })
+    } else {
+      accountActions.reduceService(
+        this.props.serviceId,
+        CoreGoogleMailServiceReducer.setSyncInterval,
+        value
+      )
+    }
   }
 
   /**
-  * Closes the custom unread dialog
+  * Closes the sleep dialog
+  * @param evt: the event that fired
   */
-  handleCloseCustomUnreadDialog = () => {
-    this.setState({ customUnreadDialogOpen: false })
+  handleSleepDialogClose = (evt) => {
+    this.setState({ disableSleepForImmediateSyncOpen: false })
+  }
+
+  /**
+  * Enables sleep from the dialog and closes it
+  * @param evt: the event that fired
+  */
+  handleDisableSleepFromDialog = (evt) => {
+    this.setState({ disableSleepForImmediateSyncOpen: false })
+    accountActions.reduceService(
+      this.props.serviceId,
+      CoreGoogleMailServiceReducer.setSyncInterval,
+      30000
+    )
+    accountActions.reduceService(
+      this.props.serviceId,
+      CoreGoogleMailServiceReducer.setSleepable,
+      false
+    )
   }
 
   /* **************************************************************************/
@@ -138,69 +151,6 @@ class GoogleMailUnreadSettings extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Turns an unread mode into a friendlier string
-  * @param type: the inbox type
-  * @param serviceType: the type of service
-  * @return the humanized version
-  */
-  humanizeInboxType (type, serviceType) {
-    switch (type) {
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT: return 'Default (Categories or tabs)'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT: return 'Important first'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD:
-        return serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_INBOX
-          ? 'All unread messages'
-          : 'Unread first'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED: return 'Starred first'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY: return 'Priority Inbox'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT_ATOM: return 'Default (Categories or tabs) (Experimental counts)'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT_ATOM: return 'Important first (Experimental counts)'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD_ATOM: return 'Unread first (Experimental counts)'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED_ATOM: return 'Starred first (Experimental counts)'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY_ATOM: return 'Priority Inbox (Experimental counts)'
-      case CoreGoogleMailService.INBOX_TYPES.GMAIL__ALL: return 'All messages (Read & Unread)'
-      case CoreGoogleMailService.INBOX_TYPES.GINBOX_UNBUNDLED: return 'Unread Unbundled Messages'
-    }
-  }
-
-  /**
-  * Renders the inbox type settings. This is basically a shim around supportedInboxTypes so we can have
-  * dividers within the list. Once Google Inbox has been turned off by Google and we've removed it from
-  * the Wavebox codebase, we can look to simplify this
-  * @param serviceType: the service type to render for
-  * @param supportedInboxTypes: the list of supported inbox type from the model
-  * @return an array that can be passed to the list
-  */
-  renderInboxTypeSettings (serviceType, supportedInboxTypes) {
-    if (serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL) {
-      const userCommon = new Set([
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED,
-        CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY
-      ])
-
-      return [].concat(
-        Array.from(userCommon).map((type) => {
-          return { value: type, label: this.humanizeInboxType(type, serviceType) }
-        }),
-        [{ divider: true }],
-        supportedInboxTypes
-          .filter((type) => !userCommon.has(type))
-          .map((type) => {
-            return { value: type, label: this.humanizeInboxType(type, serviceType) }
-          })
-      )
-    } else {
-      // Depricated Google Inbox types
-      return supportedInboxTypes.map((type) => {
-        return { value: type, label: this.humanizeInboxType(type, serviceType) }
-      })
-    }
-  }
-
   render () {
     const {
       serviceId,
@@ -209,61 +159,73 @@ class GoogleMailUnreadSettings extends React.Component {
     } = this.props
     const {
       hasService,
-      hasCustomQueryConfiguration,
-      customUnreadDialogOpen,
       inboxType,
-      supportedInboxTypes,
-      serviceType
+      syncInterval,
+      sleepable,
+      disableSleepForImmediateSyncOpen
     } = this.state
     if (!hasService) { return false }
 
     return (
-      <SettingsListSection title='Unread & Sync' {...passProps}>
-        <SettingsListItemSelect
-          label={serviceType === CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL ? (
-            <React.Fragment>
-              Inbox Type <a href='#' className={classes.link} onClick={this.handleOpenInboxTypeKB}>Need some help?</a>
-            </React.Fragment>
-          ) : ('Inbox Type')}
-          disabled={hasCustomQueryConfiguration}
-          value={inboxType}
-          options={this.renderInboxTypeSettings(serviceType, supportedInboxTypes)}
-          onChange={(evt, value) => {
-            accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setInboxType, value)
-          }} />
-        <SettingsListItem className={classes.customUnreadModeListItem} divider={false}>
-          <ListItemText
-            primary={(
-              <span>
-                A custom unread mode can be used to configure Wavebox to provide
-                Notifications and Badges for a custom set of messages
-              </span>
+      <React.Fragment>
+        <SettingsListSection title='Unread & Sync' {...passProps}>
+          <SettingsListItemSelect
+            label={(
+              <React.Fragment>
+                Inbox Type <a href='#' className={classes.link} onClick={this.handleOpenInboxTypeKB}>Need some help?</a>
+              </React.Fragment>
             )}
-            secondary={(
-              <span className={classes.customUnreadModeIndicator}>
-                {hasCustomQueryConfiguration ? (
-                  <CheckBoxIcon className={classes.customUnreadModeIconIndicator} />
-                ) : (
-                  <CheckBoxOutlineIcon className={classes.customUnreadModeIconIndicator} />
-                )}
-                Using custom unread mode
-              </span>
-            )} />
-          <ListItemSecondaryAction>
-            <Button variant='contained' size='small' onClick={this.handleOpenCustomUnreadDialog}>
-              Configure
+            value={inboxType}
+            options={[
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_DEFAULT, label: 'Default (Categories or tabs)' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_IMPORTANT, label: 'Important first' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_UNREAD, label: 'Unread first' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_STARRED, label: 'Starred first' },
+              { value: CoreGoogleMailService.INBOX_TYPES.GMAIL_PRIORITY, label: 'Priority Inbox' }
+            ]}
+            onChange={(evt, value) => {
+              accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setInboxType, value)
+            }} />
+          <SettingsListItemSelect
+            divider={false}
+            label='Sync interval'
+            disabled={!sleepable}
+            value={sleepable ? syncInterval : 0}
+            options={[
+              { value: 0, label: 'Immediate' },
+              { value: 30000, label: '30 seconds' },
+              { value: 60000, label: '1 Minute' },
+              { value: 120000, label: '2 Minutes' },
+              { value: 300000, label: '5 minutes' }
+            ]}
+            onChange={this.handleSetSyncInterval}>
+            {sleepable ? undefined : (
+              <SettingsListTypography
+                type='info'
+                variant='select-help'
+                icon={<CheckCircleIcon />}>
+                Sync is immediate when sleep is disabled on this service
+              </SettingsListTypography>
+            )}
+          </SettingsListItemSelect>
+        </SettingsListSection>
+        <Dialog open={disableSleepForImmediateSyncOpen} onClose={this.handleSleepDialogClose}>
+          <DialogTitle>Disable sleep?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Immediate sync is only available when sleep is disabled
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleSleepDialogClose}>
+              Cancel
             </Button>
-          </ListItemSecondaryAction>
-        </SettingsListItem>
-        <Dialog
-          disableEnforceFocus
-          open={customUnreadDialogOpen}
-          onClose={this.handleCloseCustomUnreadDialog}>
-          <GoogleMailCustomUnreadDialogContent
-            serviceId={serviceId}
-            onRequestClose={this.handleCloseCustomUnreadDialog} />
+            <Button onClick={this.handleDisableSleepFromDialog} color='primary' autoFocus>
+              Disable Sleep
+            </Button>
+          </DialogActions>
         </Dialog>
-      </SettingsListSection>
+      </React.Fragment>
     )
   }
 }

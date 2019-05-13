@@ -11,6 +11,10 @@ import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import TrelloServiceReducer from 'shared/AltStores/Account/ServiceReducers/TrelloServiceReducer'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import ServiceAdvancedSection from '../Common/ServiceAdvancedSection'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import BugReportIcon from '@material-ui/icons/BugReport'
+import { WB_IENGINE_LOG_NETWORK_EVENTS_ } from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
 
 export default class TrelloServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -66,10 +70,11 @@ export default class TrelloServiceSettings extends React.Component {
   */
   extractStateForService (serviceId, accountState) {
     const service = accountState.getService(serviceId)
-    return service ? {
+    const serviceData = accountState.getServiceData(serviceId)
+    return service && serviceData ? {
       hasService: true,
       homeBoardId: service.homeBoardId,
-      boards: Array.from(service.boards)
+      boards: serviceData.shapeExpandoValue('trelloBoards', 'array', [])
     } : {
       hasService: false
     }
@@ -116,7 +121,15 @@ export default class TrelloServiceSettings extends React.Component {
         <ServiceBadgeSection serviceId={serviceId} />
         <ServiceBehaviourSection serviceId={serviceId} />
         <ServiceNotificationSection serviceId={serviceId} />
-        <ServiceAdvancedSection serviceId={serviceId} onRequestEditCustomCode={onRequestEditCustomCode} />
+        <ServiceAdvancedSection
+          serviceId={serviceId}
+          onRequestEditCustomCode={onRequestEditCustomCode}>
+          <SettingsListItemButton
+            divider={false}
+            label='Log Sync network requests'
+            icon={<BugReportIcon />}
+            onClick={() => ipcRenderer.send(`${WB_IENGINE_LOG_NETWORK_EVENTS_}${serviceId}`)} />
+        </ServiceAdvancedSection>
       </div>
     )
   }

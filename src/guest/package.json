@@ -9,6 +9,8 @@
     "escape-html": "1.0.3",
     "hunspell-asm": "2.0.0",
     "lru-cache": "5.1.1",
+    "querystring": "0.2.0",
+    "semver": "6.0.0",
     "url-pattern": "1.0.3",
     "uuid": "3.3.2"
   },

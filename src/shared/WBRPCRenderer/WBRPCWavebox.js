@@ -10,7 +10,8 @@ import {
   WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
   WBRPC_OPEN_EXTERNAL,
   WBRPC_SHOW_ITEM_IN_FOLDER,
-  WBRPC_OPEN_ITEM
+  WBRPC_OPEN_ITEM,
+  WBRPC_CHECK_FOR_IENGINE_UPDATES
 } from '../WBRPCEvents'
 
 class WBRPCWavebox {
@@ -127,6 +128,13 @@ class WBRPCWavebox {
       })
       ipcRenderer.send(WBRPC_GET_UPDATER_CONFIG, ret)
     })
+  }
+
+  /**
+  * Checks for iEngine updatets
+  */
+  checkForIEngineUpdates () {
+    ipcRenderer.send(WBRPC_CHECK_FOR_IENGINE_UPDATES)
   }
 }
 
