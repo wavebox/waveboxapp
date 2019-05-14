@@ -268,6 +268,7 @@ class DebugTests {
       WB_SHOW_TRAY_WINDOWED,
       WB_METRICS_OPEN_MONITOR,
       WB_NEW_WINDOW,
+      WB_NEW_POPUP_WINDOW,
       WB_KEYCHAIN_OPEN
     } = require('shared/ipcEvents')
     const {
@@ -305,6 +306,20 @@ class DebugTests {
       console.log(`${sig} Content Window:opened`)
     } else {
       console.warn(`${sig} Content Window:FAILED. Needs service`)
+    }
+
+    // Content popup window
+    console.log(`${sig} Content Popup Window`)
+    if (service) {
+      ipcRenderer.send(WB_NEW_POPUP_WINDOW, {
+        serviceId: service.id,
+        url: window.atob('aHR0cHM6Ly93YXZlYm94Lmlv'),
+        partition: service.partitionId,
+        webPreferences: { partition: service.partitionId }
+      })
+      console.log(`${sig} Content Popup Window:opened`)
+    } else {
+      console.warn(`${sig} Content Popup Window:FAILED. Needs service`)
     }
 
     // Content PDF
