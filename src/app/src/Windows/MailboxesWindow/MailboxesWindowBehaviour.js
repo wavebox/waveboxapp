@@ -1,11 +1,12 @@
 import { ipcMain, BrowserWindow, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import ContentWindow from 'Windows/ContentWindow'
+import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import AuthWindow from 'Windows/AuthWindow'
 import { accountStore } from 'stores/account'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'
-import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
+import { WB_NEW_WINDOW, WB_NEW_POPUP_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 import WINDOW_TYPES from '../WindowTypes'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
@@ -32,12 +33,14 @@ class MailboxesWindowBehaviour {
 
     evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
+    ipcMain.on(WB_NEW_POPUP_WINDOW, this.handleOpenIPCWaveboxPopupWindow)
     ipcMain.on(WB_FOCUS_AUTH_WINDOW, this.handleIPCFocusAuthWindow)
   }
 
   destroy () {
     evtMain.removeListener(evtMain.WB_TAB_CREATED, this.handleTabCreated)
     ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
+    ipcMain.removeListener(WB_NEW_POPUP_WINDOW, this.handleOpenIPCWaveboxPopupWindow)
     ipcMain.removeListener(WB_FOCUS_AUTH_WINDOW, this.handleIPCFocusAuthWindow)
   }
 
@@ -75,6 +78,24 @@ class MailboxesWindowBehaviour {
   handleOpenIPCWaveboxWindow = (evt, body) => {
     if (evt.sender.id === this.webContentsId) {
       const contentWindow = new ContentWindow(body.mailboxId && body.serviceId ? {
+        backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
+        mailboxId: body.mailboxId,
+        serviceId: body.serviceId
+      } : undefined)
+
+      const window = BrowserWindow.fromWebContents(evt.sender)
+      contentWindow.create(body.url, body.windowPreferences, window, body.webPreferences)
+    }
+  }
+
+  /**
+  * Opens a new content popup window
+  * @param evt: the event that fired
+  * @param body: the arguments from the body
+  */
+  handleOpenIPCWaveboxPopupWindow = (evt, body) => {
+    if (evt.sender.id === this.webContentsId) {
+      const contentWindow = new ContentPopupWindow(body.mailboxId && body.serviceId ? {
         backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
         mailboxId: body.mailboxId,
         serviceId: body.serviceId

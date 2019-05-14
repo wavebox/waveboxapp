@@ -55,7 +55,9 @@ class AccountSessionManager extends EventEmitter {
     const userState = userStore.getState()
     if (userState.wireConfigLatestCVersion()) {
       this[privActiveCVersion] = userState.wireConfigLatestCVersion()
-      app.userAgentFallback = this._replaceUAChromeVersion(app.userAgentFallback, this[privActiveCVersion])
+      if (app.userAgentFallback) {
+        app.userAgentFallback = this._replaceUAChromeVersion(app.userAgentFallback, this[privActiveCVersion])
+      }
     }
     userStore.listen(this.userStoreUpdated)
 
@@ -69,7 +71,9 @@ class AccountSessionManager extends EventEmitter {
   userStoreUpdated = (userState) => {
     if (userState.wireConfigLatestCVersion() !== this[privActiveCVersion]) {
       this[privActiveCVersion] = userState.wireConfigLatestCVersion()
-      app.userAgentFallback = this._replaceUAChromeVersion(app.userAgentFallback, this[privActiveCVersion])
+      if (app.userAgentFallback) {
+        app.userAgentFallback = this._replaceUAChromeVersion(app.userAgentFallback, this[privActiveCVersion])
+      }
 
       this[privManaged].forEach((partitionId) => {
         const ses = session.fromPartition(partitionId)
