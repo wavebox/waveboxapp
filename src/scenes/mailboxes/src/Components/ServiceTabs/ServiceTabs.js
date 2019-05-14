@@ -54,7 +54,8 @@ const SortableList = SortableContainer((props) => {
     uiLocation,
     sidebarSize,
     onOpenService,
-    onOpenServiceMenu
+    onOpenServiceMenu,
+    disabled
   } = props
 
   return (
@@ -65,6 +66,7 @@ const SortableList = SortableContainer((props) => {
           index={index}
           mailboxId={mailboxId}
           serviceId={serviceId}
+          disabled={disabled}
           uiLocation={uiLocation}
           sidebarSize={sidebarSize}
           onOpenService={onOpenService}
