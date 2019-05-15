@@ -39,7 +39,7 @@ module.exports = function (name, env, config) {
   // Plugins
   config.plugins = config.plugins || []
   if (isNotifications) {
-    // config.plugins.push(new WebpackNotifierPlugin({ title: name, alwaysNotify: true }))
+    config.plugins.push(new WebpackNotifierPlugin({ title: name, alwaysNotify: true }))
   }
 
   if (isSingleTask(env)) {

@@ -32,12 +32,12 @@ module.exports = function (env = {}) {
     }
   }
 
-  if (env.disableNotify) {
+  if (env.enableNotify) {
+    console.log('[NOTIFICATIONS ENABLED]')
+    process.env.NOTIFICATIONS = 'true'
+  } else {
     console.log('[NOTIFICATIONS DISABLED]')
     process.env.NOTIFICATIONS = 'false'
-  } else {
-    console.log('[NOTIFICATIONS_ENABLED]')
-    process.env.NOTIFICATIONS = 'true'
   }
 
   if (env.verbose) {
