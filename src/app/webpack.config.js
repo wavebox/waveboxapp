@@ -6,7 +6,7 @@ const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const webpackRequire = (n) => require(path.join(ROOT_DIR, 'webpack', n))
 
 const webpack = devRequire('webpack')
-const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
+const { CleanWebpackPlugin } = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const { isProduction, isVerboseLog } = webpackRequire('Config')
 const DevTools = webpackRequire('DevTools')
