@@ -30,7 +30,11 @@ class AppSettings extends Model {
   /* **************************************************************************/
 
   static get UPDATE_CHANNELS () { return RELEASE_CHANNELS }
-  static get SUPPORTS_MIXED_SANDBOX_MODE () { return true }
+  static get SUPPORTS_MIXED_SANDBOX_MODE () {
+    // Dynamic require so guest pages don't bork
+    const Platform = require('../../Platform').default
+    return Platform.isDarwinCatalina() === false
+  }
   static get SEARCH_PROVIDERS () { return SEARCH_PROVIDERS }
   static get SEARCH_PROVIDER_NAMES () { return SEARCH_PROVIDER_NAMES }
   static get PROXY_MODES () { return PROXY_MODES }
