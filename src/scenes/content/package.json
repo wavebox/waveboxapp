@@ -34,7 +34,7 @@
     "@fortawesome/pro-solid-svg-icons": "5.8.2"
   },
   "devDependencies": {
-    "standard": "12.0.1",
+    "standard": "13.0.0",
     "babel-eslint": "10.0.2"
   },
   "standard": {
