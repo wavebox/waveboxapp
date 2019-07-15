@@ -1,5 +1,6 @@
 import querystring from 'querystring'
 import SlackRTM from './SlackRTM'
+import FetchService from 'shared/FetchService'
 
 class SlackHTTP {
   /* **************************************************************************/
@@ -24,14 +25,16 @@ class SlackHTTP {
   * @param auth: the auth token
   * @return promise
   */
-  static testAuth (auth) {
+  static testAuth (auth, partitionId) {
     if (!auth) { return this._rejectWithNoAuth() }
 
     const query = querystring.stringify({
-      token: auth
+      token: auth,
+      '_x_gantry': true
     })
+
     return Promise.resolve()
-      .then(() => window.fetch('https://slack.com/api/auth.test?' + query))
+      .then(() => FetchService.request('https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -46,15 +49,16 @@ class SlackHTTP {
   * @param auth: the auth token
   * @return promise
   */
-  static startRTM (auth) {
+  static startRTM (auth, partitionId) {
     if (!auth) { return this._rejectWithNoAuth() }
 
     const query = querystring.stringify({
       token: auth,
-      mpim_aware: true
+      mpim_aware: true,
+      '_x_gantry': true
     })
     return Promise.resolve()
-      .then(() => window.fetch('https://slack.com/api/rtm.start?' + query))
+      .then(() => FetchService.request('https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -72,17 +76,18 @@ class SlackHTTP {
   * @param auth: the auth token
   * @param simpleUnreads = true: true to return the simple unread counts
   */
-  static fetchUnreadInfo (auth, simpleUnreads = true) {
+  static fetchUnreadInfo (auth, partitionId, simpleUnreads = true) {
     if (!auth) { return this._rejectWithNoAuth() }
 
     const query = querystring.stringify({
       token: auth,
       simple_unreads: simpleUnreads,
       mpim_aware: true,
-      include_threads: true
+      include_threads: true,
+      '_x_gantry': true
     })
     return Promise.resolve()
-      .then(() => window.fetch('https://slack.com/api/users.counts?' + query))
+      .then(() => FetchService.request('https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))

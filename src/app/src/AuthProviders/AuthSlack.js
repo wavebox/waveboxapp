@@ -26,9 +26,20 @@ class AuthSlack {
   */
   _scrapeAuthenticationInfo (webContents) {
     return new Promise((resolve, reject) => {
-      webContents.executeJavaScript('(window.TS || {}).boot_data', (bootData) => {
-        if (bootData && bootData.team_url && bootData.api_token) {
-          resolve({ teamUrl: bootData.team_url, token: bootData.api_token })
+      const js = `(function () {
+        if (window.TS && window.TS.boot_data && window.TS.boot_data.api_token) {
+          return window.TS.boot_data.api_token
+        } else if (window.slackDebug && window.slackDebug.activeTeam && window.slackDebug.activeTeam.redux) {
+          const state = window.slackDebug.activeTeam.redux.getState()
+          if (state && state.bootData && state.bootData.api_token) {
+            return state.bootData.api_token
+          }
+        }
+        return undefined
+      })()`
+      webContents.executeJavaScript(js, (apiToken) => {
+        if (apiToken) {
+          resolve({ token: apiToken })
         } else {
           reject(new Error('Not found'))
         }
@@ -115,14 +126,14 @@ class AuthSlack {
   handleAuthSlack (evt, body) {
     Promise.resolve()
       .then(() => this.promptUserToGetAuthorizationCode(body.partitionId))
-      .then(({ teamUrl, token }) => {
+      .then(({ token }) => {
         evt.sender.send(WB_AUTH_SLACK_COMPLETE, {
           mode: body.mode,
           context: body.context,
           auth: {
             provisional: body.provisional,
-            teamUrl: teamUrl,
-            token: token
+            token: token,
+            partitionId: body.partitionId
           }
         })
       }, (err) => {

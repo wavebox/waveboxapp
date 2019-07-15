@@ -855,7 +855,7 @@ class AccountStore extends RendererAccountStore {
   handleAuthSlackSuccess ({ mode, context, auth }) {
     this.preventDefault()
     Promise.resolve()
-      .then(() => SlackHTTP.testAuth(auth.token))
+      .then(() => SlackHTTP.testAuth(auth.token, auth.partitionId))
       .then((userInfo) => {
         const authData = {
           access_token: auth.token,
