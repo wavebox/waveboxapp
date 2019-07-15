@@ -202,9 +202,11 @@ class DebugSlackCount {
     // See if we can detect a discrepency
     const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
     if (!serviceAuth) { return }
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return }
 
     Promise.resolve()
-      .then(() => SlackHTTP.fetchUnreadInfo(serviceAuth.authToken))
+      .then(() => SlackHTTP.fetchUnreadInfo(serviceAuth.authToken, service.partitionId))
       .then((response) => {
         const nextJS = SlackServiceDataReducer.setSlackUnreadInfo(
           undefined,

@@ -204,6 +204,8 @@ class SlackStore {
       this.preventDefault()
       return
     }
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return }
 
     const connectionId = uuid.v4()
 
@@ -251,7 +253,7 @@ class SlackStore {
     })
 
     Promise.resolve()
-      .then(() => SlackHTTP.startRTM(serviceAuth.authToken))
+      .then(() => SlackHTTP.startRTM(serviceAuth.authToken, service.partitionId))
       .then(({ response, rtm }) => {
         if (!this.isValidConnection(serviceId, connectionId)) { return }
         accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
@@ -483,12 +485,14 @@ class SlackStore {
       this.preventDefault()
       return
     }
+    const service = accountStore.getState().getService(serviceId)
+    if (!service) { return }
 
     Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${serviceId}`)
     const requestId = this.trackOpenRequest(REQUEST_TYPES.UNREAD, serviceId)
 
     Promise.resolve()
-      .then(() => SlackHTTP.fetchUnreadInfo(serviceAuth.authToken))
+      .then(() => SlackHTTP.fetchUnreadInfo(serviceAuth.authToken, service.partitionId))
       .then((response) => {
         accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
         accountActions.reduceServiceData(

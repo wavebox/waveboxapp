@@ -35,6 +35,21 @@ class Platform {
     }
     return false
   }
+
+  /**
+  * Checks if we are macOS catalina
+  * @return true if we are catalina, false otherwise
+  */
+  static isDarwinCatalina () {
+    if (process.platform === 'darwin') {
+      try {
+        return semver.satisfies(os.release(), '19.x.x') // catalina lists itself as 19.0.0
+      } catch (ex) {
+        return false
+      }
+    }
+    return false
+  }
 }
 
 export default Platform
