@@ -75,7 +75,9 @@ class Hunspell extends EventEmitter {
   /* **************************************************************************/
 
   get loaded () { return this[privLoaded] }
+
   get destroyed () { return this[privDestroyed] }
+
   get language () { return this[privLanguage] }
 
   /* **************************************************************************/

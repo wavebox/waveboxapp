@@ -4,20 +4,20 @@ const NOTIFICATION_PROVIDERS = Object.freeze({
 })
 
 const NOTIFICATION_SOUNDS_DARWIN = Object.freeze({
-  'default': 'Basso',
-  'Blow': 'Blow',
-  'Bottle': 'Bottle',
-  'Frog': 'Frog',
-  'Funk': 'Funk',
-  'Glass': 'Glass',
-  'Hero': 'Hero',
-  'Morse': 'Morse',
-  'Ping': 'Ping',
-  'Pop': 'Pop',
-  'Purr': 'Purr',
-  'Sosumi': 'Sosumi',
-  'Submarine': 'Submarine',
-  'Tink': 'Tink'
+  default: 'Basso',
+  Blow: 'Blow',
+  Bottle: 'Bottle',
+  Frog: 'Frog',
+  Funk: 'Funk',
+  Glass: 'Glass',
+  Hero: 'Hero',
+  Morse: 'Morse',
+  Ping: 'Ping',
+  Pop: 'Pop',
+  Purr: 'Purr',
+  Sosumi: 'Sosumi',
+  Submarine: 'Submarine',
+  Tink: 'Tink'
 })
 const DEFAULT_NOTIFICATION_SOUND_DARWIN = 'default'
 

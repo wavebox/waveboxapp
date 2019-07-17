@@ -4,13 +4,13 @@ import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
 } from 'shared/constants'
-import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
 import { PermissionManager } from 'Permissions'
 import SessionManager from './SessionManager'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import e2c from 'electron-to-chromium'
+import KRXFramework from 'Extensions/KRXFramework'
 
 const privManaged = Symbol('privManaged')
 const privEarlyManaged = Symbol('privEarlyManaged')
@@ -223,6 +223,16 @@ class AccountSessionManager extends EventEmitter {
     const userState = userStore.getState()
     const ses = session.fromPartition(partitionId)
 
+    // Packages
+    process.electronBinding('pdf_viewer').manageSession(partitionId, ses)
+    process.electronBinding('pdf_viewer').on('download-started', this._handlePdfDownloadStarted)
+    process.electronBinding('pdf_viewer').on('download-complete', this._handlePdfDownloadCompleted)
+    KRXFramework.manageSession(partitionId, ses, {
+      usesContextIsolation: true,
+      usesSandbox: true,
+      exposePublicChromeApi: true
+    })
+
     // Downloads
     DownloadManager.setupUserDownloadHandlerForPartition(partitionId)
 
@@ -248,7 +258,7 @@ class AccountSessionManager extends EventEmitter {
 
     // Extensions: CSP
     SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
-      const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
+      const updatedHeaders = KRXFramework.updateContentSecurityPolicy(details.url, details.responseHeaders)
       if (updatedHeaders) {
         responder({ responseHeaders: updatedHeaders })
       } else {
@@ -258,7 +268,7 @@ class AccountSessionManager extends EventEmitter {
 
     // Extensions: XHR
     SessionManager.webRequestEmitterFromSession(ses).beforeSendHeaders.onBlocking(undefined, (details, responder) => {
-      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHRBeforeSendHeaders(details)
+      const updatedHeaders = KRXFramework.updateCSXHRBeforeSendHeaders(details)
       if (updatedHeaders) {
         responder({ requestHeaders: updatedHeaders })
       } else {
@@ -266,7 +276,7 @@ class AccountSessionManager extends EventEmitter {
       }
     })
     SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
-      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHROnHeadersReceived(details)
+      const updatedHeaders = KRXFramework.updateCSXHROnHeadersReceived(details)
       if (updatedHeaders) {
         responder({ responseHeaders: updatedHeaders })
       } else {
@@ -274,12 +284,12 @@ class AccountSessionManager extends EventEmitter {
       }
     })
     SessionManager.webRequestEmitterFromSession(ses).errorOccurred.on((details) => {
-      CRExtensionManager.runtimeHandler.onCSXHRError(details)
+      KRXFramework.onCSXHRError(details)
     })
 
     // Extensions: Functionality
     SessionManager.webRequestEmitterFromSession(ses).beforeRequest.onBlocking(undefined, (details, responder) => {
-      const modifier = CRExtensionManager.runtimeHandler.runExtensionOnBeforeRequest(details)
+      const modifier = KRXFramework.runExtensionOnBeforeRequest(details)
       if (modifier) {
         responder(modifier)
       } else {
@@ -289,6 +299,18 @@ class AccountSessionManager extends EventEmitter {
 
     this[privManaged].add(partitionId)
     this.emit('session-managed', ses)
+  }
+
+  /* ****************************************************************************/
+  // Downloads
+  /* ****************************************************************************/
+
+  _handlePdfDownloadStarted = (evt, url) => {
+
+  }
+
+  _handlePdfDownloadCompleted = (evt, url) => {
+    //TODO show complete notif
   }
 
   /* ****************************************************************************/

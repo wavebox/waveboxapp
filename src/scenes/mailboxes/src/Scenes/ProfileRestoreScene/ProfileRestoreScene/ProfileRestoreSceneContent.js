@@ -15,10 +15,10 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const HUMANIZED_PLATFORMS = {
-  'darwin': 'macOS',
-  'win32': 'Windows',
-  'linux': 'Linux',
-  'organization': 'Organization'
+  darwin: 'macOS',
+  win32: 'Windows',
+  linux: 'Linux',
+  organization: 'Organization'
 }
 
 const styles = {

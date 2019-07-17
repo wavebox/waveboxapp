@@ -12,6 +12,7 @@ class GoogleYouTubeService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'YouTube' }
+
   static get humanizedLogos () {
     return [
       'google/logo_youtube_32px.png',
@@ -21,6 +22,7 @@ class GoogleYouTubeService extends CoreACService {
       'google/logo_youtube_128px.png'
     ]
   }
+
   static get humanizedColor () { return '#ff0000' }
 
   /* **************************************************************************/
@@ -28,13 +30,21 @@ class GoogleYouTubeService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

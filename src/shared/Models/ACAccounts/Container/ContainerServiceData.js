@@ -14,7 +14,9 @@ class ContainerServiceData extends CoreACServiceData {
   /* **************************************************************************/
 
   get documentTitleUnreadCount () { return this._value_('documentTitleUnreadCount', 0) }
+
   get faviconIndicatesUnreadActivity () { return this._value_('faviconIndicatesUnreadActivity', false) }
+
   get notificationIndicatesUnreadActivity () { return !!this._value_('lastUnseenNotificationTime', undefined) }
 
   /* **************************************************************************/

@@ -6,8 +6,6 @@ import {
   WBRPC_RUN_SERVICE_COMMAND,
   WBRPC_GET_UPDATER_CONFIG,
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
-  WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
-  WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
   WBRPC_OPEN_EXTERNAL,
   WBRPC_SHOW_ITEM_IN_FOLDER,
   WBRPC_OPEN_ITEM,
@@ -25,24 +23,6 @@ class WBRPCWavebox {
   */
   getGuestPreloadConfigSync () {
     return ipcRenderer.sendSync(WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, window.location.href)
-  }
-
-  /**
-  * Gets the extension contentscript preload config synchronously
-  * @param extensionId: the extension id
-  * @return the cs preload config
-  */
-  getExtensionContentScriptPreloadConfigSync (extensionId) {
-    return ipcRenderer.sendSync(WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, extensionId)
-  }
-
-  /**
-  * Gets the extension hosted preload config synchronously
-  * @param extensionId: the extension id
-  * @return the hosted preload config
-  */
-  getExtensionHostedPreloadConfigSync (extensionId) {
-    return ipcRenderer.sendSync(WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, extensionId)
   }
 
   /* ****************************************************************************/

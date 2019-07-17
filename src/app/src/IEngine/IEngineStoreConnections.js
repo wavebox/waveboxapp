@@ -14,7 +14,9 @@ class IEngineStoreConnections {
   /* **************************************************************************/
 
   get isAccountConnected () { return !!this[privAccount] }
+
   get accountStore () { return this[privAccount].store }
+
   get accountActions () { return this[privAccount].actions }
 
   /* **************************************************************************/

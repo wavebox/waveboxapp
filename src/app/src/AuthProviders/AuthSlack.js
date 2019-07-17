@@ -4,6 +4,7 @@ import { URL } from 'url'
 import AuthWindow from 'Windows/AuthWindow'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
+import KRXFramework from 'Extensions/KRXFramework'
 
 class AuthSlack {
   /* ****************************************************************************/
@@ -73,7 +74,7 @@ class AuthSlack {
           sharedSiteInstances: true,
           partition: partitionId,
           preload: Resolver.guestPreload(),
-          preloadCrx: Resolver.crExtensionApi()
+          preloadCrx: KRXFramework.preloadApiPath()
         }
       })
       const oauthWin = waveboxOauthWin.window

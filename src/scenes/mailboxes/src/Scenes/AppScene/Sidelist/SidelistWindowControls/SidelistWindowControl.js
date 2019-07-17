@@ -89,6 +89,7 @@ class SidelistWindowControl extends React.Component {
   /* **************************************************************************/
 
   static TYPES = TYPES
+
   static propTypes = {
     onClick: PropTypes.func.isRequired,
     type: PropTypes.oneOf(Object.keys(TYPES)).isRequired,

@@ -11,6 +11,7 @@ class SlackAdapator extends BaseAdaptor {
       'http(s)\\://*.slack.com(*)'
     ]
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

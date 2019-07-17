@@ -20,7 +20,7 @@ module.exports = function (env) {
     },
     plugins: [
       new CleanWebpackPlugin({
-        cleanOnceBeforeBuildPatterns: [ OUT_DIR ],
+        cleanOnceBeforeBuildPatterns: [OUT_DIR],
         verbose: isVerboseLog,
         dry: false
       }),
@@ -39,7 +39,7 @@ module.exports = function (env) {
           } : undefined
         }
       ], {
-        ignore: [ '.DS_Store' ]
+        ignore: ['.DS_Store']
       })
     ]
   }

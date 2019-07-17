@@ -7,6 +7,7 @@ import { userStore } from 'stores/user'
 import pkg from 'package.json'
 import { SessionManager } from 'SessionManager'
 import Resolver from 'Runtime/Resolver'
+import KRXFramework from 'Extensions/KRXFramework'
 
 class AuthMicrosoft {
   /* ****************************************************************************/
@@ -89,7 +90,7 @@ class AuthMicrosoft {
           nativeWindowOpen: true,
           sharedSiteInstances: true,
           preload: Resolver.guestPreload(),
-          preloadCrx: Resolver.crExtensionApi()
+          preloadCrx: KRXFramework.preloadApiPath()
         }
       })
       const oauthWin = waveboxOauthWin.window

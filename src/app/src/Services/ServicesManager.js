@@ -1,5 +1,4 @@
 import SpellcheckService from './SpellcheckService'
-import PDFRenderService from './PDFRenderService'
 import MetricsService from './MetricsService'
 import ContextMenuService from './ContextMenuService'
 import WBRPCService from './WBRPCService'
@@ -15,7 +14,6 @@ import PowerMonitorService from './PowerMonitorService'
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
 const privMetricsService = Symbol('privMetricsService')
-const privPdfRenderService = Symbol('privPdfRenderService')
 const privContextMenuService = Symbol('privContextMenuService')
 const privWBRPCService = Symbol('privWBRPCService')
 const privMailboxAdaptorService = Symbol('privMailboxAdaptorService')
@@ -39,7 +37,6 @@ class ServicesManager {
     this[privAutofillService] = undefined
     this[privContextMenuService] = undefined
     this[privMetricsService] = undefined
-    this[privPdfRenderService] = undefined
     this[privWBRPCService] = undefined
     this[privMailboxAdaptorService] = undefined
     this[privWBAPIService] = undefined
@@ -59,7 +56,6 @@ class ServicesManager {
     this[privContextMenuService] = new ContextMenuService(this[privSpellcheckService], this[privAutofillService])
     this[privNotificationService] = new NotificationService()
     this[privMetricsService] = new MetricsService()
-    this[privPdfRenderService] = new PDFRenderService()
     this[privWBRPCService] = new WBRPCService(this[privNotificationService])
     this[privMailboxAdaptorService] = new MailboxAdaptorService()
     this[privWBAPIService] = new WBAPIService()
@@ -74,17 +70,27 @@ class ServicesManager {
   /* ****************************************************************************/
 
   get metricsService () { return this[privMetricsService] }
-  get PDFRenderService () { return this[privPdfRenderService] }
+
   get spellcheckService () { return this[privSpellcheckService] }
+
   get autofillService () { return this[privAutofillService] }
+
   get contextMenuService () { return this[privContextMenuService] }
+
   get waveboxRPCService () { return this[privWBRPCService] }
+
   get mailboxAdaptorService () { return this[privMailboxAdaptorService] }
+
   get waveboxAPIService () { return this[privWBAPIService] }
+
   get notificationService () { return this[privNotificationService] }
+
   get fetchService () { return this[privFetchService] }
+
   get takeoutService () { return this[privTakeoutService] }
+
   get recentTrackerService () { return this[privRecentTrackerService] }
+
   get powerMonitorService () { return this[privPowerMonitorService] }
 }
 

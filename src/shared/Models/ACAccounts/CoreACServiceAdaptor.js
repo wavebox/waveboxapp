@@ -18,6 +18,7 @@ class CoreACServiceAdaptor extends Model {
   /* **************************************************************************/
 
   get JS () { return undefined }
+
   get hasJS () { return !!this.JS }
 
   /* **************************************************************************/
@@ -25,6 +26,7 @@ class CoreACServiceAdaptor extends Model {
   /* **************************************************************************/
 
   get styles () { return undefined }
+
   get hasStyles () { return !!this.styles }
 }
 

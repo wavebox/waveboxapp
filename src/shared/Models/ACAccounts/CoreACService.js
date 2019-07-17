@@ -15,7 +15,9 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   static get SERVICE_TYPES () { return SERVICE_TYPES }
+
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
+
   static get type () { SubclassNotImplementedError('CoreACService.type') }
 
   /* **************************************************************************/
@@ -23,10 +25,15 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   static get humanizedType () { SubclassNotImplementedError('CoreACService.humanizedType') }
+
   static get humanizedTypeShort () { return this.humanizedType }
+
   static get humanizedLogos () { SubclassNotImplementedError('CoreACService.humanizedLogos') }
+
   static get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
+
   static get humanizedUnreadItemType () { return 'item' }
+
   static get humanizedColor () { return undefined }
 
   /**
@@ -73,6 +80,7 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get parentId () { return this._value_('parentId') }
+
   get partitionId () {
     // It would be tidier here to use service id as the base for the partition,
     // however it's pretty tricky to teardown all the session bindings cleanly
@@ -83,8 +91,11 @@ class CoreACService extends CoreACModel {
     if (!basePartitionId) { throw new Error('Partition id invalid for service') }
     return `persist:${basePartitionId}`
   }
+
   get type () { return this.constructor.type }
+
   get iengineAlias () { return this.constructor.type }
+
   get sandboxFromMailbox () { return this._value_('sandboxFromMailbox', false) }
 
   /* **************************************************************************/
@@ -98,12 +109,19 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { SubclassNotImplementedError('CoreACService.supportsUnreadActivity') }
+
   get supportsUnreadCount () { SubclassNotImplementedError('CoreACService.supportsUnreadCount') }
+
   get supportsTrayMessages () { SubclassNotImplementedError('CoreACService.supportsTrayMessages') }
+
   get supportsSyncedDiffNotifications () { SubclassNotImplementedError('CoreACService.supportsSyncedDiffNotifications') }
+
   get supportsNativeNotifications () { SubclassNotImplementedError('CoreACService.supportsNativeNotifications') }
+
   get supportsGuestNotifications () { SubclassNotImplementedError('CoreACService.supportsGuestNotifications') }
+
   get supportsSyncWhenSleeping () { SubclassNotImplementedError('CoreACService.supportsSyncWhenSleeping') }
+
   get supportsSync () {
     return [
       this.supportsUnreadActivity,
@@ -112,8 +130,11 @@ class CoreACService extends CoreACModel {
       this.supportsGuestNotifications
     ].find((s) => s) || false
   }
+
   get supportsWBGAPI () { SubclassNotImplementedError('CoreACService.supportsWBGAPI') }
+
   get supportedAuthNamespace () { SubclassNotImplementedError('CoreACService.supportedAuthNamespace') }
+
   get similarityNamespaceId () { return `${this.type}:${this.supportedAuthNamespace || '_'}` }
 
   /* **************************************************************************/
@@ -121,10 +142,15 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get humanizedType () { return this.constructor.humanizedType }
+
   get humanizedTypeShort () { return this.constructor.humanizedTypeShort }
+
   get humanizedLogos () { return this.constructor.humanizedLogos }
+
   get humanizedLogo () { return this.constructor.humanizedLogo }
+
   get humanizedUnreadItemType () { return this.constructor.humanizedUnreadItemType }
+
   get humanizedColor () { return this.constructor.humanizedColor }
 
   humanizedLogoAtSize (...args) { return this.constructor.humanizedLogoAtSize(...args) }
@@ -136,6 +162,7 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get sleepable () { return this._value_('sleepable', true) }
+
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
 
   /* **************************************************************************/
@@ -143,7 +170,9 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get installText () { return this._value_('installText') }
+
   get hasInstallText () { return !!this.installText }
+
   get hasSeenInstallInfo () { return this._value_('hasSeenInstallInfo', false) }
 
   /* **************************************************************************/
@@ -151,9 +180,13 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', false) }
+
   get displayName () { return this._value_('displayName', this.serviceDisplayName) }
+
   get serviceDisplayName () { return this._value_('serviceDisplayName', this.humanizedType) }
+
   get hasExplicitServiceDisplayName () { return !!this._value_('serviceDisplayName', undefined) }
+
   get color () { return this._value_('color', this.humanizedColor) }
 
   /**
@@ -175,8 +208,11 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get url () { SubclassNotImplementedError('CoreACService.url') }
+
   get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
+
   get restoreLastUrl () { return this._value_('restoreLastUrl', false) }
+
   get preventLowPowerMode () { return this._value_('preventLowPowerMode', false) }
 
   /**
@@ -198,11 +234,17 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get avatarId () { return this._value_('avatarId', undefined) }
+
   get hasAvatarId () { return !!this.avatarId }
+
   get serviceAvatarURL () { return this._value_('serviceAvatarURL') }
+
   get hasServiceAvatarURL () { return !!this.serviceAvatarURL }
+
   get serviceLocalAvatarId () { return this._value_('serviceLocalAvatarId') }
+
   get hasServiceLocalAvatarId () { return !!this.serviceLocalAvatarId }
+
   get serviceAvatarCharacterDisplay () { return this._value_('serviceAvatarCharacterDisplay', undefined) }
 
   /* **************************************************************************/
@@ -210,9 +252,13 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get badgeColor () { return this._value_('badgeColor', 'rgba(238, 54, 55, 0.95)') }
+
   get showBadgeCount () { return this._value_('showBadgeCount', true) }
+
   get showBadgeActivity () { return this._value_('showBadgeActivity', true) }
+
   get showBadgeCountInApp () { return this._value_('showBadgeCountInApp', true) }
+
   get showBadgeActivityInApp () { return this._value_('showBadgeActivityInApp', true) }
 
   /* **************************************************************************/
@@ -220,7 +266,9 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get showNotifications () { return this._value_('showNotifications', true) }
+
   get showAvatarInNotifications () { return this._value_('showAvatarInNotifications', true) }
+
   get notificationsSound () { return this._value_('notificationsSound', undefined) }
 
   /* **************************************************************************/
@@ -228,7 +276,9 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get bookmarks () { return this._value_('bookmarks', []) }
+
   get readingQueue () { return this._value_('readingQueue', []) }
+
   get readingQueueNeedsMetaUpdate () {
     return this.readingQueue.find((item) => {
       if (item.meta) { return false }
@@ -259,8 +309,11 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get customCSS () { return this._value_('customCSS') }
+
   get hasCustomCSS () { return !!this.customCSS }
+
   get customJS () { return this._value_('customJS') }
+
   get hasCustomJS () { return !!this.customJS }
 
   /* **************************************************************************/

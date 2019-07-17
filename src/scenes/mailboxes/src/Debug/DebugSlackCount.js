@@ -226,7 +226,7 @@ class DebugSlackCount {
           dialog.showMessageBox({
             message: 'It looks like the count has fallen out of sync. If this is the case, do you want to write the logs?',
             type: 'question',
-            buttons: [ 'Cancel', 'Write' ]
+            buttons: ['Cancel', 'Write']
           }, (res) => {
             if (res !== 0) {
               this.writeLog()

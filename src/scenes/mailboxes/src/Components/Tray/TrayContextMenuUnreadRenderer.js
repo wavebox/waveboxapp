@@ -20,6 +20,7 @@ class TrayContextMenuUnreadRenderer {
   /* **************************************************************************/
 
   get signature () { return this[privSignature] }
+
   get template () { return this[privTemplate] }
 
   /* **************************************************************************/
@@ -33,7 +34,7 @@ class TrayContextMenuUnreadRenderer {
     const mailboxMenuItems = accountState.allMailboxes().map((mailbox) => {
       const trayMessages = accountState.userTrayMessagesForMailbox(mailbox.id)
       const messageItemsSignature = trayMessages.map((message) => message.id).join(':')
-      let messageItems = trayMessages.map((message) => {
+      const messageItems = trayMessages.map((message) => {
         return {
           id: message.id,
           label: message.text,

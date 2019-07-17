@@ -16,6 +16,7 @@ class GoogleHangoutsAdaptor extends BaseAdaptor {
       'http(s)\\://hangouts.google.com(*)'
     ]
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

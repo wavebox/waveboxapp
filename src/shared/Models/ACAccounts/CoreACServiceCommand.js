@@ -12,8 +12,11 @@ class CoreACServiceCommand extends Model {
   /* **************************************************************************/
 
   get modifier () { return this._value_('modifier', undefined) }
+
   get keyword () { return this._value_('keyword', undefined) }
+
   get helper () { return this._value_('helper', undefined) }
+
   get description () { return this._value_('description', undefined) }
 
   /* **************************************************************************/
@@ -21,6 +24,7 @@ class CoreACServiceCommand extends Model {
   /* **************************************************************************/
 
   get url () { return this._value_('url', undefined) }
+
   get hasUrl () { return !!this.url }
 
   /**
@@ -37,6 +41,7 @@ class CoreACServiceCommand extends Model {
   }
 
   get JS () { return this._value_('js', undefined) }
+
   get hasJS () { return !!this.JS }
 }
 

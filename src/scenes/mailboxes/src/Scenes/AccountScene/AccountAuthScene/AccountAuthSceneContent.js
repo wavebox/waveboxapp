@@ -170,7 +170,7 @@ class AccountAuthScene extends React.Component {
           acc[auth.id] = {
             auth: auth,
             mailbox: mailbox,
-            services: [ service ]
+            services: [service]
           }
         }
 

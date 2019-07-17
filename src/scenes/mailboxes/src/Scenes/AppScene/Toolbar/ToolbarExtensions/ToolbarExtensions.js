@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import ToolbarExtension from './ToolbarExtension'
-import { crextensionStore } from 'stores/crextension'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = {
   buttons: {
@@ -26,33 +26,15 @@ class ToolbarExtensions extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    crextensionStore.listen(this.crextensionUpdated)
-  }
-
-  componentWillUnmount () {
-    crextensionStore.unlisten(this.crextensionUpdated)
-  }
-
-  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = (() => {
-    const crextensionState = crextensionStore.getState()
+    //TODO change events
     return {
-      extensionIds: crextensionState.browserActionExtensionIds()
+      extensionIds: KRXFramework.browserActionIds()
     }
   })()
-
-  crextensionUpdated = (crextensionState) => {
-    this.setState({
-      extensionIds: crextensionState.browserActionExtensionIds()
-    })
-  }
 
   /* **************************************************************************/
   // Rendering

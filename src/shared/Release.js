@@ -26,6 +26,7 @@ class Release {
 
     return info
   }
+
   /**
   * Generates a version string
   * @param pkg: the current package info

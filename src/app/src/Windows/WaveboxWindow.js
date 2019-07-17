@@ -32,23 +32,41 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   static all () { return waveboxWindowManager.all() }
+
   static allOfType (Constructor) { return waveboxWindowManager.allOfType(Constructor) }
+
   static getOfType (Constructor) { return waveboxWindowManager.getOfType(Constructor) }
+
   static lastFocused () { return waveboxWindowManager.lastFocused() }
+
   static lastFocusedId (includeSpecial) { return waveboxWindowManager.lastFocusedId(includeSpecial) }
+
   static focused () { return waveboxWindowManager.focused() }
+
   static fromWebContentsId (wcId) { return waveboxWindowManager.fromWebContentsId(wcId) }
+
   static allTabIds () { return waveboxWindowManager.allTabIds() }
+
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
+
   static tabMetaInfo (tabId) { return waveboxWindowManager.tabMetaInfo(tabId) }
+
   static allTabIdsWithBacking (backingType) { return waveboxWindowManager.allTabIdsWithBacking(backingType) }
+
   static allTabMetaWithBacking (backingType) { return waveboxWindowManager.allTabMetaWithBacking(backingType) }
+
   static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
+
   static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
+
   static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }
+
   static focusedTabId () { return waveboxWindowManager.focusedTabId() }
+
   static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
+
   static attachSpecial (browserWindowId) { return waveboxWindowManager.attachSpecial(browserWindowId) }
+
   static detachSpecial (browserWindowId) { return waveboxWindowManager.detachSpecial(browserWindowId) }
 
   /* ****************************************************************************/
@@ -56,6 +74,7 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   static get WINDOW_TYPES () { return WINDOW_TYPES }
+
   static get windowType () { return WINDOW_TYPES.NONE }
 
   /* ****************************************************************************/
@@ -101,6 +120,7 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   get WINDOW_TYPES () { return this.constructor.WINDOW_TYPES }
+
   get windowType () { return this.constructor.windowType }
 
   /* ****************************************************************************/
@@ -108,16 +128,21 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   get window () { return this[privWindow] }
+
   get browserWindowId () { return this[privBrowserWindowId] }
+
   get rootWebContents () {
     const has = this[privWindow] && !this[privWindow].isDestroyed() && this[privWindow].webContents
     return has ? this[privWindow].webContents : undefined
   }
+
   get rootWebContentsId () {
     const rootWebContents = this.rootWebContents
     return rootWebContents && !rootWebContents.isDestroyed() ? rootWebContents.id : undefined
   }
+
   get locationSaver () { return this[privLocationSaver] }
+
   get lastTimeInFocus () { return this[privLastTimeInFocus] }
 
   /* ****************************************************************************/
@@ -125,6 +150,7 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   get rootWebContentsHasContextMenu () { return true }
+
   get allowsGuestClosing () { return false }
 
   /* ****************************************************************************/

@@ -32,12 +32,19 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   static get CLICK_ACTIONS () { return CLICK_ACTIONS }
+
   static get SUPPORTS_ADDITIONAL_CLICK_EVENTS () { return process.platform === 'win32' || process.platform === 'darwin' }
+
   static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
+
   static get POPOUT_POSITIONS () { return POPOUT_POSITIONS }
+
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
+
   static get SUPPORTS_TASKBAR_HIDING () { return process.platform === 'win32' }
+
   static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
+
   static get IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM () { return process.platform === 'linux' }
 
   /* **************************************************************************/
@@ -58,6 +65,7 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get show () { return this._value_('show', true) }
+
   get showUnreadCount () { return this._value_('showUnreadCount', true) }
 
   /* **************************************************************************/
@@ -65,7 +73,9 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
+
   get removeFromTaskbarWin32 () { return this._value_('removeFromTaskbarWin32', false) }
+
   get clickAction () {
     if (process.platform === 'win32') {
       return this._value_('clickAction', CLICK_ACTIONS.SHOW_APP)
@@ -73,7 +83,9 @@ class TraySettings extends Model {
       return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_POPOUT)
     }
   }
+
   get altClickAction () { return this._value_('altClickAction', CLICK_ACTIONS.HIDE_POPOUT) }
+
   get rightClickAction () {
     if (process.platform === 'darwin') {
       return this._value_('rightClickAction', CLICK_ACTIONS.TOGGLE_APP)
@@ -83,6 +95,7 @@ class TraySettings extends Model {
       return this._value_('rightClickAction', CLICK_ACTIONS.NONE)
     }
   }
+
   get doubleClickAction () {
     if (process.platform === 'win32') {
       return this._value_('doubleClickAction', CLICK_ACTIONS.TOGGLE_APP)
@@ -102,9 +115,13 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get readColor () { return this._value_('readColor', this.__themedDefaults__.readColor) }
+
   get readBackgroundColor () { return this._value_('readBackgroundColor', this.__themedDefaults__.readBackgroundColor) }
+
   get unreadColor () { return this._value_('unreadColor', this.__themedDefaults__.unreadColor) }
+
   get unreadBackgroundColor () { return this._value_('unreadBackgroundColor', this.__themedDefaults__.unreadBackgroundColor) }
+
   get isDarkModeTheme () {
     return this.__themedDefaults__.isDarkMode === undefined ? false : this.__themedDefaults__.isDarkMode
   }
@@ -114,9 +131,13 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get useCustomImages () { return this._value_('useCustomImages', false) }
+
   get unreadImageId () { return this._value_('unreadImageId', undefined) }
+
   get hasUnreadImageId () { return !!this.unreadImageId }
+
   get readImageId () { return this._value_('readImageId', undefined) }
+
   get hasReadImageId () { return !!this.readImageId }
 
   /* **************************************************************************/
@@ -124,7 +145,9 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get gtkUpdateMode () { return this._value_('gtkUpdateMode', GTK_UPDATE_MODES.UPDATE) }
+
   get forceGtkStatusIcon () { return this._value_('forceGtkStatusIcon', false) }
+
   get dpiMultiplier () {
     let defaultValue = 1
     try {

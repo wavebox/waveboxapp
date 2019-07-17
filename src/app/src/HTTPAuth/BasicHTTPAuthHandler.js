@@ -83,6 +83,7 @@ class BasicHTTPAuthHandler {
   /* ****************************************************************************/
 
   get autofillAvailable () { return !!Keytar && settingsStore.getState().app.enableAutofillService }
+
   get credentialsKey () { return `${pkg.name}:HTTPBasicAuth` }
 
   /* ****************************************************************************/

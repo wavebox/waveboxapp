@@ -7,7 +7,9 @@ class ACTemplatedAccount extends CoreACModel {
   /* **************************************************************************/
 
   get templateType () { return this._value_('templateType') }
+
   get accessMode () { return this._value_('accessMode') }
+
   get expando () { return this._value_('expando', {}) }
 
   /* **************************************************************************/
@@ -15,8 +17,11 @@ class ACTemplatedAccount extends CoreACModel {
   /* **************************************************************************/
 
   get color () { return this._value_('color') }
+
   get hasColor () { return !!this.color }
+
   get displayName () { return this._value_('displayName') }
+
   get hasDisplayName () { return !!this.displayName }
 
   /* **************************************************************************/
@@ -24,6 +29,7 @@ class ACTemplatedAccount extends CoreACModel {
   /* **************************************************************************/
 
   get services () { return this._value_('services', []) }
+
   get servicesUILocation () { return this._value_('servicesUILocation', ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START) }
 }
 

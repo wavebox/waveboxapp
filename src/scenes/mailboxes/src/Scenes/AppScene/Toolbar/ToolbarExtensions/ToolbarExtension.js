@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { crextensionStore, crextensionActions } from 'stores/crextension'
+import KRXFramework from 'Runtime/KRXFramework'
 import shallowCompare from 'react-addons-shallow-compare'
 import ToolbarExtensionAction from 'wbui/ToolbarExtensionAction'
 import ToolbarExtensionActionContextMenu from 'wbui/ToolbarExtensionActionContextMenu'
@@ -22,16 +22,18 @@ export default class ToolbarExtension extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    crextensionStore.listen(this.crextensionUpdated)
+    KRXFramework.on(`browser-action-changed-${this.props.extensionId}`, this.browserActionChanged)
   }
 
   componentWillUnmount () {
-    crextensionStore.unlisten(this.crextensionUpdated)
+    KRXFramework.removeListener(`browser-action-changed-${this.props.extensionId}`, this.browserActionChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.tabId !== nextProps.tabId || this.props.extensionId !== nextProps.extensionId) {
-      this.setState(this.generateExtensionState(nextProps.extensionId, nextProps.tabId, undefined))
+      KRXFramework.removeListener(`browser-action-changed-${this.props.extensionId}`, this.browserActionChanged)
+      KRXFramework.on(`browser-action-changed-${nextProps.extensionId}`, this.browserActionChanged)
+      this.setState(this.generateExtensionState(nextProps.extensionId, nextProps.tabId))
     }
   }
 
@@ -43,12 +45,14 @@ export default class ToolbarExtension extends React.Component {
   * Generates the extension state
   * @param extensionId: the id of the extension
   * @param tabId: the id of the tab
-  * @param crextensionState=autoget: the current extension state
   * @return state update for the given params
   */
-  generateExtensionState (extensionId, tabId, crextensionState = crextensionStore.getState()) {
-    const manifest = crextensionState.getManifest(extensionId)
-    const browserAction = crextensionState.composedBrowserAction(extensionId, tabId)
+  generateExtensionState (extensionId, tabId) {
+    const manifest = KRXFramework.getManifest(extensionId)
+    const browserAction = KRXFramework.composeBrowserAction([
+      KRXFramework.baseBrowserAction(extensionId),
+      KRXFramework.BrowserActionTab(extensionId, tabId)
+    ])
     return {
       manifest: manifest,
       // Browser action may not be the same object as it's composed. So extract the required values
@@ -62,12 +66,12 @@ export default class ToolbarExtension extends React.Component {
     return {
       contextMenuOpen: false,
       contextMenuAnchor: null,
-      ...this.generateExtensionState(this.props.extensionId, this.props.tabId, undefined)
+      ...this.generateExtensionState(this.props.extensionId, this.props.tabId)
     }
   })()
 
-  crextensionUpdated = (crextensionState) => {
-    this.setState(this.generateExtensionState(this.props.extensionId, this.props.tabId, crextensionState))
+  browserActionChanged = () => {
+    this.setState(this.generateExtensionState(this.props.extensionId, this.props.tabId))
   }
 
   /* **************************************************************************/
@@ -94,7 +98,11 @@ export default class ToolbarExtension extends React.Component {
   * @param tabId: the id of the tab
   */
   handleIconClicked = (evt, extensionId, tabId) => {
-    crextensionActions.browserActionClicked(extensionId, tabId)
+    KRXFramework.browserActionClicked(
+      JSON.parse(JSON.stringify(evt)),
+      extensionId,
+      tabId
+    )
   }
 
   /**
@@ -112,7 +120,7 @@ export default class ToolbarExtension extends React.Component {
         WBRPCRenderer.wavebox.openExternal(this.state.manifest.homepageUrl)
         break
       case ToolbarExtensionActionContextMenu.ITEM_TYPES.OPTIONS:
-        crextensionActions.openExtensionOptions(extensionId)
+        KRXFramework.openOptions(extensionId, false)
         break
     }
   }

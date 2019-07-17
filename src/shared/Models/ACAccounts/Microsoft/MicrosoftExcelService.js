@@ -12,6 +12,7 @@ class MicrosoftExcelService extends MicrosoftService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Excel' }
+
   static get humanizedLogos () {
     return [
       'microsoft/logo_sheets_32px.png',
@@ -21,6 +22,7 @@ class MicrosoftExcelService extends MicrosoftService {
       'microsoft/logo_sheets_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(52, 117, 69)' }
 
   /* **************************************************************************/
@@ -28,13 +30,21 @@ class MicrosoftExcelService extends MicrosoftService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
@@ -42,7 +52,9 @@ class MicrosoftExcelService extends MicrosoftService {
   /* **************************************************************************/
 
   get personalUrl () { return this.url }
+
   get corporateUrl () { return this.url }
+
   get url () { return 'https://office.live.com/start/Excel.aspx' }
 }
 

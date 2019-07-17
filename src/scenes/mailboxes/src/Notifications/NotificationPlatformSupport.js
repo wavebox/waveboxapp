@@ -6,7 +6,9 @@ class NotificationPlatformSupport {
   /* **************************************************************************/
 
   get enhancedSupportDarwin () { return process.platform === 'darwin' }
+
   get enhancedSupportLinux () { return process.platform === 'linux' }
+
   get enhancedSupportWin32 () { return false }
 
   /* **************************************************************************/

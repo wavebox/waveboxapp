@@ -12,6 +12,7 @@ class MicrosoftOnenoteService extends MicrosoftService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'OneNote' }
+
   static get humanizedLogos () {
     return [
       'microsoft/logo_notebook_32px.png',
@@ -21,6 +22,7 @@ class MicrosoftOnenoteService extends MicrosoftService {
       'microsoft/logo_notebook_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(129, 54, 124)' }
 
   /* **************************************************************************/
@@ -28,13 +30,21 @@ class MicrosoftOnenoteService extends MicrosoftService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
@@ -42,7 +52,9 @@ class MicrosoftOnenoteService extends MicrosoftService {
   /* **************************************************************************/
 
   get personalUrl () { return this.url }
+
   get corporateUrl () { return this.url }
+
   get url () { return 'http://www.onenote.com/notebooks' }
 }
 

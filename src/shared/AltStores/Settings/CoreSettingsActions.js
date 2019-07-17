@@ -145,7 +145,7 @@ class CoreSettingsActions extends RemoteActions {
   */
   setCustomLinkProvider (...args) {
     if (process.type === 'browser') {
-      const [ providerId, provider ] = args
+      const [providerId, provider] = args
       return { providerId, provider }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('setCustomLinkProvider', args)
@@ -158,7 +158,7 @@ class CoreSettingsActions extends RemoteActions {
   */
   removeCustomLinkProvider (...args) {
     if (process.type === 'browser') {
-      const [ providerId ] = args
+      const [providerId] = args
       return { providerId }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('removeCustomLinkProvider', args)

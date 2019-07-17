@@ -12,7 +12,9 @@ class MicrosoftTeamsService extends MicrosoftService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Microsoft Teams' }
+
   static get humanizedTypeShort () { return 'Teams' }
+
   static get humanizedLogos () {
     return [
       'microsoft/logo_team_32px.png',
@@ -22,6 +24,7 @@ class MicrosoftTeamsService extends MicrosoftService {
       'microsoft/logo_team_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(84, 85, 177)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class MicrosoftTeamsService extends MicrosoftService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return true }
+
   get supportsTrayMessages () { return true }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return true }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
@@ -43,7 +54,9 @@ class MicrosoftTeamsService extends MicrosoftService {
   /* **************************************************************************/
 
   get personalUrl () { return this.url }
+
   get corporateUrl () { return this.url }
+
   get url () { return 'https://teams.microsoft.com' }
 }
 

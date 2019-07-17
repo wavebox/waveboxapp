@@ -20,7 +20,9 @@ class Bootstrap {
   /* **************************************************************************/
 
   get clientId () { return this.__data__.clientId }
+
   get clientToken () { return this.__data__.clientToken }
+
   get credentials () { return this.__data__.credentials }
 }
 

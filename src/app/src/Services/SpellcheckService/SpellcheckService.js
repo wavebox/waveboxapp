@@ -52,6 +52,7 @@ class SpellcheckService {
   /* ****************************************************************************/
 
   get primaryLanguage () { return this[privProvider].primary.language }
+
   get secondaryLanguage () { return this[privProvider].secondary.language }
 
   /* ****************************************************************************/

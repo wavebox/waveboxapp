@@ -52,7 +52,9 @@ class AsyncDownloadItem extends EventEmitter {
   /* ****************************************************************************/
 
   get downloadId () { return this[privDownloadId] }
+
   get tempDownloadLocation () { return path.join(app.getPath('temp'), `${this.downloadId}.tmp`) }
+
   get waitingSetup () { return !this[privSavePath] }
 
   /* ****************************************************************************/
@@ -125,24 +127,35 @@ class AsyncDownloadItem extends EventEmitter {
   /* ****************************************************************************/
 
   getURL () { return this[privStartProperties].url }
+
   getMimeType () { return this[privStartProperties].mimeType }
+
   hasUserGesture () { return this[privStartProperties].hasUserGesture }
+
   getFilename () { return this[privStartProperties].filename }
+
   getTotalBytes () { return this[privStartProperties].totalBytes }
+
   getReceivedBytes () {
     return this[privDownloadItem].isDestroyed()
       ? this[privDoneState] === 'completed' ? this[privStartProperties].totalBytes : 0
       : this[privDownloadItem].getReceivedBytes()
   }
+
   getContentDisposition () { return this[privStartProperties].contentDisposition }
+
   getState () {
     return this.waitingSetup
       ? 'setup'
       : this[privDownloadItem].isDestroyed() ? this[privDoneState] : this[privDownloadItem].getState()
   }
+
   getURLChain () { return this[privStartProperties].urlChain }
+
   getLastModifiedTime () { return this[privStartProperties].lastModifiedTime }
+
   getETag () { return this[privStartProperties].etag }
+
   getStartTime () { return this[privStartProperties].getStartTime }
 
   /* ****************************************************************************/

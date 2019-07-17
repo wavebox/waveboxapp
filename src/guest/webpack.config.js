@@ -19,12 +19,12 @@ module.exports = function (env) {
       filename: OUT_FILENAME
     },
     externals: {
-      'electron': 'commonjs electron',
-      'fs': 'throw new Error("fs is not available")' // require('fs') is in hunspell-asm but it handles the failure gracefully :)
+      electron: 'commonjs electron',
+      fs: 'throw new Error("fs is not available")' // require('fs') is in hunspell-asm but it handles the failure gracefully :)
     },
     plugins: [
       new CleanWebpackPlugin({
-        cleanOnceBeforeBuildPatterns: [ path.join(OUT_DIR, OUT_FILENAME) ],
+        cleanOnceBeforeBuildPatterns: [path.join(OUT_DIR, OUT_FILENAME)],
         verbose: isVerboseLog,
         dry: false
       })

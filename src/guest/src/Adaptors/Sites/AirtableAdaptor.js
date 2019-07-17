@@ -11,6 +11,7 @@ class AirtableAdaptor extends BaseAdaptor {
   static get matches () {
     return ['http(s)\\://airtable.com(*)']
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

@@ -12,6 +12,7 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Slack' }
+
   static get humanizedLogos () {
     return [
       'slack/logo_32px.png',
@@ -21,7 +22,9 @@ class SlackService extends CoreACService {
       'slack/logo_128px.png'
     ]
   }
+
   static get humanizedUnreadItemType () { return 'notification' }
+
   static get humanizedColor () { return 'rgb(46, 182, 125)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return true }
+
   get supportsUnreadCount () { return true }
+
   get supportsTrayMessages () { return true }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return true }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return true }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return 'com.slack' }
 
   /* **************************************************************************/
@@ -60,6 +71,7 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return 'https://slack.com' }
+
   get restoreLastUrl () { return true }
 
   /**
@@ -102,11 +114,17 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   get selfOverview () { return this._value_('selfOverview') }
+
   get hasSelfOverview () { return !!this.selfOverview }
+
   get teamOverview () { return this._value_('teamOverview') }
+
   get hasTeamOverview () { return !!this.teamOverview }
+
   get authTeamName () { return this._value_('authTeamName') }
+
   get authUserId () { return this._value_('authUserId') }
+
   get rawTickleRTM () { return this._value_('tickleRTM', undefined) }
 }
 

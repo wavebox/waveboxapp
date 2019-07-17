@@ -2,7 +2,6 @@ import { ipcRenderer } from 'electron'
 import Bootstrap from 'R/Bootstrap'
 import { userStore } from 'stores/user'
 import { accountStore } from 'stores/account'
-import { crextensionStore } from 'stores/crextension'
 import settingsStore from 'stores/settings/settingsStore'
 import SettingsIdent from 'shared/Models/Settings/SettingsIdent'
 import querystring from 'querystring'
@@ -184,15 +183,10 @@ class Analytics {
       return acc
     }, {})
 
-    // Extensions
-    const crexensionState = crextensionStore.getState()
-    const extensions = crexensionState.extensionIds()
-
     // Send
     return this.sendWb('config', {
       accounts: accounts,
-      settings: settings,
-      extensions: extensions
+      settings: settings
     }, true)
   }
 

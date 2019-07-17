@@ -12,7 +12,9 @@ class GoogleAnalyticsService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Analytics' }
+
   static get humanizedTypeShort () { return 'Analytics' }
+
   static get humanizedLogos () {
     return [
       'google/logo_analytics_32px.png',
@@ -22,6 +24,7 @@ class GoogleAnalyticsService extends CoreACService {
       'google/logo_analytics_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(241, 122, 48)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleAnalyticsService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

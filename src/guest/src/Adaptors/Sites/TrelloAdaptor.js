@@ -13,6 +13,7 @@ class TrelloAdaptor extends BaseAdaptor {
       'http(s)\\://trello.com(*)'
     ]
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

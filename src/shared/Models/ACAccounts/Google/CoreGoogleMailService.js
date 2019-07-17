@@ -64,7 +64,9 @@ class CoreGoogleMailService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Gmail' }
+
   static get humanizedTypeShort () { return 'Gmail' }
+
   static get humanizedLogos () {
     return [
       'google/logo_gmail_32px.png',
@@ -74,6 +76,7 @@ class CoreGoogleMailService extends CoreACService {
       'google/logo_gmail_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(220, 75, 75)' }
 
   /* **************************************************************************/
@@ -145,7 +148,7 @@ class CoreGoogleMailService extends CoreACService {
   /* **************************************************************************/
 
   get syncWatchFields () {
-    return [ 'inboxType', 'syncInterval' ]
+    return ['inboxType', 'syncInterval']
   }
 
   /* **************************************************************************/
@@ -153,13 +156,21 @@ class CoreGoogleMailService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return true }
+
   get supportsTrayMessages () { return true }
+
   get supportsSyncedDiffNotifications () { return true }
+
   get supportsNativeNotifications () { return true }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return true }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return 'com.google' }
 
   /* **************************************************************************/
@@ -178,7 +189,9 @@ class CoreGoogleMailService extends CoreACService {
 
     return this.constructor.INBOX_TYPES.GMAIL_UNREAD
   }
+
   get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
+
   get syncInterval () { return this._value_('syncInterval', 30000) }
 
   /* **************************************************************************/
@@ -205,6 +218,7 @@ class CoreGoogleMailService extends CoreACService {
   /* **************************************************************************/
 
   get wasGoogleInboxService () { return this._value_('wasGoogleInboxService', false) }
+
   get hasSeenGoogleInboxToGmailHelper () { return this._value_('hasSeenGoogleInboxToGmailHelper', false) }
 
   /* **************************************************************************/

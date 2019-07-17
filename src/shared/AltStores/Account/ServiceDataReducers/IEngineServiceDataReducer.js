@@ -26,7 +26,7 @@ class IEngineServiceDataReducer extends ServiceDataReducer {
       'notifications',
       'expando'
     ].reduce((acc, k) => {
-      if (changeset.hasOwnProperty(k)) {
+      if (changeset[k]) {
         isValid = true
         acc[k] = changeset[k]
       }

@@ -12,7 +12,9 @@ class GoogleChatService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Chat' }
+
   static get humanizedTypeShort () { return 'Chat' }
+
   static get humanizedLogos () {
     return [
       'google/logo_chat_32px.png',
@@ -22,6 +24,7 @@ class GoogleChatService extends CoreACService {
       'google/logo_chat_128px.png'
     ]
   }
+
   static get humanizedColor () { return '#47a49b' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleChatService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return true }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return true }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

@@ -12,7 +12,9 @@ class GoogleSlidesService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Slides' }
+
   static get humanizedTypeShort () { return 'Slides' }
+
   static get humanizedLogos () {
     return [
       'google/logo_slides_32px.png',
@@ -22,6 +24,7 @@ class GoogleSlidesService extends CoreACService {
       'google/logo_slides_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(245, 186, 49)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleSlidesService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

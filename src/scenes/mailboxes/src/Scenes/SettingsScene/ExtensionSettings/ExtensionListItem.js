@@ -3,7 +3,6 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Paper, Button } from '@material-ui/core'
 import Spinner from 'wbui/Activity/Spinner'
-import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import { settingsStore } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
@@ -13,6 +12,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue'
 import blue from '@material-ui/core/colors/blue'
 import red from '@material-ui/core/colors/red'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = {
   // Layout
@@ -137,20 +137,22 @@ class ExtensionListItem extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    crextensionStore.listen(this.extensionUpdated)
     userStore.listen(this.userUpdated)
     settingsStore.listen(this.settingsUpdated)
+    KRXFramework.on(`extension-entry-changed-${this.props.extensionId}`, this.extensionChanged)
   }
 
   componentWillUnmount () {
-    crextensionStore.unlisten(this.extensionUpdated)
     userStore.unlisten(this.userUpdated)
     settingsStore.unlisten(this.settingsUpdated)
+    KRXFramework.removeListener(`extension-entry-changed-${this.props.extensionId}`, this.extensionChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.extensionId !== nextProps.extensionId) {
       this.setState(this.generateState(nextProps, undefined))
+      KRXFramework.removeListener(`extension-entry-changed-${this.props.extensionId}`, this.extensionChanged)
+      KRXFramework.on(`extension-entry-changed-${nextProps.extensionId}`, this.extensionChanged)
     }
   }
 
@@ -165,8 +167,8 @@ class ExtensionListItem extends React.Component {
   * @param userState=autoget: the store state
   * @return a state update
   */
-  generateState (props, crextensionState = crextensionStore.getState(), userState = userStore.getState()) {
-    const manifest = crextensionState.getManifest(props.extensionId)
+  generateState (props, userState = userStore.getState()) {
+    const manifest = KRXFramework.getManifest(props.extensionId)
     const storeRec = userState.getExtension(props.extensionId)
     return {
       unknownSource: true,
@@ -188,30 +190,30 @@ class ExtensionListItem extends React.Component {
         version: manifest.version,
         waveboxVersion: manifest.wavebox.version
       } : undefined),
-      isWaitingInstall: crextensionState.isWaitingInstall(props.extensionId),
-      isWaitingUninstall: crextensionState.isWaitingUninstall(props.extensionId),
-      isInstalled: crextensionState.isInstalled(props.extensionId),
-      isDownloading: crextensionState.isDownloading(props.extensionId),
-      isWaitingUpdate: crextensionState.isWaitingUpdate(props.extensionId),
-      isCheckingUpdate: crextensionState.isCheckingUpdate(props.extensionId),
-      hasBackgroundPage: crextensionState.hasBackgroundPage(props.extensionId),
-      hasOptionsPage: crextensionState.hasOptionsPage(props.extensionId)
+      isWaitingInstall: KRXFramework.isWaitingInstall(props.extensionId),
+      isWaitingUninstall: KRXFramework.isWaitingUninstall(props.extensionId),
+      isInstalled: KRXFramework.isInstalled(props.extensionId),
+      isDownloading: KRXFramework.isDownloading(props.extensionId),
+      isWaitingUpdate: KRXFramework.isWaitingUpdate(props.extensionId),
+      isCheckingUpdate: KRXFramework.isCheckingUpdate(props.extensionId),
+      hasBackgroundPage: KRXFramework.hasBackgroundPage(props.extensionId),
+      hasOptionsPage: KRXFramework.hasOptionsPage(props.extensionId)
     }
   }
 
   state = (() => {
     return {
       showDeveloperTools: settingsStore.getState().extension.showDeveloperTools,
-      ...this.generateState(this.props, undefined, undefined)
+      ...this.generateState(this.props, undefined)
     }
   })()
 
-  extensionUpdated = (crextensionState) => {
-    this.setState(this.generateState(this.props, crextensionState, undefined))
+  userUpdated = (userState) => {
+    this.setState(this.generateState(this.props, userState))
   }
 
-  userUpdated = (userState) => {
-    this.setState(this.generateState(this.props, undefined, userState))
+  extensionChanged = () => {
+    this.setState(this.generateState(this.props, undefined))
   }
 
   settingsUpdated = (settingsState) => {
@@ -242,7 +244,7 @@ class ExtensionListItem extends React.Component {
   * Installs the extension
   */
   handleInstall = () => {
-    crextensionActions.installExtension(this.props.extensionId, this.state.install)
+    KRXFramework.installExtension(this.props.extensionId)
     this.props.showRestart()
   }
 
@@ -250,7 +252,7 @@ class ExtensionListItem extends React.Component {
   * Uninstalls the extension
   */
   handleUninstall = () => {
-    crextensionActions.uninstallExtension(this.props.extensionId)
+    KRXFramework.uninstallExtension(this.props.extensionId)
     this.props.showRestart()
   }
 
@@ -258,14 +260,14 @@ class ExtensionListItem extends React.Component {
   * Opens the options page for the extension
   */
   handleOpenOptionsPage = () => {
-    crextensionActions.openExtensionOptions(this.props.extensionId)
+    KRXFramework.openOptions(this.props.extensionId)
   }
 
   /**
   * Opens the background page inspector for the extension
   */
   handleInspectBackgroundPage = () => {
-    crextensionActions.inspectBackgroundPage(this.props.extensionId)
+    KRXFramework.inspectBackground(this.props.extensionId)
   }
 
   /* **************************************************************************/

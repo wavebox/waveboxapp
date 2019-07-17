@@ -42,6 +42,7 @@ class PowerMonitorService extends EventEmitter {
   /* ****************************************************************************/
 
   get isSuspended () { return this[privSuspended] }
+
   get isScreenLocked () { return this[privScreenLocked] }
 
   /* ****************************************************************************/

@@ -87,11 +87,14 @@ class CoreServiceWebView extends React.Component {
     acc[name] = PropTypes.func
     return acc
   }, {}))
+
   static defaultProps = {
     hasSearch: true,
     plugHTML5Notifications: true
   }
+
   static WEBVIEW_METHODS = BrowserView.WEBVIEW_METHODS
+
   static REACT_WEBVIEW_EVENTS = BrowserView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/
@@ -709,7 +712,7 @@ class CoreServiceWebView extends React.Component {
             key={webviewKey}
             id={webviewId}
             preload={Resolver.guestPreload()}
-            preloadCrx={Resolver.crExtensionApiPreload()}
+            preloadCrx={process.atomBinding('KRXFramework').preloadApiPath()}
             partition={service.partitionId}
             src={restorableUrl || 'about:blank'}
             searchId={searchId}

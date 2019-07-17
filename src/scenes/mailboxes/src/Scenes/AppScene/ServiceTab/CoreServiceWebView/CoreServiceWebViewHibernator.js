@@ -21,11 +21,14 @@ class CoreServiceWebViewHibernator extends React.Component {
     ...CoreServiceWebView.propTypes,
     showSleepPlaceholder: PropTypes.bool.isRequired
   }
+
   static defaultProps = {
     ...CoreServiceWebView.defaultProps,
     showSleepPlaceholder: true
   }
+
   static WEBVIEW_METHODS = CoreServiceWebView.WEBVIEW_METHODS
+
   static REACT_WEBVIEW_EVENTS = CoreServiceWebView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/

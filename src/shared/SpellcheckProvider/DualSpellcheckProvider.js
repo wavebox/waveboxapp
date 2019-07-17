@@ -20,8 +20,11 @@ class DualSpellcheckProvider {
   /* **************************************************************************/
 
   get primary () { return this[privPrimary] }
+
   get secondary () { return this[privSecondary] }
+
   get isLoading () { return this.primary.isLoading || this.secondary.isLoading }
+
   get userWords () {
     return Array.from(new Set([].concat(
       this.primary.userWords,

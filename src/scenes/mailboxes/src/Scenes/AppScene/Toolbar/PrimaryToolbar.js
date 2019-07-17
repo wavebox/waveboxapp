@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
-import { crextensionStore } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
 import ToolbarMailboxServices from './ToolbarMailboxServices'
 import ToolbarExtensions from './ToolbarExtensions'
@@ -14,6 +13,7 @@ import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import { TOOLBAR_AUTO_SPLIT_THRESHOLD } from 'shared/constants'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import ToolbarContextMenu from 'Components/ToolbarContextMenu'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = (theme) => ({
   toolbar: {
@@ -62,13 +62,13 @@ class PrimaryToolbar extends React.Component {
 
   /**
   * Works out if the user has extensions in the toolbar
-  * @param crextensionState: the chrome extenion state
+  * @param browserActionCount: the count of browser actions
   * @param settingsState: the settings state
   * @return true if there are extensions, false otherwise
   */
-  static hasExtensionsInToolbar (crextensionState, settingsState) {
+  static hasExtensionsInToolbar (browserActionCount, settingsState) {
     if (!settingsState.extension.showBrowserActionsInToolbar) { return false }
-    if (crextensionState.browserActionExtensionCount() === 0) { return false }
+    if (browserActionCount === 0) { return false }
     return true
   }
 
@@ -102,13 +102,12 @@ class PrimaryToolbar extends React.Component {
   componentDidMount () {
     accountStore.listen(this.accountUpdated)
     settingsStore.listen(this.settingsUpdated)
-    crextensionStore.listen(this.crextensionUpdated)
+    //TODO KRXFramework doesn't emit change on extension add
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountUpdated)
     settingsStore.unlisten(this.settingsUpdated)
-    crextensionStore.unlisten(this.crextensionUpdated)
   }
 
   /* **************************************************************************/
@@ -118,10 +117,9 @@ class PrimaryToolbar extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     const settingsState = settingsStore.getState()
-    const crextensionState = crextensionStore.getState()
 
     return {
-      ...this.deriveExtensionState(settingsState, crextensionState),
+      ...this.deriveExtensionState(settingsState, KRXFramework.browserActionCount()),
       ...this.deriveSettingsState(settingsState),
       ...this.deriveAccountState(accountState),
       contextMenuAnchor: null
@@ -138,7 +136,7 @@ class PrimaryToolbar extends React.Component {
 
   settingsUpdated = (settingsState) => {
     this.setState({
-      ...this.deriveExtensionState(settingsState, crextensionStore.getState()),
+      ...this.deriveExtensionState(settingsState, KRXFramework.browserActionCount()),
       ...this.deriveSettingsState(settingsState)
     })
   }
@@ -149,9 +147,9 @@ class PrimaryToolbar extends React.Component {
   * @param crextensionState: the extension store state
   * @return state update
   */
-  deriveExtensionState (settingsState, crextensionState) {
+  deriveExtensionState (settingsState, browserActionCount) {
     return {
-      hasExtensionsInToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState)
+      hasExtensionsInToolbar: PrimaryToolbar.hasExtensionsInToolbar(browserActionCount, settingsState)
     }
   }
 

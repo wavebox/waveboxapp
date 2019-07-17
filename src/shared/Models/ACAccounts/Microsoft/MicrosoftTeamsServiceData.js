@@ -18,6 +18,7 @@ class MicrosoftTeamsServiceDaa extends CoreACServiceData {
 
     return 0
   }
+
   get trayMessages () {
     const count = this.unreadCount
     return count === 0 ? [] : [

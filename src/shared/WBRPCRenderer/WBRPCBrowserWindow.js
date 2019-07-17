@@ -59,6 +59,7 @@ class WBRPCBrowserWindow extends EventEmitter {
   _handleMaximize = (evt, bwId, wcId) => {
     this.emit('maximize', { senderId: bwId, webContentsId: wcId })
   }
+
   _handleUnmaximize = (evt, bwId, wcId) => {
     this.emit('unmaximize', { senderId: bwId, webContentsId: wcId })
   }

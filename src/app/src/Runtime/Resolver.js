@@ -15,19 +15,19 @@ class Resolver {
   }
 
   /**
-  * @param name: the name of the file in the content scene
-  * @return the full path to the file
-  */
-  static contentScene (name) {
-    return path.resolve(path.join(this.sourceRoot(), 'scenes/content/', name))
+   * @param name: name of the resources
+   * @return path
+   */
+  static resourcePath (name) {
+    return path.resolve(path.join(this.sourceRoot(), 'resources/pack/', name))
   }
 
   /**
   * @param name: the name of the file in the content scene
   * @return the full path to the file
   */
-  static printScene (name) {
-    return path.resolve(path.join(this.sourceRoot(), 'scenes/print/', name))
+  static contentScene (name) {
+    return path.resolve(path.join(this.sourceRoot(), 'scenes/content/', name))
   }
 
   /**
@@ -68,13 +68,6 @@ class Resolver {
   */
   static guestPreload (name) {
     return path.resolve(path.join(this.sourceRoot(), 'guest/guest.js'))
-  }
-
-  /**
-  * @return the full path to the crextension api
-  */
-  static crExtensionApi () {
-    return path.resolve(path.join(this.sourceRoot(), 'guest/guest.crx.js'))
   }
 
   /**

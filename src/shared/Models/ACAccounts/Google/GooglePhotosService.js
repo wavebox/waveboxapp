@@ -12,7 +12,9 @@ class GooglePhotosService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Photos' }
+
   static get humanizedTypeShort () { return 'Photos' }
+
   static get humanizedLogos () {
     return [
       'google/logo_photos_32px.png',
@@ -22,6 +24,7 @@ class GooglePhotosService extends CoreACService {
       'google/logo_photos_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(139, 195, 74)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GooglePhotosService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

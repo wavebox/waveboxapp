@@ -12,6 +12,7 @@ class OneDriveAdaptor extends BaseAdaptor {
       'http(s)\\://*.sharepoint.com(*)'
     ]
   }
+
   static get guestApis () { return [ExtensionLoader.ENDPOINTS.ONEDRIVE_WINDOW_OPEN] }
 }
 

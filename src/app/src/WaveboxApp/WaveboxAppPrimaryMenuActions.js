@@ -274,7 +274,7 @@ class WaveboxAppPrimaryMenuActions {
         Release.generateVersionComponents(pkg, undefined, DistributionConfig.installMethod).join('\n'),
         'Made with ♥ at wavebox.io'
       ].filter((l) => !!l).join('\n'),
-      buttons: [ 'Done', 'Website' ]
+      buttons: ['Done', 'Website']
     }, (index) => {
       if (index === 1) {
         shell.openExternal(WEB_URL)
@@ -287,10 +287,15 @@ class WaveboxAppPrimaryMenuActions {
   /* ****************************************************************************/
 
   waveboxGithub = () => { shell.openExternal(GITHUB_URL) }
+
   waveboxWebsite = () => { shell.openExternal(WEB_URL) }
+
   waveboxBlog = () => { shell.openExternal(BLOG_URL) }
+
   privacy = () => { shell.openExternal(PRIVACY_URL) }
+
   eula = () => { shell.openExternal(EULA_URL) }
+
   support = () => {
     const url = [
       SUPPORT_URL,
@@ -299,6 +304,7 @@ class WaveboxAppPrimaryMenuActions {
     ].join('')
     shell.openExternal(url)
   }
+
   knowledgeBase = () => { shell.openExternal(KB_URL) }
 
   /* ****************************************************************************/
@@ -309,10 +315,12 @@ class WaveboxAppPrimaryMenuActions {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.zoomIn() }
   }
+
   zoomOut = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.zoomOut() }
   }
+
   zoomReset = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.zoomReset() }
@@ -389,6 +397,7 @@ class WaveboxAppPrimaryMenuActions {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.navigateBack() }
   }
+
   mailboxNavForward = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.navigateForward() }
@@ -469,6 +478,7 @@ class WaveboxAppPrimaryMenuActions {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.findStart() }
   }
+
   findNext = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.findNext() }

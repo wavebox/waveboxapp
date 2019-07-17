@@ -5,8 +5,8 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Monitor UI for Wavebox",
   "dependencies": {
-    "@material-ui/core": "3.9.3",
-    "@material-ui/icons": "3.0.2",
+    "@material-ui/core": "4.2.0",
+    "@material-ui/icons": "4.2.1",
     "alt": "wavebox/alt#c17dd3044f52f6bf90178534c76f0a5efbeed59f",
     "fbjs": "1.0.0",
     "prop-types": "15.7.2",
@@ -16,7 +16,7 @@
     "react-dom": "16.8.6"
   },
   "devDependencies": {
-    "standard": "12.0.1",
+    "standard": "13.0.1",
     "babel-eslint": "10.0.2"
   },
   "standard": {

@@ -7,6 +7,7 @@ class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
 
   static get namespace () { SubclassNotImplementedError('CoreACAuth.namespace') }
+
   static get humanizedNamespace () { SubclassNotImplementedError('CoreACAuth.humanizedNamespace') }
 
   /**
@@ -60,7 +61,9 @@ class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
 
   get id () { return this.constructor.compositeId(this.parentId, this.namespace, this.sandboxedPartitionId) }
+
   get parentId () { return this._value_('parentId') }
+
   get namespace () { return this._value_('namespace') }
 
   /* **************************************************************************/
@@ -68,6 +71,7 @@ class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
 
   get sandboxedPartitionId () { return this._value_('sandboxedPartitionId', undefined) }
+
   get isForSandboxedPartitionId () { return !!this.sandboxedPartitionId }
 
   /* **************************************************************************/
@@ -75,10 +79,15 @@ class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
 
   get isAuthInvalid () { return this._value_('isAuthInvalid', false) }
+
   get hasAuth () { return this._value_('hasAuth', false) }
+
   get authData () { return this._value_('authData', {}) }
+
   get isAuthFromCookie () { return this.authData.__cookie__ === true }
+
   get authScopes () { return this._value_('scopes', []) }
+
   get userId () { return this._value_('userId', undefined) }
 
   /* **************************************************************************/
@@ -86,7 +95,9 @@ class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
 
   get humanizedNamespace () { return this.constructor.humanizedNamespace }
+
   get humanizedIdentifier () { return this.userId }
+
   get hasHumanizedIdentifier () { return !!this.humanizedIdentifier }
 }
 

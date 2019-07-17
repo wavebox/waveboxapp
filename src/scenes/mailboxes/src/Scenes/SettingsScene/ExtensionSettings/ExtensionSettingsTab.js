@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { userActions } from 'stores/user'
-import { crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import ExtensionList from './ExtensionList'
@@ -15,6 +14,7 @@ import FileUploadButton from 'wbui/FileUploadButton'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 import { Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = {
   unpackedListItem: {
@@ -109,7 +109,7 @@ class ExtensionSettingsTab extends React.Component {
                 webkitdirectory='webkitdirectory'
                 onChange={(evt) => {
                   if (evt.target && evt.target.files && evt.target.files[0]) {
-                    crextensionActions.installUnpackedExtension(evt.target.files[0].path)
+                    KRXFramework.installUnpackedExtension(evt.target.files[0].path, false)
                     this.setState({ hasInstalledUnpacked: true })
                     showRestart()
                   }

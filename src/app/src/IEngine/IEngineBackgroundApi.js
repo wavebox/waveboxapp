@@ -65,9 +65,13 @@ class IEngineBackgroundApi extends EventEmitter {
   /* **************************************************************************/
 
   get STORE_DATA_TYPES () { return STORE_DATA_TYPES }
+
   get appVersion () { return pkg.version }
+
   get platform () { return process.platform }
+
   get serviceId () { return this[privServiceId] }
+
   get libs () { return IEngineApiLibs }
 
   /* **************************************************************************/
@@ -157,7 +161,7 @@ class IEngineBackgroundApi extends EventEmitter {
         return fetch(url, {
           ...options,
           headers: {
-            'accept': '*/*',
+            accept: '*/*',
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': app.getLocale(),
             'upgrade-insecure-requests': '1',

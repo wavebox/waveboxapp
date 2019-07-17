@@ -104,7 +104,7 @@ export default class TrelloServiceSettings extends React.Component {
             divider={false}
             label='Home board (opens on launch)'
             value={homeBoardId || 'default'}
-            options={[ { value: 'default', label: 'Trello Home (Default)' } ].concat(
+            options={[{ value: 'default', label: 'Trello Home (Default)' }].concat(
               boards.map((board) => {
                 return { value: board.id, label: board.name }
               })

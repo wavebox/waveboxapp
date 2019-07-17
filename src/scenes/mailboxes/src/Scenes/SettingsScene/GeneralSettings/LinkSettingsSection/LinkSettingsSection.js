@@ -34,51 +34,51 @@ const CUSTOM_LINK_PROVIDER_EXAMPLES = {
     {
       name: 'Google Chrome',
       cmd: 'open',
-      args: [ { type: 'url' }, '-a', 'Google Chrome' ]
+      args: [{ type: 'url' }, '-a', 'Google Chrome']
     },
     {
       name: 'Firefox',
       cmd: 'open',
-      args: [ { type: 'url' }, '-a', 'Firefox' ]
+      args: [{ type: 'url' }, '-a', 'Firefox']
     },
     {
       name: 'Safari',
       cmd: 'open',
-      args: [ { type: 'url' }, '-a', 'Safari' ]
+      args: [{ type: 'url' }, '-a', 'Safari']
     }
   ],
   win32: [
     {
       name: 'Google Chrome',
       cmd: `C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe`,
-      args: [ { type: 'url' } ]
+      args: [{ type: 'url' }]
     },
     {
       name: 'Google Chrome (Profile 1)',
       cmd: `C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe`,
-      args: [ { type: 'url' }, '--profile-directory="Profile 1"' ]
+      args: [{ type: 'url' }, '--profile-directory="Profile 1"']
     },
     {
       name: 'Firefox',
       cmd: `C:\\Program Files\\Mozilla Firefox\\firefox.exe`,
-      args: [ { type: 'url' } ]
+      args: [{ type: 'url' }]
     }
   ],
   linux: [
     {
       name: 'Google Chrome',
       cmd: 'google-chrome',
-      args: [ { type: 'url' } ]
+      args: [{ type: 'url' }]
     },
     {
       name: 'Google Chrome (Profile 1)',
       cmd: 'google-chrome',
-      args: [ { type: 'url' }, '--profile-directory="Profile 1' ]
+      args: [{ type: 'url' }, '--profile-directory="Profile 1']
     },
     {
       name: 'Firefox',
       cmd: 'firefox',
-      args: [ { type: 'url' } ]
+      args: [{ type: 'url' }]
     }
   ]
 }

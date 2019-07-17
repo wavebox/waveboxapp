@@ -12,6 +12,7 @@ class MicrosoftOnedriveService extends MicrosoftService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'OneDrive' }
+
   static get humanizedLogos () {
     return [
       'microsoft/logo_drive_32px.png',
@@ -21,6 +22,7 @@ class MicrosoftOnedriveService extends MicrosoftService {
       'microsoft/logo_drive_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(5, 83, 172)' }
 
   /* **************************************************************************/
@@ -28,13 +30,21 @@ class MicrosoftOnedriveService extends MicrosoftService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
@@ -42,6 +52,7 @@ class MicrosoftOnedriveService extends MicrosoftService {
   /* **************************************************************************/
 
   get personalUrl () { return 'https://onedrive.live.com/' }
+
   get corporateUrl () { return 'https://onedrive.live.com/' }
 
   /**

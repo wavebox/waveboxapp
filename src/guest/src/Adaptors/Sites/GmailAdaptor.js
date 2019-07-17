@@ -12,6 +12,7 @@ class GmailAdaptor extends BaseAdaptor {
   static get matches () {
     return ['http(s)\\://mail.google.com(*)']
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

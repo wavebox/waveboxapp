@@ -10,6 +10,7 @@ class BaseAdaptor {
   /* **************************************************************************/
 
   static get styles () { return undefined }
+
   static get hasStyles () { return !!this.styles }
 
   /* **************************************************************************/
@@ -17,7 +18,9 @@ class BaseAdaptor {
   /* **************************************************************************/
 
   static get hasJS () { return false }
+
   static get guestApis () { return [] }
+
   static get hasGuestApis () { return this.guestApis && this.guestApis.length }
 
   /* **************************************************************************/
@@ -25,6 +28,7 @@ class BaseAdaptor {
   /* **************************************************************************/
 
   static get isInteractive () { return false }
+
   get isInteractive () { return true }
 
   /* **************************************************************************/

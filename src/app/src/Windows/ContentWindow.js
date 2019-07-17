@@ -41,6 +41,7 @@ class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   get rootWebContentsHasContextMenu () { return false }
+
   get allowsGuestClosing () { return true }
 
   /* ****************************************************************************/

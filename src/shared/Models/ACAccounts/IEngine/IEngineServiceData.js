@@ -6,6 +6,7 @@ class IEngineServiceData extends CoreACServiceData {
   /* **************************************************************************/
 
   get etag () { return this._value_('etag', undefined) }
+
   get hasEtag () { return this.etag !== undefined && this.etag !== null }
 
   /* **************************************************************************/
@@ -13,7 +14,9 @@ class IEngineServiceData extends CoreACServiceData {
   /* **************************************************************************/
 
   get unreadCount () { return this._value_('unreadCount', 0) }
+
   get trayMessages () { return this._value_('trayMessages', []) }
+
   get notifications () { return this._value_('notifications', []) }
 
   /* **************************************************************************/

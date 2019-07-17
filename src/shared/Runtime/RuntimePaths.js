@@ -25,6 +25,7 @@ module.exports = function (pkg, path, AppDirectory) {
     // Extensions
     CHROME_EXTENSION_INSTALL_PATH: path.join(appDirectory.userData(), 'extensions/chrome'),
     CHROME_EXTENSION_DOWNLOAD_PATH: path.join(appDirectory.userData(), 'extensions/chromedownload'),
-    CONTAINER_API_INSTALL_PATH: path.join(appDirectory.userData(), 'extensions/containers')
+    CONTAINER_API_INSTALL_PATH: path.join(appDirectory.userData(), 'extensions/containers'),
+    KRX_PATH: path.join(appDirectory.userData(), 'extensions/krx')
   }
 }

@@ -2,9 +2,9 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import ExtensionListItem from './ExtensionListItem'
-import { crextensionStore } from 'stores/crextension'
 import grey from '@material-ui/core/colors/grey'
 import { withStyles } from '@material-ui/core/styles'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = {
   heading: {
@@ -26,32 +26,14 @@ class InstalledExtensionList extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    crextensionStore.listen(this.extensionUpdated)
-  }
-
-  componentWillUnmount () {
-    crextensionStore.unlisten(this.extensionUpdated)
-  }
-
-  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = (() => {
     return {
-      extensionIds: crextensionStore.getState().extensionIds()
+      extensionIds: KRXFramework.extensionIds()
     }
   })()
-
-  extensionUpdated = (crextensionState) => {
-    this.setState({
-      extensionIds: crextensionStore.getState().extensionIds()
-    })
-  }
 
   /* **************************************************************************/
   // Rendering

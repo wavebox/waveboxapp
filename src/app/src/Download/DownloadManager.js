@@ -410,7 +410,7 @@ class DownloadManager extends EventEmitter {
         .then((cookieHeader) => {
           return {
             'User-Agent': transportWebContents.session.getUserAgent(),
-            'Cookie': cookieHeader
+            Cookie: cookieHeader
           }
         })
         .then((headers) => fetch(url, {
@@ -450,16 +450,13 @@ class DownloadManager extends EventEmitter {
       })
 
       return new Promise((resolve, reject) => {
-        let timeout
-        let handler
-
-        timeout = setTimeout(() => {
+        const timeout = setTimeout(() => {
           transportWebContents.session.removeListener('will-download', handler)
           this[privPlatform].queue.delete(id)
           reject(new Error('Timeout'))
         }, MAX_PLATFORM_START_TIME)
 
-        handler = (evt, item, wc) => {
+        const handler = (evt, item, wc) => {
           // Check
           const downloadId = this._getPlatformDownloadId(item, wc)
           if (downloadId === undefined) { return }

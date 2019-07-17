@@ -3,6 +3,7 @@ const ROOT_DIR = path.resolve(path.join(__dirname, '../'))
 const BIN_DIR = path.join(ROOT_DIR, 'bin')
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const webpackRequire = (n) => require(path.join(ROOT_DIR, 'webpack', n))
+const pkg = require(path.join(ROOT_DIR, 'package.json'))
 
 const { CleanWebpackPlugin } = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
@@ -32,8 +33,14 @@ module.exports = function (env) {
         { from: path.join(__dirname, 'icons'), to: 'icons', force: true },
         { from: path.join(__dirname, 'images'), to: 'images', force: true },
         { from: path.join(__dirname, 'wbie'), to: 'wbie', force: true }
-      ], {
-        ignore: [ '.DS_Store' ]
+      ].concat(Object.keys(pkg.resources).map((p) => {
+        return {
+          from: path.join(ROOT_DIR, 'resources/pack/', `${p}.pak`),
+          to: 'resources',
+          force: true
+        }
+      })), {
+        ignore: ['.DS_Store']
       })
     ]
   }

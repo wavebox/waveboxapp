@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import { accountActions } from 'stores/account'
-import { crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
@@ -26,6 +25,7 @@ import RuntimePaths from 'Runtime/RuntimePaths'
 import FASCloudDownloadIcon from 'wbfa/FASCloudDownload'
 import FASCloudUploadIcon from 'wbfa/FASCloudUpload'
 import WBRPCRenderer from 'shared/WBRPCRenderer'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = {
   listItem: {
@@ -99,7 +99,7 @@ class DataSettingsSection extends React.Component {
             confirmWaitMs={4000}
             onConfirmedClick={() => {
               accountActions.clearAllBrowserSessions()
-              crextensionActions.clearAllBrowserSessions()
+              KRXFramework.clearAllBrowserSessions()
             }} />
           <SettingsListTypography type='info' variant='button-help'>
             You will need to sign back into all accounts after doing this
@@ -123,7 +123,7 @@ class DataSettingsSection extends React.Component {
             )}
             confirmWaitMs={4000}
             onConfirmedClick={() => {
-              crextensionActions.clearAllBrowserSessions()
+              KRXFramework.clearAllBrowserSessions()
             }} />
           <SettingsListTypography type='info' variant='button-help'>
             You may need to reconfigure your extensions after doing this

@@ -78,7 +78,7 @@ class CoreLocalHistoryActions extends RemoteActions {
   */
   deleteDownload (...args) {
     if (process.type === 'browser') {
-      const [ id ] = args
+      const [id] = args
       return { id }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('deleteDownload', args)

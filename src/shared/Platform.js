@@ -15,6 +15,7 @@ class Platform {
   /* **************************************************************************/
 
   static get PACKAGE_MANAGERS () { return PACKAGE_MANAGERS }
+
   static get SQUIRREL_UPDATE_ENABLED_ON_PLATFORM () { return process.platform === 'darwin' || process.platform === 'win32' }
 
   /* **************************************************************************/

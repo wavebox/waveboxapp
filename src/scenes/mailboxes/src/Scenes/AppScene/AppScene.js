@@ -5,13 +5,13 @@ import Sidelist from './Sidelist'
 import { PrimaryToolbar, SecondaryToolbar } from './Toolbar'
 import shallowCompare from 'react-addons-shallow-compare'
 import { settingsStore } from 'stores/settings'
-import { crextensionStore } from 'stores/crextension'
 import { accountStore } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import { ipcRenderer } from 'electron'
 import { WB_WINDOW_MIN_MAX_DBL_CLICK } from 'shared/ipcEvents'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const SIDEBAR_WIDTH_REGULAR = 70
 const SIDEBAR_WIDTH_COMPACT = 55
@@ -111,13 +111,11 @@ class AppScene extends React.Component {
   componentDidMount () {
     accountStore.listen(this.accountUpdated)
     settingsStore.listen(this.settingsUpdated)
-    crextensionStore.listen(this.crextensionUpdated)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountUpdated)
     settingsStore.unlisten(this.settingsUpdated)
-    crextensionStore.unlisten(this.crextensionUpdated)
   }
 
   /* **************************************************************************/
@@ -127,13 +125,12 @@ class AppScene extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     const settingsState = settingsStore.getState()
-    const crextensionState = crextensionStore.getState()
 
     return {
       hasSidebar: settingsState.ui.sidebarEnabled,
       sidebarSize: settingsState.ui.sidebarSize,
       appHasTitlebar: settingsState.launched.ui.showTitlebar,
-      hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState),
+      hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(KRXFramework.browserActionCount(), settingsState),
       hasServicesInPrimaryToolbar: PrimaryToolbar.hasServicesInToolbar(accountState),
       hasNavigationInPrimaryToolbar: PrimaryToolbar.hasNavigationInToolbar(accountState),
       hasNavigationInSecondaryToolbar: SecondaryToolbar.hasNavigationInToolbar(accountState)
@@ -141,11 +138,10 @@ class AppScene extends React.Component {
   })()
 
   settingsUpdated = (settingsState) => {
-    const crextensionState = crextensionStore.getState()
     this.setState({
       hasSidebar: settingsState.ui.sidebarEnabled,
       sidebarSize: settingsState.ui.sidebarSize,
-      hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState)
+      hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(KRXFramework.browserActionCount(), settingsState)
     })
   }
 
@@ -154,13 +150,6 @@ class AppScene extends React.Component {
       hasServicesInPrimaryToolbar: PrimaryToolbar.hasServicesInToolbar(accountState),
       hasNavigationInPrimaryToolbar: PrimaryToolbar.hasNavigationInToolbar(accountState),
       hasNavigationInSecondaryToolbar: SecondaryToolbar.hasNavigationInToolbar(accountState)
-    })
-  }
-
-  crextensionUpdated = (crextensionState) => {
-    const settingsState = settingsStore.getState()
-    this.setState({
-      hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState)
     })
   }
 

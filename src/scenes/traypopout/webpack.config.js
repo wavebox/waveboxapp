@@ -23,7 +23,7 @@ module.exports = function (env) {
     plugins: [
       // Clean out our bin dir
       new CleanWebpackPlugin({
-        cleanOnceBeforeBuildPatterns: [ OUT_DIR ],
+        cleanOnceBeforeBuildPatterns: [OUT_DIR],
         verbose: isVerboseLog,
         dry: false
       }),
@@ -32,7 +32,7 @@ module.exports = function (env) {
       new CopyWebpackPlugin([
         { from: path.join(__dirname, 'src/popout.html'), to: 'popout.html', force: true }
       ], {
-        ignore: [ '.DS_Store' ]
+        ignore: ['.DS_Store']
       })
     ].filter((p) => !!p),
     resolve: {

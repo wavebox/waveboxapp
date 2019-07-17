@@ -5,10 +5,10 @@ const OUT_DIR = path.join(SRC_DIR, 'scenes/wbfa/generated')
 const Colors = require('colors/safe')
 
 const VARIANTS = {
-  'l': 'light',
-  'r': 'regular',
-  's': 'solid',
-  'b': 'brands'
+  l: 'light',
+  r: 'regular',
+  s: 'solid',
+  b: 'brands'
 }
 
 const MAPPING = [

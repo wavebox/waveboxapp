@@ -16,6 +16,7 @@ class GoogleAlloAdaptor extends BaseAdaptor {
       'http(s)\\://allo.google.com(*)'
     ]
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

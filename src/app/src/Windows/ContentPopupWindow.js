@@ -294,6 +294,7 @@ class ContentPopupWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   findStart () { return this }
+
   findNext () { return this }
 }
 

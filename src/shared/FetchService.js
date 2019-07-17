@@ -8,12 +8,19 @@ class FetchService {
   /* **************************************************************************/
 
   static get DEFAULT_ACCEPT_HEADER () { return 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8' }
+
   static get DEFAULT_ACCEPT_IMAGE_HEADER () { return 'image/webp,image/apng,image/*,*/*;q=0.8' }
+
   static get DEFAULT_ACCEPT_VIDEO_HEADER () { return '*/*' }
+
   static get DEFAULT_ACCEPT_AUDIO_HEADER () { return '*/*' }
+
   static get DEFAULT_ACCEPT_SCRIPT_HEADER () { return '*/*' }
+
   static get DEFAULT_ACCEPT_CSS_HEADER () { return 'text/css,*/*;q=0.1' }
+
   static get DEFAULT_ACCEPT_ENCODING_HEADER () { return 'gzip, deflate, br' }
+
   static get DEFAULT_ACCEPT_LANGUAGE_HEADER () {
     if (window.navigator.languages.length > 1) {
       return window.navigator.languages.map((lang, index) => {
@@ -25,11 +32,12 @@ class FetchService {
       return window.navigator.language
     }
   }
+
   static get DEFAULT_USER_AGENT_HEADER () { return window.navigator.userAgent }
 
   static get DEFAULT_HEADERS () {
     return {
-      'accept': this.DEFAULT_ACCEPT_HEADER,
+      accept: this.DEFAULT_ACCEPT_HEADER,
       'accept-encoding': this.DEFAULT_ACCEPT_ENCODING_HEADER,
       'accept-language': this.DEFAULT_ACCEPT_LANGUAGE_HEADER,
       'upgrade-insecure-requests': '1',

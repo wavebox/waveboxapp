@@ -1,6 +1,6 @@
 /* global __DEV__ */
 
-import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain, globalShortcut, dialog, protocol } from 'electron'
 import os from 'os'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
@@ -16,8 +16,7 @@ import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
 import CustomHTTPSCertificateManager from 'HTTPAuth/CustomHTTPSCertificateManager'
-import { CRExtensionManager } from 'Extensions/Chrome'
-import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
+import { SessionManager, AccountSessionManager } from '../SessionManager'
 import ServicesManager from 'Services'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
@@ -33,6 +32,10 @@ import WaveboxDataManager from './WaveboxDataManager'
 import constants from 'shared/constants'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import WaveboxAppCommandKeyTracker from './WaveboxAppCommandKeyTracker'
+import Resolver from 'Runtime/Resolver'
+import RuntimePaths from 'Runtime/RuntimePaths'
+import pkg from 'package.json'
+import KRXFramework from 'Extensions/KRXFramework'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -140,19 +143,32 @@ class WaveboxApp {
     // Managers
     SessionManager.start()
     AccountSessionManager.start()
-    ExtensionSessionManager.start()
     ServicesManager.load()
     WaveboxAppCommandKeyTracker.start()
+
+    if (this[privArgv].safemode !== true) {
+      try {
+        process.electronBinding('resources').loadResourceSync(Resolver.resourcePath('pdf_viewer.pak'))
+        process.electronBinding('resources').loadResourceSync(Resolver.resourcePath('KRXFramework.pak'))
+      } catch (ex) {
+        console.error(`Failed to load resource. Continuing...`, ex)
+      }
+    }
 
     // Setup the environment
     this._configureEnvironment()
 
     // Configure extensions
-    CRExtensionManager.setup()
-    // Electron registers chrome-extension by default so we don't need to do it
-    // protocol.registerStandardSchemes([].concat(
-    //   CRExtensionManager.supportedProtocols
-    // ), { secure: true })
+    if (this[privArgv].safemode !== true) {
+      KRXFramework.setup({
+        version: pkg.version,
+        path: RuntimePaths.KRX_PATH
+      })
+    }
+    protocol.registerStandardSchemes([].concat(
+      process.electronBinding('pdf_viewer').pdfViewer,
+      KRXFramework.supportedProtocols
+    ), { secure: true })
 
     // App menus and shortcuts
     this[privAppMenu] = new WaveboxAppPrimaryMenu()
@@ -306,7 +322,7 @@ class WaveboxApp {
     // Load extensions before any webcontents get created
     if (this[privArgv].safemode !== true) {
       try {
-        CRExtensionManager.loadExtensionDirectory()
+        KRXFramework.startInstalled()
       } catch (ex) {
         console.error(`Failed to load extensions. Continuing...`, ex)
       }

@@ -12,7 +12,9 @@ class GoogleFiService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Fi' }
+
   static get humanizedTypeShort () { return 'Fi' }
+
   static get humanizedLogos () {
     return [
       'google/logo_fi_32px.png',
@@ -22,6 +24,7 @@ class GoogleFiService extends CoreACService {
       'google/logo_fi_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(77, 166, 102)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleFiService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

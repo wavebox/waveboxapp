@@ -17,7 +17,7 @@ import ServiceInfoPanelContent from 'wbui/ServiceInfoPanelContent'
 import ServiceInfoPanelTitle from 'wbui/ServiceInfoPanelTitle'
 
 const styles = {
-  'list': {
+  list: {
     paddingLeft: 30
   },
   nscIcons: {

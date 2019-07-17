@@ -3,12 +3,11 @@ import { ElectronWebContents } from 'ElectronTools'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
-import { CRExtensionManager } from 'Extensions/Chrome'
-import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
 import { settingsActions, settingsStore } from 'stores/settings'
 import { accountStore, accountActions } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
 import AppSettings from 'shared/Models/Settings/AppSettings'
+import KRXFramework from 'Extensions/KRXFramework'
 import {
   WB_READING_QUEUE_LINK_ADDED,
   WB_READING_QUEUE_CURRENT_PAGE_ADDED
@@ -703,113 +702,43 @@ class ContextMenuService {
     const waveboxWindow = WaveboxWindow.fromTabId(contents.id)
     if (!waveboxWindow) { return [] }
 
-    // Munge the data a little bit to make it easier to work with
-    const extensionContextMenus = CRExtensionManager.runtimeHandler.getRuntimeContextMenuData()
-    Object.keys(extensionContextMenus).forEach((extensionId) => {
-      extensionContextMenus[extensionId].contextMenus = extensionContextMenus[extensionId].contextMenus.map(([menuId, menuData]) => {
-        return new CRExtensionRTContextMenu(extensionId, menuId, menuData)
-      })
-    })
-
-    // Start building the template
-    const template = []
-    Object.keys(extensionContextMenus).forEach((extensionId) => {
-      const { name, icons, contextMenus } = extensionContextMenus[extensionId]
-      const validContextMenus = contextMenus
-        .filter((menu) => {
-          const contexts = new Set(menu.contexts)
-          if (contexts.has(CRExtensionRTContextMenu.CONTEXT_TYPES.ALL || CRExtensionRTContextMenu.CONTEXT_TYPES.PAGE)) {
-            return true
-          } else if (params.isEditable && contexts.has(CRExtensionRTContextMenu.CONTEXT_TYPES.EDITABLE)) {
-            return true
+    return KRXFramework.getContextMenuExtensionIds().map((extensionId) => {
+      const info = KRXFramework.getContextMenuInfo(extensionId)
+      return {
+        label: info.name,
+        icon: nativeImage.createFromPath(info.icons['16']),
+        submenu: info.entries.map((menuItem) => {
+          if (menuItem.type === 'normal') {
+            return {
+              _id_: menuItem.id,
+              label: menuItem.title,
+              enabled: menuItem.enabled,
+              click: () => KRXFramework.contextMenuOptionSelected(contents, extensionId, menuItem, params)
+            }
+          } else if (menuItem.type === 'checkbox') {
+            return {
+              _id_: menuItem.id,
+              label: menuItem.title,
+              type: 'checkbox',
+              checked: menuItem.checked,
+              click: () => KRXFramework.contextMenuOptionSelected(contents, extensionId, menuItem, params)
+            }
+          } else if (menuItem.type === 'radio') {
+            return {
+              _id_: menuItem.id,
+              label: menuItem.title,
+              type: 'radio',
+              checked: menuItem.checked,
+              click: () => KRXFramework.contextMenuOptionSelected(contents, extensionId, menuItem, params)
+            }
+          } else if (menuItem.type === 'separator') {
+            return { type: 'separator' }
+          } else {
+            return undefined
           }
         })
-
-      const renderedMenuTemplate = this.renderExtensionMenuTree(contents, params, extensionId, validContextMenus)
-
-      if (renderedMenuTemplate.length === 1) {
-        template.push({
-          icon: nativeImage.createFromPath(icons['16']),
-          ...renderedMenuTemplate[0]
-        })
-      } else if (validContextMenus.length > 1) {
-        template.push({
-          label: name,
-          icon: nativeImage.createFromPath(icons['16']),
-          submenu: renderedMenuTemplate
-        })
       }
     })
-
-    return template
-  }
-
-  /**
-  * Renders an extension menu into the correct tree structure
-  * @param contents: the sending webcontents
-  * @param params: the original context menu params
-  * @param extensionId: the id of the extension
-  * @param contextMenus: the context menus to render
-  * @return an array that can be used in the template
-  */
-  renderExtensionMenuTree (contents, params, extensionId, contextMenus) {
-    const root = []
-    const index = new Map()
-
-    contextMenus.forEach((menuItem) => {
-      const rendered = this.renderExtensionMenuItem(contents, params, extensionId, menuItem)
-      if (rendered) {
-        if (menuItem.parentId && index.get(menuItem.parentId)) {
-          const parent = index.get(menuItem.parentId)
-          parent.submenu = parent.submenu || []
-          parent.submenu.push(rendered)
-        } else {
-          root.push(rendered)
-        }
-        index.set(menuItem.id, rendered)
-      }
-    })
-
-    return root
-  }
-
-  /**
-  * Renders an extension menu item
-  * @param contents: the sending webcontents
-  * @param params: the original context menu params
-  * @param extensionId: the id of the extension
-  * @param menuItem: the runtime context menu to render
-  * @return an object that can be passed into the electron templating engine
-  */
-  renderExtensionMenuItem (contents, params, extensionId, menuItem) {
-    if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.NORMAL) {
-      return {
-        _id_: menuItem.id,
-        label: menuItem.title,
-        enabled: menuItem.enabled,
-        click: () => this.extensionOptionSelected(contents, extensionId, menuItem, params)
-      }
-    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.CHECKBOX) {
-      return {
-        _id_: menuItem.id,
-        label: menuItem.title,
-        type: 'checkbox',
-        checked: menuItem.checked,
-        click: () => this.extensionOptionSelected(contents, extensionId, menuItem, params)
-      }
-    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.RADIO) {
-      return {
-        _id_: menuItem.id,
-        label: menuItem.title,
-        type: 'radio',
-        checked: menuItem.checked,
-        click: () => this.extensionOptionSelected(contents, extensionId, menuItem, params)
-      }
-    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.SEPARATOR) {
-      return { type: 'separator' }
-    } else {
-      return undefined
-    }
   }
 
   /* **************************************************************************/
@@ -837,34 +766,6 @@ class ContextMenuService {
     if (mailboxesWindow) {
       mailboxesWindow.show().focus().launchPreferences()
     }
-  }
-
-  /**
-  * Handles an extension option being clicked by triggering the call upstream
-  * @param contents: the sending contents
-  * @param extensionId: the id of the extension
-  * @param menuItem: the menu item that was clicked
-  * @param params: the original context menu params
-  */
-  extensionOptionSelected (contents, extensionId, menuItem, params) {
-    if (contents.isDestroyed()) { return }
-
-    const clickParams = Object.assign({
-      menuItemId: menuItem.id,
-      parentMenuItemId: menuItem.parentId,
-      mediaType: params.mediaType === 'none' ? undefined : params.mediaType,
-      linkUrl: params.linkURL,
-      srcUrl: params.srcURL,
-      pageUrl: params.pageURL,
-      frameUrl: params.frameURL,
-      selectionText: params.selectionText,
-      editable: params.editable
-    },
-    menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.CHECKBOX || menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.RADIO ? {
-      wasChecked: menuItem.checked,
-      checked: !menuItem.checked
-    } : {})
-    CRExtensionManager.runtimeHandler.contextMenuItemSelected(extensionId, contents, clickParams)
   }
 }
 

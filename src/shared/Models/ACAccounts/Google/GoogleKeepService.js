@@ -12,7 +12,9 @@ class GoogleKeepService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Keep' }
+
   static get humanizedTypeShort () { return 'Keep' }
+
   static get humanizedLogos () {
     return [
       'google/logo_keep_32px.png',
@@ -22,6 +24,7 @@ class GoogleKeepService extends CoreACService {
       'google/logo_keep_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(244, 185, 49)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleKeepService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

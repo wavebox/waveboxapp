@@ -30,7 +30,9 @@ class SlackSocket extends EventEmitter {
   /* **************************************************************************/
 
   get isOpen () { return this._isOpen }
+
   get isConnected () { return this._isConnected }
+
   get lastResponseTime () { return this._lastResponseTime }
 
   /* **************************************************************************/

@@ -245,7 +245,7 @@ class BrowserScene extends React.Component {
             allowpopups
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes, sandbox=yes'
             preload={Resolver.guestPreload()}
-            preloadCrx={Resolver.crExtensionApiPreload()}
+            preloadCrx={process.atomBinding('KRXFramework').preloadApiPath()}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
             close={this.handleClose}

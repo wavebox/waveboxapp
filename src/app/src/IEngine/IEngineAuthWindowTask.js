@@ -3,6 +3,7 @@ import AuthWindow from 'Windows/AuthWindow'
 import { SessionManager } from 'SessionManager'
 import { userStore } from 'stores/user'
 import Resolver from 'Runtime/Resolver'
+import KRXFramework from 'Extensions/KRXFramework'
 
 const privUserClosed = Symbol('privUserClosed')
 const privOnComplete = Symbol('privOnComplete')
@@ -114,7 +115,7 @@ class IEngineAuthWindowTask {
         sharedSiteInstances: true,
         partition: partitionId,
         preload: Resolver.guestPreload(),
-        preloadCrx: Resolver.crExtensionApi()
+        preloadCrx: KRXFramework.preloadApiPath()
       }
     })
     return authWindow

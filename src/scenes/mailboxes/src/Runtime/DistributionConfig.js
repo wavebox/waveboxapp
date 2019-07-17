@@ -30,7 +30,9 @@ class DistributionConfig {
   /* ****************************************************************************/
 
   get installMethod () { return this.load().installMethod || 'unknown' }
+
   get isSnapInstall () { return process.platform === 'linux' && this.installMethod === 'snap' }
+
   get isDebInstall () { return process.platform === 'linux' && this.installMethod === 'deb' }
 }
 

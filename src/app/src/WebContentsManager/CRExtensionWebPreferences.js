@@ -1,6 +1,6 @@
 import { CR_EXTENSION_PARTITION_PREFIX } from 'shared/extensionApis'
-import Resolver from 'Runtime/Resolver'
 import { GuestWebPreferences } from 'WebContentsManager'
+import KRXFramework from 'Extensions/KRXFramework'
 
 class CRExtensionWebPreferences {
   /* ****************************************************************************/
@@ -46,7 +46,7 @@ class CRExtensionWebPreferences {
       nativeWindowOpen: true,
       sharedSiteInstances: true,
       affinity: this.affinityIdForExtension(extensionId),
-      preload: Resolver.crExtensionApi(),
+      preload: KRXFramework.preloadApiPath(),
       partition: this.partitionIdForExtension(extensionId)
     })
   }

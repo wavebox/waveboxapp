@@ -24,12 +24,15 @@ export default class HtmlMetaResult {
   /* ****************************************************************************/
 
   get title () { return this[privData].title }
+
   set title (val) {
     if (!val) { return }
     if (this.title) { return }
     this[privData].title = val
   }
+
   get favicon () { return this[privData].favicon }
+
   set favicon (val) {
     if (!val) { return }
     if (this.favicon) { return }
@@ -48,6 +51,7 @@ export default class HtmlMetaResult {
       url: this[privUrl]
     }
   }
+
   get hasMissing () {
     return Object
       .keys(this[privData])

@@ -12,7 +12,9 @@ class GoogleCalendarService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Calendar' }
+
   static get humanizedTypeShort () { return 'Calendar' }
+
   static get humanizedLogos () {
     return [
       'google/logo_calendar_32px.png',
@@ -22,6 +24,7 @@ class GoogleCalendarService extends CoreACService {
       'google/logo_calendar_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(69, 132, 240)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleCalendarService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return true }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return true }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

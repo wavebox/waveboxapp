@@ -12,7 +12,9 @@ class GoogleVoiceService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Voice' }
+
   static get humanizedTypeShort () { return 'Voice' }
+
   static get humanizedLogos () {
     return [
       'google/logo_voice_32px.png',
@@ -22,6 +24,7 @@ class GoogleVoiceService extends CoreACService {
       'google/logo_voice_128px.png'
     ]
   }
+
   static get humanizedColor () { return '#198E80' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleVoiceService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

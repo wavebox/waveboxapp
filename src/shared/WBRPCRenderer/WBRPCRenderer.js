@@ -26,7 +26,9 @@ class WBRPCRenderer {
   /* ****************************************************************************/
 
   get browserWindow () { return this[privBrowserWindow] }
+
   get webContents () { return this[privWebContents] }
+
   get wavebox () { return this[privWavebox] }
 }
 

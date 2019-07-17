@@ -11,6 +11,7 @@ class AsanaAdaptor extends BaseAdaptor {
       'http(s)\\://app.asana.com/-/login(*)'
     ]
   }
+
   static get hasJS () { return true }
 
   /* **************************************************************************/

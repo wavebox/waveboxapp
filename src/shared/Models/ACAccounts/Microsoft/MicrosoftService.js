@@ -7,8 +7,11 @@ class MicrosoftService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return this.personalUrl }
+
   get personalUrl () { SubclassNotImplementedError('MicrosoftService.personalUrl') }
+
   get corporateUrl () { SubclassNotImplementedError('MicrosoftService.corporateUrl') }
+
   get restoreLastUrl () { return false }
 
   /**

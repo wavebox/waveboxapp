@@ -46,15 +46,21 @@ class ParallelHttpTracker {
   /* **************************************************************************/
 
   get inflight () { return this[privInflight] }
+
   get hasData () { return this[privResponse].has }
+
   get timestamp () { return this[privResponse].timestamp }
+
   get data () { return this[privResponse].data }
+
   get statusCode () { return this[privResponse].statusCode }
 
   get responseAge () { return this.hasData ? new Date().getTime() - this.timestamp : Infinity }
+
   get inError () { return this.hasData ? (this.statusCode < 200 || this.statusCode > 299) : false }
 
   set metadata (metadata) { this[privMetadata] = metadata }
+
   get metadata () { return this[privMetadata] }
 
   /* **************************************************************************/

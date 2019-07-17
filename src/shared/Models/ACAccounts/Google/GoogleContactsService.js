@@ -12,7 +12,9 @@ class GoogleContactsService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Contacts' }
+
   static get humanizedTypeShort () { return 'Contacts' }
+
   static get humanizedLogos () {
     return [
       'google/logo_contacts_32px.png',
@@ -22,6 +24,7 @@ class GoogleContactsService extends CoreACService {
       'google/logo_contacts_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(60, 173, 244)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleContactsService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

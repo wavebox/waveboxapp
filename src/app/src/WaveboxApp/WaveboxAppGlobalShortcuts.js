@@ -162,14 +162,23 @@ class WaveboxAppGlobalShortcuts {
   }
 
   _handleShowMailbox0 = () => { this._handleShowMailboxIndex(0) }
+
   _handleShowMailbox1 = () => { this._handleShowMailboxIndex(1) }
+
   _handleShowMailbox2 = () => { this._handleShowMailboxIndex(2) }
+
   _handleShowMailbox3 = () => { this._handleShowMailboxIndex(3) }
+
   _handleShowMailbox4 = () => { this._handleShowMailboxIndex(4) }
+
   _handleShowMailbox5 = () => { this._handleShowMailboxIndex(5) }
+
   _handleShowMailbox6 = () => { this._handleShowMailboxIndex(6) }
+
   _handleShowMailbox7 = () => { this._handleShowMailboxIndex(7) }
+
   _handleShowMailbox8 = () => { this._handleShowMailboxIndex(8) }
+
   _handleShowMailbox9 = () => { this._handleShowMailboxIndex(9) }
 }
 

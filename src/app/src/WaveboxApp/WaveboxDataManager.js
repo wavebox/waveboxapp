@@ -1,6 +1,6 @@
 import { SessionManager } from 'SessionManager'
 import accountStore from 'stores/account/accountStore'
-import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
+import KRXFramework from 'Extensions/KRXFramework'
 
 class WaveboxDataManager {
   /* ****************************************************************************/
@@ -14,7 +14,7 @@ class WaveboxDataManager {
     const expire = new Set(SessionManager.getAllDiskSessionIdsSync())
     const activeSessionIds = [].concat(
       accountStore.getState().allPartitions(),
-      CRExtensionManager.runtimeHandler.inUsePartitions
+      KRXFramework.inUsePartitions()
     )
     activeSessionIds.forEach((id) => expire.delete(id))
 

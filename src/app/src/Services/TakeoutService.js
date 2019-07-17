@@ -11,7 +11,6 @@ import { evtMain } from 'AppEvents'
 import MachineInfo from 'shared/MachineInfo'
 import { userStore } from 'stores/user'
 import { accountStore } from 'stores/account'
-import { crextensionStore } from 'stores/crextension'
 import {
   WB_TAKEOUT_IMPORT_FILE,
   WB_TAKEOUT_EXPORT_FILE,
@@ -74,7 +73,6 @@ class TakeoutService {
   */
   _dataForServerExport () {
     const accountState = accountStore.getState()
-    const crexensionState = crextensionStore.getState()
     if (accountState.mailboxCount() === 0) { return undefined }
 
     const storeData = TAKEOUT_STORES.reduce((acc, storage) => {
@@ -103,8 +101,7 @@ class TakeoutService {
       },
       metadata: {
         mailboxCount: accountState.mailboxCount(),
-        serviceCount: accountState.serviceCount(),
-        extensionIds: crexensionState.extensionIds()
+        serviceCount: accountState.serviceCount()
       },
       data: storeData
     }

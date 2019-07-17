@@ -39,6 +39,7 @@ class CommandPaletteSearchEngine extends EventEmitter {
   /* **************************************************************************/
 
   get tickTime () { return this[privTickTime] }
+
   get hasTickScheduled () { return this[privTick] !== null }
 
   /* **************************************************************************/

@@ -12,7 +12,9 @@ class GoogleClassroomService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Classroom' }
+
   static get humanizedTypeShort () { return 'Classroom' }
+
   static get humanizedLogos () {
     return [
       'google/logo_classroom_32px.png',
@@ -22,6 +24,7 @@ class GoogleClassroomService extends CoreACService {
       'google/logo_classroom_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(76, 165, 101)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleClassroomService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

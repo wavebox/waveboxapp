@@ -12,7 +12,9 @@ class GoogleAdminService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Admin' }
+
   static get humanizedTypeShort () { return 'Admin' }
+
   static get humanizedLogos () {
     return [
       'google/logo_admin_32px.png',
@@ -22,6 +24,7 @@ class GoogleAdminService extends CoreACService {
       'google/logo_admin_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(73, 137, 244)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleAdminService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

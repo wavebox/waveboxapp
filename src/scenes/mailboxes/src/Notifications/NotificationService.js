@@ -21,6 +21,7 @@ class NotificationService extends EventEmitter {
   /* **************************************************************************/
 
   get isRunning () { return this.__state__.isRunning }
+
   get suppressForGrace () { return new Date().getTime() - this.__state__.startedTime < NOTIFICATION_FIRST_RUN_GRACE_MS }
 
   /* **************************************************************************/

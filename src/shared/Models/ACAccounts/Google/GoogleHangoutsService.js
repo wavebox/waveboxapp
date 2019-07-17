@@ -12,7 +12,9 @@ class GoogleHangoutsService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Hangouts' }
+
   static get humanizedTypeShort () { return 'Hangouts' }
+
   static get humanizedLogos () {
     return [
       'google/logo_hangouts_32px.png',
@@ -22,7 +24,9 @@ class GoogleHangoutsService extends CoreACService {
       'google/logo_hangouts_128px.png'
     ]
   }
+
   static get humanizedUnreadItemType () { return 'message' }
+
   static get humanizedColor () { return '#0f9d58' }
 
   /* **************************************************************************/
@@ -30,13 +34,21 @@ class GoogleHangoutsService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return true }
+
   get supportsTrayMessages () { return true }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return true }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

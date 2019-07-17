@@ -1,10 +1,7 @@
 import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
-import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
-import CRExtensionManifestWavebox from 'shared/Models/CRExtension/CRExtensionManifestWavebox'
 import { URL } from 'url'
 import fallbackConfig from './fallbackConfig'
-import { CRExtensionWebPreferences } from 'WebContentsManager'
 import {
   WAVEBOX_CAPTURE_URL_PREFIX,
   WAVEBOX_CAPTURE_URL_HOSTNAMES
@@ -75,47 +72,6 @@ class WindowOpeningEngine {
         ignoreUserCommandKeyModifier: false
       }
     }
-  }
-
-  /**
-  * Gets the extension rule for opening a window
-  * @param webContentsId: the id of the webcontents that's opening
-  * @param targetUrl: the target url we are trying to open
-  * @param disposition: the new window disposition
-  * @return { match:true|false, config:{}, mode:WINDOW_OPEN_MODES, paritionOverride:partition|undefined}
-  */
-  getExtensionRuleForWindowOpen (webContentsId, targetUrl, disposition) {
-    const extensionPopoutConfig = CRExtensionManager.runtimeHandler.getWindowPopoutModePreference(
-      webContentsId,
-      targetUrl,
-      new URL(targetUrl),
-      disposition
-    )
-
-    if (extensionPopoutConfig !== false) {
-      if (extensionPopoutConfig.mode === CRExtensionManifestWavebox.POPOUT_WINDOW_MODES.POPOUT) {
-        return {
-          match: true,
-          config: extensionPopoutConfig,
-          mode: WINDOW_OPEN_MODES.POPUP_CONTENT
-        }
-      } else if (extensionPopoutConfig.mode === CRExtensionManifestWavebox.POPOUT_WINDOW_MODES.CONTENT) {
-        return {
-          match: true,
-          config: extensionPopoutConfig,
-          mode: WINDOW_OPEN_MODES.CONTENT
-        }
-      } else if (extensionPopoutConfig.mode === CRExtensionManifestWavebox.POPOUT_WINDOW_MODES.CONTENT_BACKGROUND) {
-        return {
-          match: true,
-          config: extensionPopoutConfig,
-          mode: WINDOW_OPEN_MODES.CONTENT,
-          partitionOverride: extensionPopoutConfig.extension.manifest.hasBackground ? CRExtensionWebPreferences.partitionIdForExtension(extensionPopoutConfig.extension.id) : undefined
-        }
-      }
-    }
-
-    return { match: false }
   }
 
   /**

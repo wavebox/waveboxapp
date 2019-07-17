@@ -106,6 +106,7 @@ class LinuxNotification {
   /* ****************************************************************************/
 
   get isLoaded () { return this[privLoaded] }
+
   get webContentsId () { return this[privWindow] ? this[privWindow].webContents.id : undefined }
 
   /* ****************************************************************************/

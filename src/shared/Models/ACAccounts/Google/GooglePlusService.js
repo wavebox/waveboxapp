@@ -12,7 +12,9 @@ class GooglePlusService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Plus' }
+
   static get humanizedTypeShort () { return 'Google+' }
+
   static get humanizedLogos () {
     return [
       'google/logo_plus_32px.png',
@@ -22,6 +24,7 @@ class GooglePlusService extends CoreACService {
       'google/logo_plus_128px.png'
     ]
   }
+
   static get humanizedColor () { return '#dd4b39' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GooglePlusService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

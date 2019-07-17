@@ -39,7 +39,7 @@ module.exports = function (env) {
         { from: path.join(__dirname, 'src/HTTPAuth/BasicHTTPAuthHandler.html'), to: 'app/BasicHTTPAuthHandler.html', force: true },
         { from: path.join(__dirname, 'src/Notifications/LinuxNotification.html'), to: 'app/LinuxNotification.html', force: true }
       ], {
-        ignore: [ '.DS_Store' ]
+        ignore: ['.DS_Store']
       }),
 
       // Minify & optimization & devtools

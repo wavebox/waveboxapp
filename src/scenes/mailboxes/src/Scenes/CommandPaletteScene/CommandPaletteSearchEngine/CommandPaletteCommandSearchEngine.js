@@ -85,7 +85,7 @@ class CommandPaletteCommandSearchEngine {
       maxPatternLength: 32,
       minMatchCharLength: 1,
       tokenize: true,
-      keys: [ 'id', 'modifier', 'keyword', 'helper', 'description' ]
+      keys: ['id', 'modifier', 'keyword', 'helper', 'description']
     })
     return true
   }

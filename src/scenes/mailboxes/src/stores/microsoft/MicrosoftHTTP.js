@@ -55,7 +55,7 @@ class MicrosoftHTTP {
       .then(() => this._fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
         method: 'post',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: querystring.stringify({
@@ -80,9 +80,9 @@ class MicrosoftHTTP {
           .then(() => this._fetch('https://graph.microsoft.com/v1.0/organization', {
             method: 'get',
             headers: {
-              'Accept': 'application/json',
+              Accept: 'application/json',
               'User-Agent': 'wavebox',
-              'Authorization': `Bearer ${auth.access_token}`
+              Authorization: `Bearer ${auth.access_token}`
             }
           }))
           .then((res) => {
@@ -142,7 +142,7 @@ class MicrosoftHTTP {
       .then(() => this._fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
         method: 'post',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: querystring.stringify(body)
@@ -168,9 +168,9 @@ class MicrosoftHTTP {
       .then(() => this._fetch('https://graph.microsoft.com/v1.0/me', {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -190,7 +190,7 @@ class MicrosoftHTTP {
         method: 'get',
         headers: {
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => {
@@ -276,9 +276,9 @@ class MicrosoftHTTP {
       .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}`, {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -296,19 +296,19 @@ class MicrosoftHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     const query = querystring.stringify({
-      '$select': 'Id,Subject,BodyPreview,ReceivedDateTime,from,webLink',
-      '$filter': 'IsRead eq false',
-      '$orderby': 'ReceivedDateTime DESC',
-      '$top': limit
+      $select: 'Id,Subject,BodyPreview,ReceivedDateTime,from,webLink',
+      $filter: 'IsRead eq false',
+      $orderby: 'ReceivedDateTime DESC',
+      $top: limit
     })
 
     return Promise.resolve()
       .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}/messages?${query}`, {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -343,18 +343,18 @@ class MicrosoftHTTP {
   */
   static fetchFocusedUnreadCount (auth, limit = 1000) {
     const query = querystring.stringify({
-      '$select': 'Id',
-      '$filter': `IsRead eq false and InferenceClassification eq 'focused'`,
-      '$top': limit
+      $select: 'Id',
+      $filter: `IsRead eq false and InferenceClassification eq 'focused'`,
+      $top: limit
     })
 
     return Promise.resolve()
       .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -370,19 +370,19 @@ class MicrosoftHTTP {
   */
   static fetchFocusedUnreadMessages (auth, limit = 10) {
     const query = querystring.stringify({
-      '$select': 'Id,Subject,BodyPreview,ReceivedDateTime,from,webLink,InferenceClassification',
-      '$filter': 'IsRead eq false',
-      '$orderby': 'ReceivedDateTime DESC',
-      '$top': limit
+      $select: 'Id,Subject,BodyPreview,ReceivedDateTime,from,webLink,InferenceClassification',
+      $filter: 'IsRead eq false',
+      $orderby: 'ReceivedDateTime DESC',
+      $top: limit
     })
 
     return Promise.resolve()
       .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -405,9 +405,9 @@ class MicrosoftHTTP {
       .then(() => this._fetch(`https://graph.microsoft.com/beta/me/messages/${messageId}`, {
         method: 'PATCH',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`,
+          Authorization: `Bearer ${auth}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -434,9 +434,9 @@ class MicrosoftHTTP {
       .then(() => this._fetch('https://graph.microsoft.com/v1.0/me/drive', {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -444,9 +444,9 @@ class MicrosoftHTTP {
       .then((res) => this._fetch(`https://graph.microsoft.com/v1.0/drives/${res.id}/root`, {
         method: 'get',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
+          Authorization: `Bearer ${auth}`
         }
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))

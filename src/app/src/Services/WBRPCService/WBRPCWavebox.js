@@ -6,8 +6,6 @@ import {
   WBRPC_RUN_SERVICE_COMMAND,
   WBRPC_GET_UPDATER_CONFIG,
   WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
-  WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
-  WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
   WBRPC_OPEN_EXTERNAL,
   WBRPC_SHOW_ITEM_IN_FOLDER,
   WBRPC_OPEN_ITEM,
@@ -19,12 +17,9 @@ import LinkOpener from 'LinkOpener'
 import AppUpdater from 'AppUpdater'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import Platform from 'shared/Platform'
-import { URL } from 'url'
 import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { userStore } from 'stores/user'
-import { CRExtensionManager } from 'Extensions/Chrome'
-import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import os from 'os'
 import IEngine from 'IEngine'
 
@@ -45,8 +40,6 @@ class WBRPCWavebox {
 
     // Preload
     ipcMain.on(WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, this._handleSyncGetGuestPreloadInfo)
-    ipcMain.on(WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, this._handleSyncGetExtensionContentScriptPreloadInfo)
-    ipcMain.on(WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, this._handleSyncGetExtensionHostedPreloadInfo)
 
     // Links & opening
     ipcMain.on(WBRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
@@ -101,7 +94,6 @@ class WBRPCWavebox {
       evt.returnValue = {
         launchSettings: settingsStore.getState().launchSettingsJS(),
         launchUserSettings: userStore.getState().launchSettingsJS(),
-        extensions: CRExtensionManager.runtimeHandler.getAllContentScriptGuestConfigs(),
         initialHostUrl: !currentUrl || currentUrl === 'about:blank' ? ElectronWebContents.getHostUrl(evt.sender) : currentUrl,
         notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender, currentUrl),
         paths: {},
@@ -113,84 +105,6 @@ class WBRPCWavebox {
     } catch (ex) {
       console.error(`Failed to respond to "${WBRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
       evt.returnValue = {}
-    }
-  }
-
-  /**
-  * Synchronously gets the extension runtime config for a contentscript
-  * @param evt: the event that fired
-  * @param extensionId: the id of the extension
-  */
-  _handleSyncGetExtensionContentScriptPreloadInfo = (evt, extensionId) => {
-    if (!this[privConnected].has(evt.sender.id)) {
-      evt.returnValue = null
-      return
-    }
-
-    try {
-      const hasRuntime = CRExtensionManager.runtimeHandler.hasRuntime(extensionId)
-      if (hasRuntime) {
-        evt.returnValue = {
-          extensionId: extensionId,
-          hasRuntime: true,
-          runtimeConfig: CRExtensionManager.runtimeHandler.getContentScriptRuntimeConfig(extensionId),
-          isBackgroundPage: evt.sender.id === CRExtensionManager.runtimeHandler.getBackgroundPageId(extensionId)
-        }
-      } else {
-        evt.returnValue = {
-          extensionId: extensionId,
-          hasRuntime: false
-        }
-      }
-    } catch (ex) {
-      console.error(`Failed to respond to "${WBRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
-      evt.returnValue = null
-    }
-  }
-
-  /**
-  * Synchronously gets the extension runtime config for a hosted extension
-  * @param evt: the event that fired
-  * @param extensionId: the id of the extension
-  */
-  _handleSyncGetExtensionHostedPreloadInfo = (evt, extensionId) => {
-    if (!this[privConnected].has(evt.sender.id)) {
-      evt.returnValue = null
-      return
-    }
-
-    // See note in _handleSyncGetInitialHostUrl about the url
-    try {
-      const wcUrl = evt.sender.getURL()
-      const parsedUrl = new URL(!wcUrl || wcUrl === 'about:blank'
-        ? ElectronWebContents.getHostUrl(evt.sender)
-        : wcUrl
-      )
-      if (parsedUrl.protocol !== `${CR_EXTENSION_PROTOCOL}:` || parsedUrl.hostname !== extensionId) {
-        // Something's not quite right in this case
-        evt.returnValue = {
-          extensionId: extensionId,
-          hasRuntime: false
-        }
-      } else {
-        const hasRuntime = CRExtensionManager.runtimeHandler.hasRuntime(extensionId)
-        if (hasRuntime) {
-          evt.returnValue = {
-            extensionId: extensionId,
-            hasRuntime: true,
-            runtimeConfig: CRExtensionManager.runtimeHandler.getContentScriptRuntimeConfig(extensionId),
-            isBackgroundPage: evt.sender.id === CRExtensionManager.runtimeHandler.getBackgroundPageId(extensionId)
-          }
-        } else {
-          evt.returnValue = {
-            extensionId: extensionId,
-            hasRuntime: false
-          }
-        }
-      }
-    } catch (ex) {
-      console.error(`Failed to respond to "${WBRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
-      evt.returnValue = null
     }
   }
 

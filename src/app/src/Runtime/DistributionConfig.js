@@ -4,15 +4,15 @@ import getos from 'getos'
 import Platform from 'shared/Platform'
 
 const LINUX_PACKAGE_MANGER_BY_OS_NAME = Object.freeze({
-  'Fedora': Platform.PACKAGE_MANAGERS.YUM,
-  'Centos': Platform.PACKAGE_MANAGERS.YUM,
+  Fedora: Platform.PACKAGE_MANAGERS.YUM,
+  Centos: Platform.PACKAGE_MANAGERS.YUM,
   'SUSE Linux': Platform.PACKAGE_MANAGERS.ZYPPER,
   'Ubuntu Linux': Platform.PACKAGE_MANAGERS.APT,
-  'IYCC': Platform.PACKAGE_MANAGERS.APT,
+  IYCC: Platform.PACKAGE_MANAGERS.APT,
   'Linux Mint': Platform.PACKAGE_MANAGERS.APT,
   'elementary OS': Platform.PACKAGE_MANAGERS.APT,
-  'Debian': Platform.PACKAGE_MANAGERS.APT,
-  'Raspbian': Platform.PACKAGE_MANAGERS.APT
+  Debian: Platform.PACKAGE_MANAGERS.APT,
+  Raspbian: Platform.PACKAGE_MANAGERS.APT
 })
 
 const privDistributionConfig = Symbol('privDistributionConfig')
@@ -46,8 +46,11 @@ class DistributionConfig {
   /* ****************************************************************************/
 
   get installMethod () { return this._loadDistributionConfig().installMethod || 'unknown' }
+
   get isSnapInstall () { return process.platform === 'linux' && this.installMethod === 'snap' }
+
   get isDebInstall () { return process.platform === 'linux' && this.installMethod === 'deb' }
+
   get PACKAGE_MANAGERS () { return Platform.PACKAGE_MANAGERS }
 
   /* **************************************************************************/

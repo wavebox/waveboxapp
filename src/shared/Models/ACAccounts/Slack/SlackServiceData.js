@@ -6,9 +6,13 @@ class SlackServiceData extends CoreACServiceData {
   /* **************************************************************************/
 
   get slackUnreadChannelInfo () { return this._value_('slackUnreadChannelInfo', {}) }
+
   get slackUnreadGroupInfo () { return this._value_('slackUnreadGroupInfo', {}) }
+
   get slackUnreadMPIMInfo () { return this._value_('slackUnreadMPIMInfo', {}) }
+
   get slackUnreadIMInfo () { return this._value_('slackUnreadIMInfo', {}) }
+
   get slackUnreadThreadInfo () { return this._value_('slackUnreadThreadInfo', {}) }
 
   /* **************************************************************************/

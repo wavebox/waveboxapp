@@ -54,6 +54,7 @@ class SpellcheckProvider {
   /* **************************************************************************/
 
   get language () { return this[privLanguage] }
+
   set language (l) {
     if (l === this[privLanguage]) { return }
     // Teardown
@@ -68,16 +69,20 @@ class SpellcheckProvider {
       this._createHunspell()
     }
   }
+
   get isAvailable () {
     if (!this[privHunspell]) { return false }
     if (!this[privHunspell].loaded) { return false }
     return true
   }
+
   get isLoading () {
     if (!this.language) { return false }
     return !this.isAvailable
   }
+
   get dictionaryProvider () { return this[privDictionaryProvider] }
+
   get userWords () { return Array.from(this[privUserWords]) }
 
   /* **************************************************************************/

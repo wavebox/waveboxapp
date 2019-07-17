@@ -145,23 +145,39 @@
     /* **************************************************************************/
 
     get actions () { return this[privOptions].actions }
+
     get badge () { return this[privOptions].badge }
+
     get body () { return this[privOptions].body }
+
     get data () { return this[privOptions].data }
+
     get dir () { return this[privOptions].dir }
+
     get lang () { return this[privOptions].lang }
+
     get tag () { return this[privOptions].tag }
+
     get icon () { return this[privOptions].icon }
+
     get image () { return this[privOptions].image }
+
     get requireInteraction () { return this[privOptions].requireInteraction }
+
     get silent () { return this[privOptions].silent }
+
     get timestamp () { return this[privOptions].timestamp === undefined ? this[privCreated] : this[privOptions].timestamp }
+
     get title () { return this[privTitle] }
+
     get vibrate () { return this[privOptions].vibrate ? [1] : [0] }
 
     get onclick () { return this[privOnClick] }
+
     set onclick (v) { this[privOnClick] = v }
+
     get onerror () { return this[privOnError] }
+
     set onerror (v) { this[privOnError] = v }
 
     /* **************************************************************************/

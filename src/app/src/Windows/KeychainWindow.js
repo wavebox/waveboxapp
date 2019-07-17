@@ -174,7 +174,9 @@ class KeychainWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   focusedTabId () { return null }
+
   tabIds () { return [] }
+
   tabMetaInfo (tabId) { return undefined }
 
   /**

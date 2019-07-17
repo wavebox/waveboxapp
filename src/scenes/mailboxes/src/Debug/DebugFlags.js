@@ -21,6 +21,7 @@ class DebugFlags {
   /* **************************************************************************/
 
   get slackLogUnreadCounts () { return this.getValue('slackLogUnreadCounts', false) }
+
   get slackLogWSMessages () { return this.getValue('slackLogWSMessages', false) }
 
   /* **************************************************************************/
@@ -34,6 +35,7 @@ class DebugFlags {
   /* **************************************************************************/
 
   get googleLogServerPings () { return this.getValue('googleLogServerPings', false) }
+
   get googleLogUnreadMessages () { return this.getValue('googleLogUnreadMessages', false) }
 }
 

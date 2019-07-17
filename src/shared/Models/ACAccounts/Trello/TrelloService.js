@@ -12,6 +12,7 @@ class TrelloService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Trello' }
+
   static get humanizedLogos () {
     return [
       'trello/logo_32px.png',
@@ -22,7 +23,9 @@ class TrelloService extends CoreACService {
       'trello/logo_600px.png'
     ]
   }
+
   static get humanizedUnreadItemType () { return 'notification' }
+
   static get humanizedColor () { return 'rgb(33, 108, 167)' }
 
   /* **************************************************************************/
@@ -40,13 +43,21 @@ class TrelloService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return true }
+
   get supportsTrayMessages () { return true }
+
   get supportsSyncedDiffNotifications () { return true }
+
   get supportsNativeNotifications () { return true }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return true }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return 'com.trello' }
 
   /* **************************************************************************/

@@ -12,7 +12,9 @@ class GoogleDocsService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Docs' }
+
   static get humanizedTypeShort () { return 'Docs' }
+
   static get humanizedLogos () {
     return [
       'google/logo_docs_32px.png',
@@ -22,6 +24,7 @@ class GoogleDocsService extends CoreACService {
       'google/logo_docs_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(79, 142, 245)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleDocsService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

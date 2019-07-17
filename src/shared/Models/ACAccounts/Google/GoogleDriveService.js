@@ -12,7 +12,9 @@ class GoogleDriveService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Drive' }
+
   static get humanizedTypeShit () { return 'Drive' }
+
   static get humanizedLogos () {
     return [
       'google/logo_drive_32px.png',
@@ -22,6 +24,7 @@ class GoogleDriveService extends CoreACService {
       'google/logo_drive_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(75, 163, 97)' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class GoogleDriveService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

@@ -45,6 +45,7 @@ class WebView extends React.Component {
   }
 
   static REACT_WEBVIEW_EVENTS = REACT_WEBVIEW_EVENTS
+
   static WEBVIEW_METHODS = WEBVIEW_METHODS
 
   /* **************************************************************************/

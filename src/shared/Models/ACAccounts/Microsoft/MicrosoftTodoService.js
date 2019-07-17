@@ -12,7 +12,9 @@ class MicrosoftTodoService extends MicrosoftService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Microsoft Todo' }
+
   static get humanizedTypeShort () { return 'Todo' }
+
   static get humanizedLogos () {
     return [
       'microsoft/logo_todo_32px.png',
@@ -22,6 +24,7 @@ class MicrosoftTodoService extends MicrosoftService {
       'microsoft/logo_todo_128px.png'
     ]
   }
+
   static get humanizedColor () { return '#507CEF' }
 
   /* **************************************************************************/
@@ -29,13 +32,21 @@ class MicrosoftTodoService extends MicrosoftService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
@@ -47,6 +58,7 @@ class MicrosoftTodoService extends MicrosoftService {
   // In addition to this "todo."" only seems to work for outlook and "to-do." only
   // seems to work for O365
   get personalUrl () { return 'https://todo.microsoft.com/*' }
+
   get corporateUrl () { return 'https://to-do.microsoft.com/*' }
 }
 

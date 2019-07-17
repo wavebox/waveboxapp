@@ -30,7 +30,9 @@ class AutofillService {
   /* ****************************************************************************/
 
   get isLibraryLoaded () { return !!Keytar }
+
   get isEnabled () { return settingsStore.getState().app.enableAutofillService }
+
   get isAvailable () { return this.isLibraryLoaded && this.isEnabled }
 
   /* ****************************************************************************/

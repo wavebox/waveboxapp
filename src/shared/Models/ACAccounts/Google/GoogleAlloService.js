@@ -12,7 +12,9 @@ class GoogleAlloService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Allo' }
+
   static get humanizedTypeShort () { return 'Allo' }
+
   static get humanizedLogos () {
     return [
       'google/logo_allo_32px.png',
@@ -22,6 +24,7 @@ class GoogleAlloService extends CoreACService {
       'google/logo_allo_128px.png'
     ]
   }
+
   static get humanizedColor () { return '#fbbc05' }
 
   /* **************************************************************************/
@@ -43,13 +46,21 @@ class GoogleAlloService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return true }
+
   get supportsTrayMessages () { return true }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return true }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

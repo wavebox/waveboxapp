@@ -125,17 +125,6 @@ class WindowOpeningHandler {
       }
     }
 
-    // Check installed extensions to see if they overwrite the behaviour
-    let extensionRule
-    try {
-      extensionRule = WindowOpeningEngine.getExtensionRuleForWindowOpen(webContentsId, targetUrl, disposition)
-      if (extensionRule.match) {
-        openRule = extensionRule
-      }
-    } catch (ex) {
-      console.error(`Failed to process extension window opening rules. Continuing with "${openRule.mode}" behaviour...`, ex)
-    }
-
     // Look to see if the user wants to overwrite the behaviour
     const preAppCommandOpenUrl = this._getNewWindowUrlFromMode(openRule.mode, targetUrl, provisionalTargetUrl)
     if (!openRule.ignoreUserCommandKeyModifier) {

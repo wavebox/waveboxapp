@@ -83,9 +83,13 @@ class ACContainerSAPI extends Model {
   /* **************************************************************************/
 
   getSupportsUnreadActivity (defaultValue) { return this._value_('supportsUnreadActivity', defaultValue) }
+
   getSupportsUnreadCount (defaultValue) { return this._value_('supportsUnreadCount', defaultValue) }
+
   getSupportsTrayMessages (defaultValue) { return this._value_('supportsTrayMessages', defaultValue) }
+
   getSupportsGuestNotifications (defaultValue) { return this._value_('supportsGuestNotifications', defaultValue) }
+
   getSupportsWBGAPI (defaultValue) { return this._value_('supportsWBGAPI', defaultValue) }
 
   /* **************************************************************************/
@@ -131,6 +135,7 @@ class ACContainerSAPI extends Model {
   /* **************************************************************************/
 
   getUseAsyncAlerts (defaultValue) { return this._value_('useAsyncAlerts', defaultValue) }
+
   getHtml5NotificationsGenerateUnreadActivity (defaultValue) { return this._value_('html5NotificationsGenerateUnreadActivity', defaultValue) }
 
   /* **************************************************************************/
@@ -138,7 +143,9 @@ class ACContainerSAPI extends Model {
   /* **************************************************************************/
 
   getDocumentTitleHasUnread (defaultValue) { return this._value_('documentTitleHasUnread', defaultValue) }
+
   getDocumentTitleUnreadBlinks (defaultValue) { return this._value_('documentTitleUnreadBlinks', defaultValue) }
+
   getFaviconUnreadActivityRegexp (defaultValue) { return this._value_('faviconUnreadActivityRegexp', defaultValue) }
 
   /* **************************************************************************/

@@ -22,10 +22,13 @@ export default class BrowserView extends React.Component {
     searchTerm: PropTypes.string,
     onPermissionRequestsChanged: PropTypes.func
   }
+
   static defaultProps = {
     searchId: `${Math.random()}`
   }
+
   static REACT_WEBVIEW_EVENTS = WebView.REACT_WEBVIEW_EVENTS
+
   static WEBVIEW_METHODS = [].concat(WebView.WEBVIEW_METHODS, ['getProcessMemoryInfo', 'sendWithResponse', 'getWebviewNode', 'isWebviewAttached'])
 
   /* **************************************************************************/

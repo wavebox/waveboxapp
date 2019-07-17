@@ -6,7 +6,9 @@ class MicrosoftMailServiceData extends CoreACServiceData {
   /* **************************************************************************/
 
   get unreadCount () { return this._value_('unreadCount', 0) }
+
   get unreadMessages () { return this._value_('unreadMessages', []) }
+
   get trayMessages () {
     return this.unreadMessages.map((message) => {
       const senderName = ((message.from || {}).emailAddress || {}).name
@@ -28,6 +30,7 @@ class MicrosoftMailServiceData extends CoreACServiceData {
       }
     })
   }
+
   get notifications () {
     return this.unreadMessages.map((message) => {
       const senderInfo = ((message.from || {}).emailAddress || {})

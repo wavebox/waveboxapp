@@ -57,11 +57,9 @@ module.exports = function (env = {}) {
     traypopout: require('./src/scenes/traypopout/webpack.config.js'),
     content: require('./src/scenes/content/webpack.config.js'),
     mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
-    print: require('./src/scenes/print/webpack.config.js'),
     monitor: require('./src/scenes/monitor/webpack.config.js'),
     guest: require('./src/guest/webpack.config.js'),
-    guestApi: require('./src/guestApi/webpack.config.js'),
-    crextensionApi: require('./src/crextensionApi/webpack.config.js')
+    guestApi: require('./src/guestApi/webpack.config.js')
   }
 
   // Tasks

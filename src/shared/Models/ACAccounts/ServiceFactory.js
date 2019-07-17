@@ -105,6 +105,7 @@ class ServiceFactory {
     const rec = MAPPING[type]
     return rec ? rec[0] : undefined
   }
+
   /**
   * Modelizes a service
   * @param data: the service data

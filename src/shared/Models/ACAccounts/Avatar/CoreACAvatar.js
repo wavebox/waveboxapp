@@ -12,12 +12,19 @@ class CoreACAvatar extends Model {
   /* **************************************************************************/
 
   get color () { return this._value_('color', '#FFFFFF') }
+
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
+
   get avatarCharacterDisplay () { return this._value_('avatarCharacterDisplay', undefined) }
+
   get rawAvatar () { return this._value_('rawAvatar', undefined) }
+
   get hasAvatar () { return !!(this.rawAvatar && (this.rawAvatar.uri || this.rawAvatar.id)) }
+
   get rawServiceIcon () { return this._value_('rawServiceIcon', undefined) }
+
   get altRawServiceIcons () { return this._value_('altRawServiceIcons', []) }
+
   get hasServiceIcon () { return !!(this.rawServiceIcon && (this.rawServiceIcon.uri || this.rawServiceIcon.id)) }
 
   /**

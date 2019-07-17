@@ -54,6 +54,7 @@ class Spellchecker {
   /* **************************************************************************/
 
   get isRunningLocally () { return !!this[privProvider] }
+
   get hasStartedInit () { return this[privHasStartedInit] }
 
   /* **************************************************************************/

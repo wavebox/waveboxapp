@@ -153,7 +153,7 @@ class MailboxesWindowTouchBarProvider {
         Promise.resolve()
           .then(() => fetch(iconUrl, {
             headers: {
-              'accept': '*/*',
+              accept: '*/*',
               'accept-encoding': 'gzip, deflate, br',
               'accept-language': app.getLocale(),
               'upgrade-insecure-requests': '1',

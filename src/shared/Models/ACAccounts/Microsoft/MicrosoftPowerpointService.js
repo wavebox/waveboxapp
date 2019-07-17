@@ -12,6 +12,7 @@ class MicrosoftPowerpointService extends MicrosoftService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'PowerPoint' }
+
   static get humanizedLogos () {
     return [
       'microsoft/logo_slides_32px.png',
@@ -21,6 +22,7 @@ class MicrosoftPowerpointService extends MicrosoftService {
       'microsoft/logo_slides_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(185, 71, 35)' }
 
   /* **************************************************************************/
@@ -28,13 +30,21 @@ class MicrosoftPowerpointService extends MicrosoftService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
@@ -42,7 +52,9 @@ class MicrosoftPowerpointService extends MicrosoftService {
   /* **************************************************************************/
 
   get personalUrl () { return this.url }
+
   get corporateUrl () { return this.url }
+
   get url () { return 'https://office.live.com/start/PowerPoint.aspx' }
 }
 

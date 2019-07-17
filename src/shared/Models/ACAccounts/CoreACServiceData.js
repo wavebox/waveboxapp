@@ -31,6 +31,7 @@ class CoreACServiceData extends CoreACModel {
   /* **************************************************************************/
 
   get parentId () { return this.id }
+
   get parentType () { return this._value_('parentType') }
 
   /* **************************************************************************/
@@ -38,8 +39,11 @@ class CoreACServiceData extends CoreACModel {
   /* **************************************************************************/
 
   get url () { return this._value_('url', undefined) }
+
   get documentTitle () { return this._value_('documentTitle', undefined) }
+
   get documentTheme () { return this._value_('documentTheme', undefined) }
+
   get favicons () {
     const raw = this._value_('favicons', [])
     return raw
@@ -49,6 +53,7 @@ class CoreACServiceData extends CoreACModel {
         return base.endsWith('.png') || base.endsWith('.ico') || base.endsWith('.jpg') || base.endsWith('.gif')
       })
   }
+
   get largestFavicon () {
     const favicons = this.favicons
     return favicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
@@ -65,8 +70,11 @@ class CoreACServiceData extends CoreACModel {
   /* **************************************************************************/
 
   get unreadCount () { return 0 }
+
   get hasUnreadActivity () { return false }
+
   get trayMessages () { return [] }
+
   get notifications () { return [] }
 
   /* **************************************************************************/
@@ -76,9 +84,11 @@ class CoreACServiceData extends CoreACModel {
   get wbgapiHasUnreadActivity () {
     return this._valueOfType_('::wbgapi:hasUnreadActivity', 'boolean', false)
   }
+
   get wbgapiUnreadCount () {
     return parseInt(this._valueOfType_('::wbgapi:unreadCount', 'number', 0))
   }
+
   get wbgapiTrayMessages () {
     return this._valueOfType_('::wbgapi:trayMessages', 'array', [])
   }

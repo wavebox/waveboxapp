@@ -58,8 +58,11 @@ class MonitorWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   focusedTabId () { return null }
+
   tabIds () { return [] }
+
   tabMetaInfo (tabId) { return undefined }
+
   focusedEditableWebContents () { return this.window.webContents }
 
   /**

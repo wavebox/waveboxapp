@@ -6,7 +6,6 @@ import { settingsStore, settingsActions } from 'stores/settings'
 import { updaterStore, updaterActions } from 'stores/updater'
 import { userStore, userActions } from 'stores/user'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
-import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { platformStore, platformActions } from 'stores/platform'
 import { guestStore, guestActions } from 'stores/guest'
 import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
@@ -71,8 +70,6 @@ settingsStore.getState()
 settingsActions.load()
 updaterStore.getState()
 updaterActions.load()
-crextensionStore.getState()
-crextensionActions.load()
 platformStore.getState()
 platformActions.load()
 emblinkStore.getState()

@@ -8,7 +8,9 @@ class IEngineAuthWindowApi extends EventEmitter {
   /* **************************************************************************/
 
   get appVersion () { return pkg.version }
+
   get platform () { return process.platform }
+
   get libs () { return IEngineApiLibs }
 
   /* **************************************************************************/
@@ -22,6 +24,7 @@ class IEngineAuthWindowApi extends EventEmitter {
   /* **************************************************************************/
 
   authSuccess (auth) { this.emit('auth-success', auth) }
+
   authFailure (ex) { this.emit('auth-failure') }
 }
 

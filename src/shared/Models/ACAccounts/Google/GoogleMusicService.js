@@ -12,7 +12,9 @@ class GoogleMusicService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Google Play Music' }
+
   static get humanizedTypeShort () { return 'Music' }
+
   static get humanizedLogos () {
     return [
       'google/logo_music_32px.png',
@@ -22,6 +24,7 @@ class GoogleMusicService extends CoreACService {
       'google/logo_music_128px.png'
     ]
   }
+
   static get humanizedColor () { return 'rgb(237, 72, 47)' }
 
   /* **************************************************************************/
@@ -43,13 +46,21 @@ class GoogleMusicService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return false }
+
   get supportsUnreadCount () { return false }
+
   get supportsTrayMessages () { return false }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return false }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return false }
+
   get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/

@@ -15,6 +15,7 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Container' }
+
   static get humanizedLogos () { return [] }
 
   /* **************************************************************************/
@@ -35,9 +36,13 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get iengineAlias () { return `${this.type}:${this.containerId}` }
+
   get container () { return this.__container__ }
+
   get containerSAPI () { return this.__containerSAPI__ }
+
   get containerId () { return this._value_('containerId', undefined) }
+
   get hasSAPIConfig () { return this.containerSAPI.hasConfig }
 
   /* **************************************************************************/
@@ -45,14 +50,23 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return this.containerSAPI.getSupportsUnreadActivity(this.container.supportsUnreadActivity) }
+
   get supportsUnreadCount () { return this.containerSAPI.getSupportsUnreadCount(this.container.supportsUnreadCount) }
+
   get supportsTrayMessages () { return this.containerSAPI.getSupportsTrayMessages(this.container.supportsTrayMessages) }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return this.containerSAPI.getSupportsGuestNotifications(this.container.supportsGuestNotifications) }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return this.containerSAPI.getSupportsWBGAPI(this.container.supportsWBGAPI) }
+
   get supportedAuthNamespace () { return undefined }
+
   get similarityNamespaceId () { return `${this.type}:${this.containerId}` }
 
   /* **************************************************************************/
@@ -60,9 +74,13 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get humanizedType () { return this.container.name }
+
   get humanizedTypeShort () { return this.container.name }
+
   get humanizedLogos () { return this.container.logos }
+
   get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
+
   get humanizedColor () { return this.container.defaultColor }
 
   humanizedLogoAtSize (size) { return this.getLogoAtSize(this.humanizedLogos, size) }
@@ -78,6 +96,7 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', this.container.hasNavigationToolbarDefault) }
+
   get userDisplayName () { return this._value_('displayName', this.container.name) }
 
   /* **************************************************************************/
@@ -85,10 +104,15 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return this.container.getUrlWithConfig(this.urlOverwrite, this.urlSubdomain) }
+
   get reloadBehaviour () { return CoreACService.RELOAD_BEHAVIOURS[this.container.reloadBehaviour] || super.reloadBehaviour }
+
   get urlSubdomain () { return this._value_('urlSubdomain', '') }
+
   get urlOverwrite () { return this._value_('urlOverwrite', '') }
+
   get useAsyncAlerts () { return this.containerSAPI.getUseAsyncAlerts(this.container.useAsyncAlerts) }
+
   get html5NotificationsGenerateUnreadActivity () { return this.containerSAPI.getHtml5NotificationsGenerateUnreadActivity(this.container.html5NotificationsGenerateUnreadActivity) }
 
   /* **************************************************************************/
@@ -96,11 +120,17 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get badgeColor () { return this._value_('badgeColor', 'rgba(238, 54, 55, 0.95)') }
+
   get showBadgeCount () { return this._value_('showBadgeCount', this.container.showBadgeCountDefault) }
+
   get showBadgeCountInApp () { return this._value_('showBadgeCountInApp', this.container.showBadgeCountInAppDefault) }
+
   get showBadgeActivityInApp () { return this._value_('showBadgeActivityInApp', this.container.showBadgeActivityInAppDefault) }
+
   get documentTitleHasUnread () { return this.containerSAPI.getDocumentTitleHasUnread(this.container.documentTitleHasUnread) }
+
   get documentTitleUnreadBlinks () { return this.containerSAPI.getDocumentTitleUnreadBlinks(this.container.documentTitleUnreadBlinks) }
+
   get faviconUnreadActivityRegexp () { return this.containerSAPI.getFaviconUnreadActivityRegexp(this.container.faviconUnreadActivityRegexp) }
 
   /* **************************************************************************/

@@ -122,9 +122,13 @@ class TrayPopout {
   /* ****************************************************************************/
 
   get isLoaded () { return this[privWindow] && !this[privWindow].isDestroyed() }
+
   get webContentsId () { return this.isLoaded ? this[privWindow].webContents.id : undefined }
+
   get isVisible () { return this.isLoaded && this[privWindow].isVisible() && !this[privWindow].isMinimized() }
+
   get isWindowedMode () { return this[privIsWindowMode] }
+
   get isFocused () { return this.isLoaded && this[privWindow].isFocused() }
 
   /* ****************************************************************************/

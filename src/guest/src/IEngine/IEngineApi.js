@@ -46,8 +46,11 @@ class IEngineApi extends EventEmitter {
   /* **************************************************************************/
 
   get appVersion () { return pkg.version }
+
   get platform () { return LiveConfig.platform }
+
   get serviceId () { return this[privServiceId] }
+
   get LIBS () { return LIBS }
 
   /* **************************************************************************/

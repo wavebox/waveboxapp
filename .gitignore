@@ -1,6 +1,7 @@
 node_modules
 bin
 dist
+resources
 .DS_Store
 .caches
 .localscripts

@@ -94,6 +94,7 @@ class WBRPCBrowserWindow {
   _handleMaximize = (evt) => {
     evt.sender.webContents.send(WBRPC_BWE_MAXIMIZE, evt.sender.id, evt.sender.webContents.id)
   }
+
   _handleUnmaximize = (evt) => {
     evt.sender.webContents.send(WBRPC_BWE_UNMAXIMIZE, evt.sender.id, evt.sender.webContents.id)
   }

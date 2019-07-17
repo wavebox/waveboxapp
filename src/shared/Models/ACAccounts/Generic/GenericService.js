@@ -12,6 +12,7 @@ class GenericService extends CoreACService {
   /* **************************************************************************/
 
   static get humanizedType () { return 'Weblink' }
+
   static get humanizedLogos () {
     return [
       'generic/logo_32px.png',
@@ -21,7 +22,9 @@ class GenericService extends CoreACService {
       'generic/logo_128px.png'
     ]
   }
+
   static get humanizedUnreadItemType () { return 'notification' }
+
   static get humanizedColor () { return '#2ecc71' }
 
   /* **************************************************************************/
@@ -29,14 +32,23 @@ class GenericService extends CoreACService {
   /* **************************************************************************/
 
   get supportsUnreadActivity () { return true }
+
   get supportsUnreadCount () { return this.supportsWBGAPI }
+
   get supportsTrayMessages () { return this.supportsWBGAPI }
+
   get supportsSyncedDiffNotifications () { return false }
+
   get supportsNativeNotifications () { return false }
+
   get supportsGuestNotifications () { return true }
+
   get supportsSyncWhenSleeping () { return false }
+
   get supportsWBGAPI () { return this._value_('supportsWBGAPI', false) }
+
   get supportedAuthNamespace () { return undefined }
+
   get similarityNamespaceId () { return `${this.type}:_:${this.url}` }
 
   /* **************************************************************************/
@@ -44,6 +56,7 @@ class GenericService extends CoreACService {
   /* **************************************************************************/
 
   get usePageThemeAsColor () { return this._value_('usePageThemeAsColor', false) }
+
   get usePageTitleAsDisplayName () { return this._value_('usePageTitleAsDisplayName', false) }
 
   /**
@@ -73,7 +86,9 @@ class GenericService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return this._value_('url', 'about:blank') }
+
   get reloadBehaviour () { return CoreACService.RELOAD_BEHAVIOURS.RELOAD }
+
   get restoreLastUrl () { return this._value_('restoreLastUrl', true) }
 }
 

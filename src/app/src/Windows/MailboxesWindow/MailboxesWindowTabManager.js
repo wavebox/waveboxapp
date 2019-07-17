@@ -49,7 +49,9 @@ class MailboxesWindowTabManager {
   get activeTabId () {
     return this.attachedMailboxes.has(this[privActiveTabId]) ? this[privActiveTabId] : undefined
   }
+
   get allWebContentIds () { return Array.from(this.attachedMailboxes.keys()) }
+
   get mailboxesWindow () { return WaveboxWindow.fromWebContentsId(this.webContentsId) }
 
   /* ****************************************************************************/

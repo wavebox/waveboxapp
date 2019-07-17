@@ -54,6 +54,7 @@ class ConcurrencyRec {
   /* **************************************************************************/
 
   get id () { return this[privRecId] }
+
   get stage () { return this[privRecStage] }
 
   /* **************************************************************************/
@@ -140,13 +141,21 @@ class ConcurrencyLock extends EventEmitter {
       return 2
     }
   }
+
   get maxConcurrentLoads () { return this[privMaxConcurrentLoads] }
+
   get hasFreeLockSlot () { return this.loadingCount < this.maxConcurrentLoads }
+
   get waitingRecs () { return Array.from(this[privState].values()).filter((r) => r.stage === STAGES.WAITING) }
+
   get waitingCount () { return this.waitingRecs.length }
+
   get loadingRecs () { return Array.from(this[privState].values()).filter((r) => r.stage === STAGES.LOADING) }
+
   get loadingCount () { return this.loadingRecs.length }
+
   get loadedRecs () { return Array.from(this[privState].values()).filter((r) => r.stage === STAGES.LOADED) }
+
   get loadedCount () { return this.loadedRecs.length }
 
   /* **************************************************************************/

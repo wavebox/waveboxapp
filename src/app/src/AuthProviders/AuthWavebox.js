@@ -7,6 +7,7 @@ import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
 import AuthWindow from 'Windows/AuthWindow'
 import { SessionManager } from 'SessionManager'
 import Resolver from 'Runtime/Resolver'
+import KRXFramework from 'Extensions/KRXFramework'
 
 class AuthWavebox {
   /* ****************************************************************************/
@@ -84,7 +85,7 @@ class AuthWavebox {
           sharedSiteInstances: true,
           partition: partitionId,
           preload: Resolver.guestPreload(),
-          preloadCrx: Resolver.crExtensionApi()
+          preloadCrx: KRXFramework.preloadApiPath()
         }
       })
       const oauthWin = waveboxOauthWin.window

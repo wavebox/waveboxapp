@@ -6,6 +6,7 @@ class GoogleAuth extends CoreACAuth {
   /* **************************************************************************/
 
   static get namespace () { return 'com.google' }
+
   static get humanizedNamespace () { return 'Google' }
 }
 

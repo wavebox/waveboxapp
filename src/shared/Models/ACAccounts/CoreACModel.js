@@ -17,8 +17,11 @@ class CoreACModel extends Model {
   /* **************************************************************************/
 
   get id () { return this.__data__.id }
+
   get changedTime () { return this._value_('changedTime', 0) }
+
   get versionedId () { return `${this.id}:${this.changedTime}` }
+
   get partitionId () { SubclassNotImplementedError('CoreACModel.partitionId') }
 }
 

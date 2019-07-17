@@ -28,7 +28,9 @@ class MigratingStorageBucket {
   /* ****************************************************************************/
 
   get exportName () { return path.basename(this[privPath]) }
+
   get logPath () { return this[privMigrateLogPath] }
+
   get hasDataToImport () { return this[privData] && Object.keys(this[privData]).length }
 
   /* ****************************************************************************/

@@ -32,9 +32,13 @@ class ConnectedTab {
   /* ****************************************************************************/
 
   get tabId () { return this[privTabId] }
+
   get windowType () { return this[privWindowType] }
+
   get serviceId () { return this[privServiceId] }
+
   get hasPending () { return !!this[privPending] }
+
   get trackingId () { return this[privTrackingId] }
 
   /* ****************************************************************************/

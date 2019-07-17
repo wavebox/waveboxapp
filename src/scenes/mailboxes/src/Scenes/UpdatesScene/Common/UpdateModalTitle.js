@@ -27,6 +27,7 @@ class UpdateModalTitle extends React.Component {
     iconClassName: PropTypes.string,
     titleClassName: PropTypes.string
   }
+
   static defaultProps = {
     text: 'Wavebox Updates',
     IconClass: SystemUpdateIcon

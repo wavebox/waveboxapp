@@ -42,9 +42,13 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   static get USER_WINDOW_OPEN_MODES () { return USER_WINDOW_OPEN_MODES }
+
   static get SERVICE_UI_LOCATIONS () { return SERVICE_UI_LOCATIONS }
+
   static get NAVIGATION_BAR_UI_LOCATIONS () { return NAVIGATION_BAR_UI_LOCATIONS }
+
   static get SERVICE_UI_PRIORITY () { return SERVICE_UI_PRIORITY }
+
   static get SIDEBAR_FIRST_SERVICE_PRIORITY () { return SIDEBAR_FIRST_SERVICE_PRIORITY }
 
   /* **************************************************************************/
@@ -153,7 +157,9 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get partitionId () { return `persist:${this.id}` }
+
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
+
   get templateType () { return this._value_('templateType', undefined) }
 
   /* **************************************************************************/
@@ -161,9 +167,13 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get sidebarServices () { return this._value_('sidebarServices', []) }
+
   get toolbarStartServices () { return this._value_('toolbarStartServices', []) }
+
   get toolbarEndServices () { return this._value_('toolbarEndServices', []) }
+
   get serviceUiPriority () { return this._value_('serviceUiPriority', SERVICE_UI_PRIORITY.AUTO) }
+
   get allServices () {
     let priority = this.serviceUiPriority
     if (priority === SERVICE_UI_PRIORITY.AUTO) {
@@ -193,18 +203,23 @@ class ACMailbox extends CoreACModel {
       )
     }
   }
+
   get allServiceCount () {
     return this.toolbarStartServices.length +
     this.toolbarEndServices.length +
     this.sidebarServices.length
   }
+
   get hasServices () {
     return !!this.sidebarServices.length ||
       !!this.toolbarStartServices.length ||
       !!this.toolbarEndServices.length
   }
+
   get hasMultipleServices () { return this.allServiceCount > 1 }
+
   get hasSingleService () { return this.allServiceCount === 1 }
+
   get singleService () { return this.hasSingleService ? this.allServices[0] : undefined }
 
   /**
@@ -279,14 +294,23 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get displayName () { return this._value_('displayName', undefined) }
+
   get showExtendedDispayName () { return this._value_('showExtendedDispayName', true) }
+
   get avatarId () { return this._value_('avatarId', undefined) }
+
   get hasAvatarId () { return !!this.avatarId }
+
   get color () { return this._value_('color', undefined) }
+
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
+
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
+
   get sidebarFirstServicePriority () { return this._value_('sidebarFirstServicePriority', SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL) }
+
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
+
   get navigationBarUiLocation () { return this._value_('navigationBarUiLocation', NAVIGATION_BAR_UI_LOCATIONS.AUTO) }
 
   /* **************************************************************************/
@@ -294,6 +318,7 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get showBadge () { return this._value_('showBadge', true) }
+
   get badgeColor () { return this._value_('badgeColor', 'rgba(238, 54, 55, 0.95)') }
 
   /* **************************************************************************/
@@ -301,6 +326,7 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get useCustomUserAgent () { return this._value_('useCustomUserAgent', false) }
+
   get customUserAgentString () { return this._value_('customUserAgentString', '') }
 
   /* **************************************************************************/
@@ -308,6 +334,7 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get openDriveLinksWithExternalBrowser () { return this._value_('openGoogleDriveLinksWithExternalBrowser', false) }
+
   get userWindowOpenRules () { return this._value_('userWindowOpenRules', []) }
 
   get userNoMatchWindowOpenRule () {
@@ -408,6 +435,7 @@ class ACMailbox extends CoreACModel {
       return []
     }
   }
+
   get hasWindowOpenModeRulesetOverrides () { return this.windowOpenModeOverrideRulesets && this.windowOpenModeOverrideRulesets.length }
 
   get navigateModeOverrideRulesets () {
@@ -427,6 +455,7 @@ class ACMailbox extends CoreACModel {
       return []
     }
   }
+
   get hasNavigateModeOverrideRulesets () { return this.navigateModeOverrideRulesets && this.navigateModeOverrideRulesets.length }
 }
 

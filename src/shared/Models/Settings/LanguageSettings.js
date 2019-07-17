@@ -11,6 +11,7 @@ class LanguageSettings extends Model {
   * @return the paths to add user dictionaries
   */
   static userDictionariesPath (root) { return path.join(root, 'user_dictionaries') }
+
   static get defaultSpellcheckerLanguage () { return 'en_US' }
 
   /* ****************************************************************************/
@@ -18,9 +19,13 @@ class LanguageSettings extends Model {
   /* ****************************************************************************/
 
   get spellcheckerEnabled () { return this._value_('spellcheckerEnabled', true) }
+
   get inProcessSpellchecking () { return this._value_('inProcessSpellchecking', true) }
+
   get spellcheckerLanguage () { return this._value_('spellcheckerLanguage', LanguageSettings.defaultSpellcheckerLanguage) }
+
   get hasSecondarySpellcheckerLanguage () { return this.secondarySpellcheckerLanguage === null }
+
   get secondarySpellcheckerLanguage () { return this._value_('secondarySpellcheckerLanguage', null) }
 }
 

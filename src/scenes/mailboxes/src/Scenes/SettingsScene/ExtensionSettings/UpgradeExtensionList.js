@@ -3,12 +3,12 @@ import React from 'react'
 import { Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import ExtensionListItem from './ExtensionListItem'
-import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import grey from '@material-ui/core/colors/grey'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import KRXFramework from 'Runtime/KRXFramework'
 
 const styles = {
   container: {
@@ -42,12 +42,10 @@ class UpgradeExtensionList extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    crextensionStore.listen(this.extensionUpdated)
     userStore.listen(this.userUpdated)
   }
 
   componentWillUnmount () {
-    crextensionStore.unlisten(this.extensionUpdated)
     userStore.unlisten(this.userUpdated)
   }
 
@@ -57,14 +55,13 @@ class UpgradeExtensionList extends React.Component {
 
   /**
   * Generates the extension ids
-  * @param crextensionState=autoget: the crextension store state
   * @param userState=autoget: the user store state
   * @return a list of extension ids
   */
-  generateExtensionIds (crextensionState = crextensionStore.getState(), userState = userStore.getState()) {
+  generateExtensionIds (userState = userStore.getState()) {
     return userState.supportedExtensionList()
       .filter((ext) => {
-        if (crextensionState.hasExtensionInstalled(ext.id)) { return false }
+        if (KRXFramework.hasExtensionInstalled(ext.id)) { return false }
         if (userState.user.hasExtensionWithLevel(ext.availableTo)) { return false }
         return true
       })
@@ -77,15 +74,9 @@ class UpgradeExtensionList extends React.Component {
     }
   })()
 
-  extensionUpdated = (crextensionState) => {
-    this.setState({
-      extensionIds: this.generateExtensionIds(crextensionState, undefined)
-    })
-  }
-
   userUpdated = (userState) => {
     this.setState({
-      extensionIds: this.generateExtensionIds(undefined, userState)
+      extensionIds: this.generateExtensionIds(userState)
     })
   }
 
