@@ -24,7 +24,7 @@ class WaveboxHTTP {
   */
   static fetchExtensionInfo (clientId) {
     return Promise.resolve()
-      .then(() => window.fetch(`https://waveboxio.com/client/${clientId}/extensions.json?version=${pkg.version}&channel=${pkg.releaseChannel}`))
+      .then(() => window.fetch(`https://waveboxio.com/resources/${clientId}/extensions.json?version=${pkg.version}&channel=${pkg.releaseChannel}`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
   }
