@@ -1,7 +1,7 @@
 {
   "name": "wavebox",
-  "version": "4.10.5",
-  "releaseChannel": "STABLE",
+  "version": "4.10.6",
+  "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "node scripts/rebuildElectron.js",
@@ -105,7 +105,7 @@
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_4_10_2"
+    "ELECTRON_CUSTOM_DIR": "wb_4_10_3"
   },
   "pre-commit": [
     "validate"
