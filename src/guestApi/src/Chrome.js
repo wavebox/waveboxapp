@@ -18,7 +18,10 @@
         RunningState: { CANNOT_RUN: 'cannot_run', READY_TO_RUN: 'ready_to_run', RUNNING: 'running' },
         getDetails: () => null,
         getIsInstalled: () => false,
-        installState: (cb) => cb('not_installed'),
+        installState: (cb) => {
+          const res = 'not_installed'
+          cb(res)
+        },
         isInstalled: false,
         runningState: () => 'cannot_run'
       },
