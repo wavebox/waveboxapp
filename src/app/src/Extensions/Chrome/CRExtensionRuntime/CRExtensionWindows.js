@@ -100,9 +100,8 @@ class CRExtensionWindows {
       .map((bwId) => CRExtensionWindow.dataFromBrowserWindowId(this.extension, bwId))
       .filter((crxw) => windowTypesFilter ? windowTypesFilter.has(crxw.type) : true)
 
-    const windowsWithTabs = !getInfo && !getInfo.populate
-      ? windows
-      : windows.map((crxw) => {
+    const windowsWithTabs = getInfo && getInfo.populate === true
+      ? windows.map((crxw) => {
         if (crxw.tabIds === undefined) { return crxw }
         return {
           ...crxw,
@@ -111,6 +110,7 @@ class CRExtensionWindows {
           })
         }
       })
+      : windows
 
     responseCallback(null, windowsWithTabs)
   }
