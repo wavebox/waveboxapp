@@ -25,24 +25,38 @@ class AuthSlack {
   * @return promise, rejected if could not be found
   */
   _scrapeAuthenticationInfo (webContents) {
+    if (!webContents || webContents.isDestroyed()) {
+      return Promise.reject(new Error('Webcontents no longer active'))
+    }
     return new Promise((resolve, reject) => {
       const js = `(function () {
         if (window.TS && window.TS.boot_data && window.TS.boot_data.api_token) {
-          return window.TS.boot_data.api_token
-        } else if (window.slackDebug && window.slackDebug.activeTeam && window.slackDebug.activeTeam.redux) {
-          const state = window.slackDebug.activeTeam.redux.getState()
-          if (state && state.bootData && state.bootData.api_token) {
-            return state.bootData.api_token
+          return { token: window.TS.boot_data.api_token }
+        } else if (window.slackDebug) {
+          if (window.slackDebug.activeTeam && window.slackDebug.activeTeam.redux) {
+            const state = window.slackDebug.activeTeam.redux.getState()
+            if (state && state.bootData && state.bootData.api_token) {
+              return { token: state.bootData.api_token }
+            }
+          } else {
+            return { retry: true }
           }
         }
-        return undefined
+        return {}
       })()`
-      webContents.executeJavaScript(js, (apiToken) => {
-        if (apiToken) {
-          resolve({ token: apiToken })
-        } else {
-          reject(new Error('Not found'))
+      webContents.executeJavaScript(js, (res) => {
+        if (res) {
+          if (res.token) {
+            return resolve({ token: res.token })
+          } else if (res.retry) {
+            setTimeout(() => {
+              this._scrapeAuthenticationInfo(webContents).then(resolve, reject)
+            }, 500)
+            return
+          }
         }
+
+        reject(new Error('Not found'))
       })
     })
   }
