@@ -32,6 +32,7 @@
         PlatformNaclArch: { ARM: 'arm', MIPS: 'mips', MIPS64: 'mips64', X86_32: 'x86-32', X86_64: 'x86-64' },
         PlatformOs: { ANDROID: 'android', CROS: 'cros', LINUX: 'linux', MAC: 'mac', OPENBSD: 'openbsd', WIN: 'win' },
         RequestUpdateCheckStatus: { NO_UPDATE: 'no_update', THROTTLED: 'throttled', UPDATE_AVAILABLE: 'update_available' },
+        lastError: undefined,
         id: undefined,
         connect: (extensionId, args) => {
           return {
@@ -52,7 +53,15 @@
             }, {})
           }
         },
-        sendMessage: () => {}
+        sendMessage: (id, msg, cb) => {
+          if (id === 'klnjmillfildbbimkincljmfoepfhjjj' || id === 'kmendfapggjehodndflmmgagdbamhnfd' || id === 'lkjlajklkdhaneeelolkfgbpikkgnkpk' || id === 'dlfcjilkjfhdnfiecknlnddkmmiofjbg' || id === 'beknehfpfkghjoafdifaflglpjkojoco') {
+            window.chrome.runtime.lastError = { message: `Could not establish connection. Receiving end does not exist.` }
+            setTimeout(() => {
+              window.chrome.runtime.lastError = undefined
+            })
+            if (cb) { cb() }
+          }
+        }
       },
       csi: () => {
         const timing = oPerformance.timing
