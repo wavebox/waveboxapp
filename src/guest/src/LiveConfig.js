@@ -48,11 +48,7 @@ class LiveConfig {
   get osRelease () { return this.config.osRelease }
   get iEngine () { return this.config.iEngine }
   get hasIEngine () { return !!this.iEngine }
-
-  get shimOutlookPDFPreview () {
-    console.log("HERE", this.config.wireConfigExperiments)
-    return this.config.wireConfigExperiments.shimOutlookPDFPreview !== false
-  }
+  get shimOutlookPDFPreview () { return this.config.wireConfigExperiments.shimOutlookPDFPreview !== false }
 }
 
 export default new LiveConfig()
