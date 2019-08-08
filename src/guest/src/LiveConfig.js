@@ -59,6 +59,7 @@ class LiveConfig {
   get iEngine () { return this.config.iEngine }
 
   get hasIEngine () { return !!this.iEngine }
+  get shimOutlookPDFPreview () { return this.config.wireConfigExperiments.shimOutlookPDFPreview !== false }
 }
 
 export default new LiveConfig()

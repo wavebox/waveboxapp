@@ -203,6 +203,13 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
+     * @return true if we should shim the preview
+     */
+    this.wireConfigShimOutlookPDFPreview = () => {
+      return this.wireConfigExperiments().shimOutlookPDFPreview !== false
+    }
+
+    /**
     * Returns the latest version
     * @return the latest version or undefined
     */

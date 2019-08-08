@@ -94,6 +94,7 @@ class WBRPCWavebox {
       evt.returnValue = {
         launchSettings: settingsStore.getState().launchSettingsJS(),
         launchUserSettings: userStore.getState().launchSettingsJS(),
+        wireConfigExperiments: userStore.getState().wireConfigExperiments(),
         initialHostUrl: !currentUrl || currentUrl === 'about:blank' ? ElectronWebContents.getHostUrl(evt.sender) : currentUrl,
         notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender, currentUrl),
         paths: {},
