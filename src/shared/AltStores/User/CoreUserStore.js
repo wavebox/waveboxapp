@@ -206,7 +206,7 @@ class CoreUserStore extends RemoteStore {
      * @return true if we should shim the preview
      */
     this.wireConfigShimOutlookPDFPreview = () => {
-      return this.wireConfigExperiments().shimOutlookPDFPreview !== false
+      return this.wireConfigExperiments().shimOutlookPDFPreview === true
     }
 
     /**

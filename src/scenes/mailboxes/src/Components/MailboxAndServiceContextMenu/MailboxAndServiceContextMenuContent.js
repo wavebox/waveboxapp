@@ -33,8 +33,8 @@ import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 const ITEM_TYPES = Object.freeze({
   DIVIDER: 'DIVIDER',
   INFO: 'INFO',
-  SERVICE_OPEN_NEW: 'SERVICE_OPEN_NEW',
-  SERVICE_OPEN_NEW_BLANK: 'SERVICE_OPEN_NEW_BLANK',
+  OPEN_NEW: 'OPEN_NEW',
+  OPEN_NEW_BLANK: 'OPEN_NEW_BLANK',
   SERVICE_SLEEP: 'SERVICE_SLEEP',
   MAILBOX_SLEEP: 'MAILBOX_SLEEP',
   SERVICE_RELOAD: 'SERVICE_RELOAD',
@@ -331,10 +331,13 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleOpenInWindow = (evt) => {
+    const { mailboxShimService, service } = this.state
     const { serviceId } = this.props
+    const actionServiceId = serviceId || mailboxShimService
+    const fallbackUrl = (service || {}).url || (accountStore.getState().getService(mailboxShimService) || {}).url
     this.closePopover(evt)
-    const url = accountDispatch.getCurrentUrl(serviceId) || this.state.service.url
-    AccountLinker.openContentWindow(serviceId, url)
+    const url = accountDispatch.getCurrentUrl(actionServiceId) || fallbackUrl
+    AccountLinker.openContentWindow(actionServiceId, url)
   }
 
   /**
@@ -342,9 +345,11 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
   * @param evt: the event that fired
   */
   handleOpenBlankWindow = (evt) => {
+    const { mailboxShimService } = this.state
     const { serviceId } = this.props
+    const actionServiceId = serviceId || mailboxShimService
     this.closePopover(evt)
-    AccountLinker.openContentWindow(serviceId, '')
+    AccountLinker.openContentWindow(actionServiceId, '')
   }
 
   handleAddService = (evt) => {
@@ -450,14 +455,14 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
             } />
           </MenuItem>
         )
-      case ITEM_TYPES.SERVICE_OPEN_NEW:
+      case ITEM_TYPES.OPEN_NEW:
         return (
           <MenuItem onClick={this.handleOpenInWindow}>
             <ListItemIcon><OpenInNewIcon /></ListItemIcon>
             <ListItemText inset primary='Open in New Window' />
           </MenuItem>
         )
-      case ITEM_TYPES.SERVICE_OPEN_NEW_BLANK:
+      case ITEM_TYPES.OPEN_NEW_BLANK:
         return (
           <MenuItem onClick={this.handleOpenBlankWindow}>
             <ListItemIcon><OpenInNewIcon /></ListItemIcon>
@@ -652,7 +657,8 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
       service,
       serviceCount,
       userHasSleepable,
-      serviceType
+      serviceType,
+      mailboxShimService
     } = this.state
     if (!mailbox) { return false }
 
@@ -663,8 +669,8 @@ export default class MailboxAndServiceContextMenuContent extends React.Component
         {/* Info & Util */}
         {this.renderItem(ITEM_TYPES.INFO)}
         {serviceType === SERVICE_TYPES.GOOGLE_INBOX ? this.renderItem(ITEM_TYPES.GOOGLE_INBOX_CONVERT) : undefined}
-        {service ? this.renderItem(ITEM_TYPES.SERVICE_OPEN_NEW) : undefined}
-        {service ? this.renderItem(ITEM_TYPES.SERVICE_OPEN_NEW_BLANK) : undefined}
+        {service || mailboxShimService ? this.renderItem(ITEM_TYPES.OPEN_NEW) : undefined}
+        {service || mailboxShimService ? this.renderItem(ITEM_TYPES.OPEN_NEW_BLANK) : undefined}
 
         {/* Sleep */}
         {userHasSleepable && service ? this.renderItem(ITEM_TYPES.SERVICE_SLEEP) : undefined}
