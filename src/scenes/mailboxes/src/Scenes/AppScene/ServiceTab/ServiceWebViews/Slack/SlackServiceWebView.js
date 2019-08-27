@@ -3,6 +3,7 @@ import React from 'react'
 import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountDispatch, accountStore, accountActions } from 'stores/account'
 import { slackActions } from 'stores/slack'
+import { URL } from 'url'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_NOTIFICATION_CLICK
@@ -96,16 +97,57 @@ export default class SlackServiceWebView extends React.Component {
     if (!this.webviewRef.current) { return }
     if (evt.serviceId === this.props.serviceId) {
       const { authTeamId, url } = this.state
-      if (evt.data.launchUri) {
-        this.webviewRef.current.executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
-      } else if (evt.data.channelId) {
-        this.webviewRef.current.executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${authTeamId}');`)
-      } else if (evt.data.global === 'vall_threads') {
+      if (evt.data.global === 'vall_threads') {
         this.webviewRef.current.executeJavaScript(
-          `TS.redux.dispatch(TS.interop.actions.displayModelOrViewById({ id: 'Vall_threads' }))`
+          `window.slackDebug
+            ? (window.slackDebug.router.navigateToRoute('ROUTE_ENTITY', { teamId: '${authTeamId}', entityId: 'threads' }))
+            : TS.redux.dispatch(TS.interop.actions.displayModelOrViewById({ id: 'Vall_threads' }))
+          `
         )
       } else {
-        this.webviewRef.current.loadURL(url)
+        let channelLaunch
+        if (evt.data.launchUri && evt.data.launchUri.startsWith('slack://channel?')) {
+          try {
+            const launchUri = new URL(evt.data.launchUri)
+            channelLaunch = {
+              channelId: launchUri.searchParams.get('channelId') || evt.data.channelId,
+              timestamp: launchUri.searchParams.get('message'),
+              teamId: launchUri.searchParams.get('team') || authTeamId
+            }
+          } catch (ex) {
+            if (evt.data.channelId) {
+              channelLaunch = {
+                channelId: evt.data.channelId,
+                teamId: authTeamId
+              }
+            }
+          }
+        } else if (evt.data.channelId) {
+          channelLaunch = {
+            channelId: evt.data.channelId,
+            teamId: authTeamId
+          }
+        }
+
+        if (channelLaunch) {
+          const routeStr = JSON.stringify({
+            teamId: channelLaunch.teamId,
+            entityId: channelLaunch.channelId
+          })
+          const urlStr = evt.data.launchUri ? evt.data.launchUri : [
+            `slack://channel`,
+            `?id=${channelLaunch.channelId}`,
+            `&team=${channelLaunch.teamId}`
+          ].join('')
+          this.webviewRef.current.executeJavaScript(
+            `window.slackDebug
+              ? (window.slackDebug.router.navigateToRoute('ROUTE_ENTITY', ${routeStr}))
+              : (window.TS.client.handleDeepLink('${urlStr}'))
+            `
+          )
+        } else {
+          this.webviewRef.current.loadURL(url)
+        }
       }
     }
   }
