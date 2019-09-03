@@ -1,11 +1,12 @@
 import OSSettings from 'shared/Models/Settings/OSSettings'
+import Platfrom from 'shared/Platform'
 
 class NotificationPlatformSupport {
   /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
-  get enhancedSupportDarwin () { return process.platform === 'darwin' }
+  get enhancedSupportDarwin () { return process.platform === 'darwin' && !Platfrom.isDarwinCatalina() }
   get enhancedSupportLinux () { return process.platform === 'linux' }
   get enhancedSupportWin32 () { return false }
 

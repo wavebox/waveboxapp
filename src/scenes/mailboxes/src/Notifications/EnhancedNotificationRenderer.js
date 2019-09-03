@@ -4,13 +4,14 @@ import { OSX_APP_BUNDLE_ID } from 'shared/constants'
 import uuid from 'uuid'
 import { settingsStore } from 'stores/settings'
 import { ipcRenderer } from 'electron'
+import Platform from 'shared/Platform'
 import {
   WB_LIN_NOTIF_CLICK,
   WB_LIN_NOTIF_PRESENT
 } from 'shared/ipcEvents'
 
 let MacNotification = null
-if (process.platform === 'darwin') {
+if (process.platform === 'darwin' && !Platform.isDarwinCatalina()) {
   try {
     MacNotification = window.appNodeModulesRequire('node-mac-notifier')
   } catch (ex) {
