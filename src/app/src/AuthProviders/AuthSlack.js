@@ -4,6 +4,7 @@ import { URL } from 'url'
 import AuthWindow from 'Windows/AuthWindow'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
+import { userStore } from 'stores/user'
 
 class AuthSlack {
   /* ****************************************************************************/
@@ -11,6 +12,7 @@ class AuthSlack {
   /* ****************************************************************************/
 
   constructor () {
+    this.signinFallbackTO = null
     ipcMain.on(WB_AUTH_SLACK, (evt, body) => {
       this.handleAuthSlack(evt, body)
     })
@@ -67,6 +69,7 @@ class AuthSlack {
   * @return promise
   */
   promptUserToGetAuthorizationCode (partitionId) {
+    clearTimeout(this.signinFallbackTO)
     return new Promise((resolve, reject) => {
       const waveboxOauthWin = new AuthWindow()
       waveboxOauthWin.create('https://slack.com/signin', {
@@ -101,6 +104,12 @@ class AuthSlack {
           const purl = new URL(details.url)
           if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.searchParams.get('redir')) {
             oauthWin.hide()
+            if (userStore.getState().wceSlackSigninFallback()) {
+              clearTimeout(this.signinFallbackTO)
+              this.signinFallbackTO = setTimeout(() => {
+                oauthWin.show()
+              }, 5000)
+            }
           }
         }
         responder({})
@@ -113,6 +122,7 @@ class AuthSlack {
           .then((data) => {
             userClose = false
             oauthWin.close()
+            clearTimeout(this.signinFallbackTO)
             resolve(data)
           })
           .catch(() => { /* no-op */ })
@@ -122,6 +132,7 @@ class AuthSlack {
       oauthWin.on('closed', () => {
         emitter.beforeRequest.removeListener(handleBeforeRequest)
         if (userClose) {
+          clearTimeout(this.signinFallbackTO)
           reject(new Error('User closed the window'))
         }
       })
