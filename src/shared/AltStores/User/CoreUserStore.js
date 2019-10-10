@@ -171,6 +171,19 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
+    * @param userSetting: the setting that the user has defined
+    * @return the wire config expierment to enable tickle or not
+    */
+    this.wceSlackSigninFallback = (userSetting) => {
+      if (userSetting !== undefined) {
+        return userSetting
+      } else {
+        const val = this.wireConfigExperiments().wceSlackSigninFallback
+        return val === undefined ? true : val
+      }
+    }
+
+    /**
     * @param defaultVal=[]: the default value if none is found
     * @return the window open rules
     */
