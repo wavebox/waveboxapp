@@ -142,6 +142,8 @@ class MailboxLinkNoMatchRule extends React.Component {
       MailboxReducer.setUserNoMatchWindowOpenRule,
       rule.mode,
       rule.targetInfo
+        ? rule.targetInfo.providerId
+        : undefined
     )
   }
 
