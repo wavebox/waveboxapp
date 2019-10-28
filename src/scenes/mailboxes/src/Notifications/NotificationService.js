@@ -250,6 +250,8 @@ class NotificationService extends EventEmitter {
         this.__state__.openSystemNotifications.delete(id)
         if (systemNotification.notification && systemNotification.notification.close) {
           systemNotification.notification.close()
+        } else if (systemNotification.close) {
+          systemNotification.close()
         }
       }
     })
