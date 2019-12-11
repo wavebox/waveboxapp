@@ -1,6 +1,7 @@
 import querystring from 'querystring'
 import SlackRTM from './SlackRTM'
 import FetchService from 'shared/FetchService'
+import userStore from 'stores/user/userStore'
 
 class SlackHTTP {
   /* **************************************************************************/
@@ -34,7 +35,11 @@ class SlackHTTP {
     })
 
     return Promise.resolve()
-      .then(() => FetchService.request('https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' }))
+      .then(() => {
+        return userStore.getState().wceSlackHTTPWcThread()
+          ? FetchService.wcRequest('https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' })
+          : FetchService.request('https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' })
+      })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -58,7 +63,11 @@ class SlackHTTP {
       '_x_gantry': true
     })
     return Promise.resolve()
-      .then(() => FetchService.request('https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' }))
+      .then(() => {
+        return userStore.getState().wceSlackHTTPWcThread()
+          ? FetchService.wcRequest('https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' })
+          : FetchService.request('https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' })
+      })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -87,7 +96,11 @@ class SlackHTTP {
       '_x_gantry': true
     })
     return Promise.resolve()
-      .then(() => FetchService.request('https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' }))
+      .then(() => {
+        return userStore.getState().wceSlackHTTPWcThread()
+          ? FetchService.wcRequest('https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' })
+          : FetchService.request('https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' })
+      })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
