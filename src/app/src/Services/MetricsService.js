@@ -251,7 +251,9 @@ class MetricsService {
                 return metric
               }
             })
-            syncs[0].memory.bytes = ~~(syncsMem.reduce((a, b) => a + b, 0))
+            if (syncs[0]) {
+              syncs[0].memory.bytes = ~~(syncsMem.reduce((a, b) => a + b, 0))
+            }
             return metrics
           })
       })

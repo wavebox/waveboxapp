@@ -36,11 +36,12 @@ ipcRenderer.on('WB_WCFETCH_SERVICE_TEXT_RUNNER', (evt, channel, url, options) =>
     .then(() => window.fetch(url, options))
     .then((res) => {
       res.text().then((body) => {
-        ipcRenderer.send(channel, {
+        const payload = {
           ok: res.ok,
           status: res.status,
           body: body
-        })
+        }
+        ipcRenderer.send(channel, payload)
       })
     })
 })

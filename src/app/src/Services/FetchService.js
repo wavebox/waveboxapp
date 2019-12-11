@@ -1,7 +1,7 @@
 import { ipcMain, session, BrowserWindow } from 'electron'
 import fetch from 'electron-fetch'
 import { SessionManager } from 'SessionManager'
-import { WB_FETCH_SERVICE_TEXT, WB_WCFETCH_SERVICE_TEXT } from 'shared/ipcEvents'
+import { WB_FETCH_SERVICE_TEXT, WB_WCFETCH_SERVICE_TEXT, WB_WCFETCH_SERVICE_TEXT_CLEANUP } from 'shared/ipcEvents'
 import uuid from 'uuid'
 import Resolver from 'Runtime/Resolver'
 
@@ -13,12 +13,13 @@ class FetchService {
   constructor () {
     ipcMain.on(WB_FETCH_SERVICE_TEXT, this._handleIPCFetchText)
     ipcMain.on(WB_WCFETCH_SERVICE_TEXT, this._handleIPCWCFetchText)
+    ipcMain.on(WB_WCFETCH_SERVICE_TEXT_CLEANUP, this._handleIPCWCFetchTextCleanup)
 
     this.wcFetchers = new Map()
     this.wcFetchersExpirer = setInterval(() => {
       const now = Date.now()
       Array.from(this.wcFetchers.entries()).forEach(([key, value]) => {
-        if (now - value.ts > 60000 * 2) {
+        if (now - value.ts > 60000 * 10) {
           this.wcFetchers.delete(key)
           if (value.win) {
             value.win.destroy()
@@ -80,6 +81,16 @@ class FetchService {
       })
   }
 
+  _handleIPCWCFetchTextCleanup = (evt, baseUrl, partitionId) => {
+    const key = `${partitionId}:${baseUrl}`
+    const rec = this.wcFetchers.get(key)
+    if (rec) {
+      if (rec.resolvers && rec.resolvers.length) { return }
+      this.wcFetchers.delete(key)
+      rec.win.destroy()
+    }
+  }
+
   _handleIPCWCFetchText = (evt, returnChannel, baseUrl, partitionId, url, options = {}) => {
     if (evt.sender.getWebPreferences().nodeIntegration !== true) { return }
 
@@ -128,6 +139,7 @@ class FetchService {
             win.webContents.once('did-navigate', (evt, url, statusCode) => {
               rec.win = win
               rec.resolvers.forEach((resolver) => resolver(win))
+              rec.resolvers = []
             })
             win.loadURL(baseUrl)
           })
