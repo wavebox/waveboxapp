@@ -110,7 +110,6 @@ class FetchService {
         }, body)
       })
       .catch((ex) => {
-        console.log(">>>>",ex)
         if (evt.sender.isDestroyed()) { return Promise.resolve() }
         evt.sender.send(returnChannel, null, {
           ok: false,
