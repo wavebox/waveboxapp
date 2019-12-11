@@ -3,6 +3,8 @@ import SlackRTM from './SlackRTM'
 import FetchService from 'shared/FetchService'
 import userStore from 'stores/user/userStore'
 
+const BASE_URL = 'https://slack.com/api/auth.test#sync-channel'
+
 class SlackHTTP {
   /* **************************************************************************/
   // Utils
@@ -37,7 +39,7 @@ class SlackHTTP {
     return Promise.resolve()
       .then(() => {
         return userStore.getState().wceSlackHTTPWcThread()
-          ? FetchService.wcRequest('https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' })
+          ? FetchService.wcRequest(BASE_URL, 'https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' })
           : FetchService.request('https://slack.com/api/auth.test?' + query, partitionId, { credentials: 'include' })
       })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -65,7 +67,7 @@ class SlackHTTP {
     return Promise.resolve()
       .then(() => {
         return userStore.getState().wceSlackHTTPWcThread()
-          ? FetchService.wcRequest('https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' })
+          ? FetchService.wcRequest(BASE_URL, 'https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' })
           : FetchService.request('https://slack.com/api/rtm.start?' + query, partitionId, { credentials: 'include' })
       })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -98,7 +100,7 @@ class SlackHTTP {
     return Promise.resolve()
       .then(() => {
         return userStore.getState().wceSlackHTTPWcThread()
-          ? FetchService.wcRequest('https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' })
+          ? FetchService.wcRequest(BASE_URL, 'https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' })
           : FetchService.request('https://slack.com/api/users.counts?' + query, partitionId, { credentials: 'include' })
       })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))

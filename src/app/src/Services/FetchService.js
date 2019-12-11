@@ -2,6 +2,8 @@ import { ipcMain, session, BrowserWindow } from 'electron'
 import fetch from 'electron-fetch'
 import { SessionManager } from 'SessionManager'
 import { WB_FETCH_SERVICE_TEXT, WB_WCFETCH_SERVICE_TEXT } from 'shared/ipcEvents'
+import uuid from 'uuid'
+import Resolver from 'Runtime/Resolver'
 
 class FetchService {
   /* ****************************************************************************/
@@ -13,6 +15,17 @@ class FetchService {
     ipcMain.on(WB_WCFETCH_SERVICE_TEXT, this._handleIPCWCFetchText)
 
     this.wcFetchers = new Map()
+    this.wcFetchersExpirer = setInterval(() => {
+      const now = Date.now()
+      Array.from(this.wcFetchers.entries()).forEach(([key, value]) => {
+        if (now - value.ts > 60000 * 2) {
+          this.wcFetchers.delete(key)
+          if (value.win) {
+            value.win.destroy()
+          }
+        }
+      })
+    }, 10000)
   }
 
   /* ****************************************************************************/
@@ -67,47 +80,75 @@ class FetchService {
       })
   }
 
-  _handleIPCWCFetchText = (evt, returnChannel, partitionId, url, options = {}) => {
+  _handleIPCWCFetchText = (evt, returnChannel, baseUrl, partitionId, url, options = {}) => {
     if (evt.sender.getWebPreferences().nodeIntegration !== true) { return }
+
+    const fetcherKey = `${partitionId}:${baseUrl}`
     Promise.resolve()
-      .then(() => new Promise((resolve) => {
-        const win = new BrowserWindow({
-          width: 1,
-          height: 1,
-          show: false,
-          focusable: false,
-          skipTaskbar: true,
-          webPreferences: {
-            backgroundThrottling: false,
-            contextIsolation: true,
-            partition: partitionId,
-            sandbox: true,
-            nativeWindowOpen: true,
-            nodeIntegration: false,
-            nodeIntegrationInWorker: false,
-            webviewTag: false,
-            offscreen: true
-          }
-        })
-        win.webContents.setFrameRate(1)
-        win.webContents.once('did-navigate', (evt, url, statusCode) => {
-          win.webContents.executeJavaScript('document.documentElement.outerText', (res) => {
-            win.destroy()
-            resolve({
-              ok: statusCode >= 200 && statusCode <= 299,
-              status: statusCode,
-              body: res
+      .then(() => {
+        if (this.wcFetchers.has(fetcherKey)) {
+          const rec = this.wcFetchers.get(fetcherKey)
+          rec.ts = Date.now()
+          if (rec.win) {
+            return Promise.resolve(rec.win)
+          } else {
+            return new Promise((resolve) => {
+              rec.resolvers.push(resolve)
             })
+          }
+        } else {
+          return new Promise((resolve) => {
+            const rec = {
+              win: undefined,
+              ts: Date.now(),
+              resolvers: [resolve]
+            }
+            this.wcFetchers.set(fetcherKey, rec)
+
+            const win = new BrowserWindow({
+              width: 1,
+              height: 1,
+              show: false,
+              focusable: false,
+              skipTaskbar: true,
+              webPreferences: {
+                backgroundThrottling: false,
+                contextIsolation: true,
+                partition: partitionId,
+                sandbox: true,
+                nativeWindowOpen: true,
+                nodeIntegration: false,
+                nodeIntegrationInWorker: false,
+                webviewTag: false,
+                offscreen: true,
+                preload: Resolver.guestPreload()
+              }
+            })
+            win.webContents.setFrameRate(1)
+            win.webContents.once('did-navigate', (evt, url, statusCode) => {
+              rec.win = win
+              rec.resolvers.forEach((resolver) => resolver(win))
+            })
+            win.loadURL(baseUrl)
           })
+        }
+      })
+      .then((win) => {
+        return new Promise((resolve) => {
+          const channel = uuid.v4()
+          ipcMain.once(channel, (evt, res) => {
+            resolve(res)
+          })
+          win.webContents.send('WB_WCFETCH_SERVICE_TEXT_RUNNER', channel, url, options)
         })
-        win.loadURL(url)
-      }))
+      })
       .then(({ ok, status, body }) => {
         if (evt.sender.isDestroyed()) { return Promise.resolve() }
         evt.sender.send(returnChannel, null, {
           ok: ok,
           status: status
         }, body)
+        return Promise.resolve()
       })
       .catch((ex) => {
         if (evt.sender.isDestroyed()) { return Promise.resolve() }
@@ -115,6 +156,14 @@ class FetchService {
           ok: false,
           status: -1
         }, 'error')
+        return Promise.resolve()
+      })
+      .then(() => {
+        // Cleanup
+        const fetcher = this.wcFetchers.get(fetcherKey)
+        if (fetcher) {
+          fetcher.ts = Date.now()
+        }
       })
   }
 }

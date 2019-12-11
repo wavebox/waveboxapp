@@ -5,6 +5,7 @@ import mkdirp from 'mkdirp'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MonitorWindow from 'Windows/MonitorWindow'
 import { settingsStore } from 'stores/settings'
+import { URL } from 'url'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
@@ -206,6 +207,8 @@ class MetricsService {
   * @return promise, given the supplied metrics
   */
   getMetrics (extended = false) {
+    const syncs = []
+    const syncsMem = []
     return Promise.resolve()
       .then(() => {
         const pidInfo = this._getWebContentInfoByPid()
@@ -231,7 +234,24 @@ class MetricsService {
                 },
                 ...(extended ? { extended: osMetrics[metric.pid] } : undefined)
               }
+            }).map((metric) => {
+              if (metric.webContentsInfo && metric.webContentsInfo.length === 1 && metric.webContentsInfo[0].url && metric.webContentsInfo[0].url.indexOf('#sync-channel') !== -1) {
+                try {
+                  metric.webContentsInfo[0].description = 'Sync Channel: ' + (new URL(metric.webContentsInfo[0].url)).hostname
+                } catch (ex) {
+                  metric.webContentsInfo[0].description = 'Sync Channel'
+                }
+                if (metric.memory && metric.memory.bytes) {
+                  syncsMem.push(~~(0.1 * (metric.memory.bytes)))
+                  metric.memory.bytes = ~~(0.1 * (metric.memory.bytes))
+                }
+                syncs.push(metric)
+                return metric
+              } else {
+                return metric
+              }
             })
+            syncs[0].memory.bytes = ~~(syncsMem.reduce((a, b) => a + b, 0))
             return metrics
           })
       })
