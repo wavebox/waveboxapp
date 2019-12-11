@@ -1,7 +1,7 @@
 {
   "name": "wavebox",
-  "version": "4.11.6",
-  "releaseChannel": "STABLE",
+  "version": "4.11.7",
+  "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "node scripts/rebuildElectron.js",
