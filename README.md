@@ -1,4 +1,4 @@
-# Wavebox
+# Wavebox Classic
 
 ![](https://img.shields.io/badge/Contributions-Welcome-ff69b4.svg)
 [![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp/master.svg)](http://travis-ci.org/wavebox/waveboxapp)
@@ -32,8 +32,6 @@ Why not give it a try at [wavebox.io](https://wavebox.io)
 # Download Wavebox
 
 Wavebox is available to download for macOS, Windows & Linux (tar & deb). Precompiled downloads are available from our downloads page [https://wavebox.io/download](https://wavebox.io/download).
-
-If you're interested in finding out what's changed between each version you can take a look at the [changelog](https://github.com/wavebox/waveboxapp/releases)
 
 # Building Wavebox
 

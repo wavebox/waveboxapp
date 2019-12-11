@@ -7,6 +7,8 @@ import CRExtensionLoader from './Extensions/CRExtensionLoader'
 import UserCodeInjection from './UserCodeInjection'
 import WaveboxApiProvider from './WaveboxApiProvider'
 import VisualZoomProvider from './VisualZoomProvider'
+import { webFrame } from 'electron'
+import LiveConfig from 'LiveConfig'
 
 const privStarted = Symbol('privStarted')
 const privKeyboardShim = Symbol('privKeyboardShim')
@@ -55,6 +57,10 @@ class Browser {
     this[privCRExtensionLoader] = new CRExtensionLoader()
     this[privCRExtensionLoader].load()
     ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.CHROME)
+
+    if (LiveConfig.platform === 'darwin') {
+      webFrame.insertCSS('*::selection { background-color: #ACCEF7; }')
+    }
   }
 }
 
