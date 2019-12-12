@@ -74,7 +74,7 @@ class FetchService {
   * @param options={}: the request options
   * @return promise
   */
-  static wcRequest (url, partitionId, options = {}) {
+  static wcRequest (baseUrl, url, partitionId, options = {}) {
     return new Promise((resolve, reject) => {
       const returnChannel = `${WB_WCFETCH_SERVICE_TEXT}:${uuid.v4()}`
       ipcRenderer.once(returnChannel, (evt, err, res, body) => {
@@ -89,7 +89,7 @@ class FetchService {
           })
         }
       })
-      ipcRenderer.send(WB_WCFETCH_SERVICE_TEXT, returnChannel, partitionId, url, options)
+      ipcRenderer.send(WB_WCFETCH_SERVICE_TEXT, returnChannel, baseUrl, partitionId, url, options)
     })
   }
 }

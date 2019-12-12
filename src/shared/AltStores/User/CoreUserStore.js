@@ -187,7 +187,7 @@ class CoreUserStore extends RemoteStore {
     * @return the wire config expierment to use wcthread or not
     */
     this.wceSlackHTTPWcThread = () => {
-      const val = this.wireConfigExperiments().wceSlackHTTPWcThread
+      const val = this.wireConfigExperiments().wceSlackHTTPWcThread_v2
       return val === undefined ? true : val
     }
 
