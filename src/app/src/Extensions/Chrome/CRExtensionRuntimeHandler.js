@@ -624,10 +624,8 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     } else {
       // Look to see if we have credentials
       const { acceptHeader, extensionId, xhrToken } = this._extractCSXHRAcceptHeader(details.requestHeaders)
-      const nextHeaders = {
-        ...details.requestHeaders,
-        'Accept': acceptHeader
-      }
+      const nextHeaders = { 'Accept': acceptHeader }
+
       if (!extensionId || !xhrToken) { return nextHeaders }
 
       // Check we have the credentials

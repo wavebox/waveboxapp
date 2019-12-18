@@ -11,6 +11,7 @@ import SessionManager from './SessionManager'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import e2c from 'electron-to-chromium'
+import UrlPattern from 'url-pattern'
 
 const privManaged = Symbol('privManaged')
 const privEarlyManaged = Symbol('privEarlyManaged')
@@ -258,9 +259,30 @@ class AccountSessionManager extends EventEmitter {
 
     // Extensions: XHR
     SessionManager.webRequestEmitterFromSession(ses).beforeSendHeaders.onBlocking(undefined, (details, responder) => {
-      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHRBeforeSendHeaders(details)
-      if (updatedHeaders) {
-        responder({ requestHeaders: updatedHeaders })
+      const updatedCrxHeaders = CRExtensionManager.runtimeHandler.updateCSXHRBeforeSendHeaders(details)
+
+      const uaRule = userStore.getState()
+        .wireConfigUARules()
+        .find((rule) => {
+          try {
+            const pattern = new UrlPattern(rule.pattern)
+            return pattern.match(details.url) !== null
+          } catch (ex) {
+            return false
+          }
+        })
+      const uaHeaders = uaRule
+        ? { UserAgent: uaRule[`userAgent_${process.platform}`] || uaRule.userAgent }
+        : undefined
+
+      if (updatedCrxHeaders || uaHeaders) {
+        responder({
+          requestHeaders: {
+            ...details.requestHeaders,
+            ...updatedCrxHeaders,
+            ...uaHeaders
+          }
+        })
       } else {
         responder({})
       }
