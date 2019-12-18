@@ -238,6 +238,14 @@ class CoreUserStore extends RemoteStore {
       return this.wireConfigExperiments().latestCVersion
     }
 
+    /**
+     * Returns any changes to the useragent
+     * @return an array of changes to make
+     */
+    this.wireConfigUARules = () => {
+      return this.wireConfigExperiments().uaRules || []
+    }
+
     /* ****************************************/
     // Containers
     /* ****************************************/
