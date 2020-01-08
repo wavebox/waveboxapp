@@ -655,6 +655,7 @@ class CoreServiceWebView extends React.Component {
       className,
       hasSearch,
       allowpopups,
+      useragent,
       mailboxId,
       serviceId,
       ...passProps
@@ -716,6 +717,7 @@ class CoreServiceWebView extends React.Component {
             searchTerm={isSearching ? searchTerm : ''}
             webpreferences={webpreferences}
             allowpopups={allowpopups === undefined ? true : allowpopups}
+            useragent={useragent}
             plugins
 
             {...webviewEventProps}

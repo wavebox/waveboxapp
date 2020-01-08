@@ -95,6 +95,10 @@ class ACClassicContainer extends Model {
   get reloadBehaviour () { return this._classicServiceValue_('reloadBehaviour', 'RESET_URL') }
   get useAsyncAlerts () { return this._classicServiceValue_('useAsyncAlerts', true) }
   get html5NotificationsGenerateUnreadActivity () { return this._classicServiceValue_('html5NotificationsGenerateUnreadActivity', true) }
+  get userAgent () {
+    const all = this._classicServiceValue_('userAgent', {})
+    return all[process.platform] || all['default'] || undefined
+  }
 
   /* **************************************************************************/
   // Properties: Unread

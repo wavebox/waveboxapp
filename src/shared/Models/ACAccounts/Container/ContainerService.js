@@ -90,6 +90,7 @@ class ContainerService extends CoreACService {
   get urlOverwrite () { return this._value_('urlOverwrite', '') }
   get useAsyncAlerts () { return this.containerSAPI.getUseAsyncAlerts(this.container.useAsyncAlerts) }
   get html5NotificationsGenerateUnreadActivity () { return this.containerSAPI.getHtml5NotificationsGenerateUnreadActivity(this.container.html5NotificationsGenerateUnreadActivity) }
+  get userAgent () { return this.container.userAgent }
 
   /* **************************************************************************/
   // Properties: Badge & Unread

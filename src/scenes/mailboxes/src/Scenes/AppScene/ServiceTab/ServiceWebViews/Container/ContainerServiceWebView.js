@@ -100,12 +100,14 @@ export default class ContainerServiceWebView extends React.Component {
         useAsyncAlerts: service.useAsyncAlerts,
         documentTitleHasUnread: service.documentTitleHasUnread,
         documentTitleUnreadBlinks: service.documentTitleUnreadBlinks,
-        faviconUnreadActivityRegexp: service.faviconUnreadActivityRegexp
+        faviconUnreadActivityRegexp: service.faviconUnreadActivityRegexp,
+        userAgent: service.userAgent
       } : {
         useAsyncAlerts: true,
         documentTitleHasUnread: false,
         documentTitleUnreadBlinks: false,
-        faviconUnreadActivityRegexp: undefined
+        faviconUnreadActivityRegexp: undefined,
+        userAgent: undefined
       })
     }
   }
@@ -290,6 +292,7 @@ export default class ContainerServiceWebView extends React.Component {
         serviceId={serviceId}
         ipcMessage={this.handleIPCMessage}
         domReady={this.handleDOMReady}
+        useragent={this.state.userAgent}
         pageTitleUpdated={this.handlePageTitleUpdated}
         pageFaviconUpdated={this.handlePageFaviconUpdated} />
     )
