@@ -1,4 +1,6 @@
 <!--
+Thanks for reporting an issue with Wavebox!
+
 Wavebox 10 is now available with hundreds of bugfixes and  support for features such as Chrome Extensions, Tab support and more.
 
 Find out about the change here: https://github.com/wavebox/waveboxapp/issues/1133

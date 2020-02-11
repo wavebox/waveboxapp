@@ -31,7 +31,7 @@ Want to know more about Wavebox? [Visit our homepage](https://wavebox.io/)
 
 # Download Wavebox 10
 
-Wavebox is available to download for macOS, Windows & Linux on our downloads page [https://wavebox.io/download](https://wavebox.io/download).
+**Wavebox is available to download for macOS, Windows & Linux on our downloads page [https://wavebox.io/download](https://wavebox.io/download)**.
 
 ---
 
