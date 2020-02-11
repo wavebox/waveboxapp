@@ -1,8 +1,8 @@
 # Wavebox
 
-Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
+Your client for Gmail, Outlook, O365, Trello, Slack & more!
 
-Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing Gmail, Inbox, Outlook, O365, Trello, Slack & over 1000 more apps into a configurable client.
+Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing Gmail, Outlook, O365, Trello, Slack & over 1000 more apps into a configurable client.
 
 ---
 
@@ -40,9 +40,9 @@ Want to know more about Wavebox? [Visit our homepage](https://wavebox.io/)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![Download](https://img.shields.io/badge/downloads-wavebox.io-blue.svg)](https://wavebox.io/download/)
 
-Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
+Your client for Gmail, Outlook, O365, Trello, Slack & more!
 
-Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing Gmail, Inbox, Outlook, O365, Trello, Slack & over 1000 more apps into a configurable client.
+Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing Gmail, Outlook, O365, Trello, Slack & over 1000 more apps into a configurable client.
 
 Gone are the days of opening countless browser tabs and logging in and out of your favourite cloud accounts. Now you can launch Wavebox with one click, and instantly access them all in one UI, and without slowing your machine.
 
@@ -55,13 +55,13 @@ Gone are the days of opening countless browser tabs and logging in and out of yo
 - **Focus on what's important:** Declutter your desktop by having everything in one place, and use 'mute' across all apps when you need time to concentrate.
 - **Better than a browser:** Unlike browser tabs which work independently, Wavebox brings everything together as a single suite of web apps. It's faster, more secure and uses less processing power.
 
-Install Wavebox and use for free with 2 Gmail/Inbox accounts. Then upgrade to Pro to add more apps, services and features. Join thousands of individuals and teams who now spend their days in Wavebox.
+Install Wavebox and use for free with 2 Gmail accounts. Then upgrade to Pro to add more apps, services and features. Join thousands of individuals and teams who now spend their days in Wavebox.
 
 Why not give it a try at [wavebox.io](https://wavebox.io)
 
 ---
 
-**Wavebox Classic is built using [Electron](https://github.com/atom/electron), [React](https://facebook.github.io/react/) and [Flux](https://facebook.github.io/flux/). It supports Gmail, Google Inbox, Outlook, Office 365, Slack, Trello & over a 1000 other apps.**
+**Wavebox Classic is built using [Electron](https://github.com/atom/electron), [React](https://facebook.github.io/react/) and [Flux](https://facebook.github.io/flux/). It supports Gmail, Google, Outlook, Office 365, Slack, Trello & over a 1000 other apps.**
 
 # Building Wavebox Classic
 
