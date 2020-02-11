@@ -1,9 +1,43 @@
-# Wavebox Classic
+# Wavebox
 
-![](https://img.shields.io/badge/Contributions-Welcome-ff69b4.svg)
+Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
+
+Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing Gmail, Inbox, Outlook, O365, Trello, Slack & over 1000 more apps into a configurable client.
+
+---
+
+# Wavebox Classic & Wavebox 10
+
+This is the home of the Electron-based Wavebox Classic. The team behind Wavebox have been busy working on a completely new 100% Chromium version of Wavebox, which we are calling [Wavebox 10](https://wavebox.io/download). It includes some amazing new features such as...
+
+* Expand our supported extension list from 16 to thousands of extensions ❤️
+* A 10-20% decrease in memory consumption 💨
+* A refined and sparkly new UI that's tastefully familiar ✨
+* Seamless tab support in any window
+* Fully integrated autofill for usernames and passwords 🤖
+* Improved PDF and printing support across the board
+* Improved theming support 🎨
+* Support for things such as U2F keys when signing into Google
+* Improved screen-sharing support
+* Privacy lock to keep your app private 🔒
+
+Part of this transformation is down to the fact that we have moved away from Electron to a direct Chromium foundation. It's a massively exciting move that allows Wavebox to grow and evolve.
+
+Want to know more about the technical changes? [Find out more about the move to Chromium](https://blog.wavebox.io/wavebox-is-evolving-electron-chromium/)
+
+Already a user? Check our [handy migration guide](https://blog.wavebox.io/wavebox-10-migration-wizard-for-pro-users/)
+
+Want to know more about Wavebox? [Visit our homepage](https://wavebox.io/)
+
+# Download Wavebox 10
+
+Wavebox is available to download for macOS, Windows & Linux on our downloads page [https://wavebox.io/download](https://wavebox.io/download).
+
+---
+
+
 [![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp/master.svg)](http://travis-ci.org/wavebox/waveboxapp)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-[![GitHub release](https://img.shields.io/github/release/wavebox/waveboxapp.svg)](https://github.com/wavebox/waveboxapp/releases)
 [![Download](https://img.shields.io/badge/downloads-wavebox.io-blue.svg)](https://wavebox.io/download/)
 
 Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
@@ -27,15 +61,9 @@ Why not give it a try at [wavebox.io](https://wavebox.io)
 
 ---
 
-**Wavebox is built using [Electron](https://github.com/atom/electron), [React](https://facebook.github.io/react/) and [Flux](https://facebook.github.io/flux/). It supports Gmail, Google Inbox, Outlook, Office 365, Slack, Trello & over a 1000 other apps.**
+**Wavebox Classic is built using [Electron](https://github.com/atom/electron), [React](https://facebook.github.io/react/) and [Flux](https://facebook.github.io/flux/). It supports Gmail, Google Inbox, Outlook, Office 365, Slack, Trello & over a 1000 other apps.**
 
-# Download Wavebox
-
-Wavebox is available to download for macOS, Windows & Linux (tar & deb). Precompiled downloads are available from our downloads page [https://wavebox.io/download](https://wavebox.io/download).
-
-# Building Wavebox
-
-Here's how to build Wavebox from source.
+# Building Wavebox Classic
 
 ### Prerequisites
 Before you get started you'll need the following
