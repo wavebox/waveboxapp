@@ -9,7 +9,7 @@ Find out about the change here: https://github.com/wavebox/waveboxapp/issues/113
 
 For up to date help articles, we recommend visiting the Wavebox 10 Knowledge Base: https://kb.wavebox.io/
 
-For dedidcated support we recommend contacting Wavebox support directly: https://wavebox.io/support
+For dedicated support we recommend contacting Wavebox support directly: https://wavebox.io/support
 
 -->
 
