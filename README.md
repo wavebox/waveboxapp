@@ -1,47 +1,73 @@
-# Wavebox
 
-**[💾 Download Wavebox 10](https://wavebox.io/download)**
+<p align="center">
+  <a href="https://wavebox.io">
+    <img width="600" alt="Wavebox logo" src="images/lead.png">
+  </a>
+</p>
 
-Your super-browser for work! A complete up to date fork of Chromium, built from the ground up to give you the best browsing experience.
+<p align="center">
+  <a href="https://wavebox.io">Website</a>
+  ·
+  <a href="https://wavebox.io/download">Download</a>
+  ·
+  <a href="https://blog.wavebox.io">Blog</a>
+</p>
 
-With customizable toolbars, sleeping tabs, cookie containers, and multiple profiles, Wavebox has everything you need to work better across Slack, Asana, Gmail, Teams, Figma, and all your other daily web tools.
+<a href="https://wavebox.io">
+  <img width="1025" alt="Wavebox screenshot" src="images/hero.png">
+</a>
 
-✅ Tab managementTab organizing, sleep, and search.
+## 🦸 About
 
-✅ Multiple containersContainers for multi-accounts.
+This is an issues & release-only repo for Wavebox, the revolutionary and feature-rich Chromium browser that's built for productive working across Google Workspaces, Microsoft Teams, ClickUp, Monday, Atlassian, Asana, AirTable, Slack, and every other web app you use to get work done.
 
-✅ Multiple profilesProfiles for multiple setups.
+Wavebox gives you customizable toolbars, sleeping tabs, cookie containers and multiple profile
 
-✅ High performanceHigh performance, longer battery life.
+✅ Tab management, organizing, sleep, and search. [More](https://blog.wavebox.io/how-to-keep-tabs-on-your-browser-tabs/).
 
-✅ Zero ads or trackingZero ads or tracking.
+✅ Multiple [cookie containers](https://blog.wavebox.io/saas-profiles-groups-collections-tutorial/), for multi-account sign-in.
+
+✅ [Multiple profiles](https://kb.wavebox.io/wavebox-profiles/), for multiple setups.
+
+✅ Multiway [split screen](https://kb.wavebox.io/using-split-screen-in-wavebox/).
+
+✅ High performance, longer battery life.
+
+✅ Zero ads or tracking.
 
 ✅ Extensions directly from the Chrome Store.
 
-**[💾 Download Wavebox 10](https://wavebox.io/download)**
+## 💾 Downloads
+
+Wavebox is available for:
+
+* [macOS](https://wavebox.io/download?platform=mac) (Intel & Apple Silicon)
+* [Windows](https://wavebox.io/download?platform=windows)
+* [Linux](https://wavebox.io/download?platform=linux) (DEB, RPM, TAR, AppImage, AUR)
+
+If you want to try the latest features, and see what's coming soon, Wavebox also has a [beta channel](https://wavebox.io/download/beta)
+
+## 📖 Changelog
+
+Wavebox keeps parity with the latest version of Chromium , which means we tend to have a major release every 4 weeks. You can find information about what's new in each release in our changelog
+
+* [Stable changelog](https://wavebox.io/changelog/stable/)
+* [Beta changelog](https://wavebox.io/changelog/beta/)
+
+## 🐛 Issues, Bugs, & Feature Requests
+
+For dedicated support, we recommend reaching out to our support team, either by using the in-app support button, or by visiting the [support page](https://wavebox.io/support).
+
+You can also visit our the [Wavebox knowledge base](https://wavebox.io/kb) which has answers to lots of common problems, or raise an [issue in this repo](https://github.com/wavebox/waveboxapp)
+
+## 💻 Developer resources
+
+🏗️ Wavebox supports the same extension ecosystem and set of extension APIs as Chromium & Google Chrome. In addition to this it also provides some additional features over the standard extension APIs. You can find information about these in the [wavebox-10-extension-api](https://github.com/wavebox/wavebox-10-extension-api) repo.
+
+👍 Wavebox is committed to staying up to date with the latest versions of Chromium, and to make it easy to check we launched [Chromium Checker](https://chromiumchecker.com) which not only reads out the UserAgent, but also feature detects the Chromium version. If you want to check how it works, visit the [chromium-checker-site](https://github.com/wavebox/chromium-checker-site) repo
 
 ---
 
-Looking for Wavebox on a specific platform, we've got you covered,
+#### Wavebox Classic
 
-✅ macOS (Apple Silicon & Intel)
-
-✅ Windows
-
-✅ Linux (deb, rpm & aur)
-
-**[💾 Download Wavebox 10](https://wavebox.io/download)**
-
----
-
-Want to find out more about the move Wavebox made to Chromium?
-
-[🚚 Wavebox 10 moves to Chromium](https://blog.wavebox.io/wavebox-is-evolving-electron-chromium/)
-
-[🗓️ How we keep Wavebox 10 up to date with Chromium](https://blog.wavebox.io/check-chromium-release-version/)
-
-[🚀 Wavebox release schedule and updates](https://kb.wavebox.io/how-and-when-do-i-update-wavebox/)
-
----
-
-Wavebox 10, a complete fork of Chromium launched in 2019, but if you're looking for the Electron based Wavebox Classic, there's an [archive of the code here](classic)
+Wavebox 10, a complete fork of Chromium launched in 2019, but if you're looking for the Electron based Wavebox Classic, there's an [archive of the code here](classic). More info about [our move to Chromium](https://blog.wavebox.io/wavebox-is-evolving-electron-chromium/).
