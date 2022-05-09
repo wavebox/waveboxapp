@@ -1,3 +1,32 @@
+<h3>Version 10.101.19 beta <span class="date">9/5/2022</span></h3>
+<ul>
+  <li>Add an option to exclude pinned tabs from the open tab counts. This can be changed under Settings > Tabs & Windows</li>
+  <li>Add support for picking search results with the tab key in the quick switch</li>
+  <li>Add a keyboard shortcut to toggle between pre-set split screen sizes. This can be configured under Settings > Keyboard Shortcuts</li>
+  <li>Improve icon quality in the sidebar</li>
+  <li>Fix an issue with split screen, where one of the tabs could fail to resize and display under the other</li>
+  <li>Fix an issue on macOS where desktop web apps would fail to launch</li>
+  <li>Fix an issue where Wavebox could start minimized and then it was difficult to get the main window opened</li>
+  <li>Fix styling issue when using certain themes and getting the signed out dialog</li>
+  <li>Fix an issue where switching Slack workspaces would fail and you'd essentiall get stuck in a single workspace</li>
+  <li>Performance fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.19.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.19.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.19.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.19.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.19-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.19-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.19-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.101.16 beta <span class="date">3/5/2022</span></h3>
 <ul>
   <li>Update to Chromium 101.0.4951.54</li>
@@ -226,42 +255,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.100.3-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.100.3-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.99.50 beta <span class="date">30/3/2022</span></h3>
-<ul>
-  <li>Add "New window" to the link opener engines</li>
-  <li>
-    After the new UI update, right clicking on a group with just 1 app wouldn't
-    show the "Open current page in new window" option. Fix this.
-  </li>
-  <li>
-    Disable the "Send to workspace" option in the group context menu, when
-    there's nothing in the group to send
-  </li>
-  <li>
-    Fix an issue on macOS where the CMD+W behaviour was inconsistent in some configurations
-  </li>
-  <li>Stability fixes around locking & unlocking Wavebox</li>
-  <li>Fix a CPU spike when opening the profile switcher</li>
-  <li>Fix some notifications not showing the correct icons in Wavebox mini</li>
-  <li>Style fixes</li>
-  <li>Update dependencies</li>
-  <li>Update integrations</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.99.50.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.99.50.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.99.50.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.99.50.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.99.50-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.99.50-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.99.50-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
