@@ -1,3 +1,47 @@
+<h3>Version 10.101.21 <span class="date">12/5/2022</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add an option to exclude pinned tabs from the open tab counts. This can be changed under Settings > Tabs & Windows</li>
+  <li>Add support for picking search results with the tab key in the quick switch</li>
+  <li>Add a keyboard shortcut to toggle between pre-set split screen sizes. This can be configured under Settings > Keyboard Shortcuts</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Upgrade to Chromium 101.0.4951.64</li>
+  <li>Improve icon quality in the sidebar</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with split screen, where one of the tabs could fail to resize and display under the other</li>
+  <li>Fix an issue on macOS where desktop web apps would fail to launch</li>
+  <li>Fix an issue where Wavebox could start minimized and then it was difficult to get the main window opened</li>
+  <li>Fix styling issue when using certain themes and getting the signed out dialog</li>
+  <li>Fix an issue where switching Slack workspaces would fail and you'd essentiall get stuck in a single workspace</li>
+  <li>Fix an issue when adding multiple ClickUp or Feedly apps to the same cookie container</li>
+  <li>Fix an issue where new tab pages could be blank</li>
+  <li>Data integrity fixes</li>
+  <li>Performance fixes</li>
+</ul>
+
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.101.21.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.101.21.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.101.21.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.101.21.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.101.21-2_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.21-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.21-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.101.16 <span class="date">4/5/2022</span></h3>
 <p>
   This version contains important updates and fixes for Wavebox
@@ -469,79 +513,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.98.34-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.98.34-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.98.9 <span class="date">7/2/2022</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add Feedly as an integrated app 🎉</li>
-  <li>Add an option to hide the titlebar in workspaces</li>
-  <li>Add a button to app settings to the set the icon to be the current page icon (Weblink apps only)</li>
-  <li>Add support for AppImage on Linux</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update Chromium to 98.0.4758.80</li>
-  <li>Update dependencies</li>
-  <li>
-    If you've enabled Wavebox UI2 under Settings, Advanced, Flags then...
-    <ul>
-      <li>UI2 new drag-drop interface</li>
-      <li>UI2 fix the signed out panel bleeding over the tabstrip</li>
-      <li>UI2 the sidebar could be resized when locked, fix this</li>
-      <li>UI2 deleting an empty group would leave you in an undefined state, fix this</li>
-    </ul>
-  </li>
-  <li>
-    Promote the following settings from flags
-    <ul>
-      <li>Use glass effect for some user interface elements</li>
-      <li>Connect micro sidebar</li>
-      <li>Prompt before closing multiple tabs</li>
-    </ul>
-  </li>
-  <li>Add a timestamp to notifications in Wavebox mini & workspaces</li>
-  <li>
-    The unified unread widget would only report unread items that were specifically
-    reported by integrations, meaning some unread counts and activities would go
-    unreported in the widget. It now also includes counts and activities where
-    the app doesn't explicitly report unread items.
-  </li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>
-    WhatsApp was sometimes reporting messages were sent 52 years ago. Although it's
-    impressive that people in 1970 were able to use WhatsApp it wasn't right, so we fixed it.
-  </li>
-  <li>When opening external links in Wavebox, and picking the last used window, also inherit the cookie container</li>
-  <li>Split screen would not work on macOS in fullscreen mode, fix this</li>
-  <li>Split screen would not focus the tab on click on macOS, fix this</li>
-  <li>Fix an issue where notifications would not open the correct window and app</li>
-  <li>Fix an issue where notifications would open in the wrong cookie container</li>
-  <li>Fix right clicking on a tab only working once</li>
-  <li>Fix the icon picker on Cookie Containers</li>
-  <li>Fix an issue where using keyboard shortcuts to change app would not bring keyboard focus back properly</li>
-  <li>Fix style issue on workspaces</li>
-  <li>Fixes for the Linux update process</li>
-  <li>Fix an issue that could see you unable to start Wavebox</li>
-  <li>Fix adding suggested apps from the Desktop Web Apps page</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.98.9.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.98.9.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.98.9.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.98.9.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.98.9-2_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.98.9-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.98.9-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
