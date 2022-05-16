@@ -1,3 +1,27 @@
+<h3>Version 10.101.24 beta <span class="date">16/5/2022</span></h3>
+<ul>
+  <li>Fix opening external links in new tabs, heading out to a new window in some configurations</li>
+  <li>Fix the keyring deprecation warning on Ubuntu 22</li>
+  <li>Add the password manager into the main Wavebox settings</li>
+  <li>Add DNS over HTTPS settings into the main Wavebox settings</li>
+  <li>Update dependencies</li>
+  <li>Stability & performance fixes</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.24.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.24.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.24.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.24.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.24-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.24-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.24-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.101.22 beta <span class="date">13/5/2022</span></h3>
 <ul>
   <li>Update to Chromium 101.0.4951.67</li>
@@ -225,29 +249,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.100.10-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.100.10-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.100.7 beta <span class="date">10/4/2022</span></h3>
-<ul>
-  <li>Add a keyboard shortcut to toggle the webdock modes (this can be configured under settings)</li>
-  <li>Tabs held in the top level group would fail to convert to apps as they assumed they'd have a parent app. 🤦 Fix this</li>
-  <li>The active app & tab indicator was incredibly washed out when using dark themes. Make it brighter</li>
-  <li>Update dependencies</li>
-  <li>UI tweaks</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.100.7.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.100.7.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.100.7.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.100.7.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.100.7-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.100.7-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.100.7-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
