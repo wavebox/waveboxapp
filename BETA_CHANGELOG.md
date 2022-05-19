@@ -1,3 +1,26 @@
+<h3>Version 10.102.8 beta <span class="date">19/5/2022</span></h3>
+<ul>
+  <li>Update to Chromium 102.0.5005.61</li>
+  <li>Update dependencies</li>
+  <li>Performance improvements for passwords in settings</li>
+  <li>Add search to the passwords section in settings</li>
+  <li>Fix Smart notes not adding highlighted text correctly</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.8.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.8.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.8.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.8.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.8-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.8-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.8-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.101.24 beta <span class="date">16/5/2022</span></h3>
 <ul>
   <li>Fix opening external links in new tabs, heading out to a new window in some configurations</li>
@@ -222,33 +245,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.100.11-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.100.11-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.100.10 beta <span class="date">12/4/2022</span></h3>
-<ul>
-  <li>Update to Chromium 100.0.4896.88"</li>
-  <li>Add an option to set a different proxy config on each cookie container</li>
-  <li>Add an option to ignore certain url patterns when sleeping tabs</li>
-  <li>The option to change the new tab page had vanished, bring it back</li>
-  <li>Fullscreen fix on macOS when moving from a fullscreen window, to a fullscreen video</li>
-  <li>Fix tab titles sometimes not updating</li>
-  <li>Cookie container fixes</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.100.10.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.100.10.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.100.10.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.100.10.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.100.10-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.100.10-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.100.10-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
