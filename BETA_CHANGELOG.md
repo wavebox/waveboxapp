@@ -1,3 +1,25 @@
+<h3>Version 10.102.9 beta <span class="date">20/5/2022</span></h3>
+<ul>
+  <li>Add dark mode support to some of the Wavebox dialogs</li>
+  <li>Update dependencies</li>
+  <li>UI Tweaks</li>
+  <li>The previous beta broke the unread counts displayed on the app badge, fix this</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.9.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.9.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.9.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.9.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.9-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.9-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.9-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.102.8 beta <span class="date">19/5/2022</span></h3>
 <ul>
   <li>Update to Chromium 102.0.5005.61</li>
@@ -223,28 +245,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.2-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.2-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.100.11 beta <span class="date">13/4/2022</span></h3>
-<ul>
-  <li>Fix for Outlook where it would fail to update when the machine comes back online.</li>
-  <li>Opening links from the new tab page, would sometimes incorrectly eject the link into a new window. Fix this.</li>
-  <li>On macOS, if "Always show toolbar in fullscreen" was disabled, the webview would overflow into the toolbars in fullscreen mode. Fix this.</li>
-  <li>Other less important bugfixes and stability fixes</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.100.11.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.100.11.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.100.11.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.100.11.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.100.11-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.100.11-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.100.11-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
