@@ -1,3 +1,23 @@
+<h3>Version 10.102.12 beta <span class="date">24/5/2022</span></h3>
+<ul>
+  <li>The previous beta broke tab titles, so they always showed the url. Fix this</li>
+  <li>Update dependencies</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.12.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.12.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.12.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.12.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.12-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.12-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.12-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.102.11 beta <span class="date">23/5/2022</span></h3>
 <ul>
   <li>Update dependencies</li>
@@ -220,33 +240,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.9-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.9-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.4 beta <span class="date">21/4/2022</span></h3>
-<ul>
-  <li>Update to Chromium 101.0.4951.41</li>
-  <li>When launching an app from the webdock popup, don't auto expand this in the explorer webdock</li>
-  <li>Moving tabs from secondary windows back to the primary one didn't work. Fix this</li>
-  <li>macOS, add View > Unsplit all apps & tabs to the main menu</li>
-  <li>Fix the explorer webdock sometimes failing to render on first switch</li>
-  <li>When removing an app we used to remove all it's child tabs. Now reparent them to the group</li>
-  <li>Some favicons failed to show customized icons served by pages and instead showed the default favicon icon for the domain, fix this</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.4.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.4.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.4.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.4.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.4-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.4-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.4-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
