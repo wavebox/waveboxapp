@@ -1,3 +1,42 @@
+<h3>Version 10.102.12 <span class="date">25/5/2022</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add the password manager into the main Wavebox settings</li>
+  <li>Add DNS over HTTPS settings into the main Wavebox settings</li>
+  <li>Add dark mode support to some of the Wavebox dialogs</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 102.0.5005.61</li>
+  <li>Update dependencies</li>
+  <li>Stability & performance fixes</li>
+  <li>UI Tweaks</li>
+  <li>Move Wavebox update settings into the about section</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix opening external links in new tabs, heading out to a new window in some configurations</li>
+  <li>Fix the keyring deprecation warning on Ubuntu 22</li>
+  <li>Fix Smart notes not adding highlighted text correctly</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.102.12.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.102.12.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.102.12.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.102.12.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.102.12-2_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.102.12-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.102.12-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.101.21 <span class="date">12/5/2022</span></h3>
 
 <h4>🆕 New!</h4>
@@ -468,51 +507,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.99.11-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.99.11-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.98.34 <span class="date">21/2/2022</span></h3>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 98.0.4758.102</li>
-  <li>Update dependencies</li>
-  <li>Performance improvements from our internal fuzzing</li>
-  <li>Compatibility improvements for extensions that connect to native applications</li>
-  <li>Add a floating drawer icon to workspaces that have a hidden titlebar</li>
-  <li>Add some additional info to diagnostics to help us diagnose split screen issues</li>
-  <li>Add a keyboard shortcut (Ctrl/Cmd+Shift+C) to copy the current url</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Split screen would sometimes not respect the setting after a reboot, fix this</li>
-  <li>Under some circumstances, the resize handle for split screen would not work after opening a tab, fix this</li>
-  <li>Fixes for the Clickup integration</li>
-  <li>Fix an issue where Wavebox would sometimes pick a random app after restarting</li>
-  <li>Stability improvements</li>
-  <li>Fix a crash when fetching the last used tab</li>
-  <li>Better error handling</li>
-  <li>Fix some sites being unable to open links in the default browser</li>
-  <li>Fix Skype being unable to open links in the default browser, when the default browser setting is only set on the Skype app</li>
-  <li>Fix an issue where some tab icons would appear broken</li>
-  <li>Fix a crash when editing an installer in the collection widget</li>
-  <li>Fix some issues around closing windows via a keyboard shortcut</li>
-  <li>Stability improvements</li>
-  <li>Fix sorting for cloud profiles</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.98.34.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.98.34.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.98.34.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.98.34.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.98.34-2_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.98.34-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.98.34-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
