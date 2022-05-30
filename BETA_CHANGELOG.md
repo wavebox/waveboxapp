@@ -1,3 +1,28 @@
+<h3>Version 10.102.15 beta <span class="date">30/5/2022</span></h3>
+<ul>
+  <li>Add sections to the Quick Switch when searching to help you locate what you're looking for</li>
+  <li>Add an option to change the order of the Quick Switch search results. Right click on the section titles to change</li>
+  <li>When right-clicking on a link in a page, add an option to create a new link open rule</li>
+  <li>When setting the new tab url, this was only taking into account when pressing the home button. Change it so the homepage actually changes 👍</li>
+  <li>Fix widgets sometimes failing to popout</li>
+  <li>🤞 Another fix for PowerToys FancyZones on Windows</li>
+  <li>Style fixes</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.15.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.15.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.15.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.15.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.15-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.15-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.15-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.102.14 beta <span class="date">27/5/2022</span></h3>
 <ul>
   <li>Add group results into the quick switch</li>
@@ -224,36 +249,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.19-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.19-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.16 beta <span class="date">3/5/2022</span></h3>
-<ul>
-  <li>Update to Chromium 101.0.4951.54</li>
-  <li>Update dependencies</li>
-  <li>When using the switcher, if you just hit enter after searching, auto-select the first item in the list</li>
-  <li>In settings, make weblink accounts include their resolved display name</li>
-  <li>Tweaks to the omnibox behaviour when typing urls on the new group/tab sleeping ui</li>
-  <li>Add boost tab into right-click context menu</li>
-  <li>Fixes for tab boosting</li>
-  <li>Fix some Slack accounts no longer receiving updated badges & notifications</li>
-  <li>Add "Focus the main Wavebox window" option to the main burger menu</li>
-  <li>Fix an issue where collapsed groups would still show the unread badge when it was disabled in settings</li>
-  <li>Style fixes</li>
-  <li>Stability fixes</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.16.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.16.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.16.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.16.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.16-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.16-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.16-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
