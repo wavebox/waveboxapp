@@ -1,3 +1,24 @@
+<h3>Version 10.102.16 beta <span class="date">1/6/2022</span></h3>
+<ul>
+  <li>Fix the quick switch not closing on blur</li>
+  <li>When boosting a tab, if the app supports it, give the option to use the url from the tab as the base url</li>
+  <li>Update dependencies</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.16.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.16.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.16.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.16.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.16-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.16-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.16-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.102.15 beta <span class="date">30/5/2022</span></h3>
 <ul>
   <li>Add sections to the Quick Switch when searching to help you locate what you're looking for</li>
@@ -220,35 +241,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.21-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.21-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.19 beta <span class="date">9/5/2022</span></h3>
-<ul>
-  <li>Add an option to exclude pinned tabs from the open tab counts. This can be changed under Settings > Tabs & Windows</li>
-  <li>Add support for picking search results with the tab key in the quick switch</li>
-  <li>Add a keyboard shortcut to toggle between pre-set split screen sizes. This can be configured under Settings > Keyboard Shortcuts</li>
-  <li>Improve icon quality in the sidebar</li>
-  <li>Fix an issue with split screen, where one of the tabs could fail to resize and display under the other</li>
-  <li>Fix an issue on macOS where desktop web apps would fail to launch</li>
-  <li>Fix an issue where Wavebox could start minimized and then it was difficult to get the main window opened</li>
-  <li>Fix styling issue when using certain themes and getting the signed out dialog</li>
-  <li>Fix an issue where switching Slack workspaces would fail and you'd essentiall get stuck in a single workspace</li>
-  <li>Performance fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.19.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.19.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.19.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.19.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.19-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.19-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.19-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
