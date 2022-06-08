@@ -1,3 +1,36 @@
+<h3>Version 10.102.17 beta <span class="date">8/6/2022</span></h3>
+<ul>
+  <li>Add an option to name your app when using the "Boost this tab" wizard</li>
+  <li>
+    Add an experimental option to show tabs along the top of Desktop Web Apps.
+    This can be enabled, by right-clicking on the app > Settings &
+    enabling the "Tabstrip"
+  </li>
+  <li>
+    Add an option to keep notifications on screen, until dismissed (Integrated apps only).
+    This can be enabled under app settings > "Keep notifications on-screen until dismissed"
+  </li>
+  <li>Fix the text color in the titlebar for Windows</li>
+  <li>Re-opening a tab via Ctrl/Cmd+Shift+T was failing to keep the tab in the main Wavebox window. Fix this</li>
+  <li>Stability fixes</li>
+  <li>Usability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.17.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.17.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.17.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.17.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.17-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.17-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.17-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.102.16 beta <span class="date">1/6/2022</span></h3>
 <ul>
   <li>Fix the quick switch not closing on blur</li>
@@ -218,29 +251,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.22-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.22-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.21 beta <span class="date">11/5/2022</span></h3>
-<ul>
-  <li>Upgrade to Chromium 101.0.4951.64</li>
-  <li>Fix an issue when adding multiple ClickUp or Feedly apps to the same cookie container</li>
-  <li>Fix an issue where new tab pages could be blank</li>
-  <li>Data integrity fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.21.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.21.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.21.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.21.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.21-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.21-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.21-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
