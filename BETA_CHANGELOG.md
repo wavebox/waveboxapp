@@ -1,3 +1,24 @@
+<h3>Version 10.102.18 beta <span class="date">9/6/2022</span></h3>
+<ul>
+  <li>Add an option to auto-wakeup apps in the background</li>
+  <li>Update dependencies</li>
+  <li>Usability fixes</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.18.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.18.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.18.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.18.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.18-3_amd64.deb)
+* [Linux (RPM)](https://wavebox.io/download?platform=linux)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.18-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.18-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.102.17 beta <span class="date">8/6/2022</span></h3>
 <ul>
   <li>Add an option to name your app when using the "Boost this tab" wizard</li>
@@ -232,25 +253,6 @@
 * [Linux (RPM)](https://wavebox.io/download?platform=linux)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.24-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.24-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.22 beta <span class="date">13/5/2022</span></h3>
-<ul>
-  <li>Update to Chromium 101.0.4951.67</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.101.22.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.101.22.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.101.22.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.101.22.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.101.22-3_amd64.deb)
-* [Linux (RPM)](https://wavebox.io/download?platform=linux)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.101.22-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.101.22-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
