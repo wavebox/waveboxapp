@@ -1,14 +1,6 @@
 <h3>Version 10.103.17 beta <span class="date">30/6/2022</span></h3>
 <ul>
   <li>
-    Brand new template sharing. Send one or more groups and passwords to a friend
-    or co-worker so they can grab part or all of your setup. If you share a template
-    with someone who doesn't have Wavebox this can help them get setup quickly; when
-    they first launch Wavebox, the template will be pre-added to Wavebox so they're
-    ready to go! To give it a try, right-click on any group and use the "Share this group"
-    option 🛫
-  </li>
-  <li>
     Add a new Info Card widget to workspaces, allowing you to add an image, text and link,
     helpful if you're part of a team and want to share some inspiration 💡
   </li>
