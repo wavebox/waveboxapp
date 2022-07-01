@@ -1,3 +1,24 @@
+<h3>Version 10.103.19 beta <span class="date">1/7/2022</span></h3>
+<ul>
+  <li>Fix an issue with the previous beta, where adding a new app to a group would fail</li>
+  <li>Fix an issue where parts of the main UI would fail to show in the main window</li>
+  <li>Add a keyboard shortcut to close all tabs in the current group</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.103.19.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.103.19.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.103.19.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.103.19.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.103.19-3_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.19-3.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.19-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.19-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.103.17 beta <span class="date">30/6/2022</span></h3>
 <ul>
   <li>
@@ -217,54 +238,6 @@
 * [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.102.15-3.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.15-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.15-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.102.14 beta <span class="date">27/5/2022</span></h3>
-<ul>
-  <li>Add group results into the quick switch</li>
-  <li>Add keyboard shortcuts to toggle between just the tabs as opposed to the apps in the main window.</li>
-  <li>Make the history and saved items in the tooltips open as a new tab when holding the shift key</li>
-  <li>Tidy up the keyboard shortcut settings where there are shortcuts that map from 1-9</li>
-  <li>Fix an issue on Windows where PowerToys and FancyZones could resize popup windows such as the quick switch</li>
-  <li>Fix not being able to enter color codes in the group & app context menus</li>
-  <li>Fix not being able to remove an ignored password site in settings</li>
-  <li>Groups with no apps, would sometimes place the tab toolbar in it's own toolbar, with an empty one above it. Fix this</li>
-  <li>
-    Split screen fixes
-    <ul>
-      <li>Changing the mode via the in page right-click menu, would revert the change shortly after. Fix this</li>
-      <li>Add the unsplit option to context menus for the secondary split tab</li>
-      <li>Fix the incorrect split mode sometimes being reported in right-click menus</li>
-    </ul>
-  </li>
-  <li>
-    Link engine updates & fixes
-    <ul>
-      <li>
-        Add an option to open links across cookie container, when opening links alongside their matched app.
-        These rules can be created in the customizer, when using "Open in tab as matched app"
-      </li>
-      <li>
-        There are some edge cases where links would incorrectly open cross cookie container, this would
-        cause an undefined behaviour (i.e. tabs would appear to reload, or reset to their homepage). Capture
-        this edge case and handle it more uniformly
-      </li>
-    </ul>
-  </li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.14.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.14.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.14.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.14.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.14-3_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.102.14-3.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.14-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.14-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
