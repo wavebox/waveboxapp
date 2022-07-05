@@ -1,3 +1,23 @@
+<h3>Version 10.103.23 beta <span class="date">5/7/2022</span></h3>
+<ul>
+  <li>Update to Chromium 103.0.5060.114</li>
+  <li>Fix tab boosting for urls that share the same domain (i.e. Gmail & Google Chat)</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.103.23.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.103.23.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.103.23.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.103.23.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.103.23-3_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.23-3.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.23-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.23-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.103.20 beta <span class="date">4/7/2022</span></h3>
 <ul>
   <li>Add a Smart Notes widget</li>
@@ -214,27 +234,6 @@
 * [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.102.17-3.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.17-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.17-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.102.16 beta <span class="date">1/6/2022</span></h3>
-<ul>
-  <li>Fix the quick switch not closing on blur</li>
-  <li>When boosting a tab, if the app supports it, give the option to use the url from the tab as the base url</li>
-  <li>Update dependencies</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.102.16.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.102.16.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.102.16.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.102.16.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.102.16-3_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.102.16-3.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.102.16-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.102.16-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
