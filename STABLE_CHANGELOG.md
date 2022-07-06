@@ -1,3 +1,60 @@
+<h3>Version 10.103.28 <span class="date">6/7/2022</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Brand new template sharing. Send one or more groups and passwords to a friend
+    or co-worker so they can grab part or all of your setup. If you share a template
+    with someone who doesn't have Wavebox this can help them get setup quickly; when
+    they first launch Wavebox, the template will be pre-added to Wavebox so they're
+    ready to go! To give it a try, right-click on any group and use the "Share this group"
+    option 🛫
+  </li>
+  <li>
+    Add a new Info Card widget to workspaces, allowing you to add an image, text and link,
+    helpful if you're part of a team and want to share some inspiration 💡
+  </li>
+  <li>Add a new Smart Notes widget to workspaces</li>
+  <li>Add new wallpapers in workspaces</li>
+  <li>Add a keyboard shortcut to close all tabs in the current group</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 103.0.5060.114</li>
+  <li>Update dependencies</li>
+  <li>Improvements to tab boosting</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix not being able to set the text color in Smart notes</li>
+  <li>Fix the toggle webdock keyboard shortcut not working</li>
+  <li>Fix the titlebar button colors when not using the unified tabstrip & titlebar</li>
+  <li>
+    Clickup has been experiencing some issues and are not sending notification
+    change events, which means the unread badge fails to update. We've added a
+    workaround for this until Clickup issue a fix
+  </li>
+  <li>Fix an issue where parts of the main UI would fail to show in the main window</li>
+  <li>Fix tab boosting for urls that share the same domain (i.e. Gmail & Google Chat)</li>
+  <li>Fix Desktop Web Apps failing to open correctly</li>
+</ul>
+
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.28.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.28.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.28.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.28.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.28-2_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.28-2.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.28-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.28-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.103.5 <span class="date">22/6/2022</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -432,110 +489,6 @@
 * [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.99.50-2.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.99.50-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.99.50-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.99.46 <span class="date">28/3/2022</span></h3>
-<h4>🆕 Our brand new UI for 2022</h4>
-<p>
-  The team at Wavebox HQ have been busy working on a brand new UI for
-  Wavebox which is slicker and smoother so you can work faster and be more
-  productive than ever when working on the web. The results include a mix
-  of awesome design and usability improvements and time-saving new features.
-  Here's a run-down of what's new!
-</p>
-<ul>
-  <li>
-    A brand new UI, which includes a unified tab strip & title bar, floating
-    webviews with subtle rounded corners and shadows to make everything you're
-    working on just pop
-  </li>
-  <li>
-    Rebuilt from the ground up, a new drag & drop experience that among other things
-    lets you drag tabs from toolbar straight into the webdock
-  </li>
-  <li>
-    A brand new webdock rebuilt from the ground up...
-    <ul>
-      <li>
-        The webdock now has two modes, the list webdock (just your icons) and the
-        explorer webdock showing all your groups, apps and tabs on the left.
-      </li>
-      <li>
-        Seamlessly toggle between the list webdock and explorer webdock anytime by using the
-        button in the toolbar.
-      </li>
-      <li>
-        Got lots of tabs to organize? No problem, easily create folders in the
-        explorer webdock to keep all your stuff exactly where you need it.
-      </li>
-      <li>
-        You're no longer bound by the regular, compact & tiny webdock sizes, just use the drag
-        bar for as much (or as little) webdock as you like.
-      </li>
-      <li>
-        Wish you could create a new group without an app? Just hit the new group button and
-        start adding tabs.
-      </li>
-    </ul>
-  </li>
-  <li>
-    Need the action buttons in the title bar, or prefer the extra space? You can now choose
-    which icons you want and which you don't.
-  </li>
-  <li>
-    Always hitting compose, or creating new documents? Just hover over your favorite apps
-    and check out the fast actions (try it on Google Drive, or Gmail)!
-  </li>
-  <li>
-    Quickly get to what's new just by hovering over your apps. We've added your unreads,
-    notifications and more into the popovers to make them more useful.
-  </li>
-  <li>
-    Customize your groups and apps directly from the right-click menus without ever needing
-    to touch settings (try clicking on the name or color).
-  </li>
-  <li>
-    Check out the new tab navigator. Cool little graphs and lists of what you've got running!
-  </li>
-  <li>
-    Add Wavebox Smart Notes as an app.
-  </li>
-  <li>
-    The dev team & ux team tell us that there are nearly a million other tweaks but we don't
-    quite believe them. Or maybe we do. You decide!
-  </li>
-</ul>
-
-<h4>And there's more...</h4>
-<ul>
-  <li>Update to Chromium 99.0.4844.84</li>
-  <li>Update a bunch of other dependencies</li>
-  <li>
-    Some big performance improvements from the new UI update, especially for machines
-    that have integrated graphics
-  </li>
-  <li>Add keyboard shortcuts for split/unsplit (this can be configured under settings)</li>
-  <li>Opening wavebox://downloads in the main window could cause it to reload on startup, fix this</li>
-  <li>Fix a crash in the main window</li>
-  <li>Fix opening app settings not always scrolling the settings window to the correct location</li>
-  <li>When opening external links, Wavebox wouldn't offer the last cookie container when it was the default. Fix this</li>
-  <li>Tab counts would not show on groups with a single app, fix this</li>
-  <li>Capture a case where a partial update could cause the app to stop launching</li>
-</ul>
-
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.99.46.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.99.46.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.99.46.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.99.46.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.99.46-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.99.46-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.99.46-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.99.46-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
