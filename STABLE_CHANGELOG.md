@@ -1,3 +1,57 @@
+<h3>Version 10.103.36 <span class="date">18/7/2022</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Updates to the link opener
+    <ul>
+      <li>Add a priority option to link rules, so you can ensure the ordering of matching</li>
+      <li>Add the ability to edit & create rules (both for links opened within Wavebox and external links)</li>
+      <li>Fix an issue where picking to open in a new window, wouldn't always create a new window</li>
+      <li>
+        Updates for when opening links from outside Wavebox
+        <ul>
+          <li>Add advanced matching options, so you can use url patterns etc</li>
+          <li>Add an option to open certain links in different Wavebox profiles</li>
+          <li>Rewrite the chooser dialog to be less cluttered</li>
+          <li>Add a profile option in the chooser dialog</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Add a titlebar button to secondary windows to get back to the main Wavebox window</li>
+  <li>Tidy up the titlebar buttons on secondary windows (these can be re-enabled under settings)</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Updates to tab boosting</li>
+  <li>Performance improvements</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue where Wavebox would sometimes incorrectly quit rather than hide on Linux when using keyboard shortcuts</li>
+  <li>Fix CMD+Q sometimes not prompting before exit on macOS</li>
+  <li>Fixes when adding new apps</li>
+</ul>
+
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.36.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.36.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.36.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.36.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.36-2_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.36-2.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.36-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.36-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.103.28 <span class="date">6/7/2022</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -435,60 +489,6 @@
 * [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.100.7-2.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.100.7-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.100.7-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.99.50 <span class="date">30/3/2022</span></h3>
-<p>
-  Thanks to everyone who reported bugs in the release with the new UI earlier
-  this week, this version contains a number of fixes.
-</p>
-<p>
-  In case you missed version 10.99.46, it brings a brand new UI for
-  Wavebox which is slicker and smoother so you can work faster and be more
-  productive than ever when working on the web. The results include a mix
-  of awesome design and usability improvements and time-saving new features.
-  You can find out more information on our blog!
-</p>
-
-<p>Here's what's new in this version...</p>
-<ul>
-  <li>Add "New window" to the link opener engines</li>
-  <li>Fix an issue, when in fullscreen the sidebar would be cut-off (macOS)</li>
-  <li>Fix a style issue when rounded webviews is disabled</li>
-  <li>Fix an issue where the the sidebar would cut off some styles at more than 80 pixels wide</li>
-  <li>
-    After the new UI update, right clicking on a group with just 1 app wouldn't
-    show the "Open current page in new window" option. Fix this.
-  </li>
-  <li>
-    Disable the "Send to workspace" option in the group context menu, when
-    there's nothing in the group to send
-  </li>
-  <li>
-    Fix an issue on macOS where the CMD+W behaviour was inconsistent in some configurations
-  </li>
-  <li>Stability fixes around locking & unlocking Wavebox</li>
-  <li>Fix a CPU spike when opening the profile switcher</li>
-  <li>Fix some notifications not showing the correct icons in Wavebox mini</li>
-  <li>Style fixes</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-  <li>Update integrations</li>
-</ul>
-
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.99.50.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.99.50.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.99.50.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.99.50.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.99.50-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.99.50-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.99.50-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.99.50-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
