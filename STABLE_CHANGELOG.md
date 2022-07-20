@@ -1,3 +1,25 @@
+<h3>Version 10.103.39 <span class="date">20/7/2022</span></h3>
+<ul>
+  <li>Update to Chromium 103.0.5060.134 which includes important security fixes</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.39.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.39.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.39.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.39.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.39-2_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.39-2.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.39-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.39-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.103.36 <span class="date">18/7/2022</span></h3>
 
 <h4>🆕 New!</h4>
@@ -445,50 +467,6 @@
 * [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.100.12-2.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.100.12-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.100.12-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.100.7 <span class="date">10/4/2022</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add an option to Groups to set the default homepage when opening new tabs in that group</li>
-  <li>Add the option to change the text size in the sidebar</li>
-  <li>Add a cookie container picker when sharing a website using the share menu in the addressbar</li>
-  <li>Add a keyboard shortcut to toggle the webdock modes (this can be configured under settings)</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update Chromium to 100.0.4896.75</li>
-  <li>Update dependencies</li>
-  <li>Performance improvements, including up to 25% faster launching of some Wavebox pages</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Temporarily disable floating webviews when devtools are open</li>
-  <li>Adding Wavebox smart notes, connect or workspaces as a desktop web app would fail silently, fix this.</li>
-  <li>Fix a compatability issue with the Norton Password Manager extension</li>
-  <li>Tabs held in the top level group would fail to convert to apps as they assumed they'd have a parent app. 🤦 Fix this</li>
-  <li>The active app & tab indicator was incredibly washed out when using dark themes. Make it brighter</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.100.7.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.100.7.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.100.7.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.100.7.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.100.7-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.100.7-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.100.7-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.100.7-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
