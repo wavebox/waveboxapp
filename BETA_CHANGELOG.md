@@ -1,3 +1,37 @@
+<h3>Version 10.104.6 beta <span class="date">28/7/2022</span></h3>
+<ul>
+  <li>Update to Chromium 104.0.5112.65</li>
+  <li>
+    Wavebox had a secret disco mode! You could sometimes trigger this
+    when interacting with Groups that are in split screen, and you'd see tabs
+    switching every half a second or so. Fun as disco mode was, it was actually a
+    bug and not a feature. So the Wavebox dev team have been party-poopers and
+    shut the disco down.
+  </li>
+  <li>Dragging apps into the Webdock and creating a group was broken, fix this.</li>
+  <li>
+    Fix an issue where the "This tab is sleeping" or "Add your first tab to the group"
+    screen would end up in error.
+  </li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>First launch improvements</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.104.6.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.104.6.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.104.6.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.104.6.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.104.6-3_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.104.6-3.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.104.6-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.104.6-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.104.4 beta <span class="date">25/7/2022</span></h3>
 <ul>
   <li></li>
@@ -199,28 +233,6 @@
 * [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.23-3.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.23-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.23-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.103.20 beta <span class="date">4/7/2022</span></h3>
-<ul>
-  <li>Add a Smart Notes widget</li>
-  <li>Improvements to tab boosting</li>
-  <li>Fix a crash on the Link opener manager</li>
-  <li>Update dependencies</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.103.20.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.103.20.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.103.20.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.103.20.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.103.20-3_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.20-3.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.20-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.20-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
