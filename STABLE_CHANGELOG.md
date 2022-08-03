@@ -1,3 +1,38 @@
+<h3>Version 10.104.7 <span class="date">3/8/2022</span></h3>
+<ul>
+  <li>Update to Chromium 104.0.5112.81</li>
+  <li>
+    Wavebox had a secret disco mode! You could sometimes trigger this
+    when interacting with Groups that are in split screen, and you'd see tabs
+    switching every half a second or so. Fun as disco mode was, it was actually a
+    bug and not a feature. So the Wavebox dev team have been party-poopers and
+    shut the disco down.
+  </li>
+  <li>Dragging apps into the Webdock and creating a group was broken, fix this.</li>
+  <li>
+    Fix an issue where the "This tab is sleeping" or "Add your first tab to the group"
+    screen would end up in error.
+  </li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>First launch improvements</li>
+</ul>
+
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.7.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.7.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.104.7.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.104.7.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.104.7-2_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.104.7-2.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.104.7-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.104.7-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.103.39 <span class="date">20/7/2022</span></h3>
 <ul>
   <li>Update to Chromium 103.0.5060.134 which includes important security fixes</li>
@@ -426,47 +461,6 @@
 * [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.101.9-2.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.9-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.9-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.100.12 <span class="date">19/4/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add an option to set a different proxy config on each cookie container</li>
-  <li>Add an option to ignore certain url patterns when sleeping tabs</li>
-  <li>The option to change the new tab page had vanished, bring it back</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 100.0.4896.127</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fullscreen fix on macOS when moving from a fullscreen window, to a fullscreen video</li>
-  <li>Fix tab titles sometimes not updating</li>
-  <li>Cookie container fixes</li>
-  <li>Fix for Outlook where it would fail to update when the machine comes back online.</li>
-  <li>Opening links from the new tab page, would sometimes incorrectly eject the link into a new window. Fix this.</li>
-  <li>On macOS, if "Always show toolbar in fullscreen" was disabled, the webview would overflow into the toolbars in fullscreen mode. Fix this.</li>
-  <li>Other less important bugfixes and stability fixes</li>
-</ul>
-
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.100.12.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.100.12.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.100.12.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.100.12.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.100.12-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.100.12-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.100.12-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.100.12-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
