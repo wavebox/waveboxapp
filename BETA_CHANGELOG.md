@@ -1,3 +1,27 @@
+<h3>Version 10.104.8 beta <span class="date">4/8/2022</span></h3>
+<ul>
+  <li>Fix not being able to add new passwords in settings</li>
+  <li>Fix some UI styling when the devtools are open</li>
+  <li>Faster extension downloads, especially with larger extensions</li>
+  <li>Update dependencies</li>
+  <li>UI fixes</li>
+  <li>Stability fixes</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.104.8.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.104.8.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.104.8.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.104.8.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.104.8-3_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.104.8-3.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.104.8-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.104.8-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.104.7 beta <span class="date">2/8/2022</span></h3>
 <ul>
   <li>Update to Chromium 104.0.5112.81</li>
@@ -210,28 +234,6 @@
 * [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.31-3.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.31-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.31-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.103.28 beta <span class="date">6/7/2022</span></h3>
-<ul>
-  <li>Fix Desktop Web Apps failing to open correctly</li>
-  <li>Final tweaks to template sharing</li>
-  <li>Bug fixes</li>
-  <li>Stability improvements</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.103.28.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.103.28.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.103.28.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.103.28.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.103.28-3_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.28-3.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.28-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.28-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
