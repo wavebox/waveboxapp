@@ -1,3 +1,49 @@
+<h3>Version 10.104.12 <span class="date">22/8/2022</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    New Side Search allows you to open the search page in a side panel
+    after you start opening results. When Side Search is available, a
+    prompt will appear in the address bar allowing you to open it.
+    Side Search works when Google or You.com are set as your
+    default search.
+  </li>
+  <li>Add You.com as a search provider</li>
+  <li>Add search engine picker to the main Wavebox settings</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 104.0.5112.101</li>
+  <li>Update dependencies</li>
+  <li>Include add buttons in the explorer webdock</li>
+  <li>Updates to the template sharing process</li>
+  <li>Faster extension downloads, especially with larger extensions</li>
+  <li>UI & Stability fixes</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix some dragging issue in the explorer webdock</li>
+  <li>Fix not being able to add new passwords in settings</li>
+  <li>Fix some UI styling when the devtools are open</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.12.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.12.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.104.12.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.104.12.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.104.12-2_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.104.12-2.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.104.12-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.104.12-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.104.7 <span class="date">3/8/2022</span></h3>
 <ul>
   <li>Update to Chromium 104.0.5112.81</li>
@@ -410,57 +456,6 @@
 * [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.101.16-2.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.16-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.16-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.9 <span class="date">27/4/2022</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Tab boosting! Although it was previously possible to convert a tab into an
-    app, it only turned the tab into a weblink app. This meant that you often
-    missed out on customizations and integrations specific for that app. Tab
-    boosting fixes this, by boosting the tab into its fully blown tab counterpart.
-    Also when you boost a tab it has a cool animation 😎.
-  </li>
-  <li>We successfully moved over to Stripe for subscription billing, so you can edit your payment details via the Stripe Portal 👍</li>
-  <li>macOS, add View > Unsplit all apps & tabs to the main menu</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 101.0.4951.41</li>
-  <li>Updates to the Gmail integration</li>
-  <li>When launching an app from the webdock popup, don't auto expand this in the explorer webdock</li>
-  <li>Improve the drop indicator when moving an item into a group</li>
-  <li>Startup performance improvements</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Do not disturb/focus mode detection was siliently failing on some macOS configurations & versions, fix for this</li>
-  <li>Fix the update checker running too frequently</li>
-  <li>Fix a bunch of glitches with right-click menus</li>
-  <li>Moving tabs from secondary windows back to the primary one didn't work. Fix this</li>
-  <li>Fix the explorer webdock sometimes failing to render on first switch</li>
-  <li>When removing an app we used to remove all it's child tabs. Now reparent them to the group</li>
-  <li>Some favicons failed to show customized icons served by pages and instead showed the default favicon icon for the domain, fix this</li>
-  <li>UI fixes</li>
-</ul>
-
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.101.9.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.101.9.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.101.9.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.101.9.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.101.9-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.101.9-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.9-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.9-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
