@@ -1,3 +1,48 @@
+<h3>Version 10.104.14 <span class="date">22/8/2022</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    New Side Search allows you to open the search page in a side panel
+    after you start opening results. When Side Search is available, a
+    prompt will appear in the address bar allowing you to open it.
+    Side Search works when Google or You.com are set as your
+    default search.
+  </li>
+  <li>Add You.com as a search provider</li>
+  <li>Add search engine picker to the main Wavebox settings</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 104.0.5112.101</li>
+  <li>Update dependencies</li>
+  <li>Include add buttons in the explorer webdock</li>
+  <li>Updates to the template sharing process</li>
+  <li>Faster extension downloads, especially with larger extensions</li>
+  <li>UI & Stability fixes</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix some dragging issue in the explorer webdock</li>
+  <li>Fix not being able to add new passwords in settings</li>
+  <li>Fix some UI styling when the devtools are open</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.14.2.dmg)
+* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.14.2.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.104.14.2.dmg)
+* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.104.14.2.exe)
+* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.104.14-2_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.104.14-2.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.104.14-2.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.104.14-2_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.104.12 <span class="date">22/8/2022</span></h3>
 
 <h4>🆕 New!</h4>
@@ -417,45 +462,6 @@
 * [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.101.21-2.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.21-2.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.21-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.16 <span class="date">4/5/2022</span></h3>
-<p>
-  This version contains important updates and fixes for Wavebox
-</p>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 101.0.4951.54</li>
-  <li>Update dependencies</li>
-  <li>Add boost tab into right-click context menu</li>
-  <li>Add "Focus the main Wavebox window" option to the main burger menu</li>
-  <li>When using the switcher, if you just hit enter after searching, auto-select the first item in the list</li>
-  <li>In settings, make weblink accounts include their resolved display name</li>
-  <li>Tweaks to the omnibox behaviour when typing urls on the new group/tab sleeping ui</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixes for tab boosting</li>
-  <li>Fix some Slack accounts no longer receiving updated badges & notifications</li>
-  <li>Fix an issue where collapsed groups would still show the unread badge when it was disabled in settings</li>
-  <li>UI fixes</li>
-  <li>Stability fixes</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.101.16.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.101.16.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.101.16.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.101.16.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.101.16-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.101.16-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.16-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.16-2_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
