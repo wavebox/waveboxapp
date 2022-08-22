@@ -1,3 +1,31 @@
+<h3>Version 10.104.12 beta <span class="date">22/8/2022</span></h3>
+<ul>
+  <li>
+    New Side Search allows you to open the search page in a side panel
+    after you start opening results. When Side Search is available, a
+    prompt will appear in the address bar allowing you to open it.
+    Side Search works when Google or You.com are set as your
+    default search.
+  </li>
+  <li>Add You.com as a search provider</li>
+  <li>Add search engine picker to the main Wavebox settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+**Downloads**
+
+* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.104.12.3.dmg)
+* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.104.12.3.dmg)
+* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.104.12.3.dmg)
+* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.104.12.3.exe)
+* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.104.12-3_amd64.deb)
+* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.104.12-3.x86_64.rpm)
+* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.104.12-3.tar.gz)
+* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.104.12-3_x86_64.AppImage)
+* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+
+---
+
 <h3>Version 10.104.10 beta <span class="date">17/8/2022</span></h3>
 <ul>
   <li>Update to Chromium 104.0.5112.101</li>
@@ -195,42 +223,6 @@
 * [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.35-3.x86_64.rpm)
 * [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.35-3.tar.gz)
 * [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.35-3_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.103.34 beta <span class="date">13/7/2022</span></h3>
-<ul>
-  <li>
-    Updates to the link opener
-    <ul>
-      <li>Add a priority option to link rules, so you can ensure the ordering of matching</li>
-      <li>Add the ability to edit & create rules (both for links opened within Wavebox and external links)</li>
-      <li>Fix an issue where picking to open in a new window, wouldn't always create a new window</li>
-      <li>
-        Updates for when opening links from outside Wavebox
-        <ul>
-          <li>Add advanced matching options, so you can use url patterns etc</li>
-          <li>Add an option to open certain links in different Wavebox profiles</li>
-          <li>Rewrite the chooser dialog to be less cluttered</li>
-          <li>Add a profile option in the chooser dialog</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Update dependencies</li>
-</ul>
-
-**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/beta/macuniversal/Install%20Wavebox%2010.103.34.3.dmg)
-* [macOS (Intel)](https://download.wavebox.app/beta/mac/Install%20Wavebox%2010.103.34.3.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/beta/macarm64/Install%20Wavebox%2010.103.34.3.dmg)
-* [Windows](https://download.wavebox.app/beta/win/Install%20Wavebox%2010.103.34.3.exe)
-* [Linux (DEB)](https://download.wavebox.app/beta/linux/deb/amd64/wavebox_10.103.34-3_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/beta/linux/rpm/x86_64/Wavebox_10.103.34-3.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/beta/linux/tar/Wavebox_10.103.34-3.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/beta/linux/appimage/Wavebox_10.103.34-3_x86_64.AppImage)
 * [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
 
 ---
