@@ -28,8 +28,7 @@
   <li>Fix not being able to add new passwords in settings</li>
   <li>Fix some UI styling when the devtools are open</li>
 </ul>
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.14.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.14.2.dmg)
@@ -74,8 +73,7 @@
   <li>Fix not being able to add new passwords in settings</li>
   <li>Fix some UI styling when the devtools are open</li>
 </ul>
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.12.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.12.2.dmg)
@@ -109,8 +107,7 @@
   <li>First launch improvements</li>
 </ul>
 
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.7.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.7.2.dmg)
@@ -131,8 +128,7 @@
   <li>Stability fixes</li>
 </ul>
 
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.39.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.39.2.dmg)
@@ -185,8 +181,7 @@
   <li>Fixes when adding new apps</li>
 </ul>
 
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.36.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.36.2.dmg)
@@ -242,8 +237,7 @@
   <li>Fix Desktop Web Apps failing to open correctly</li>
 </ul>
 
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.28.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.28.2.dmg)
@@ -279,8 +273,7 @@
   <li>Fix the tabstrip not showing on groups where all apps are in the Webdock</li>
   <li>Fix Wavebox completely quitting when shutting down a profile</li>
 </ul>
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.5.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.5.2.dmg)
@@ -368,8 +361,7 @@
   <li>Usability fixes</li>
 </ul>
 
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.102.21.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.102.21.2.dmg)
@@ -407,8 +399,7 @@
   <li>Fix the keyring deprecation warning on Ubuntu 22</li>
   <li>Fix Smart notes not adding highlighted text correctly</li>
 </ul>
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.102.12.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.102.12.2.dmg)
@@ -451,8 +442,7 @@
   <li>Performance fixes</li>
 </ul>
 
-
-**Downloads**
+\n**Downloads**
 
 * [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.101.21.2.dmg)
 * [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.101.21.2.dmg)
