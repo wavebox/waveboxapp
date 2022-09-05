@@ -1,3 +1,16 @@
+<h3>Version 10.105.8 <span class="date">5/9/2022</span></h3>
+<ul>
+  <li>Update to Chromium 105.0.5195.102</li>
+  <li>Update dependencies</li>
+  <li>Fixes for removing and importing passwords</li>
+  <li>Faster launching of Sticky Notes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.105.8.2)
+
+---
+
 <h3>Version 10.104.14 <span class="date">22/8/2022</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -28,17 +41,8 @@
   <li>Fix not being able to add new passwords in settings</li>
   <li>Fix some UI styling when the devtools are open</li>
 </ul>
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.14.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.14.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.104.14.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.104.14.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.104.14-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.104.14-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.104.14-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.104.14-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.104.14.2)
 
 ---
 
@@ -73,17 +77,8 @@
   <li>Fix not being able to add new passwords in settings</li>
   <li>Fix some UI styling when the devtools are open</li>
 </ul>
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.12.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.12.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.104.12.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.104.12.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.104.12-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.104.12-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.104.12-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.104.12-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.104.12.2)
 
 ---
 
@@ -107,17 +102,8 @@
   <li>First launch improvements</li>
 </ul>
 
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.104.7.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.104.7.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.104.7.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.104.7.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.104.7-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.104.7-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.104.7-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.104.7-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.104.7.2)
 
 ---
 
@@ -128,17 +114,8 @@
   <li>Stability fixes</li>
 </ul>
 
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.39.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.39.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.39.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.39.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.39-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.39-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.39-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.39-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.103.39.2)
 
 ---
 
@@ -181,17 +158,8 @@
   <li>Fixes when adding new apps</li>
 </ul>
 
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.36.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.36.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.36.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.36.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.36-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.36-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.36-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.36-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.103.36.2)
 
 ---
 
@@ -237,17 +205,8 @@
   <li>Fix Desktop Web Apps failing to open correctly</li>
 </ul>
 
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.28.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.28.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.28.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.28.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.28-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.28-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.28-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.28-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.103.28.2)
 
 ---
 
@@ -273,17 +232,8 @@
   <li>Fix the tabstrip not showing on groups where all apps are in the Webdock</li>
   <li>Fix Wavebox completely quitting when shutting down a profile</li>
 </ul>
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.103.5.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.103.5.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.103.5.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.103.5.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.103.5-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.103.5-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.103.5-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.103.5-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.103.5.2)
 
 ---
 
@@ -361,17 +311,8 @@
   <li>Usability fixes</li>
 </ul>
 
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.102.21.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.102.21.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.102.21.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.102.21.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.102.21-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.102.21-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.102.21-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.102.21-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.102.21.2)
 
 ---
 
@@ -399,60 +340,8 @@
   <li>Fix the keyring deprecation warning on Ubuntu 22</li>
   <li>Fix Smart notes not adding highlighted text correctly</li>
 </ul>
-\n**Downloads**
 
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.102.12.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.102.12.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.102.12.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.102.12.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.102.12-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.102.12-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.102.12-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.102.12-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
-
----
-
-<h3>Version 10.101.21 <span class="date">12/5/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add an option to exclude pinned tabs from the open tab counts. This can be changed under Settings > Tabs & Windows</li>
-  <li>Add support for picking search results with the tab key in the quick switch</li>
-  <li>Add a keyboard shortcut to toggle between pre-set split screen sizes. This can be configured under Settings > Keyboard Shortcuts</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Upgrade to Chromium 101.0.4951.64</li>
-  <li>Improve icon quality in the sidebar</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with split screen, where one of the tabs could fail to resize and display under the other</li>
-  <li>Fix an issue on macOS where desktop web apps would fail to launch</li>
-  <li>Fix an issue where Wavebox could start minimized and then it was difficult to get the main window opened</li>
-  <li>Fix styling issue when using certain themes and getting the signed out dialog</li>
-  <li>Fix an issue where switching Slack workspaces would fail and you'd essentiall get stuck in a single workspace</li>
-  <li>Fix an issue when adding multiple ClickUp or Feedly apps to the same cookie container</li>
-  <li>Fix an issue where new tab pages could be blank</li>
-  <li>Data integrity fixes</li>
-  <li>Performance fixes</li>
-</ul>
-
-\n**Downloads**
-
-* [macOS (Universal)](https://download.wavebox.app/stable/macuniversal/Install%20Wavebox%2010.101.21.2.dmg)
-* [macOS (Intel)](https://download.wavebox.app/stable/mac/Install%20Wavebox%2010.101.21.2.dmg)
-* [macOS (Apple Silicon)](https://download.wavebox.app/stable/macarm64/Install%20Wavebox%2010.101.21.2.dmg)
-* [Windows](https://download.wavebox.app/stable/win/Install%20Wavebox%2010.101.21.2.exe)
-* [Linux (DEB)](https://download.wavebox.app/stable/linux/deb/amd64/wavebox_10.101.21-2_amd64.deb)
-* [Linux (RPM)](https://download.wavebox.app/stable/linux/rpm/x86_64/Wavebox_10.101.21-2.x86_64.rpm)
-* [Linux (TAR)](https://download.wavebox.app/stable/linux/tar/Wavebox_10.101.21-2.tar.gz)
-* [Linux (AppImage)](https://download.wavebox.app/stable/linux/appimage/Wavebox_10.101.21-2_x86_64.AppImage)
-* [Linux (AUR)](https://aur.archlinux.org/packages/wavebox)
+[Downloads](https://wavebox.io/download/release/10.102.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
