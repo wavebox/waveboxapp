@@ -1,3 +1,14 @@
+<h3>Version 10.105.16 beta <span class="date">8/9/2022</span></h3>
+<ul>
+  <li>More stability fixes for sync</li>
+  <li>Fix a hard crash that could bring Wavebox down completely</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.16.3)
+
+---
+
 <h3>Version 10.105.14 beta <span class="date">7/9/2022</span></h3>
 <ul>
   <li>Some links would fail to match through the link engine, when opened from google sites. Fix this.</li>
@@ -123,30 +134,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.7.3)
-
----
-
-<h3>Version 10.104.6 beta <span class="date">28/7/2022</span></h3>
-<ul>
-  <li>Update to Chromium 104.0.5112.65</li>
-  <li>
-    Wavebox had a secret disco mode! You could sometimes trigger this
-    when interacting with Groups that are in split screen, and you'd see tabs
-    switching every half a second or so. Fun as disco mode was, it was actually a
-    bug and not a feature. So the Wavebox dev team have been party-poopers and
-    shut the disco down.
-  </li>
-  <li>Dragging apps into the Webdock and creating a group was broken, fix this.</li>
-  <li>
-    Fix an issue where the "This tab is sleeping" or "Add your first tab to the group"
-    screen would end up in error.
-  </li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>First launch improvements</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
