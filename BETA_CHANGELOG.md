@@ -1,3 +1,12 @@
+<h3>Version 10.105.22 beta <span class="date">12/9/2022</span></h3>
+<ul>
+  <li>Fix Connect and Smart Notes buttons not working</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.22.3)
+
+---
+
 <h3>Version 10.105.21 beta <span class="date">12/9/2022</span></h3>
 <ul>
   <li>Fixes for sharing passwords</li>
@@ -122,19 +131,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.10.3)
-
----
-
-<h3>Version 10.104.9 beta <span class="date">15/8/2022</span></h3>
-<ul>
-  <li>Fix some dragging issue in the explorer webdock</li>
-  <li>Include add buttons in the explorer webdock</li>
-  <li>Updates to the template sharing process</li>
-  <li>UI tweaks</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
