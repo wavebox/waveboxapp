@@ -1,3 +1,39 @@
+<h3>Version 10.105.21 <span class="date">12/9/2022</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Wavebox sync is now available as part of labs. This allows you to keep
+    more than one Wavebox install in sync, so you can have the same Groups,
+    Apps, Bookmarks, Extensions, Smart notes, Passwords and more all in sync
+    across multiple devices. To get started open Settings > Data & Sync and
+    request access!
+  </li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Improvements when setting default search engine</li>
+  <li>UI updates when opening links from outside of Wavebox</li>
+  <li>UI updates for context menus</li>
+  <li>Reduce Wavebox's memory consumption by approximately 50MB 🤩</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Some links would fail to match through the link engine, when opened from google sites. Fix this.</li>
+  <li>Fix memory leak with ClickUp</li>
+  <li>Fix a hard crash that could bring Wavebox down completely</li>
+  <li>Fixes for sharing passwords</li>
+  <li>Fix the settings tooltip not being clickable</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.105.21.2)
+
+---
+
 <h3>Version 10.105.8 <span class="date">5/9/2022</span></h3>
 <ul>
   <li>Update to Chromium 105.0.5195.102</li>
@@ -313,35 +349,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.102.21.2)
-
----
-
-<h3>Version 10.102.12 <span class="date">25/5/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add the password manager into the main Wavebox settings</li>
-  <li>Add DNS over HTTPS settings into the main Wavebox settings</li>
-  <li>Add dark mode support to some of the Wavebox dialogs</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 102.0.5005.61</li>
-  <li>Update dependencies</li>
-  <li>Stability & performance fixes</li>
-  <li>UI Tweaks</li>
-  <li>Move Wavebox update settings into the about section</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix opening external links in new tabs, heading out to a new window in some configurations</li>
-  <li>Fix the keyring deprecation warning on Ubuntu 22</li>
-  <li>Fix Smart notes not adding highlighted text correctly</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.102.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
