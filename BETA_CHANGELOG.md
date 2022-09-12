@@ -1,3 +1,13 @@
+<h3>Version 10.105.20 beta <span class="date">9/9/2022</span></h3>
+<ul>
+  <li>Fixes for sharing passwords</li>
+  <li>Stability and performance fixes for cloud sync</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.20.3)
+
+---
+
 <h3>Version 10.105.16 beta <span class="date">8/9/2022</span></h3>
 <ul>
   <li>More stability fixes for sync</li>
@@ -125,15 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.8.3)
-
----
-
-<h3>Version 10.104.7 beta <span class="date">2/8/2022</span></h3>
-<ul>
-  <li>Update to Chromium 104.0.5112.81</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.7.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
