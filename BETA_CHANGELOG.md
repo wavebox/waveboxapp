@@ -1,3 +1,17 @@
+<h3>Version 10.105.21 beta <span class="date">12/9/2022</span></h3>
+<ul>
+  <li>Fixes for sharing passwords</li>
+  <li>Stability and performance fixes for cloud sync</li>
+  <li>Reduce Wavebox's memory consumption by approximately 50MB 🤩</li>
+  <li>Fix weblink apps and apps with a pre-set subdomain not syncing those fields correctly</li>
+  <li>Fix the settings tooltip not being clickable</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.21.3)
+
+---
+
 <h3>Version 10.105.20 beta <span class="date">9/9/2022</span></h3>
 <ul>
   <li>Fixes for sharing passwords</li>
@@ -121,20 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.9.3)
-
----
-
-<h3>Version 10.104.8 beta <span class="date">4/8/2022</span></h3>
-<ul>
-  <li>Fix not being able to add new passwords in settings</li>
-  <li>Fix some UI styling when the devtools are open</li>
-  <li>Faster extension downloads, especially with larger extensions</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
