@@ -1,3 +1,20 @@
+<h3>Version 10.105.26 beta <span class="date">13/9/2022</span></h3>
+<ul>
+  <li>Fixes for extensions that use the chrome.identity API</li>
+  <li>Fix the new tab workspace not being remembered after a restart</li>
+  <li>Fix being unable to move an app in some instances</li>
+  <li>Fix an edge case where sync would fail to reconnect properly</li>
+  <li>Fix Smart Note sync needlessly always uploading images on the first run</li>
+  <li>Rewrite the sync dispatcher to be more consistent and reslient</li>
+  <li>Handle invalid password entries more consistently in sync</li>
+  <li>Fix an issue where dragging sidebar items could move Wavebox into an undefined state and require a full restart to fix</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.26.3)
+
+---
+
 <h3>Version 10.105.22 beta <span class="date">12/9/2022</span></h3>
 <ul>
   <li>Fix Connect and Smart Notes buttons not working</li>
@@ -122,15 +139,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.12.3)
-
----
-
-<h3>Version 10.104.10 beta <span class="date">17/8/2022</span></h3>
-<ul>
-  <li>Update to Chromium 104.0.5112.101</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
