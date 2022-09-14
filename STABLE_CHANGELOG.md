@@ -1,3 +1,27 @@
+<h3>Version 10.105.26 <span class="date">14/9/2022</span></h3>
+<p>
+  This release contains some bugfixes that were reported in the previous
+  version. Thanks to everyone who has requested access to the new Wavebox sync, we're
+  rolling this out in batches to ensure that it's working as expected 👍
+</p>
+
+<ul>
+  <li>Fixes for extensions that use the chrome.identity API</li>
+  <li>Fix the new tab workspace not being remembered after a restart</li>
+  <li>Fix being unable to move an app in some instances</li>
+  <li>Fix an edge case where sync would fail to reconnect properly</li>
+  <li>Fix Smart Note sync needlessly always uploading images on the first run</li>
+  <li>Rewrite the sync dispatcher to be more consistent and reslient</li>
+  <li>Handle invalid password entries more consistently in sync</li>
+  <li>Fix an issue where dragging sidebar items could move Wavebox into an undefined state and require a full restart to fix</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.105.26.2)
+
+---
+
 <h3>Version 10.105.22 <span class="date">12/9/2022</span></h3>
 
 <h4>🆕 New!</h4>
@@ -278,33 +302,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.103.28.2)
-
----
-
-<h3>Version 10.103.5 <span class="date">22/6/2022</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add an option to hide/show the webdock on hover</li>
-  <li>Add an experimental flag, for the Chromium side panel</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Upgrade to Chromium 103.0.5060.53</li>
-  <li>Update dependencies</li>
-  <li>UI Tweaks</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Boosting some urls would give bad suggestions, fix this</li>
-  <li>Context menu fixes</li>
-  <li>Stability and performance improvements</li>
-  <li>Fix the tabstrip not showing on groups where all apps are in the Webdock</li>
-  <li>Fix Wavebox completely quitting when shutting down a profile</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.103.5.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
