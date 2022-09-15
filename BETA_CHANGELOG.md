@@ -1,3 +1,15 @@
+<h3>Version 10.105.30 beta <span class="date">15/9/2022</span></h3>
+<ul>
+  <li>Update to Chromium 105.0.5195.125</li>
+  <li>Update other dependencies</li>
+  <li>More fixes for sync</li>
+  <li>Fix Wavebox Connect colors not reflecting the main Wavebox theme</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.30.3)
+
+---
+
 <h3>Version 10.105.26 beta <span class="date">13/9/2022</span></h3>
 <ul>
   <li>Fixes for extensions that use the chrome.identity API</li>
@@ -121,24 +133,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.14.3)
-
----
-
-<h3>Version 10.104.12 beta <span class="date">22/8/2022</span></h3>
-<ul>
-  <li>
-    New Side Search allows you to open the search page in a side panel
-    after you start opening results. When Side Search is available, a
-    prompt will appear in the address bar allowing you to open it.
-    Side Search works when Google or You.com are set as your
-    default search.
-  </li>
-  <li>Add You.com as a search provider</li>
-  <li>Add search engine picker to the main Wavebox settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
