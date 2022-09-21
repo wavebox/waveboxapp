@@ -1,3 +1,13 @@
+<h3>Version 10.105.31 beta <span class="date">21/9/2022</span></h3>
+<ul>
+  <li>Fix a crash when setting the Cookie Container on manifest 3 extensions</li>
+  <li>Add a keyboard shortcut to toggle the side search (this can be setup under Settings > Keyboard shortcuts)</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.31.3)
+
+---
+
 <h3>Version 10.105.30 beta <span class="date">15/9/2022</span></h3>
 <ul>
   <li>Update to Chromium 105.0.5195.125</li>
@@ -115,24 +125,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.5.3)
-
----
-
-<h3>Version 10.104.14 beta <span class="date">22/8/2022</span></h3>
-<ul>
-  <li>
-    New Side Search allows you to open the search page in a side panel
-    after you start opening results. When Side Search is available, a
-    prompt will appear in the address bar allowing you to open it.
-    Side Search works when Google or You.com are set as your
-    default search.
-  </li>
-  <li>Add You.com as a search provider</li>
-  <li>Add search engine picker to the main Wavebox settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
