@@ -1,3 +1,18 @@
+<h3>Version 10.105.31 <span class="date">21/9/2022</span></h3>
+
+<ul>
+  <li>Update to Chromium 105.0.5195.125</li>
+  <li>Update other dependencies</li>
+  <li>More fixes for sync</li>
+  <li>Fix Wavebox Connect colors not reflecting the main Wavebox theme</li>
+  <li>Fix a crash when setting the Cookie Container on manifest 3 extensions</li>
+  <li>Add a keyboard shortcut to toggle the side search (this can be setup under Settings > Keyboard shortcuts)</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.105.31.2)
+
+---
+
 <h3>Version 10.105.26 <span class="date">14/9/2022</span></h3>
 <p>
   This release contains some bugfixes that were reported in the previous
@@ -255,53 +270,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.103.36.2)
-
----
-
-<h3>Version 10.103.28 <span class="date">6/7/2022</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Brand new template sharing. Send one or more groups and passwords to a friend
-    or co-worker so they can grab part or all of your setup. If you share a template
-    with someone who doesn't have Wavebox this can help them get setup quickly; when
-    they first launch Wavebox, the template will be pre-added to Wavebox so they're
-    ready to go! To give it a try, right-click on any group and use the "Share this group"
-    option 🛫
-  </li>
-  <li>
-    Add a new Info Card widget to workspaces, allowing you to add an image, text and link,
-    helpful if you're part of a team and want to share some inspiration 💡
-  </li>
-  <li>Add a new Smart Notes widget to workspaces</li>
-  <li>Add new wallpapers in workspaces</li>
-  <li>Add a keyboard shortcut to close all tabs in the current group</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 103.0.5060.114</li>
-  <li>Update dependencies</li>
-  <li>Improvements to tab boosting</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix not being able to set the text color in Smart notes</li>
-  <li>Fix the toggle webdock keyboard shortcut not working</li>
-  <li>Fix the titlebar button colors when not using the unified tabstrip & titlebar</li>
-  <li>
-    Clickup has been experiencing some issues and are not sending notification
-    change events, which means the unread badge fails to update. We've added a
-    workaround for this until Clickup issue a fix
-  </li>
-  <li>Fix an issue where parts of the main UI would fail to show in the main window</li>
-  <li>Fix tab boosting for urls that share the same domain (i.e. Gmail & Google Chat)</li>
-  <li>Fix Desktop Web Apps failing to open correctly</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.103.28.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
