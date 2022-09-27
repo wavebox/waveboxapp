@@ -1,3 +1,19 @@
+<h3>Version 10.106.2 beta <span class="date">27/9/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.61</li>
+  <li>Update dependecies</li>
+  <li>Performance boost for UI components</li>
+  <li>Performance boost on first launch</li>
+  <li>Fix not being able to select elements using the keyboard in the switcher</li>
+  <li>Fix highlight style not having enough contrast in the switcher</li>
+  <li>Changing the Cookie container icon had stopped working, until now! (We fixed it)</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.2.3)
+
+---
+
 <h3>Version 10.105.31 beta <span class="date">21/9/2022</span></h3>
 <ul>
   <li>Fix a crash when setting the Cookie Container on manifest 3 extensions</li>
@@ -113,18 +129,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.9.3)
-
----
-
-<h3>Version 10.105.5 beta <span class="date">30/8/2022</span></h3>
-<ul>
-  <li>Update to Chromium 105.0.5195.52</li>
-  <li>Update dependencies</li>
-  <li>Fixes for removing and importing passwords</li>
-  <li>Faster launching of Sticky Notes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
