@@ -1,3 +1,19 @@
+<h3>Version 10.106.2 <span class="date">28/9/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.61</li>
+  <li>Update dependecies</li>
+  <li>Performance boost for UI components</li>
+  <li>Performance boost on first launch</li>
+  <li>Fix not being able to select elements using the keyboard in the switcher</li>
+  <li>Fix highlight style not having enough contrast in the switcher</li>
+  <li>Changing the Cookie container icon had stopped working, until now! (We fixed it)</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.2.2)
+
+---
+
 <h3>Version 10.105.31 <span class="date">21/9/2022</span></h3>
 
 <ul>
@@ -226,50 +242,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.103.39.2)
-
----
-
-<h3>Version 10.103.36 <span class="date">18/7/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Updates to the link opener
-    <ul>
-      <li>Add a priority option to link rules, so you can ensure the ordering of matching</li>
-      <li>Add the ability to edit & create rules (both for links opened within Wavebox and external links)</li>
-      <li>Fix an issue where picking to open in a new window, wouldn't always create a new window</li>
-      <li>
-        Updates for when opening links from outside Wavebox
-        <ul>
-          <li>Add advanced matching options, so you can use url patterns etc</li>
-          <li>Add an option to open certain links in different Wavebox profiles</li>
-          <li>Rewrite the chooser dialog to be less cluttered</li>
-          <li>Add a profile option in the chooser dialog</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>Add a titlebar button to secondary windows to get back to the main Wavebox window</li>
-  <li>Tidy up the titlebar buttons on secondary windows (these can be re-enabled under settings)</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Updates to tab boosting</li>
-  <li>Performance improvements</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue where Wavebox would sometimes incorrectly quit rather than hide on Linux when using keyboard shortcuts</li>
-  <li>Fix CMD+Q sometimes not prompting before exit on macOS</li>
-  <li>Fixes when adding new apps</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.103.36.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
