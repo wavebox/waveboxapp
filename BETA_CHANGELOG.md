@@ -1,3 +1,13 @@
+<h3>Version 10.106.3 beta <span class="date">29/9/2022</span></h3>
+<ul>
+  <li>Fix webdock apps not collapsing when the group is inactive</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.3.3)
+
+---
+
 <h3>Version 10.106.2 beta <span class="date">27/9/2022</span></h3>
 <ul>
   <li>Update to Chromium 106.0.5249.61</li>
@@ -113,22 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.14.3)
-
----
-
-<h3>Version 10.105.9 beta <span class="date">5/9/2022</span></h3>
-<ul>
-  <li>
-    Wavebox sync is now available as part of labs. This allows you to keep
-    more than one Wavebox install in sync, so you can have the same Groups,
-    Apps, Bookmarks, Extensions, Smart notes, Passwords and more all in sync
-    across multiple devices. To get started open Settings > Data & Sync and
-    follow the wizard 🪄
-  </li>
-  <li>Update to Chromium 105.0.5195.102</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
