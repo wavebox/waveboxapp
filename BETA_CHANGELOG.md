@@ -1,3 +1,14 @@
+<h3>Version 10.106.5 beta <span class="date">3/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.91</li>
+  <li>Fix being unable to edit passwords</li>
+  <li>Sync fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.5.3)
+
+---
+
 <h3>Version 10.106.3 beta <span class="date">29/9/2022</span></h3>
 <ul>
   <li>Fix webdock apps not collapsing when the group is inactive</li>
@@ -104,25 +115,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.16.3)
-
----
-
-<h3>Version 10.105.14 beta <span class="date">7/9/2022</span></h3>
-<ul>
-  <li>Some links would fail to match through the link engine, when opened from google sites. Fix this.</li>
-  <li>UI updates when opening links from outside of Wavebox</li>
-  <li>UI updates for context menus</li>
-  <li>Improvements when setting default search engine</li>
-  <li>Add sync options to the profile popup</li>
-  <li>Fix memory leak with ClickUp</li>
-  <li>Fix an issue with sync where Wavebox could get into a broken state</li>
-  <li>Disable cloud sync before restoring a cloud snapshot or local snapshot</li>
-  <li>Fixes for password sync failing to restore passwords correctly</li>
-  <li>Other sync stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
