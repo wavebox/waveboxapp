@@ -1,3 +1,16 @@
+<h3>Version 10.106.5 <span class="date">3/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.91</li>
+  <li>Update dependencies</li>
+  <li>Fix webdock apps not collapsing when the group is inactive</li>
+  <li>Fix being unable to edit passwords</li>
+  <li>Sync fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.5.2)
+
+---
+
 <h3>Version 10.106.2 <span class="date">28/9/2022</span></h3>
 <ul>
   <li>Update to Chromium 106.0.5249.61</li>
@@ -230,18 +243,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.104.7.2)
-
----
-
-<h3>Version 10.103.39 <span class="date">20/7/2022</span></h3>
-<ul>
-  <li>Update to Chromium 103.0.5060.134 which includes important security fixes</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.103.39.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
