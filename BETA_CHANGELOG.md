@@ -1,3 +1,16 @@
+<h3>Version 10.106.6 beta <span class="date">7/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.103</li>
+  <li>Update dependencies</li>
+  <li>Add "Open in Cookie Container" to context menus</li>
+  <li>Fix an issue where tabs could be left in the stores with no parent</li>
+  <li>Speculative fix for the main window not restoring after a restart</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.6.3)
+
+---
+
 <h3>Version 10.106.5 beta <span class="date">3/10/2022</span></h3>
 <ul>
   <li>Update to Chromium 106.0.5249.91</li>
@@ -104,17 +117,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.20.3)
-
----
-
-<h3>Version 10.105.16 beta <span class="date">8/9/2022</span></h3>
-<ul>
-  <li>More stability fixes for sync</li>
-  <li>Fix a hard crash that could bring Wavebox down completely</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
