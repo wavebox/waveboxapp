@@ -1,3 +1,16 @@
+<h3>Version 10.106.8 beta <span class="date">12/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.119</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>When creating a collection widget from a window, tab ordering was not respected. Fix this.</li>
+  <li>UI Tweaks</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.8.3)
+
+---
+
 <h3>Version 10.106.6 beta <span class="date">7/10/2022</span></h3>
 <ul>
   <li>Update to Chromium 106.0.5249.103</li>
@@ -107,16 +120,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.21.3)
-
----
-
-<h3>Version 10.105.20 beta <span class="date">9/9/2022</span></h3>
-<ul>
-  <li>Fixes for sharing passwords</li>
-  <li>Stability and performance fixes for cloud sync</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.20.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
