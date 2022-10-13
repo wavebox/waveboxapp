@@ -1,3 +1,19 @@
+<h3>Version 10.106.8 <span class="date">12/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 106.0.5249.119</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>When creating a collection widget from a window, tab ordering was not respected. Fix this.</li>
+  <li>UI Tweaks</li>
+  <li>Add "Open in Cookie Container" to context menus</li>
+  <li>Fix an issue where tabs could be left in the stores with no parent</li>
+  <li>Speculative fix for the main window not restoring after a restart</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.106.8.2)
+
+---
+
 <h3>Version 10.106.5 <span class="date">3/10/2022</span></h3>
 <ul>
   <li>Update to Chromium 106.0.5249.91</li>
@@ -218,31 +234,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.12.2)
-
----
-
-<h3>Version 10.104.7 <span class="date">3/8/2022</span></h3>
-<ul>
-  <li>Update to Chromium 104.0.5112.81</li>
-  <li>
-    Wavebox had a secret disco mode! You could sometimes trigger this
-    when interacting with Groups that are in split screen, and you'd see tabs
-    switching every half a second or so. Fun as disco mode was, it was actually a
-    bug and not a feature. So the Wavebox dev team have been party-poopers and
-    shut the disco down.
-  </li>
-  <li>Dragging apps into the Webdock and creating a group was broken, fix this.</li>
-  <li>
-    Fix an issue where the "This tab is sleeping" or "Add your first tab to the group"
-    screen would end up in error.
-  </li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>First launch improvements</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.104.7.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
