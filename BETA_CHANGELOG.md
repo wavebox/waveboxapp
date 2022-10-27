@@ -1,3 +1,17 @@
+<h3>Version 10.107.4 beta <span class="date">27/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 107.0.5304.68</li>
+  <li>Fix the maximized window state sometimes not being remembered on restart</li>
+  <li>Update dependencies</li>
+  <li>UI fixes</li>
+  <li>Fix password sync failing to update password</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.107.4.3)
+
+---
+
 <h3>Version 10.106.9 beta <span class="date">17/10/2022</span></h3>
 <ul>
   <li>Fix the stats widget and downloads always showing file sizes as 0</li>
@@ -121,15 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.26.3)
-
----
-
-<h3>Version 10.105.22 beta <span class="date">12/9/2022</span></h3>
-<ul>
-  <li>Fix Connect and Smart Notes buttons not working</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.22.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
