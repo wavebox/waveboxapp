@@ -1,3 +1,16 @@
+<h3>Version 10.107.9 beta <span class="date">31/10/2022</span></h3>
+<ul>
+  <li>Update to Chromium 107.0.5304.87</li>
+  <li>New Ctrl+Tab switcher</li>
+  <li>New styling and helpers for the global search</li>
+  <li>Fix parts of the UI becoming unresponsive when dragging saved items outside of a tooltip</li>
+  <li>Stability improvements</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.107.9.3)
+
+---
+
 <h3>Version 10.107.5 beta <span class="date">27/10/2022</span></h3>
 <ul>
   <li>Update to Chromium 107.0.5304.68</li>
@@ -120,18 +133,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.31.3)
-
----
-
-<h3>Version 10.105.30 beta <span class="date">15/9/2022</span></h3>
-<ul>
-  <li>Update to Chromium 105.0.5195.125</li>
-  <li>Update other dependencies</li>
-  <li>More fixes for sync</li>
-  <li>Fix Wavebox Connect colors not reflecting the main Wavebox theme</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
