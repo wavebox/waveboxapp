@@ -1,3 +1,13 @@
+<h3>Version 10.107.10 beta <span class="date">2/11/2022</span></h3>
+<ul>
+  <li>Fix the global search keyboard shortcut not working</li>
+  <li>Fix a crash in the keyboard shortcut settings UI</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.107.10.3)
+
+---
+
 <h3>Version 10.107.9 beta <span class="date">31/10/2022</span></h3>
 <ul>
   <li>Update to Chromium 107.0.5304.87</li>
@@ -123,16 +133,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.2.3)
-
----
-
-<h3>Version 10.105.31 beta <span class="date">21/9/2022</span></h3>
-<ul>
-  <li>Fix a crash when setting the Cookie Container on manifest 3 extensions</li>
-  <li>Add a keyboard shortcut to toggle the side search (this can be setup under Settings > Keyboard shortcuts)</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.31.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
