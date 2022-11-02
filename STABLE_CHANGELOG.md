@@ -1,3 +1,49 @@
+<h3>Version 10.107.10 <span class="date">2/11/2022</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    New Ctrl+Tab switcher. Hold Ctrl+Tab to switch between your most recently used
+    apps & tabs.
+  </li>
+  <li>New styling and helpers for the global search</li>
+  <li>
+    On Windows add a button to create a shortcut for a Wavebox profile so it can be launched
+    directly from the desktop
+  </li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 107.0.5304.87</li>
+  <li>Update dependencies</li>
+  <li>
+    When using the explorer webdock it was pretty hard to keep group popovers
+    open as you'd hover over the + button to move your mouse to them. Fix this.
+  </li>
+  <li>
+    Disable webdock hiding when rounded webviews are disabled. This wasn't a supported
+    configuration and you could quite easily end up with a hidden webdock and no way
+    to get to it.
+  </li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix the stats widget and downloads always showing file sizes as 0</li>
+  <li>Integrity fix for extension sync</li>
+  <li>Fix password sync failing to update password</li>
+  <li>Fix the maximized window state sometimes not being remembered on restart</li>
+  <li>Fix parts of the UI becoming unresponsive when dragging saved items outside of a tooltip</li>
+  <li>Fix a crash in the keyboard shortcut settings UI</li>
+  <li>UI fixes</li>
+  <li>Stability fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.107.10.2)
+
+---
+
 <h3>Version 10.106.8 <span class="date">12/10/2022</span></h3>
 <ul>
   <li>Update to Chromium 106.0.5249.119</li>
@@ -198,42 +244,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.104.14.2)
-
----
-
-<h3>Version 10.104.12 <span class="date">22/8/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    New Side Search allows you to open the search page in a side panel
-    after you start opening results. When Side Search is available, a
-    prompt will appear in the address bar allowing you to open it.
-    Side Search works when Google or You.com are set as your
-    default search.
-  </li>
-  <li>Add You.com as a search provider</li>
-  <li>Add search engine picker to the main Wavebox settings</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 104.0.5112.101</li>
-  <li>Update dependencies</li>
-  <li>Include add buttons in the explorer webdock</li>
-  <li>Updates to the template sharing process</li>
-  <li>Faster extension downloads, especially with larger extensions</li>
-  <li>UI & Stability fixes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix some dragging issue in the explorer webdock</li>
-  <li>Fix not being able to add new passwords in settings</li>
-  <li>Fix some UI styling when the devtools are open</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.104.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
