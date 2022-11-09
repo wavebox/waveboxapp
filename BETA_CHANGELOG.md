@@ -1,3 +1,36 @@
+<h3>Version 10.107.15 beta <span class="date">9/11/2022</span></h3>
+<ul>
+  <li>
+    New split-screen controls
+    <ul>
+      <li>
+        New split-screen button in the titlebar of Wavebox windows, providing faster access to
+        split-screen controls and status
+      </li>
+      <li>
+        You can now split an app across groups as well as just within groups, so now if you have
+        one app you want to always keep on screen you can do this
+      </li>
+      <li>Fix the split-screen dragger disappearing when splitting right and bottom</li>
+      <li>Simplify the split-screen behaviour by removing the apps & tabs mode</li>
+      <li>Ensure there are always two apps/tabs open when entering split mode</li>
+    </ul>
+  </li>
+  <li>New Redesigned icon picker</li>
+  <li>Update the Chromium 107.0.5304.110</li>
+  <li>Cookie containers didn't sync custom icons, fix this</li>
+  <li>Under certain configurations the tooltips failed to stay open in the explorer webdock, fix this</li>
+  <li>Fix an issue where the main window could be closed on macOS and it was difficult to get it back</li>
+  <li>Add support for moving sleeping tabs to other groups</li>
+  <li>Update the base url for Outlook to remove the white bar in the desktop web app</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.107.15.3)
+
+---
+
 <h3>Version 10.107.10 beta <span class="date">2/11/2022</span></h3>
 <ul>
   <li>Fix the global search keyboard shortcut not working</li>
@@ -117,22 +150,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.3.3)
-
----
-
-<h3>Version 10.106.2 beta <span class="date">27/9/2022</span></h3>
-<ul>
-  <li>Update to Chromium 106.0.5249.61</li>
-  <li>Update dependecies</li>
-  <li>Performance boost for UI components</li>
-  <li>Performance boost on first launch</li>
-  <li>Fix not being able to select elements using the keyboard in the switcher</li>
-  <li>Fix highlight style not having enough contrast in the switcher</li>
-  <li>Changing the Cookie container icon had stopped working, until now! (We fixed it)</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.106.2.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
