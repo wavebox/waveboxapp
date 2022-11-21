@@ -1,3 +1,17 @@
+<h3>Version 10.107.16 beta <span class="date">21/11/2022</span></h3>
+<ul>
+  <li>Add keyboard shortcuts for changing split screen across the window (as opposed to just groups)</li>
+  <li>Fix being unable to remove tabs in certain circumstances</li>
+  <li>Fix a crash on workspaces</li>
+  <li>Fix a crash when removing yourself from a team</li>
+  <li>UI fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.107.16.3)
+
+---
+
 <h3>Version 10.107.15 beta <span class="date">9/11/2022</span></h3>
 <ul>
   <li>
@@ -140,16 +154,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.5.3)
-
----
-
-<h3>Version 10.106.3 beta <span class="date">29/9/2022</span></h3>
-<ul>
-  <li>Fix webdock apps not collapsing when the group is inactive</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.106.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
