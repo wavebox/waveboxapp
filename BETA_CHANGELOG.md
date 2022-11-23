@@ -1,3 +1,16 @@
+<h3>Version 10.108.5 beta <span class="date">23/11/2022</span></h3>
+<ul>
+  <li>Update to Chromium 108.0.5359.40</li>
+  <li>Fix an issue with Discord signing out under certain configurations</li>
+  <li>UI updates</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.5.3)
+
+---
+
 <h3>Version 10.108.4 beta <span class="date">23/11/2022</span></h3>
 <ul>
   <li>Update to Chromium 108.0.5359.40</li>
@@ -142,19 +155,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.8.3)
-
----
-
-<h3>Version 10.106.6 beta <span class="date">7/10/2022</span></h3>
-<ul>
-  <li>Update to Chromium 106.0.5249.103</li>
-  <li>Update dependencies</li>
-  <li>Add "Open in Cookie Container" to context menus</li>
-  <li>Fix an issue where tabs could be left in the stores with no parent</li>
-  <li>Speculative fix for the main window not restoring after a restart</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.106.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
