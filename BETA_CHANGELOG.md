@@ -1,3 +1,15 @@
+<h3>Version 10.108.4 beta <span class="date">23/11/2022</span></h3>
+<ul>
+  <li>Update to Chromium 108.0.5359.40</li>
+  <li>UI updates</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.4.3)
+
+---
+
 <h3>Version 10.107.16 beta <span class="date">21/11/2022</span></h3>
 <ul>
   <li>Add keyboard shortcuts for changing split screen across the window (as opposed to just groups)</li>
@@ -143,17 +155,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.6.3)
-
----
-
-<h3>Version 10.106.5 beta <span class="date">3/10/2022</span></h3>
-<ul>
-  <li>Update to Chromium 106.0.5249.91</li>
-  <li>Fix being unable to edit passwords</li>
-  <li>Sync fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.106.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
