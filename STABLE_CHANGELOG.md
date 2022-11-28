@@ -1,3 +1,15 @@
+<h3>Version 10.107.18 <span class="date">28/11/2022</span></h3>
+<ul>
+  <li>Update to Chromium 107.0.5304.122</li>
+  <li>UI updates</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>`
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.107.18.2)
+
+---
+
 <h3>Version 10.107.16 <span class="date">21/11/2022</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -244,19 +256,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.105.21.2)
-
----
-
-<h3>Version 10.105.8 <span class="date">5/9/2022</span></h3>
-<ul>
-  <li>Update to Chromium 105.0.5195.102</li>
-  <li>Update dependencies</li>
-  <li>Fixes for removing and importing passwords</li>
-  <li>Faster launching of Sticky Notes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.105.8.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
