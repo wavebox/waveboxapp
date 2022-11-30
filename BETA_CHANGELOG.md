@@ -1,3 +1,13 @@
+<h3>Version 10.108.9 beta <span class="date">30/11/2022</span></h3>
+<ul>
+  <li>Update to Chromium 108.0.5359.71</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.9.3)
+
+---
+
 <h3>Version 10.108.6 beta <span class="date">28/11/2022</span></h3>
 <ul>
   <li>UI Fixes</li>
@@ -127,30 +137,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.107.4.3)
-
----
-
-<h3>Version 10.106.9 beta <span class="date">17/10/2022</span></h3>
-<ul>
-  <li>Fix the stats widget and downloads always showing file sizes as 0</li>
-  <li>Integrity fix for extension sync</li>
-  <li>
-    When using the explorer webdock it was pretty hard to keep group popovers
-    open as you'd hover over the + button to move your mouse to them. Fix this.
-  </li>
-  <li>
-    Disable webdock hiding when rounded webviews are disabled. This wasn't a supported
-    configuration and you could quite easily end up with a hidden webdock and no way
-    to get to it.
-  </li>
-  <li>
-    On Windows add a button to create a shortcut for a Wavebox profile so it can be launched
-    directly from the desktop
-  </li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.106.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
