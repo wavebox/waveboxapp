@@ -1,3 +1,16 @@
+<h3>Version 10.108.12 beta <span class="date">1/12/2022</span></h3>
+<ul>
+  <li>
+    A more compact titlebar & address bar. You can try it out by disabling
+    Settings &gt; UI &gt; Full-height titlebar
+  </li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.12.3)
+
+---
+
 <h3>Version 10.108.9 beta <span class="date">30/11/2022</span></h3>
 <ul>
   <li>Update to Chromium 108.0.5359.71</li>
@@ -123,20 +136,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.107.5.3)
-
----
-
-<h3>Version 10.107.4 beta <span class="date">27/10/2022</span></h3>
-<ul>
-  <li>Update to Chromium 107.0.5304.68</li>
-  <li>Fix the maximized window state sometimes not being remembered on restart</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-  <li>Fix password sync failing to update password</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.107.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
