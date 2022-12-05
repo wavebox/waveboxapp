@@ -1,3 +1,19 @@
+<h3>Version 10.108.14 <span class="date">5/12/2022</span></h3>
+<ul>
+  <li>
+    A more compact titlebar & address bar. You can try it out by disabling
+    Settings &gt; UI &gt; Full-height titlebar
+  </li>
+  <li>Upgrade to Chromium 108.0.5359.94</li>
+  <li>Stability fixes</li>
+  <li>Fix an issue with Discord signing out under certain configurations</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.14.2)
+
+---
+
 <h3>Version 10.107.18 <span class="date">28/11/2022</span></h3>
 <ul>
   <li>Update to Chromium 107.0.5304.122</li>
@@ -220,42 +236,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.105.22.2)
-
----
-
-<h3>Version 10.105.21 <span class="date">12/9/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Wavebox sync is now available as part of labs. This allows you to keep
-    more than one Wavebox install in sync, so you can have the same Groups,
-    Apps, Bookmarks, Extensions, Smart notes, Passwords and more all in sync
-    across multiple devices. To get started open Settings > Data & Sync and
-    request access!
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Improvements when setting default search engine</li>
-  <li>UI updates when opening links from outside of Wavebox</li>
-  <li>UI updates for context menus</li>
-  <li>Reduce Wavebox's memory consumption by approximately 50MB 🤩</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Some links would fail to match through the link engine, when opened from google sites. Fix this.</li>
-  <li>Fix memory leak with ClickUp</li>
-  <li>Fix a hard crash that could bring Wavebox down completely</li>
-  <li>Fixes for sharing passwords</li>
-  <li>Fix the settings tooltip not being clickable</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.105.21.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
