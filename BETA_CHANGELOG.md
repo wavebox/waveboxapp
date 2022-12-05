@@ -1,3 +1,12 @@
+<h3>Version 10.108.14 beta <span class="date">5/12/2022</span></h3>
+<ul>
+  <li>Upgrade to Chromium 108.0.5359.94</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.14.3)
+
+---
+
 <h3>Version 10.108.12 beta <span class="date">1/12/2022</span></h3>
 <ul>
   <li>
@@ -122,20 +131,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.107.9.3)
-
----
-
-<h3>Version 10.107.5 beta <span class="date">27/10/2022</span></h3>
-<ul>
-  <li>Update to Chromium 107.0.5304.68</li>
-  <li>Fix the maximized window state sometimes not being remembered on restart</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-  <li>Fix password sync failing to update password</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.107.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
