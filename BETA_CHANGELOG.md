@@ -1,3 +1,17 @@
+<h3>Version 10.108.15 beta <span class="date">8/12/2022</span></h3>
+<ul>
+  <li>Update to Chromium 108.0.5359.99</li>
+  <li>Update dependencies</li>
+  <li>Fix a rouge blank toolbar on some Linux configurations where all titlebar buttons are hidden and the system titlebar is used</li>
+  <li>Fix the omnibox being mispositioned on macOS when the titlebar is collapsed</li>
+  <li>Stability fixes</li>
+  <li>When editing a tab name, the edit field would sometimes fail to populate. Fix this</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.15.3)
+
+---
+
 <h3>Version 10.108.14 beta <span class="date">5/12/2022</span></h3>
 <ul>
   <li>Upgrade to Chromium 108.0.5359.94</li>
@@ -118,19 +132,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.107.10.3)
-
----
-
-<h3>Version 10.107.9 beta <span class="date">31/10/2022</span></h3>
-<ul>
-  <li>Update to Chromium 107.0.5304.87</li>
-  <li>New Ctrl+Tab switcher</li>
-  <li>New styling and helpers for the global search</li>
-  <li>Fix parts of the UI becoming unresponsive when dragging saved items outside of a tooltip</li>
-  <li>Stability improvements</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.107.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
