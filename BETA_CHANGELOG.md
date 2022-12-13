@@ -1,3 +1,21 @@
+<h3>Version 10.108.16 beta <span class="date">13/12/2022</span></h3>
+<ul>
+  <li>
+    Make the collapsed titlebar a little taller on Windows when Wavebox is
+    maximized. This gives enough drag area to drag Wavebox out of maximized state
+  </li>
+  <li>
+    The previous beta hid tabs in secondary windows on Linux when the system titlebars
+    were used, and titlebar items were hidden. Fix this.
+  </li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.16.3)
+
+---
+
 <h3>Version 10.108.15 beta <span class="date">8/12/2022</span></h3>
 <ul>
   <li>Update to Chromium 108.0.5359.99</li>
@@ -122,16 +140,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.107.15.3)
-
----
-
-<h3>Version 10.107.10 beta <span class="date">2/11/2022</span></h3>
-<ul>
-  <li>Fix the global search keyboard shortcut not working</li>
-  <li>Fix a crash in the keyboard shortcut settings UI</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.107.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
