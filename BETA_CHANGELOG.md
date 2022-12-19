@@ -1,3 +1,15 @@
+<h3>Version 10.108.19 beta <span class="date">19/12/2022</span></h3>
+<ul>
+  <li>Update to Chromium 108.0.5359.124</li>
+  <li>Update dependencies</li>
+  <li>Make the audio playing/muted icon on tabs clickable</li>
+  <li>Stability fixes for password sync</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.19.3)
+
+---
+
 <h3>Version 10.108.17 beta <span class="date">16/12/2022</span></h3>
 <ul>
   <li>
@@ -110,20 +122,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.4.3)
-
----
-
-<h3>Version 10.107.16 beta <span class="date">21/11/2022</span></h3>
-<ul>
-  <li>Add keyboard shortcuts for changing split screen across the window (as opposed to just groups)</li>
-  <li>Fix being unable to remove tabs in certain circumstances</li>
-  <li>Fix a crash on workspaces</li>
-  <li>Fix a crash when removing yourself from a team</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.107.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
