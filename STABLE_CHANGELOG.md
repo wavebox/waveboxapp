@@ -1,3 +1,37 @@
+<h3>Version 10.108.19 <span class="date">20/12/2022</span></h3>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 108.0.5359.124</li>
+  <li>Update dependencies</li>
+  <li>
+    Make the collapsed titlebar a little taller on Windows when Wavebox is
+    maximized. This gives enough drag area to drag Wavebox out of maximized state
+  </li>
+  <li>Make the audio playing/muted icon on tabs clickable</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix a rouge blank toolbar on some Linux configurations where all titlebar buttons are hidden and the system titlebar is used</li>
+  <li>Fix the omnibox being mispositioned on macOS when the titlebar is collapsed</li>
+  <li>Stability fixes</li>
+  <li>Stability fixes for password sync</li>
+  <li>When editing a tab name, the edit field would sometimes fail to populate. Fix this</li>
+  <li>
+    Fix an issue on macOS, when in fullscreen the titlebars could become
+    hidden whilst existing the privacy lock
+  </li>
+  <li>
+    Desktop web apps that displayed unread activity and unread counts would
+    favor showing the activity over the count. This was the wrong way around.
+  </li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.108.19.2)
+
+---
+
 <h3>Version 10.108.14 <span class="date">5/12/2022</span></h3>
 <ul>
   <li>
@@ -201,41 +235,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.105.26.2)
-
----
-
-<h3>Version 10.105.22 <span class="date">12/9/2022</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Wavebox sync is now available as part of labs. This allows you to keep
-    more than one Wavebox install in sync, so you can have the same Groups,
-    Apps, Bookmarks, Extensions, Smart notes, Passwords and more all in sync
-    across multiple devices. To get started open Settings > Data & Sync and
-    request access!
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Improvements when setting default search engine</li>
-  <li>UI updates when opening links from outside of Wavebox</li>
-  <li>UI updates for context menus</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Some links would fail to match through the link engine, when opened from google sites. Fix this.</li>
-  <li>Fix memory leak with ClickUp</li>
-  <li>Fix a hard crash that could bring Wavebox down completely</li>
-  <li>Fixes for sharing passwords</li>
-  <li>Fix the settings tooltip not being clickable</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.105.22.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
