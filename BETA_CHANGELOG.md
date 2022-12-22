@@ -1,3 +1,27 @@
+<h3>Version 10.109.3 beta <span class="date">22/12/2022</span></h3>
+<ul>
+  <li>
+    Brand new settings UI
+    <ul>
+      <li>
+        Settings diagrams. These replace the sea of toggle switches
+        and give in-situ feedback and visual cues as to what each
+        setting does
+      </li>
+      <li>Overhauled search, making it faster, clearer and more reliable</li>
+      <li>Faster loading</li>
+      <li>Loads of other fixes and tweaks to make settings feel less daunting</li>
+    </ul>
+  </li>
+  <li>Add an option to show/hide the border on individual apps as well as groups</li>
+  <li>Fix a crash on exit</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.109.3.3)
+
+---
+
 <h3>Version 10.109.1 beta <span class="date">20/12/2022</span></h3>
 <ul>
   <li>Upgrade to Chromium 109.0.5414.46</li>
@@ -106,19 +130,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.6.3)
-
----
-
-<h3>Version 10.108.5 beta <span class="date">23/11/2022</span></h3>
-<ul>
-  <li>Update to Chromium 108.0.5359.40</li>
-  <li>Fix an issue with Discord signing out under certain configurations</li>
-  <li>UI updates</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
