@@ -1,3 +1,17 @@
+<h3>Version 10.109.5 beta <span class="date">3/1/2023</span></h3>
+<ul>
+  <li>Update to Chromium 109.0.5414.61</li>
+  <li>Fix an issue that prevented location, notification & other permission dialogs from being interacted with</li>
+  <li>Add "last app" as an option to the "choose what to pick after closing a tab" flag</li>
+  <li>Add an option to bulk apply sleep settings to all apps</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.109.5.3)
+
+---
+
 <h3>Version 10.109.3 beta <span class="date">22/12/2022</span></h3>
 <ul>
   <li>
@@ -121,15 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.9.3)
-
----
-
-<h3>Version 10.108.6 beta <span class="date">28/11/2022</span></h3>
-<ul>
-  <li>UI Fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
