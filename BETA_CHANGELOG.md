@@ -1,3 +1,20 @@
+<h3>Version 10.109.7 beta <span class="date">9/1/2023</span></h3>
+<ul>
+  <li>Update to Chromium 109.0.5414.74</li>
+  <li>
+    Add a color picker to the appearance options so you can pick a Wavebox color
+    quickly change the look and feel of Wavebox
+  </li>
+  <li>Add a Google Calendar widget to workspaces</li>
+  <li>Add an option to the group right-click menus to wake all apps</li>
+  <li>Fix an issue where discord could keep logging you out</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.109.7.3)
+
+---
+
 <h3>Version 10.109.5 beta <span class="date">3/1/2023</span></h3>
 <ul>
   <li>Update to Chromium 109.0.5414.61</li>
@@ -125,16 +142,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.12.3)
-
----
-
-<h3>Version 10.108.9 beta <span class="date">30/11/2022</span></h3>
-<ul>
-  <li>Update to Chromium 108.0.5359.71</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
