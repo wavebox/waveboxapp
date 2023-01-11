@@ -1,3 +1,15 @@
+<h3>Version 10.109.8 beta <span class="date">11/1/2023</span></h3>
+<ul>
+  <li>Add an option to display which groups & apps are in the active focus mode</li>
+  <li>Add an option to sleep groups when entering focus mode</li>
+  <li>Update to Chromium 109.0.5414.87</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.109.8.3)
+
+---
+
 <h3>Version 10.109.7 beta <span class="date">9/1/2023</span></h3>
 <ul>
   <li>Update to Chromium 109.0.5414.74</li>
@@ -129,19 +141,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.14.3)
-
----
-
-<h3>Version 10.108.12 beta <span class="date">1/12/2022</span></h3>
-<ul>
-  <li>
-    A more compact titlebar & address bar. You can try it out by disabling
-    Settings &gt; UI &gt; Full-height titlebar
-  </li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
