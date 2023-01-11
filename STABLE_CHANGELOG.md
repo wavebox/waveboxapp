@@ -1,3 +1,55 @@
+<h3>Version 10.109.8 <span class="date">11/1/2023</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Brand new settings UI
+    <ul>
+      <li>
+        Settings diagrams. These replace the sea of toggle switches
+        and give in-situ feedback and visual cues as to what each
+        setting does
+      </li>
+      <li>Overhauled search, making it faster, clearer and more reliable</li>
+      <li>Faster loading</li>
+      <li>Loads of other fixes and tweaks to make settings feel less daunting</li>
+      <li>An option to bulk apply sleep settings to all apps</li>
+      <li>
+        Add a color picker to the appearance options so you can pick a Wavebox color
+        quickly change the look and feel of Wavebox
+      </li>
+    </ul>
+  </li>
+  <li>
+    Updates to focus mode
+    <ul>
+      <li>Add an option to display which groups & apps are in the active focus mode</li>
+      <li>Add an option to sleep groups when entering focus mode</li>
+    </ul>
+  </li>
+  <li>New Google Calendar widget for workspaces</li>
+  <li>Add wake all apps to the group right-click menu</li>
+  <li>Add "last app" as an option to the "choose what to pick after closing a tab" flag</li>
+  <li>Add an option to show/hide the border on individual apps as well as groups</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 109.0.5414.87</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue where discord could keep logging you out</li>
+  <li>Stability fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.109.8.2)
+
+---
+
 <h3>Version 10.108.19 <span class="date">20/12/2022</span></h3>
 
 <h4>🔧 Updates & improvements</h4>
@@ -211,30 +263,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.105.31.2)
-
----
-
-<h3>Version 10.105.26 <span class="date">14/9/2022</span></h3>
-<p>
-  This release contains some bugfixes that were reported in the previous
-  version. Thanks to everyone who has requested access to the new Wavebox sync, we're
-  rolling this out in batches to ensure that it's working as expected 👍
-</p>
-
-<ul>
-  <li>Fixes for extensions that use the chrome.identity API</li>
-  <li>Fix the new tab workspace not being remembered after a restart</li>
-  <li>Fix being unable to move an app in some instances</li>
-  <li>Fix an edge case where sync would fail to reconnect properly</li>
-  <li>Fix Smart Note sync needlessly always uploading images on the first run</li>
-  <li>Rewrite the sync dispatcher to be more consistent and reslient</li>
-  <li>Handle invalid password entries more consistently in sync</li>
-  <li>Fix an issue where dragging sidebar items could move Wavebox into an undefined state and require a full restart to fix</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.105.26.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
