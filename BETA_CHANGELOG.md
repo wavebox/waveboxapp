@@ -1,3 +1,18 @@
+<h3>Version 10.109.9 beta <span class="date">16/1/2023</span></h3>
+<ul>
+  <li>Add an embedded iframe widget to workspaces</li>
+  <li>Add support for Ctrl/Cmd+clicking links in workspaces and opening those links in background tabs</li>
+  <li>Improve icon refetching when Wavebox starts in an offline state, or is unable to load icons</li>
+  <li>Fix the app color ring setting as it's state wasn't always respected</li>
+  <li>Fix apps being unable to set their sound back to the default</li>
+  <li>Under certain configurations the tabstrip would fall into its own toolbar unnecessarily, fix this</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.109.9.3)
+
+---
+
 <h3>Version 10.109.8 beta <span class="date">11/1/2023</span></h3>
 <ul>
   <li>Add an option to display which groups & apps are in the active focus mode</li>
@@ -132,15 +147,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.15.3)
-
----
-
-<h3>Version 10.108.14 beta <span class="date">5/12/2022</span></h3>
-<ul>
-  <li>Upgrade to Chromium 108.0.5359.94</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
