@@ -10,7 +10,7 @@
   ·
   <a href="https://wavebox.io/download">Download</a>
   ·
-  <a href="https://blog.wavebox.io">Blog</a>
+  <a href="https://wavebox.io/blog">Blog</a>
 </p>
 
 <a href="https://wavebox.io">
