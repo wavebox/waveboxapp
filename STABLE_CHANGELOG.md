@@ -1,3 +1,43 @@
+<h3>Version 10.109.14 <span class="date">26/1/2023</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add a dialog prompt when creating a cookie container</li>
+  <li>Add an embedded iframe widget to workspaces</li>
+  <li>Add support for Ctrl/Cmd+clicking links in workspaces and opening those links in background tabs</li>
+  <li>
+    Add support for opening urls in identities and apps from the command line. You can find
+    information about this by enabling Settings > Advanced > Command line hints and checking
+    the settings of an app or cookie container.
+  </li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 109.0.5414.119</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+  <li>Improve icon refetching when Wavebox starts in an offline state, or is unable to load icons</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix the tooltip delay not being changeable</li>
+  <li>Fixes for Gmail icon fetching</li>
+  <li>Fix an issue where clicking a notification from a sleeping app, would launch the app in a new window</li>
+  <li>Fix the app color ring setting as it's state wasn't always respected</li>
+  <li>Fix apps being unable to set their sound back to the default</li>
+  <li>Under certain configurations the tabstrip would fall into its own toolbar unnecessarily, fix this</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.109.14.2)
+
+---
+
 <h3>Version 10.109.8 <span class="date">11/1/2023</span></h3>
 
 <h4>🆕 New!</h4>
@@ -248,21 +288,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.2.2)
-
----
-
-<h3>Version 10.105.31 <span class="date">21/9/2022</span></h3>
-
-<ul>
-  <li>Update to Chromium 105.0.5195.125</li>
-  <li>Update other dependencies</li>
-  <li>More fixes for sync</li>
-  <li>Fix Wavebox Connect colors not reflecting the main Wavebox theme</li>
-  <li>Fix a crash when setting the Cookie Container on manifest 3 extensions</li>
-  <li>Add a keyboard shortcut to toggle the side search (this can be setup under Settings > Keyboard shortcuts)</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.105.31.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
