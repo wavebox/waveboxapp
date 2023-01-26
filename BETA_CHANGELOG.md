@@ -1,3 +1,20 @@
+<h3>Version 10.109.14 beta <span class="date">26/1/2023</span></h3>
+<ul>
+  <li>Update to Chromium 109.0.5414.119</li>
+  <li>Add a dialog prompt when creating a cookie container</li>
+  <li>Add support for opening urls in identities and apps from the command line</li>
+  <li>Fix the tooltip delay not being changeable</li>
+  <li>Fixes for Gmail icon fetching</li>
+  <li>Fix an issue where clicking a notification from a sleeping app, would launch the app in a new window</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.109.14.3)
+
+---
+
 <h3>Version 10.109.9 beta <span class="date">16/1/2023</span></h3>
 <ul>
   <li>Add an embedded iframe widget to workspaces</li>
@@ -133,20 +150,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.16.3)
-
----
-
-<h3>Version 10.108.15 beta <span class="date">8/12/2022</span></h3>
-<ul>
-  <li>Update to Chromium 108.0.5359.99</li>
-  <li>Update dependencies</li>
-  <li>Fix a rouge blank toolbar on some Linux configurations where all titlebar buttons are hidden and the system titlebar is used</li>
-  <li>Fix the omnibox being mispositioned on macOS when the titlebar is collapsed</li>
-  <li>Stability fixes</li>
-  <li>When editing a tab name, the edit field would sometimes fail to populate. Fix this</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
