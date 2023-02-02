@@ -1,3 +1,18 @@
+<h3>Version 10.110.6 beta <span class="date">2/2/2023</span></h3>
+<ul>
+  <li>Update to Chromium 110.0.5481.77</li>
+  <li>
+    It's now possible to move apps into new windows and then bring them
+    back again, this is really helpful if you have multiple monitors!
+    To split the app into a new window, either use the right-click menu
+    or Ctrl+click on the app
+  </li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.6.3)
+
+---
+
 <h3>Version 10.110.4 beta <span class="date">1/2/2023</span></h3>
 <ul>
   <li>Update to Chromium 110.0.5481.52</li>
@@ -147,23 +162,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.19.3)
-
----
-
-<h3>Version 10.108.17 beta <span class="date">16/12/2022</span></h3>
-<ul>
-  <li>
-    Fix an issue on macOS, when in fullscreen the titlebars could become
-    hidden whilst existing the privacy lock
-  </li>
-  <li>
-    Desktop web apps that displayed unread activity and unread counts would
-    favor showing the activity over the count. This was the wrong way around.
-  </li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
