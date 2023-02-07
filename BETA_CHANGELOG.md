@@ -1,3 +1,36 @@
+<h3>Version 10.110.11 beta <span class="date">7/2/2023</span></h3>
+<ul>
+  <li>
+    A brand new faster app store that makes it easier to find your apps
+    and create your own custom ones
+  </li>
+  <li>
+    Tweaks to the controls at the bottom of the sidebar including a new
+    settings popout with a bunch of useful things!
+  </li>
+  <li>
+    New account management screens that make it easier to manage your Wavebox
+    account, manage your profiles, teams, connect accounts and billing
+  </li>
+  <li>
+    New helper wizard when you first download Wavebox (Pro tip, if you want to
+    take a look, hover over the settings icon 👍)
+  </li>
+  <li>Add "Send to group" to the right-click menu, when right-clicking on a link</li>
+  <li>
+    Add an option to widgets that allows you to copy a link to them and
+    then re-open them. You can find this under the settings cog
+  </li>
+  <li>Fix an issue where the sidebar could sometimes become hidden behind the tab</li>
+  <li>UI tweaks</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.11.3)
+
+---
+
 <h3>Version 10.110.6 beta <span class="date">2/2/2023</span></h3>
 <ul>
   <li>Update to Chromium 110.0.5481.77</li>
@@ -150,18 +183,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.1.3)
-
----
-
-<h3>Version 10.108.19 beta <span class="date">19/12/2022</span></h3>
-<ul>
-  <li>Update to Chromium 108.0.5359.124</li>
-  <li>Update dependencies</li>
-  <li>Make the audio playing/muted icon on tabs clickable</li>
-  <li>Stability fixes for password sync</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.19.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
