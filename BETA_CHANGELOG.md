@@ -1,3 +1,13 @@
+<h3>Version 10.110.12 beta <span class="date">8/2/2023</span></h3>
+<ul>
+  <li>UI tweaks</li>
+  <li>Fix a hard crash</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.12.3)
+
+---
+
 <h3>Version 10.110.11 beta <span class="date">7/2/2023</span></h3>
 <ul>
   <li>
@@ -174,15 +184,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.3.3)
-
----
-
-<h3>Version 10.109.1 beta <span class="date">20/12/2022</span></h3>
-<ul>
-  <li>Upgrade to Chromium 109.0.5414.46</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.1.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
