@@ -1,3 +1,22 @@
+<h3>Version 10.110.15 beta <span class="date">10/2/2023</span></h3>
+<ul>
+  <li>Add support for Ctrl/Shift/Alt+clicking "Move tab into a new window" to duplicate the tab rather than pop it out</li>
+  <li>Add "Wake all tabs in window" to the tab context menu in secondary windows</li>
+  <li>Add support for Alt+Clicking on tabs and apps to place them in split screen mode</li>
+  <li>Add a new link open modifier (Ctrl/Shift/Alt+click) that allows links to be opened in split screen</li>
+  <li>Add a button to Settings > Advanced to restart the Wavebox masterclass</li>
+  <li>Fix widget pop out urls not being clickable</li>
+  <li>Fix an issue where popping out a tab that's in deep sleep would fail</li>
+  <li>Fix opening external links across profiles not working</li>
+  <li>Fix some emojis on Windows being offset</li>
+  <li>UI fixes and helpers</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.15.3)
+
+---
+
 <h3>Version 10.110.12 beta <span class="date">8/2/2023</span></h3>
 <ul>
   <li>UI tweaks</li>
@@ -160,30 +179,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.5.3)
-
----
-
-<h3>Version 10.109.3 beta <span class="date">22/12/2022</span></h3>
-<ul>
-  <li>
-    Brand new settings UI
-    <ul>
-      <li>
-        Settings diagrams. These replace the sea of toggle switches
-        and give in-situ feedback and visual cues as to what each
-        setting does
-      </li>
-      <li>Overhauled search, making it faster, clearer and more reliable</li>
-      <li>Faster loading</li>
-      <li>Loads of other fixes and tweaks to make settings feel less daunting</li>
-    </ul>
-  </li>
-  <li>Add an option to show/hide the border on individual apps as well as groups</li>
-  <li>Fix a crash on exit</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
