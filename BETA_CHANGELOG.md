@@ -1,3 +1,21 @@
+<h3>Version 10.110.18 beta <span class="date">14/2/2023</span></h3>
+<ul>
+  <li>Fix an issue where popped out apps could fall asleep too readily</li>
+  <li>
+    Fix an issue on macOS where dragging images when filename extensions are
+    sometimes hidden in finder would result in a sites detecting binary file/invalid
+    file format instead of an image
+  </li>
+  <li>Update Chromium to 110.0.5481.97</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>Crash fix</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.18.3)
+
+---
+
 <h3>Version 10.110.15 beta <span class="date">10/2/2023</span></h3>
 <ul>
   <li>Add support for Ctrl/Shift/Alt+clicking "Move tab into a new window" to duplicate the tab rather than pop it out</li>
@@ -165,20 +183,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.7.3)
-
----
-
-<h3>Version 10.109.5 beta <span class="date">3/1/2023</span></h3>
-<ul>
-  <li>Update to Chromium 109.0.5414.61</li>
-  <li>Fix an issue that prevented location, notification & other permission dialogs from being interacted with</li>
-  <li>Add "last app" as an option to the "choose what to pick after closing a tab" flag</li>
-  <li>Add an option to bulk apply sleep settings to all apps</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
