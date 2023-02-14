@@ -1,3 +1,40 @@
+<h3>Version 10.110.18 <span class="date">14/2/2023</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add support for Ctrl/Shift/Alt+clicking "Move tab into a new window" to duplicate the tab rather than pop it out</li>
+  <li>Add "Wake all tabs in window" to the tab context menu in secondary windows</li>
+  <li>Add support for Alt+Clicking on tabs and apps to place them in split screen mode</li>
+  <li>Add a new link open modifier (Ctrl/Shift/Alt+click) that allows links to be opened in split screen</li>
+  <li>Add a button to Settings > Advanced to restart the Wavebox masterclass</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update Chromium to 110.0.5481.97</li>
+  <li>UI fixes and helpers</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix widget pop out urls not being clickable</li>
+  <li>Fix an issue where popping out a tab that's in deep sleep would fail</li>
+  <li>Fix opening external links across profiles not working</li>
+  <li>Fix some emojis on Windows being offset</li>
+  <li>Fix an issue where popped out apps could fall asleep too readily</li>
+  <li>
+    Fix an issue on macOS where dragging images when filename extensions are
+    sometimes hidden in finder would result in a sites detecting binary file/invalid
+    file format instead of an image
+  </li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.110.18.2)
+
+---
+
 <h3>Version 10.110.12 <span class="date">8/2/2023</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -298,19 +335,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.106.8.2)
-
----
-
-<h3>Version 10.106.5 <span class="date">3/10/2022</span></h3>
-<ul>
-  <li>Update to Chromium 106.0.5249.91</li>
-  <li>Update dependencies</li>
-  <li>Fix webdock apps not collapsing when the group is inactive</li>
-  <li>Fix being unable to edit passwords</li>
-  <li>Sync fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.106.5.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
