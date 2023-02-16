@@ -1,3 +1,25 @@
+<h3>Version 10.110.21 beta <span class="date">16/2/2023</span></h3>
+<ul>
+  <li>Update to Chromium 110.0.5481.100</li>
+  <li>Add new keyboard shortcut to cycle the active tab around the open windows</li>
+  <li>Add "Move tab to new window" keyboard shortcut</li>
+  <li>Improve YouTube url support for the embedded iframe widget</li>
+  <li>When sharing tabs to a workspace, make it possible to change the tabs before sending</li>
+  <li>Add support for dragging links into empty collection widgets</li>
+  <li>Be less strict when accepting links for collection widgets</li>
+  <li>Fix an issue where a site briefly opening a new tab to initiate a download would return to the incorrect tab</li>
+  <li>Speculative fix for modifier+click actions not working immediately after Wavebox starts</li>
+  <li>Fix an issue where settings would sometimes fail to scroll to the correct section</li>
+  <li>UI tweaks</li>
+  <li>Stability fixes</li>
+  <li>First run fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.21.3)
+
+---
+
 <h3>Version 10.110.18 beta <span class="date">14/2/2023</span></h3>
 <ul>
   <li>Fix an issue where popped out apps could fall asleep too readily</li>
@@ -166,23 +188,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.8.3)
-
----
-
-<h3>Version 10.109.7 beta <span class="date">9/1/2023</span></h3>
-<ul>
-  <li>Update to Chromium 109.0.5414.74</li>
-  <li>
-    Add a color picker to the appearance options so you can pick a Wavebox color
-    quickly change the look and feel of Wavebox
-  </li>
-  <li>Add a Google Calendar widget to workspaces</li>
-  <li>Add an option to the group right-click menus to wake all apps</li>
-  <li>Fix an issue where discord could keep logging you out</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.7.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
