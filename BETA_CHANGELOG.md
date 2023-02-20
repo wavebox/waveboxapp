@@ -1,3 +1,19 @@
+<h3>Version 10.110.23 beta <span class="date">20/2/2023</span></h3>
+<ul>
+  <li>Make the tab strip only drop into its own toolbar when you have more than 4 apps</li>
+  <li>When hitting Alt+Enter in the omnibox, the cookie container would not be carried through. Fix this.</li>
+  <li>Better compatibility for username/password proxy authentication</li>
+  <li>Fix the mute/unmute right-click menu item not reflecting current state on a group</li>
+  <li>Fix windows not reappearing after unlocking the privacy lock</li>
+  <li>Fix keyboard focus not being in the omnibox when a new tab page is set</li>
+  <li>A bunch of fixes for dragging & dropping stuff in the toolbars</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.23.3)
+
+---
+
 <h3>Version 10.110.21 beta <span class="date">16/2/2023</span></h3>
 <ul>
   <li>Update to Chromium 110.0.5481.100</li>
@@ -176,18 +192,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.9.3)
-
----
-
-<h3>Version 10.109.8 beta <span class="date">11/1/2023</span></h3>
-<ul>
-  <li>Add an option to display which groups & apps are in the active focus mode</li>
-  <li>Add an option to sleep groups when entering focus mode</li>
-  <li>Update to Chromium 109.0.5414.87</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
