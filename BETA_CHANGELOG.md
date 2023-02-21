@@ -1,3 +1,23 @@
+<h3>Version 10.110.25 beta <span class="date">21/2/2023</span></h3>
+<ul>
+  <li>
+    A new tab navigator experience that makes it easier to switch between all your
+    tabs using the mouse or the keyboard. Try it by clicking the navigator button in the
+    sidebar or through the main burger menu!
+  </li>
+  <li>
+    New color styling for the tab navigator with customizable backgrounds
+  </li>
+  <li>
+    New background gradients for workspaces
+  </li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.25.3)
+
+---
+
 <h3>Version 10.110.23 beta <span class="date">20/2/2023</span></h3>
 <ul>
   <li>Make the tab strip only drop into its own toolbar when you have more than 4 apps</li>
@@ -177,21 +197,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.109.14.3)
-
----
-
-<h3>Version 10.109.9 beta <span class="date">16/1/2023</span></h3>
-<ul>
-  <li>Add an embedded iframe widget to workspaces</li>
-  <li>Add support for Ctrl/Cmd+clicking links in workspaces and opening those links in background tabs</li>
-  <li>Improve icon refetching when Wavebox starts in an offline state, or is unable to load icons</li>
-  <li>Fix the app color ring setting as it's state wasn't always respected</li>
-  <li>Fix apps being unable to set their sound back to the default</li>
-  <li>Under certain configurations the tabstrip would fall into its own toolbar unnecessarily, fix this</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
