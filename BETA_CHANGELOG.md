@@ -1,3 +1,15 @@
+<h3>Version 10.110.26 beta <span class="date">22/2/2023</span></h3>
+<ul>
+  <li>Fixes for the context menus</li>
+  <li>Fix Connect and Smartnote extensions failing to load</li>
+  <li>Fix missing icons in Connect</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.26.3)
+
+---
+
 <h3>Version 10.110.25 beta <span class="date">21/2/2023</span></h3>
 <ul>
   <li>
@@ -180,23 +192,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.4.3)
-
----
-
-<h3>Version 10.109.14 beta <span class="date">26/1/2023</span></h3>
-<ul>
-  <li>Update to Chromium 109.0.5414.119</li>
-  <li>Add a dialog prompt when creating a cookie container</li>
-  <li>Add support for opening urls in identities and apps from the command line</li>
-  <li>Fix the tooltip delay not being changeable</li>
-  <li>Fixes for Gmail icon fetching</li>
-  <li>Fix an issue where clicking a notification from a sleeping app, would launch the app in a new window</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.109.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
