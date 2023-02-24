@@ -1,3 +1,16 @@
+<h3>Version 10.110.29 beta <span class="date">24/2/2023</span></h3>
+<ul>
+  <li>Update to Chromium 110.0.5481.178</li>
+  <li>Add some helper info when sharing workspaces</li>
+  <li>Fix more sidebar drag issues</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.110.29.3)
+
+---
+
 <h3>Version 10.110.26 beta <span class="date">22/2/2023</span></h3>
 <ul>
   <li>Fixes for the context menus</li>
@@ -160,38 +173,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.6.3)
-
----
-
-<h3>Version 10.110.4 beta <span class="date">1/2/2023</span></h3>
-<ul>
-  <li>Update to Chromium 110.0.5481.52</li>
-  <li>
-    Add support for macOS Touch ID and Windows Hello as options when using the
-    Wavebox privacy lock. If you already have the lock enable, you'll need to
-    change your lock settings to enable use biometrics
-  </li>
-  <li>
-    Add support for middle mouse clicking a group, this sleeps all apps and tabs
-    within the group
-  </li>
-  <li>Add support for Shift/Ctrl/Cmd+clicking links in Smartnotes</li>
-  <li>Add an option to disable sleep on a specific tab via the right-click menu</li>
-  <li>Add support for using the left/right arrow keys in the app switcher</li>
-  <li>
-    Add a keyboard shortcut to open a tab in the active group rather than the default
-    which is active service. This shortcut is unmapped by default but can be set under
-    Settings > Keyboard Shortcuts > Opening apps & tabs
-  </li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>In certain locales, focus mode wouldn't display AM/PM in the time until, fix this</li>
-  <li>Fix an issue with sync where it could become stuck</li>
-  <li>Fix clicking on app settings only taking you as far as the group</li>
-  <li>Fix an issue on macOS where CMD+W wouldn't always close the tab when search was open</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
