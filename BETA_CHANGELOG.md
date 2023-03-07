@@ -1,3 +1,25 @@
+<h3>Version 10.111.11 beta <span class="date">7/3/2023</span></h3>
+<ul>
+  <li>
+    🧠 Brainbox is back, and it's bigger and better than ever, bringing the power of
+    ChatGPT to every app and tab in Wavebox. In this first release of Brainbox V2,
+    our powerful right-click writing skills are back—translate, summarize, draft a
+    reply—plus there's a shiny-new sidebar UI. You can also manage, edit and create new
+    skills via the new Admin Portal.
+  </li>
+  <li>Update to Chromium 111.0.5563.64</li>
+  <li>Update dependencies</li>
+  <li>Fix an issue where opening a page as a desktop web app would close and fail</li>
+  <li>Add a shortcut to cycle between apps that have unread notifications</li>
+  <li>You can now easily add Wavebox apps directly from the omnibox</li>
+  <li>Fix the custom tab name not being searchable in search</li>
+  <li>Fix a styling issue with the active group indicator when the webdock was hidden</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.11.3)
+
+---
+
 <h3>Version 10.110.29 beta <span class="date">24/2/2023</span></h3>
 <ul>
   <li>Update to Chromium 110.0.5481.178</li>
@@ -158,21 +180,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.11.3)
-
----
-
-<h3>Version 10.110.6 beta <span class="date">2/2/2023</span></h3>
-<ul>
-  <li>Update to Chromium 110.0.5481.77</li>
-  <li>
-    It's now possible to move apps into new windows and then bring them
-    back again, this is really helpful if you have multiple monitors!
-    To split the app into a new window, either use the right-click menu
-    or Ctrl+click on the app
-  </li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
