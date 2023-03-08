@@ -1,3 +1,15 @@
+<h3>Version 10.111.14 beta <span class="date">8/3/2023</span></h3>
+<ul>
+  <li>Brainbox fixes</li>
+  <li>You can now add your own OpenAI key to use with Brainbox</li>
+  <li>Keyboard shortcut fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.14.3)
+
+---
+
 <h3>Version 10.111.11 beta <span class="date">7/3/2023</span></h3>
 <ul>
   <li>
@@ -147,39 +159,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.12.3)
-
----
-
-<h3>Version 10.110.11 beta <span class="date">7/2/2023</span></h3>
-<ul>
-  <li>
-    A brand new faster app store that makes it easier to find your apps
-    and create your own custom ones
-  </li>
-  <li>
-    Tweaks to the controls at the bottom of the sidebar including a new
-    settings popout with a bunch of useful things!
-  </li>
-  <li>
-    New account management screens that make it easier to manage your Wavebox
-    account, manage your profiles, teams, connect accounts and billing
-  </li>
-  <li>
-    New helper wizard when you first download Wavebox (Pro tip, if you want to
-    take a look, hover over the settings icon 👍)
-  </li>
-  <li>Add "Send to group" to the right-click menu, when right-clicking on a link</li>
-  <li>
-    Add an option to widgets that allows you to copy a link to them and
-    then re-open them. You can find this under the settings cog
-  </li>
-  <li>Fix an issue where the sidebar could sometimes become hidden behind the tab</li>
-  <li>UI tweaks</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
