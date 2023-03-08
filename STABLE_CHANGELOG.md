@@ -1,3 +1,41 @@
+<h3>Version 10.111.14 <span class="date">8/3/2023</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    🧠 Brainbox is back, and it's bigger and better than ever, bringing the power of
+    ChatGPT to every app and tab in Wavebox. In this first release of Brainbox V2,
+    our powerful right-click writing skills are back—translate, summarize, draft a
+    reply—plus there's a shiny-new sidebar UI. You can also manage, edit and create new
+    skills via the new Admin Portal.
+  </li>
+  <li>Add a shortcut to cycle between apps that have unread notifications</li>
+  <li>You can now easily add Wavebox apps directly from the omnibox</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 111.0.5563.64</li>
+  <li>Update dependencies</li>
+  <li>Add some helper info when sharing workspaces</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix more sidebar drag issues</li>
+  <li>Stability fixes</li>
+  <li>Fix an issue where opening a page as a desktop web app would close and fail</li>
+  <li>Fix the custom tab name not being searchable in search</li>
+  <li>Fix a styling issue with the active group indicator when the webdock was hidden</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.111.14.2)
+
+---
+
 <h3>Version 10.110.26 <span class="date">22/2/2023</span></h3>
 <p>
 
@@ -325,52 +363,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.107.16.2)
-
----
-
-<h3>Version 10.107.10 <span class="date">2/11/2022</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    New Ctrl+Tab switcher. Hold Ctrl+Tab to switch between your most recently used
-    apps & tabs.
-  </li>
-  <li>New styling and helpers for the global search</li>
-  <li>
-    On Windows add a button to create a shortcut for a Wavebox profile so it can be launched
-    directly from the desktop
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 107.0.5304.87</li>
-  <li>Update dependencies</li>
-  <li>
-    When using the explorer webdock it was pretty hard to keep group popovers
-    open as you'd hover over the + button to move your mouse to them. Fix this.
-  </li>
-  <li>
-    Disable webdock hiding when rounded webviews are disabled. This wasn't a supported
-    configuration and you could quite easily end up with a hidden webdock and no way
-    to get to it.
-  </li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix the stats widget and downloads always showing file sizes as 0</li>
-  <li>Integrity fix for extension sync</li>
-  <li>Fix password sync failing to update password</li>
-  <li>Fix the maximized window state sometimes not being remembered on restart</li>
-  <li>Fix parts of the UI becoming unresponsive when dragging saved items outside of a tooltip</li>
-  <li>Fix a crash in the keyboard shortcut settings UI</li>
-  <li>UI fixes</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.107.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
