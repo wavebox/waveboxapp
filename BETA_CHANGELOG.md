@@ -1,3 +1,12 @@
+<h3>Version 10.111.15 beta <span class="date">8/3/2023</span></h3>
+<ul>
+  <li>Fix a launch crash that was reported by some users</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.15.3)
+
+---
+
 <h3>Version 10.111.14 beta <span class="date">8/3/2023</span></h3>
 <ul>
   <li>Brainbox fixes</li>
@@ -149,16 +158,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.15.3)
-
----
-
-<h3>Version 10.110.12 beta <span class="date">8/2/2023</span></h3>
-<ul>
-  <li>UI tweaks</li>
-  <li>Fix a hard crash</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
