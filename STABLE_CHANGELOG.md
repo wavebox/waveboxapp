@@ -1,3 +1,41 @@
+<h3>Version 10.111.15 <span class="date">8/3/2023</span></h3>
+<p>
+  This version also includes a fix for a crash reported in version 10.111.14
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    🧠 Brainbox is back, and it's bigger and better than ever, bringing the power of
+    ChatGPT to every app and tab in Wavebox. In this first release of Brainbox V2,
+    our powerful right-click writing skills are back—translate, summarize, draft a
+    reply—plus there's a shiny-new sidebar UI. You can also manage, edit and create new
+    skills via the new Admin Portal.
+  </li>
+  <li>Add a shortcut to cycle between apps that have unread notifications</li>
+  <li>You can now easily add Wavebox apps directly from the omnibox</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 111.0.5563.64</li>
+  <li>Update dependencies</li>
+  <li>Add some helper info when sharing workspaces</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix more sidebar drag issues</li>
+  <li>Stability fixes</li>
+  <li>Fix an issue where opening a page as a desktop web app would close and fail</li>
+  <li>Fix the custom tab name not being searchable in search</li>
+  <li>Fix a styling issue with the active group indicator when the webdock was hidden</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.111.15.2)
+
+---
+
 <h3>Version 10.111.14 <span class="date">8/3/2023</span></h3>
 <p>
 
@@ -315,54 +353,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.107.18.2)
-
----
-
-<h3>Version 10.107.16 <span class="date">21/11/2022</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    New split-screen controls
-    <ul>
-      <li>
-        New split-screen button in the titlebar of Wavebox windows, providing faster access to
-        split-screen controls and status
-      </li>
-      <li>
-        You can now split an app across groups as well as just within groups, so now if you have
-        one app you want to always keep on screen you can do this
-      </li>
-      <li>Fix the split-screen dragger disappearing when splitting right and bottom</li>
-      <li>Simplify the split-screen behaviour by removing the apps & tabs mode</li>
-      <li>Ensure there are always two apps/tabs open when entering split mode</li>
-      <li>Add keyboard shortcuts for changing split screen across the window (as opposed to just groups)</li>
-    </ul>
-  </li>
-  <li>New Redesigned icon picker</li>
-  <li>Add support for moving sleeping tabs to other groups</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update the Chromium 107.0.5304.110</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-  <li>Update the base url for Outlook to remove the white bar in the desktop web app</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Cookie containers didn't sync custom icons, fix this</li>
-  <li>Under certain configurations the tooltips failed to stay open in the explorer webdock, fix this</li>
-  <li>Fix an issue where the main window could be closed on macOS and it was difficult to get it back</li>
-  <li>Fix being unable to remove tabs in certain circumstances</li>
-  <li>Fix a crash on workspaces</li>
-  <li>Fix a crash when removing yourself from a team</li>
-  <li>UI fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.107.16.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
