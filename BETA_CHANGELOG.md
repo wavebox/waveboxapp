@@ -1,3 +1,17 @@
+<h3>Version 10.111.16 beta <span class="date">10/3/2023</span></h3>
+<ul>
+  <li>Give Brainbox more context about the current page that's open and the selected text</li>
+  <li>Add table support for Brainbox</li>
+  <li>Fix a crash shortly after startup</li>
+  <li>Fix a crash when trying to use Brainbox</li>
+  <li>Other fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.16.3)
+
+---
+
 <h3>Version 10.111.15 beta <span class="date">8/3/2023</span></h3>
 <ul>
   <li>Fix a launch crash that was reported by some users</li>
@@ -139,25 +153,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.18.3)
-
----
-
-<h3>Version 10.110.15 beta <span class="date">10/2/2023</span></h3>
-<ul>
-  <li>Add support for Ctrl/Shift/Alt+clicking "Move tab into a new window" to duplicate the tab rather than pop it out</li>
-  <li>Add "Wake all tabs in window" to the tab context menu in secondary windows</li>
-  <li>Add support for Alt+Clicking on tabs and apps to place them in split screen mode</li>
-  <li>Add a new link open modifier (Ctrl/Shift/Alt+click) that allows links to be opened in split screen</li>
-  <li>Add a button to Settings > Advanced to restart the Wavebox masterclass</li>
-  <li>Fix widget pop out urls not being clickable</li>
-  <li>Fix an issue where popping out a tab that's in deep sleep would fail</li>
-  <li>Fix opening external links across profiles not working</li>
-  <li>Fix some emojis on Windows being offset</li>
-  <li>UI fixes and helpers</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
