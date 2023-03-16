@@ -1,3 +1,23 @@
+<h3>Version 10.111.32 beta <span class="date">16/3/2023</span></h3>
+<ul>
+  <li>Add Brainbox as a workspace widget</li>
+  <li>Add a button to send a Brainbox conversation to a Smart note</li>
+  <li>Add a text size setting to Brainbox</li>
+  <li>Add a button to complete/restart the new user masterclass under Settings, Advanced</li>
+  <li>Add more icons that can be used to customize your Wavebox profile avatar</li>
+  <li>Fix some notifications (i.e. Telegram) not appearing in the notification widgets & Mini</li>
+  <li>Fix some reliability issues with the Wavebox socket connection</li>
+  <li>Fix an issue where right-clicking & removing a notification in Mini/Workspaces would remove the wrong one</li>
+  <li>Fix a crash in the socket which could leave you unable to communicate with Brainbox</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.32.3)
+
+---
+
 <h3>Version 10.111.16 beta <span class="date">10/3/2023</span></h3>
 <ul>
   <li>Give Brainbox more context about the current page that's open and the selected text</li>
@@ -135,24 +155,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.21.3)
-
----
-
-<h3>Version 10.110.18 beta <span class="date">14/2/2023</span></h3>
-<ul>
-  <li>Fix an issue where popped out apps could fall asleep too readily</li>
-  <li>
-    Fix an issue on macOS where dragging images when filename extensions are
-    sometimes hidden in finder would result in a sites detecting binary file/invalid
-    file format instead of an image
-  </li>
-  <li>Update Chromium to 110.0.5481.97</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Crash fix</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.18.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
