@@ -1,3 +1,34 @@
+<h3>Version 10.111.36 <span class="date">22/3/2023</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Introducing Wavebox flow, a builder that helps you create extensions for Wavebox.
+    You can get started via the plus button or by launching flow.wavebox.io in a new tab.
+  </li>
+  <li>Add a new chrome.waveboxApps extension API</li>
+  <li>Add a new chrome.brainbox extension API</li>
+  <li>Add more info to Brainbox settings</li>
+  <li>Add a keyboard shortcut to open/toggle Brainbox</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 111.0.5563.110</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix non-pinned tabs sometimes appearing within the pinned tabs</li>
+  <li>Fix an issue where broken widgets could not be removed from a workspace</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.36.2)
+
+---
+
 <h3>Version 10.111.32 <span class="date">16/3/2023</span></h3>
 
 <h4>🆕 New!</h4>
@@ -361,22 +392,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.108.19.2)
-
----
-
-<h3>Version 10.108.14 <span class="date">5/12/2022</span></h3>
-<ul>
-  <li>
-    A more compact titlebar & address bar. You can try it out by disabling
-    Settings &gt; UI &gt; Full-height titlebar
-  </li>
-  <li>Upgrade to Chromium 108.0.5359.94</li>
-  <li>Stability fixes</li>
-  <li>Fix an issue with Discord signing out under certain configurations</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.108.14.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
