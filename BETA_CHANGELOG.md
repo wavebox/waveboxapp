@@ -1,3 +1,24 @@
+<h3>Version 10.111.36 beta <span class="date">22/3/2023</span></h3>
+<ul>
+  <li>Update to Chromium 111.0.5563.110</li>
+  <li>
+    Introducing Wavebox flow, a builder that helps you create extensions for Wavebox.
+    You can get started via the plus button or by launching flow.wavebox.io in a new tab.
+  </li>
+  <li>Add a new chrome.waveboxApps extension API</li>
+  <li>Add a new chrome.brainbox extension API</li>
+  <li>Add more info to Brainbox settings</li>
+  <li>Add a keyboard shortcut to open/toggle Brainbox</li>
+  <li>Fix non-pinned tabs sometimes appearing within the pinned tabs</li>
+  <li>Fix an issue where broken widgets could not be removed from a workspace</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.36.3)
+
+---
+
 <h3>Version 10.111.32 beta <span class="date">16/3/2023</span></h3>
 <ul>
   <li>Add Brainbox as a workspace widget</li>
@@ -133,28 +154,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.23.3)
-
----
-
-<h3>Version 10.110.21 beta <span class="date">16/2/2023</span></h3>
-<ul>
-  <li>Update to Chromium 110.0.5481.100</li>
-  <li>Add new keyboard shortcut to cycle the active tab around the open windows</li>
-  <li>Add "Move tab to new window" keyboard shortcut</li>
-  <li>Improve YouTube url support for the embedded iframe widget</li>
-  <li>When sharing tabs to a workspace, make it possible to change the tabs before sending</li>
-  <li>Add support for dragging links into empty collection widgets</li>
-  <li>Be less strict when accepting links for collection widgets</li>
-  <li>Fix an issue where a site briefly opening a new tab to initiate a download would return to the incorrect tab</li>
-  <li>Speculative fix for modifier+click actions not working immediately after Wavebox starts</li>
-  <li>Fix an issue where settings would sometimes fail to scroll to the correct section</li>
-  <li>UI tweaks</li>
-  <li>Stability fixes</li>
-  <li>First run fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.21.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
