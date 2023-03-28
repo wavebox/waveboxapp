@@ -1,3 +1,17 @@
+<h3>Version 10.111.47 beta <span class="date">28/3/2023</span></h3>
+<ul>
+  <li>Update to Chromium 111.0.5563.147</li>
+  <li>Update dependencies</li>
+  <li>Remove flow extensions from Wavebox when deleting them</li>
+  <li>Stability fixes</li>
+  <li>Fix being unable to set tab titles when the tabs are in deep sleep</li>
+  <li>Fix a focus issue with some keyboard shortcuts</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.111.47.3)
+
+---
+
 <h3>Version 10.111.36 beta <span class="date">22/3/2023</span></h3>
 <ul>
   <li>Update to Chromium 111.0.5563.110</li>
@@ -138,22 +152,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.25.3)
-
----
-
-<h3>Version 10.110.23 beta <span class="date">20/2/2023</span></h3>
-<ul>
-  <li>Make the tab strip only drop into its own toolbar when you have more than 4 apps</li>
-  <li>When hitting Alt+Enter in the omnibox, the cookie container would not be carried through. Fix this.</li>
-  <li>Better compatibility for username/password proxy authentication</li>
-  <li>Fix the mute/unmute right-click menu item not reflecting current state on a group</li>
-  <li>Fix windows not reappearing after unlocking the privacy lock</li>
-  <li>Fix keyboard focus not being in the omnibox when a new tab page is set</li>
-  <li>A bunch of fixes for dragging & dropping stuff in the toolbars</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
