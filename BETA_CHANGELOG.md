@@ -1,3 +1,18 @@
+<h3>Version 10.112.5 beta <span class="date">31/3/2023</span></h3>
+<ul>
+  <li>Update to Chromium 112.0.5615.49</li>
+  <li>Fix the "tabs from other devices" menu not being clickable when used with the explorer webdock</li>
+  <li>Fix an issue where external link open rules were not synced correctly</li>
+  <li>Fix an issue where apps could fail to load when switching to them</li>
+  <li>Fixes for extension sync</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.5.3)
+
+---
+
 <h3>Version 10.111.47 beta <span class="date">28/3/2023</span></h3>
 <ul>
   <li>Update to Chromium 111.0.5563.147</li>
@@ -132,26 +147,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.26.3)
-
----
-
-<h3>Version 10.110.25 beta <span class="date">21/2/2023</span></h3>
-<ul>
-  <li>
-    A new tab navigator experience that makes it easier to switch between all your
-    tabs using the mouse or the keyboard. Try it by clicking the navigator button in the
-    sidebar or through the main burger menu!
-  </li>
-  <li>
-    New color styling for the tab navigator with customizable backgrounds
-  </li>
-  <li>
-    New background gradients for workspaces
-  </li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.25.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
