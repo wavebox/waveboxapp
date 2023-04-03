@@ -1,3 +1,18 @@
+<h3>Version 10.112.6 beta <span class="date">3/4/2023</span></h3>
+<ul>
+  <li>
+    Add a shortcut to expand/collapse all dividers by shift+clicking
+    the webdock mode button in the titlebar
+  </li>
+  <li>Improve Brainbox text extraction to better support iframes</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.6.3)
+
+---
+
 <h3>Version 10.112.5 beta <span class="date">31/3/2023</span></h3>
 <ul>
   <li>Update to Chromium 112.0.5615.49</li>
@@ -135,18 +150,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.110.29.3)
-
----
-
-<h3>Version 10.110.26 beta <span class="date">22/2/2023</span></h3>
-<ul>
-  <li>Fixes for the context menus</li>
-  <li>Fix Connect and Smartnote extensions failing to load</li>
-  <li>Fix missing icons in Connect</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.26.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
