@@ -1,3 +1,17 @@
+<h3>Version 10.112.7 beta <span class="date">4/4/2023</span></h3>
+<ul>
+  <li>Fix a silent crash in the network stack that would occur on launch</li>
+  <li>
+    Fix an issue where in some configurations a workspace would fail to connect
+    to the stores, making it appear readonly
+  </li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.7.3)
+
+---
+
 <h3>Version 10.112.6 beta <span class="date">3/4/2023</span></h3>
 <ul>
   <li>
@@ -137,19 +151,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.11.3)
-
----
-
-<h3>Version 10.110.29 beta <span class="date">24/2/2023</span></h3>
-<ul>
-  <li>Update to Chromium 110.0.5481.178</li>
-  <li>Add some helper info when sharing workspaces</li>
-  <li>Fix more sidebar drag issues</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.110.29.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
