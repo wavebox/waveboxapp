@@ -1,3 +1,14 @@
+<h3>Version 10.112.8 beta <span class="date">5/4/2023</span></h3>
+<ul>
+  <li>Themes were failing to sync for some users. Fix this</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.8.3)
+
+---
+
 <h3>Version 10.112.7 beta <span class="date">4/4/2023</span></h3>
 <ul>
   <li>Fix a silent crash in the network stack that would occur on launch</li>
@@ -129,28 +140,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.14.3)
-
----
-
-<h3>Version 10.111.11 beta <span class="date">7/3/2023</span></h3>
-<ul>
-  <li>
-    🧠 Brainbox is back, and it's bigger and better than ever, bringing the power of
-    ChatGPT to every app and tab in Wavebox. In this first release of Brainbox V2,
-    our powerful right-click writing skills are back—translate, summarize, draft a
-    reply—plus there's a shiny-new sidebar UI. You can also manage, edit and create new
-    skills via the new Admin Portal.
-  </li>
-  <li>Update to Chromium 111.0.5563.64</li>
-  <li>Update dependencies</li>
-  <li>Fix an issue where opening a page as a desktop web app would close and fail</li>
-  <li>Add a shortcut to cycle between apps that have unread notifications</li>
-  <li>You can now easily add Wavebox apps directly from the omnibox</li>
-  <li>Fix the custom tab name not being searchable in search</li>
-  <li>Fix a styling issue with the active group indicator when the webdock was hidden</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
