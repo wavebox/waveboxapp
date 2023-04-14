@@ -1,3 +1,25 @@
+<h3>Version 10.112.10 beta <span class="date">14/4/2023</span></h3>
+<ul>
+  <li>Update to Chromium 112.0.5615.87</li>
+  <li>
+    Add an option to the link engine to allow opening links with the "New tab" or "New window"
+    behavior to also set their cookie container.
+  </li>
+  <li>
+    Add a flag to change what happens to unlinked tabs (usually opened by extensions). By
+    default they're moved into a new window, but they can now be moved into the active group.
+  </li>
+  <li>
+    Fix an issue where a detached app could get confused about it's split screen status
+  </li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.10.3)
+
+---
+
 <h3>Version 10.112.8 beta <span class="date">5/4/2023</span></h3>
 <ul>
   <li>Themes were failing to sync for some users. Fix this</li>
@@ -128,18 +150,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.15.3)
-
----
-
-<h3>Version 10.111.14 beta <span class="date">8/3/2023</span></h3>
-<ul>
-  <li>Brainbox fixes</li>
-  <li>You can now add your own OpenAI key to use with Brainbox</li>
-  <li>Keyboard shortcut fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
