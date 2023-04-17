@@ -1,3 +1,49 @@
+<h3>Version 10.112.11 <span class="date">17/4/2023</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Save yourself a click or two with Wavebox site search. Type "Reddit" in the omnibox then
+    tab to start searching reddit 👍
+    <ul>
+      <li>Search Reddit, Wikipedia, Twitter, Figma, Github, Amazon, Google Drive, Google Docs, Google Calendar & Gmail</li>
+      <li>Add new site search rules under Settings > Search > Manage</li>
+    </ul>
+  </li>
+  <li>
+    Add an option to the link engine to allow opening links with the "New tab" or "New window"
+    behavior to also set their cookie container.
+  </li>
+  <li>
+    Add a flag to change what happens to unlinked tabs (usually opened by extensions). By
+    default they're moved into a new window, but they can now be moved into the active group.
+  </li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 112.0.5615.121</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue where a detached app could get confused about it's split screen status</li>
+  <li>Themes were failing to sync for some users. Fix this</li>
+  <li>Fix a silent crash in the network stack that would occur on launch</li>
+  <li>
+    Fix an issue where in some configurations a shared workspace would fail to connect
+    to the stores, making it appear readonly
+  </li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.11.2)
+
+---
+
 <h3>Version 10.112.6 <span class="date">3/4/2023</span></h3>
 
 <h4>🆕 New!</h4>
@@ -340,58 +386,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.109.14.2)
-
----
-
-<h3>Version 10.109.8 <span class="date">11/1/2023</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Brand new settings UI
-    <ul>
-      <li>
-        Settings diagrams. These replace the sea of toggle switches
-        and give in-situ feedback and visual cues as to what each
-        setting does
-      </li>
-      <li>Overhauled search, making it faster, clearer and more reliable</li>
-      <li>Faster loading</li>
-      <li>Loads of other fixes and tweaks to make settings feel less daunting</li>
-      <li>An option to bulk apply sleep settings to all apps</li>
-      <li>
-        Add a color picker to the appearance options so you can pick a Wavebox color
-        quickly change the look and feel of Wavebox
-      </li>
-    </ul>
-  </li>
-  <li>
-    Updates to focus mode
-    <ul>
-      <li>Add an option to display which groups & apps are in the active focus mode</li>
-      <li>Add an option to sleep groups when entering focus mode</li>
-    </ul>
-  </li>
-  <li>New Google Calendar widget for workspaces</li>
-  <li>Add wake all apps to the group right-click menu</li>
-  <li>Add "last app" as an option to the "choose what to pick after closing a tab" flag</li>
-  <li>Add an option to show/hide the border on individual apps as well as groups</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 109.0.5414.87</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue where discord could keep logging you out</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.109.8.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
