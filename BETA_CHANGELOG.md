@@ -1,3 +1,20 @@
+<h3>Version 10.112.11 beta <span class="date">17/4/2023</span></h3>
+<ul>
+  <li>Update to Chromium 112.0.5615.121</li>
+  <li>
+    Save yourself a click or two with Wavebox site search. Type "Reddit" in the omnibox then
+    tab to start searching reddit 👍
+    <ul>
+      <li>Search Reddit, Wikipedia, Twitter, Figma, Github, Amazon, Google Drive, Google Docs, Google Calendar & Gmail</li>
+      <li>Add new site search rules under Settings > Search > Manage</li>
+    </ul>
+  </li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.11.3)
+
+---
+
 <h3>Version 10.112.10 beta <span class="date">14/4/2023</span></h3>
 <ul>
   <li>Update to Chromium 112.0.5615.87</li>
@@ -141,15 +158,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.16.3)
-
----
-
-<h3>Version 10.111.15 beta <span class="date">8/3/2023</span></h3>
-<ul>
-  <li>Fix a launch crash that was reported by some users</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
