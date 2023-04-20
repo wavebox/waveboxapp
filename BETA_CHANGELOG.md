@@ -1,3 +1,43 @@
+<h3>Version 10.112.15 beta <span class="date">20/4/2023</span></h3>
+<ul>
+  <li>
+    Brainbox improvements
+    <ul>
+      <li>
+        Brainbox now remembers your conversations so you can drop back in to one at anytime
+      </li>
+      <li>
+        Conversation flow is now better preserved so you can ask more follow-up questions
+        and get better contextual replies
+      </li>
+      <li>
+        More actions to help when chatting with Brainbox such as, stopping the reply, retrying
+        the question, switching to a suggested app & more!
+      </li>
+      <li>
+        Brainbox is now more date & time aware so you can, for example what the time in a different
+        timezone is.
+      </li>
+      <li>
+        You can now switch Brainbox engines from within the chat. By default Brainbox uses GPT-3.5,
+        but if you have your own OpenAI API key, you can switch to GPT-4.
+      </li>
+      <li>
+        Styling fixes
+      </li>
+    </ul>
+  </li>
+  <li>Update to Chromium 112.0.5615.137</li>
+  <li>Fix some silent crashes</li>
+  <li>Auto-retry some network requests that have been failing</li>
+  <li>Apps in deep-sleep were not displayed in search. Fix this</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.112.15.3)
+
+---
+
 <h3>Version 10.112.11 beta <span class="date">17/4/2023</span></h3>
 <ul>
   <li>Update to Chromium 112.0.5615.121</li>
@@ -144,20 +184,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.32.3)
-
----
-
-<h3>Version 10.111.16 beta <span class="date">10/3/2023</span></h3>
-<ul>
-  <li>Give Brainbox more context about the current page that's open and the selected text</li>
-  <li>Add table support for Brainbox</li>
-  <li>Fix a crash shortly after startup</li>
-  <li>Fix a crash when trying to use Brainbox</li>
-  <li>Other fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
