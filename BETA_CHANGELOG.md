@@ -1,3 +1,16 @@
+<h3>Version 10.113.7 beta <span class="date">26/4/2023</span></h3>
+<ul>
+  <li>Update to Chromium 113.0.5672.53</li>
+  <li>Try to restore tabs after the machine is hard powered off</li>
+  <li>Update dependencies</li>
+  <li>UI updates</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.113.7.3)
+
+---
+
 <h3>Version 10.112.16 beta <span class="date">24/4/2023</span></h3>
 <ul>
   <li>Update to Chromium 112.0.5615.165</li>
@@ -153,27 +166,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.47.3)
-
----
-
-<h3>Version 10.111.36 beta <span class="date">22/3/2023</span></h3>
-<ul>
-  <li>Update to Chromium 111.0.5563.110</li>
-  <li>
-    Introducing Wavebox flow, a builder that helps you create extensions for Wavebox.
-    You can get started via the plus button or by launching flow.wavebox.io in a new tab.
-  </li>
-  <li>Add a new chrome.waveboxApps extension API</li>
-  <li>Add a new chrome.brainbox extension API</li>
-  <li>Add more info to Brainbox settings</li>
-  <li>Add a keyboard shortcut to open/toggle Brainbox</li>
-  <li>Fix non-pinned tabs sometimes appearing within the pinned tabs</li>
-  <li>Fix an issue where broken widgets could not be removed from a workspace</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.36.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
