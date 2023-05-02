@@ -1,3 +1,21 @@
+<h3>Version 10.113.11 beta <span class="date">2/5/2023</span></h3>
+<ul>
+  <li>Update to Chromium 113.0.5672.63</li>
+  <li>
+    Add new configuration options for sleep. It's now possible to configure tabs
+    to sleep after a set amount of time and also when a certain amount of memory
+    has been used. Wavebox can now be placed into a lower resource usage mode, either
+    manually or when the machine is on battery
+  </li>
+  <li>Fix a crash in settings</li>
+  <li>Update dependencies</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.113.11.3)
+
+---
+
 <h3>Version 10.113.7 beta <span class="date">26/4/2023</span></h3>
 <ul>
   <li>Update to Chromium 113.0.5672.53</li>
@@ -152,20 +170,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.5.3)
-
----
-
-<h3>Version 10.111.47 beta <span class="date">28/3/2023</span></h3>
-<ul>
-  <li>Update to Chromium 111.0.5563.147</li>
-  <li>Update dependencies</li>
-  <li>Remove flow extensions from Wavebox when deleting them</li>
-  <li>Stability fixes</li>
-  <li>Fix being unable to set tab titles when the tabs are in deep sleep</li>
-  <li>Fix a focus issue with some keyboard shortcuts</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.47.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
