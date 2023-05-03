@@ -1,3 +1,66 @@
+<h3>Version 10.113.11 <span class="date">3/5/2023</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Brainbox improvements
+    <ul>
+      <li>
+        Brainbox now remembers your conversations so you can drop back in to one at anytime
+      </li>
+      <li>
+        Conversation flow is now better preserved so you can ask more follow-up questions
+        and get better contextual replies
+      </li>
+      <li>
+        More actions to help when chatting with Brainbox such as, stopping the reply, retrying
+        the question, switching to a suggested app & more!
+      </li>
+      <li>
+        Brainbox is now more date & time aware so you can, for example what the time in a different
+        timezone is.
+      </li>
+      <li>
+        You can now switch Brainbox engines from within the chat. By default Brainbox uses GPT-3.5,
+        but if you have your own OpenAI API key, you can switch to GPT-4.
+      </li>
+      <li>
+        Styling fixes
+      </li>
+    </ul>
+  </li>
+  <li>
+    Add new configuration options for sleep. It's now possible to configure tabs
+    to sleep after a set amount of time and also when a certain amount of memory
+    has been used. Wavebox can now be placed into a lower resource usage mode, either
+    manually or when the machine is on battery
+  </li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 113.0.5672.63</li>
+  <li>Update dependencies</li>
+  <li>Auto-retry some network requests that have been failing</li>
+  <li>Try to restore tabs after the machine is hard powered off</li>
+  <li>UI updates</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix some silent crashes</li>
+  <li>Apps in deep-sleep were not displayed in search. Fix this</li>
+  <li>Stability fixes</li>
+  <li>Fix a crash in settings</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.113.11.2)
+
+---
+
 <h3>Version 10.112.11 <span class="date">17/4/2023</span></h3>
 <p>
 
@@ -346,46 +409,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.110.12.2)
-
----
-
-<h3>Version 10.109.14 <span class="date">26/1/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add a dialog prompt when creating a cookie container</li>
-  <li>Add an embedded iframe widget to workspaces</li>
-  <li>Add support for Ctrl/Cmd+clicking links in workspaces and opening those links in background tabs</li>
-  <li>
-    Add support for opening urls in identities and apps from the command line. You can find
-    information about this by enabling Settings > Advanced > Command line hints and checking
-    the settings of an app or cookie container.
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 109.0.5414.119</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-  <li>Improve icon refetching when Wavebox starts in an offline state, or is unable to load icons</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix the tooltip delay not being changeable</li>
-  <li>Fixes for Gmail icon fetching</li>
-  <li>Fix an issue where clicking a notification from a sleeping app, would launch the app in a new window</li>
-  <li>Fix the app color ring setting as it's state wasn't always respected</li>
-  <li>Fix apps being unable to set their sound back to the default</li>
-  <li>Under certain configurations the tabstrip would fall into its own toolbar unnecessarily, fix this</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.109.14.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
