@@ -1,3 +1,16 @@
+<h3>Version 10.113.12 beta <span class="date">4/5/2023</span></h3>
+<ul>
+  <li>Fix for the HubSpot extension failing to sign in</li>
+  <li>Fix macOS TouchID not working</li>
+  <li>Stability fixes with extension APIs</li>
+  <li>UI updates</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.113.12.3)
+
+---
+
 <h3>Version 10.113.11 beta <span class="date">2/5/2023</span></h3>
 <ul>
   <li>Update to Chromium 113.0.5672.63</li>
@@ -155,21 +168,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.6.3)
-
----
-
-<h3>Version 10.112.5 beta <span class="date">31/3/2023</span></h3>
-<ul>
-  <li>Update to Chromium 112.0.5615.49</li>
-  <li>Fix the "tabs from other devices" menu not being clickable when used with the explorer webdock</li>
-  <li>Fix an issue where external link open rules were not synced correctly</li>
-  <li>Fix an issue where apps could fail to load when switching to them</li>
-  <li>Fixes for extension sync</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
