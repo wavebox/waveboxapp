@@ -1,3 +1,27 @@
+<h3>Version 10.113.18 beta <span class="date">10/5/2023</span></h3>
+<ul>
+  <li>Make the Brainbox panel resizable in the main window</li>
+  <li>Add support for customizing and showing unread counts and activity badges in custom apps</li>
+  <li>Add right-click > open link in group > new group menu option</li>
+  <li>Add support for unread counts and activities on custom apps</li>
+  <li>Add an option to collection widgets to customize grid icon alignment</li>
+  <li>Update to Chromium 113.0.5672.92</li>
+  <li>Fix the proxy settings not taking effect in the default cookie container</li>
+  <li>Fix an unexpected behavior when adding apps that was dependent on the network speed</li>
+  <li>Fix a store sync error</li>
+  <li>Fix cases where Wavebox tries to update a tab, but that tab has already been destroyed</li>
+  <li>Stability fixes for password sync</li>
+  <li>Fixes for the Linux update popup being unresponsive</li>
+  <li>Fix an issue with Brainbox chat, where a missing chat name would cause the panel to crash</li>
+  <li>Fix an issue with the Brianbox popup sometimes failing to load depending on machine speed</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.113.18.3)
+
+---
+
 <h3>Version 10.113.12 beta <span class="date">4/5/2023</span></h3>
 <ul>
   <li>Fix for the HubSpot extension failing to sign in</li>
@@ -153,21 +177,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.7.3)
-
----
-
-<h3>Version 10.112.6 beta <span class="date">3/4/2023</span></h3>
-<ul>
-  <li>
-    Add a shortcut to expand/collapse all dividers by shift+clicking
-    the webdock mode button in the titlebar
-  </li>
-  <li>Improve Brainbox text extraction to better support iframes</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
