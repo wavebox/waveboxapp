@@ -1,3 +1,17 @@
+<h3>Version 10.113.19 beta <span class="date">11/5/2023</span></h3>
+<ul>
+  <li>Fix an issue that made split-screen un-draggable in some instances</li>
+  <li>Speculative fix for parts of the Wavebox UI failing to render</li>
+  <li>Speculative fix for rendering problems with some Mesa drivers</li>
+  <li>Support passing the Brainbox engine to custom skills</li>
+  <li>Updates for new users</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.113.19.3)
+
+---
+
 <h3>Version 10.113.18 beta <span class="date">10/5/2023</span></h3>
 <ul>
   <li>Make the Brainbox panel resizable in the main window</li>
@@ -163,20 +177,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.8.3)
-
----
-
-<h3>Version 10.112.7 beta <span class="date">4/4/2023</span></h3>
-<ul>
-  <li>Fix a silent crash in the network stack that would occur on launch</li>
-  <li>
-    Fix an issue where in some configurations a workspace would fail to connect
-    to the stores, making it appear readonly
-  </li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.7.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
