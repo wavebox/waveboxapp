@@ -1,3 +1,47 @@
+<h3>Version 10.113.19 <span class="date">11/5/2023</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Make the Brainbox panel resizable in the main window</li>
+  <li>Add support for customizing and showing unread counts and activity badges in custom apps</li>
+  <li>Add right-click > open link in group > new group menu option</li>
+  <li>Add an option to collection widgets to customize grid icon alignment</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 113.0.5672.92</li>
+  <li>UI updates</li>
+  <li>Update dependencies</li>
+  <li>Support passing the Brainbox engine to custom skills</li>
+  <li>Updates for new users</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix for the HubSpot extension failing to sign in</li>
+  <li>Fix macOS TouchID not working</li>
+  <li>Stability fixes with extension APIs</li>
+  <li>Fix the proxy settings not taking effect in the default cookie container</li>
+  <li>Fix an unexpected behavior when adding apps that was dependent on the network speed</li>
+  <li>Fix a store sync error</li>
+  <li>Fix cases where Wavebox tries to update a tab, but that tab has already been destroyed</li>
+  <li>Stability fixes for password sync</li>
+  <li>Fixes for the Linux update popup being unresponsive</li>
+  <li>Fix an issue with Brainbox chat, where a missing chat name would cause the panel to crash</li>
+  <li>Fix an issue with the Brainbox popup sometimes failing to load depending on machine speed</li>
+  <li>Fix an issue that made split-screen un-draggable in some instances</li>
+  <li>Speculative fix for parts of the Wavebox UI failing to render</li>
+  <li>Speculative fix for rendering problems with some Mesa drivers</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.113.19.2)
+
+---
+
 <h3>Version 10.113.11 <span class="date">3/5/2023</span></h3>
 <p>
 
@@ -370,45 +414,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.110.18.2)
-
----
-
-<h3>Version 10.110.12 <span class="date">8/2/2023</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add support for macOS Touch ID and Windows Hello as options when using the Wavebox privacy lock. If you already have the lock enabled, you'll need to change your lock settings to use biometrics</li>
-  <li>It's now possible to move apps into new windows and then bring them back again, this is really helpful if you have multiple monitors! To split the app into a new window, either use the right-click menu or Ctrl+click on the app</li>
-  <li>A brand new faster app store that makes it easier to find your apps and create your own custom ones</li>
-  <li>Tweaks to the controls at the bottom of the sidebar, including a new settings pop-out with a bunch of useful things!</li>
-  <li>New Admin Portal that makes it easier to manage your Wavebox subscription, profiles, templates, and teams</li>
-  <li>Add Masterclass tour to help new Wavebox users get started after downloading Wavebox (Pro tip, if you want to take a look, hover over the settings icon 👍)</li>
-  <li>Add 'Send to group' to the right-click menu, when right-clicking on a link</li>
-  <li>Generate a 'URL link' for each widget so you can open them from another app. You can find this under the settings cog</li>
-  <li>Add support for middle mouse clicking a group, this sleeps all apps and tabs within the group</li>
-  <li>Add support for Shift/Ctrl/Cmd+clicking links in Smart Notes</li>
-  <li>Add an option to disable sleep on a specific tab via the right-click menu</li>
-  <li>Add support for using the left/right arrow keys in the app switcher</li>
-  <li>Add a keyboard shortcut to open a tab in the active group rather than the default (which is active service). This shortcut is unmapped by default but can be set under Settings > Keyboard Shortcuts > Opening apps & tabs</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 110.0.5481.77</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue where the sidebar could sometimes become hidden behind the tab</li>
-  <li>Stability fixes</li>
-  <li>In certain locales, focus mode wouldn't display AM/PM in the time until, fix this</li>
-<li>Fix an issue with sync where it could become stuck</li>
-<li>Fix clicking on app settings only taking you as far as the group</li>
-<li>Fix an issue on macOS where CMD+W wouldn't always close the tab when search was open</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.110.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
