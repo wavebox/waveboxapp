@@ -1,3 +1,18 @@
+<h3>Version 10.113.24 beta <span class="date">17/5/2023</span></h3>
+<ul>
+  <li>Update to Chromium 113.0.5672.127</li>
+  <li>Add an option to delete Brainbox chats</li>
+  <li>Ensure the Brainbox text field is focused when opening the panel</li>
+  <li>Fix an issue where opening multiple tabs from a collection widget could see those opened in a different order</li>
+  <li>Another speculative fix for parts of the UI going blank after exiting fullscreen</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.113.24.3)
+
+---
+
 <h3>Version 10.113.19 beta <span class="date">11/5/2023</span></h3>
 <ul>
   <li>Fix an issue that made split-screen un-draggable in some instances</li>
@@ -166,17 +181,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.10.3)
-
----
-
-<h3>Version 10.112.8 beta <span class="date">5/4/2023</span></h3>
-<ul>
-  <li>Themes were failing to sync for some users. Fix this</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
