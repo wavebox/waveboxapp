@@ -1,3 +1,22 @@
+<h3>Version 10.114.7 beta <span class="date">31/5/2023</span></h3>
+<ul>
+  <li>Update to Chromium 114.0.5735.91</li>
+  <li>Add an action chip to Brainbox that offers to open links in a new window when there are multiple links in a reply</li>
+  <li>UI tweaks to the tab strip when tabs are squished together</li>
+  <li>Dark mode fixes</li>
+  <li>Fix a rendering glitch in settings where the UI would constantly flash</li>
+  <li>Ensure new profiles are setup correctly with the default settings</li>
+  <li>Fix a crash in settings</li>
+  <li>Fixes for Smart Notes</li>
+  <li>Add side panel support for extensions</li>
+  <li>Move Brainbox into the side panel</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.7.3)
+
+---
+
 <h3>Version 10.113.24 beta <span class="date">17/5/2023</span></h3>
 <ul>
   <li>Update to Chromium 113.0.5672.127</li>
@@ -159,28 +178,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.11.3)
-
----
-
-<h3>Version 10.112.10 beta <span class="date">14/4/2023</span></h3>
-<ul>
-  <li>Update to Chromium 112.0.5615.87</li>
-  <li>
-    Add an option to the link engine to allow opening links with the "New tab" or "New window"
-    behavior to also set their cookie container.
-  </li>
-  <li>
-    Add a flag to change what happens to unlinked tabs (usually opened by extensions). By
-    default they're moved into a new window, but they can now be moved into the active group.
-  </li>
-  <li>
-    Fix an issue where a detached app could get confused about it's split screen status
-  </li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
