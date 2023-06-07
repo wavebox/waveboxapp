@@ -1,3 +1,61 @@
+<h3>Version 10.114.17 <span class="date">7/6/2023</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+      <strong>UI Enhancements!</strong>
+    <ul>
+      <li>Update to address bar icons top-right. New extension and side panel icons.</li>
+      <li>Update to address bar icons top-left. Irrelevant icons are now hidden e.g. no forward button when there is nowhere to go.</li>
+      <li>Split-screen icon moved to the address bar (within the omnibox, on the right) to sit alongside the existing sleep, share, and bookmark icons.</li>
+      <li>Clearer tab strip, even when tabs are squished together, ensuring you never lose sight of your open tabs.</li>
+      <li>Dark mode support for Linux, to match the look and feel of your operating system.</li>
+    </ul>
+  </li>
+  <li>
+    <strong> Introducing Side Panel Support</strong>
+    <ul>
+      <li>
+        Thanks to the all-new side panel APIs, extensions now have the power to create immersive experiences within the side of any window. Enjoy seamless compatibility with Chromium extension APIs, ensuring your installed extensions work flawlessly.
+      </li>
+      <li>Brainbox, now available in the new side panel, giving access to AI functionality across any window without any popups.</li>
+      <li>Discover what's new in Wavebox from within the new side panel.</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Brainbox Powerup</strong>
+    <ul>
+      <li>Unlock the full potential of Brainbox with side panel and popout support for any window.</li>
+      <li>Add an action chip to Brainbox that offers to open links in a new window when there are multiple links in a reply.</li>
+      <li>Add an option to delete Brainbox chats.</li>
+      <li>Ensure the Brainbox text field is focused when opening the panel.</li>
+    </ul>
+  </li>
+  <li>Customize the homepage of any app (not just custom ones) directly from the settings.</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>
+    Update to Chromium 114.0.5735.110. Chromium 114 includes many new web features, and Wavebox allows sites to leverage these as in other browsers. This version of Chromium also includes a new JavaScript compiler, Maglev, which reduces memory and CPU usage while improving performance simultaneously.
+  </li>
+  <li>Update dependencies.</li>
+  <li>Ensure new profiles are set up correctly with the default settings.</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Another speculative fix for parts of the UI going blank after exiting fullscreen.</li>
+  <li>Resolved an issue where opening multiple tabs from a collection widget could sometimes result in a different order, bringing consistency to your workflow.</li>
+  <li>Fix a rendering glitch in settings where the UI would constantly flash.</li>
+  <li>Fix a crash in settings.</li>
+  <li>Fixes for Smart Notes.</li>
+  <li>Stability fixes.</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.17.2)
+
+---
+
 <h3>Version 10.113.19 <span class="date">11/5/2023</span></h3>
 <p>
 
@@ -377,43 +435,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.110.26.2)
-
----
-
-<h3>Version 10.110.18 <span class="date">14/2/2023</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add support for Ctrl/Shift/Alt+clicking "Move tab into a new window" to duplicate the tab rather than pop it out</li>
-  <li>Add "Wake all tabs in window" to the tab context menu in secondary windows</li>
-  <li>Add support for Alt+Clicking on tabs and apps to place them in split screen mode</li>
-  <li>Add a new link open modifier (Ctrl/Shift/Alt+click) that allows links to be opened in split screen</li>
-  <li>Add a button to Settings > Advanced to restart the Wavebox masterclass</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update Chromium to 110.0.5481.97</li>
-  <li>UI fixes and helpers</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix widget pop out urls not being clickable</li>
-  <li>Fix an issue where popping out a tab that's in deep sleep would fail</li>
-  <li>Fix opening external links across profiles not working</li>
-  <li>Fix some emojis on Windows being offset</li>
-  <li>Fix an issue where popped out apps could fall asleep too readily</li>
-  <li>
-    Fix an issue on macOS where dragging images when filename extensions are
-    sometimes hidden in finder would result in a sites detecting binary file/invalid
-    file format instead of an image
-  </li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.110.18.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
