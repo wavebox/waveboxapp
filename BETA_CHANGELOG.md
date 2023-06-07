@@ -1,3 +1,12 @@
+<h3>Version 10.114.17 beta <span class="date">7/6/2023</span></h3>
+<ul>
+  <li>Change the way bookmarks are opened from the side panel in the main Wavebox window, so they don't replace a running app</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.17.3)
+
+---
+
 <h3>Version 10.114.16 beta <span class="date">6/6/2023</span></h3>
 <ul>
   <li>Update to Chromium 114.0.5735.110</li>
@@ -132,16 +141,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.113.7.3)
-
----
-
-<h3>Version 10.112.16 beta <span class="date">24/4/2023</span></h3>
-<ul>
-  <li>Update to Chromium 112.0.5615.165</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
