@@ -1,3 +1,24 @@
+<h3>Version 10.114.26 beta <span class="date">14/6/2023</span></h3>
+<ul>
+  <li>Update to Chromium 114.0.5735.134</li>
+  <li>Add Smart notes to the side panel</li>
+  <li>Add Wavebox Mini to the side panel</li>
+  <li>Add an option to cookie containers to clear cookies on exit</li>
+  <li>Add a menu item to clear all cookies in a single cookie container</li>
+  <li>Add an advanced flag to turn off what's new badges</li>
+  <li>Add "Wake all in group" to the tab right-click menu</li>
+  <li>Update dependencies</li>
+  <li>Fix tab thumbnails not generating</li>
+  <li>Fixes for new users</li>
+  <li>Fixes for settings</li>
+  <li>Fix bookmarks opened from the toolbar creating a new tab</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.26.3)
+
+---
+
 <h3>Version 10.114.17 beta <span class="date">7/6/2023</span></h3>
 <ul>
   <li>Change the way bookmarks are opened from the side panel in the main Wavebox window, so they don't replace a running app</li>
@@ -128,19 +149,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.113.11.3)
-
----
-
-<h3>Version 10.113.7 beta <span class="date">26/4/2023</span></h3>
-<ul>
-  <li>Update to Chromium 113.0.5672.53</li>
-  <li>Try to restore tabs after the machine is hard powered off</li>
-  <li>Update dependencies</li>
-  <li>UI updates</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.113.7.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
