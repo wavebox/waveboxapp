@@ -1,3 +1,14 @@
+<h3>Version 10.114.32 beta <span class="date">27/6/2023</span></h3>
+<ul>
+  <li>Update to Chromium 114.0.5735.199</li>
+  <li>Fix unpacked extensions failing to load when multiple instances is selected in for the mode</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.32.3)
+
+---
+
 <h3>Version 10.114.30 beta <span class="date">26/6/2023</span></h3>
 <ul>
   <li>
@@ -143,19 +154,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.113.18.3)
-
----
-
-<h3>Version 10.113.12 beta <span class="date">4/5/2023</span></h3>
-<ul>
-  <li>Fix for the HubSpot extension failing to sign in</li>
-  <li>Fix macOS TouchID not working</li>
-  <li>Stability fixes with extension APIs</li>
-  <li>UI updates</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.113.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
