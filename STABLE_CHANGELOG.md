@@ -1,3 +1,40 @@
+<h3>Version 10.114.32 <span class="date">27/6/2023</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Add experimental support for running multiple copies of the same extension, a different
+    one for each cookie container. You can enable this by opening wavebox://extensions in a new
+    tab and opening the extensions settings.
+  </li>
+  <li>
+    Add support for Firefox contextual identity extension APIs, allowing extensions to
+    interact with cookie containers.
+  </li>
+  <li>UI updates to the extensions screens.</li>
+  <li>New cookie container popover when clicking the cookie container button in the toolbar.</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 114.0.5735.199.</li>
+  <li>Expose more Chromium settings to the main Wavebox settings.</li>
+  <li>UI tweaks.</li>
+  <li>Stability fixes.</li>
+  <li>Update dependencies.</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix Smart Notes not being scrollable with the on-screen scroll handle.</li>
+  <li>Fix the tab close button incorrectly showing on unfocused tabs when the tab strip is compressed.</li>
+  <li>Fix the connect button doing nothing when the side panel is disabled.</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.114.32.2)
+
+---
+
 <h3>Version 10.114.26 <span class="date">15/6/2023</span></h3>
 <ul>
   <li>Update to Chromium 114.0.5735.134</li>
@@ -367,44 +404,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.111.15.2)
-
----
-
-<h3>Version 10.111.14 <span class="date">8/3/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    🧠 Brainbox is back, and it's bigger and better than ever, bringing the power of
-    ChatGPT to every app and tab in Wavebox. In this first release of Brainbox V2,
-    our powerful right-click writing skills are back—translate, summarize, draft a
-    reply—plus there's a shiny-new sidebar UI. You can also manage, edit and create new
-    skills via the new Admin Portal.
-  </li>
-  <li>Add a shortcut to cycle between apps that have unread notifications</li>
-  <li>You can now easily add Wavebox apps directly from the omnibox</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 111.0.5563.64</li>
-  <li>Update dependencies</li>
-  <li>Add some helper info when sharing workspaces</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix more sidebar drag issues</li>
-  <li>Stability fixes</li>
-  <li>Fix an issue where opening a page as a desktop web app would close and fail</li>
-  <li>Fix the custom tab name not being searchable in search</li>
-  <li>Fix a styling issue with the active group indicator when the webdock was hidden</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.111.14.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
