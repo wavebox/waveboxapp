@@ -1,3 +1,26 @@
+<h3>Version 10.114.33 beta <span class="date">30/6/2023</span></h3>
+<ul>
+  <li>
+    Add more options to the custom web app settings to allow for more control over
+    generating unread counts and activity. You can now create inline functions to
+    generate these values that run inside the apps tab.
+  </li>
+  <li>Add sorting for Smart Notes</li>
+  <li>
+    Fix an issue on Windows where dragging the sticky notes widget could make the
+    window resize unexpectedly
+  </li>
+  <li>Fix cookie container proxy settings not being configurable</li>
+  <li>Fix clearing the default cookie container on exit not being configurable</li>
+  <li>Fix text overflowing in workspaces</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.33.3)
+
+---
+
 <h3>Version 10.114.32 beta <span class="date">27/6/2023</span></h3>
 <ul>
   <li>Update to Chromium 114.0.5735.199</li>
@@ -130,30 +153,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.113.19.3)
-
----
-
-<h3>Version 10.113.18 beta <span class="date">10/5/2023</span></h3>
-<ul>
-  <li>Make the Brainbox panel resizable in the main window</li>
-  <li>Add support for customizing and showing unread counts and activity badges in custom apps</li>
-  <li>Add right-click > open link in group > new group menu option</li>
-  <li>Add support for unread counts and activities on custom apps</li>
-  <li>Add an option to collection widgets to customize grid icon alignment</li>
-  <li>Update to Chromium 113.0.5672.92</li>
-  <li>Fix the proxy settings not taking effect in the default cookie container</li>
-  <li>Fix an unexpected behavior when adding apps that was dependent on the network speed</li>
-  <li>Fix a store sync error</li>
-  <li>Fix cases where Wavebox tries to update a tab, but that tab has already been destroyed</li>
-  <li>Stability fixes for password sync</li>
-  <li>Fixes for the Linux update popup being unresponsive</li>
-  <li>Fix an issue with Brainbox chat, where a missing chat name would cause the panel to crash</li>
-  <li>Fix an issue with the Brianbox popup sometimes failing to load depending on machine speed</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.113.18.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
