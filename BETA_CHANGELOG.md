@@ -1,3 +1,15 @@
+<h3>Version 10.114.36 beta <span class="date">5/7/2023</span></h3>
+<ul>
+  <li>Tab styling was different between the primary and secondary windows. Fix this.</li>
+  <li>Updates to the network code so it's more resilient and makes sync more responsive</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.114.36.3)
+
+---
+
 <h3>Version 10.114.33 beta <span class="date">30/6/2023</span></h3>
 <ul>
   <li>
@@ -139,20 +151,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.113.24.3)
-
----
-
-<h3>Version 10.113.19 beta <span class="date">11/5/2023</span></h3>
-<ul>
-  <li>Fix an issue that made split-screen un-draggable in some instances</li>
-  <li>Speculative fix for parts of the Wavebox UI failing to render</li>
-  <li>Speculative fix for rendering problems with some Mesa drivers</li>
-  <li>Support passing the Brainbox engine to custom skills</li>
-  <li>Updates for new users</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.113.19.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
