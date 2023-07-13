@@ -1,3 +1,18 @@
+<h3>Version 10.115.12 beta <span class="date">13/7/2023</span></h3>
+<ul>
+  <li>Update to Chromium 115.0.5790.90</li>
+  <li>Update dependencies</li>
+  <li>Compatibility improvements for the embedded iframe widget in workspaces</li>
+  <li>Add the bookmarks manager back into the app menu</li>
+  <li>Ensure notification sounds are not played when macOS is in focus mode</li>
+  <li>Remove lots of boilerplate code</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.12.3)
+
+---
+
 <h3>Version 10.114.36 beta <span class="date">5/7/2023</span></h3>
 <ul>
   <li>Tab styling was different between the primary and secondary windows. Fix this.</li>
@@ -136,21 +151,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.7.3)
-
----
-
-<h3>Version 10.113.24 beta <span class="date">17/5/2023</span></h3>
-<ul>
-  <li>Update to Chromium 113.0.5672.127</li>
-  <li>Add an option to delete Brainbox chats</li>
-  <li>Ensure the Brainbox text field is focused when opening the panel</li>
-  <li>Fix an issue where opening multiple tabs from a collection widget could see those opened in a different order</li>
-  <li>Another speculative fix for parts of the UI going blank after exiting fullscreen</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.113.24.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
