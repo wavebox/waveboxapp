@@ -1,3 +1,16 @@
+<h3>Version 10.115.14 beta <span class="date">18/7/2023</span></h3>
+<ul>
+  <li>Update to Chromium 115.0.5790.98</li>
+  <li>Fixes for the cookie container popup</li>
+  <li>Fix the Brainbox toggle shortcut not closing side panels</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.14.3)
+
+---
+
 <h3>Version 10.115.12 beta <span class="date">13/7/2023</span></h3>
 <ul>
   <li>Update to Chromium 115.0.5790.90</li>
@@ -132,25 +145,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.8.3)
-
----
-
-<h3>Version 10.114.7 beta <span class="date">31/5/2023</span></h3>
-<ul>
-  <li>Update to Chromium 114.0.5735.91</li>
-  <li>Add an action chip to Brainbox that offers to open links in a new window when there are multiple links in a reply</li>
-  <li>UI tweaks to the tab strip when tabs are squished together</li>
-  <li>Dark mode fixes</li>
-  <li>Fix a rendering glitch in settings where the UI would constantly flash</li>
-  <li>Ensure new profiles are setup correctly with the default settings</li>
-  <li>Fix a crash in settings</li>
-  <li>Fixes for Smart Notes</li>
-  <li>Add side panel support for extensions</li>
-  <li>Move Brainbox into the side panel</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.7.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
