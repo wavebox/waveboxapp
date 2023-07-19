@@ -1,3 +1,12 @@
+<h3>Version 10.115.15 beta <span class="date">19/7/2023</span></h3>
+<ul>
+  <li>The Chromium 115 update broke creating new profiles, fix this</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.15.3)
+
+---
+
 <h3>Version 10.115.14 beta <span class="date">18/7/2023</span></h3>
 <ul>
   <li>Update to Chromium 115.0.5790.98</li>
@@ -136,15 +145,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.16.3)
-
----
-
-<h3>Version 10.114.8 beta <span class="date">1/6/2023</span></h3>
-<ul>
-  <li>UI updates</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
