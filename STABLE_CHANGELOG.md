@@ -1,3 +1,49 @@
+<h3>Version 10.115.15 <span class="date">19/7/2023</span></h3>
+<p>
+  The previous release broke creating new profiles, this release fixes that.
+  Here's everything that's new...
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Add more options to the custom web app settings to allow for more control over
+    generating unread counts and activity. You can now create inline functions to
+    generate these values that run inside the apps tab.
+  </li>
+  <li>Add sorting for Smart Notes</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 115.0.5790.98</li>
+  <li>Update dependencies</li>
+  <li>Tab styling was different between the primary and secondary windows. Fix this.</li>
+  <li>Updates to the network code so it's more resilient and makes sync more responsive</li>
+  <li>Compatibility improvements for the embedded iframe widget in workspaces</li>
+  <li>Add the bookmarks manager back into the app menu</li>
+  <li>Ensure notification sounds are not played when macOS is in focus mode</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>
+    Fix an issue on Windows where dragging the sticky notes widget could make the
+    window resize unexpectedly
+  </li>
+  <li>Fix cookie container proxy settings not being configurable</li>
+  <li>Fix clearing the default cookie container on exit not being configurable</li>
+  <li>Fix text overflowing in workspaces</li>
+  <li>Fixes for the cookie container popup</li>
+  <li>Fix the Brainbox toggle shortcut not closing side panels</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.115.15.2)
+
+---
+
 <h3>Version 10.115.14 <span class="date">19/7/2023</span></h3>
 
 <h4>🆕 New!</h4>
@@ -373,42 +419,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.111.36.2)
-
----
-
-<h3>Version 10.111.32 <span class="date">16/3/2023</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>Give Brainbox more context about the current page that's open and the selected text</li>
-  <li>Add table support for Brainbox</li>
-  <li>Add Brainbox as a workspace widget</li>
-  <li>Add a button to send a Brainbox conversation to a Smart note</li>
-  <li>Add a text size setting to Brainbox</li>
-  <li>Add a button to complete/restart the new user masterclass under Settings, Advanced</li>
-  <li>Add more icons that can be used to customize your Wavebox profile avatar</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix a crash shortly after startup</li>
-  <li>Fix a crash when trying to use Brainbox</li>
-  <li>Fix some notifications (i.e. Telegram) not appearing in the notification widgets & Mini</li>
-  <li>Fix some reliability issues with the Wavebox socket connection</li>
-  <li>Fix an issue where right-clicking & removing a notification in Mini/Workspaces would remove the wrong one</li>
-  <li>Fix a crash in the socket which could leave you unable to communicate with Brainbox</li>
-  <li>Other fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.111.32.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
