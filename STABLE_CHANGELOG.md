@@ -1,3 +1,46 @@
+<h3>Version 10.115.14 <span class="date">19/7/2023</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Add more options to the custom web app settings to allow for more control over
+    generating unread counts and activity. You can now create inline functions to
+    generate these values that run inside the apps tab.
+  </li>
+  <li>Add sorting for Smart Notes</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 115.0.5790.98</li>
+  <li>Update dependencies</li>
+  <li>Tab styling was different between the primary and secondary windows. Fix this.</li>
+  <li>Updates to the network code so it's more resilient and makes sync more responsive</li>
+  <li>Compatibility improvements for the embedded iframe widget in workspaces</li>
+  <li>Add the bookmarks manager back into the app menu</li>
+  <li>Ensure notification sounds are not played when macOS is in focus mode</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>
+    Fix an issue on Windows where dragging the sticky notes widget could make the
+    window resize unexpectedly
+  </li>
+  <li>Fix cookie container proxy settings not being configurable</li>
+  <li>Fix clearing the default cookie container on exit not being configurable</li>
+  <li>Fix text overflowing in workspaces</li>
+  <li>Fixes for the cookie container popup</li>
+  <li>Fix the Brainbox toggle shortcut not closing side panels</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.115.14.2)
+
+---
+
 <h3>Version 10.114.32 <span class="date">27/6/2023</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -366,44 +409,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.111.32.2)
-
----
-
-<h3>Version 10.111.15 <span class="date">8/3/2023</span></h3>
-<p>
-  This version also includes a fix for a crash reported in version 10.111.14
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    🧠 Brainbox is back, and it's bigger and better than ever, bringing the power of
-    ChatGPT to every app and tab in Wavebox. In this first release of Brainbox V2,
-    our powerful right-click writing skills are back—translate, summarize, draft a
-    reply—plus there's a shiny-new sidebar UI. You can also manage, edit and create new
-    skills via the new Admin Portal.
-  </li>
-  <li>Add a shortcut to cycle between apps that have unread notifications</li>
-  <li>You can now easily add Wavebox apps directly from the omnibox</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 111.0.5563.64</li>
-  <li>Update dependencies</li>
-  <li>Add some helper info when sharing workspaces</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix more sidebar drag issues</li>
-  <li>Stability fixes</li>
-  <li>Fix an issue where opening a page as a desktop web app would close and fail</li>
-  <li>Fix the custom tab name not being searchable in search</li>
-  <li>Fix a styling issue with the active group indicator when the webdock was hidden</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.111.15.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
