@@ -1,3 +1,21 @@
+<h3>Version 10.115.23 beta <span class="date">27/7/2023</span></h3>
+<ul>
+  <li>
+    Add a feature to the collection widget, so changes you make when all links are opened in a window
+    can be sent back to the workspace. To use this, click the cog icon in the collection widget and
+    select 'Open & track shortcuts in a new window'.
+  </li>
+  <li>Update to Chromium 115.0.5790.114</li>
+  <li>UI fixes</li>
+  <li>Sync fixes</li>
+  <li>Fixes for profile sync</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.23.3)
+
+---
+
 <h3>Version 10.115.19 beta <span class="date">24/7/2023</span></h3>
 <ul>
   <li>Update to Chromium 115.0.5790.102</li>
@@ -143,27 +161,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.30.3)
-
----
-
-<h3>Version 10.114.26 beta <span class="date">14/6/2023</span></h3>
-<ul>
-  <li>Update to Chromium 114.0.5735.134</li>
-  <li>Add Smart notes to the side panel</li>
-  <li>Add Wavebox Mini to the side panel</li>
-  <li>Add an option to cookie containers to clear cookies on exit</li>
-  <li>Add a menu item to clear all cookies in a single cookie container</li>
-  <li>Add an advanced flag to turn off what's new badges</li>
-  <li>Add "Wake all in group" to the tab right-click menu</li>
-  <li>Update dependencies</li>
-  <li>Fix tab thumbnails not generating</li>
-  <li>Fixes for new users</li>
-  <li>Fixes for settings</li>
-  <li>Fix bookmarks opened from the toolbar creating a new tab</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.26.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
