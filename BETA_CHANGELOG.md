@@ -1,3 +1,17 @@
+<h3>Version 10.115.25 beta <span class="date">2/8/2023</span></h3>
+<ul>
+  <li>Fix for opening tabs from a collection widget</li>
+  <li>Sync fixes</li>
+  <li>Fixes for the collection widgets</li>
+  <li>Fix the sticky notes widgets not being draggable</li>
+  <li>Fixes for new users</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.25.3)
+
+---
+
 <h3>Version 10.115.23 beta <span class="date">27/7/2023</span></h3>
 <ul>
   <li>
@@ -136,31 +150,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.32.3)
-
----
-
-<h3>Version 10.114.30 beta <span class="date">26/6/2023</span></h3>
-<ul>
-  <li>
-    Add experimental support for running multiple copies of the same extension, a different
-    one for each cookie container
-  </li>
-  <li>
-    Add support for Firefox contextual identity extension APIs, allowing extensions to
-    interact with cookie containers
-  </li>
-  <li>UI updates to the extensions screens</li>
-  <li>New cookie container popover when clicking the cookie container button in the toolbar</li>
-  <li>Fix Smart Notes not being scrollable with the on-screen scroll handle</li>
-  <li>Expose more Chromium settings to the main Wavebox settings</li>
-  <li>Fix the tab close button incorrectly showing on unfocused tabs when the tab strip is compressed</li>
-  <li>Fix the connect button doing nothing when the side panel is disabled</li>
-  <li>Update dependencies</li>
-  <li>UI tweaks</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
