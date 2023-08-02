@@ -1,3 +1,13 @@
+<h3>Version 10.115.26 beta <span class="date">2/8/2023</span></h3>
+<ul>
+  <li>Fix a data integrity issue with sync</li>
+  <li>Fix some apps failing to remember the url that's configured during the add wizard</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.26.3)
+
+---
+
 <h3>Version 10.115.25 beta <span class="date">2/8/2023</span></h3>
 <ul>
   <li>Fix for opening tabs from a collection widget</li>
@@ -139,17 +149,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.33.3)
-
----
-
-<h3>Version 10.114.32 beta <span class="date">27/6/2023</span></h3>
-<ul>
-  <li>Update to Chromium 114.0.5735.199</li>
-  <li>Fix unpacked extensions failing to load when multiple instances is selected in for the mode</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.32.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
