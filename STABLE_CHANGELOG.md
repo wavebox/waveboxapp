@@ -1,3 +1,48 @@
+<h3>Version 10.115.27 <span class="date">3/8/2023</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Add a feature to the collection widget, so changes you make when all links are opened in a window
+    can be sent back to the workspace. To use this, click the cog icon in the collection widget and
+    select 'Open & track shortcuts in a new window'.
+  </li>
+  <li>Add menu item in Wavebox Mini to clear notifications older than</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 115.0.5790.171</li>
+  <li>Update dependencies</li>
+  <li>Improve sync for workspaces so workspace apps also sync the reference to the workspace that's open</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixes for notifications that originate from ServiceWorkers</li>
+  <li>Fixes for clicking on notifications in Wavebox Mini</li>
+  <li>Fix an issue sending a single tab to a workspace</li>
+  <li>Fixes to the extension tabs API</li>
+  <li>Fix an issue with sync when importing bookmarks</li>
+  <li>Fix editing collections in workspaces</li>
+  <li>UI tweaks to the tab navigator</li>
+  <li>UI fixes</li>
+  <li>Sync fixes</li>
+  <li>Fix for opening tabs from a collection widget</li>
+  <li>Fixes for the collection widgets</li>
+  <li>Fix the sticky notes widgets not being draggable</li>
+  <li>Fixes for new users</li>
+  <li>Fix a data integrity issue with sync</li>
+  <li>Fix some apps failing to remember the url that's configured during the add wizard</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.115.27.2)
+
+---
+
 <h3>Version 10.115.15 <span class="date">19/7/2023</span></h3>
 <p>
   The previous release broke creating new profiles, this release fixes that.
@@ -388,37 +433,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.112.6.2)
-
----
-
-<h3>Version 10.111.36 <span class="date">22/3/2023</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Introducing Wavebox flow, a builder that helps you create extensions for Wavebox.
-    You can get started via the plus button or by launching flow.wavebox.io in a new tab.
-  </li>
-  <li>Add a new chrome.waveboxApps extension API</li>
-  <li>Add a new chrome.brainbox extension API</li>
-  <li>Add more info to Brainbox settings</li>
-  <li>Add a keyboard shortcut to open/toggle Brainbox</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 111.0.5563.110</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix non-pinned tabs sometimes appearing within the pinned tabs</li>
-  <li>Fix an issue where broken widgets could not be removed from a workspace</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.111.36.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
