@@ -1,3 +1,12 @@
+<h3>Version 10.115.27 beta <span class="date">3/8/2023</span></h3>
+<ul>
+  <li>Update to Chromium 115.0.5790.171</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.115.27.3)
+
+---
+
 <h3>Version 10.115.26 beta <span class="date">2/8/2023</span></h3>
 <ul>
   <li>Fix a data integrity issue with sync</li>
@@ -126,29 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.36.3)
-
----
-
-<h3>Version 10.114.33 beta <span class="date">30/6/2023</span></h3>
-<ul>
-  <li>
-    Add more options to the custom web app settings to allow for more control over
-    generating unread counts and activity. You can now create inline functions to
-    generate these values that run inside the apps tab.
-  </li>
-  <li>Add sorting for Smart Notes</li>
-  <li>
-    Fix an issue on Windows where dragging the sticky notes widget could make the
-    window resize unexpectedly
-  </li>
-  <li>Fix cookie container proxy settings not being configurable</li>
-  <li>Fix clearing the default cookie container on exit not being configurable</li>
-  <li>Fix text overflowing in workspaces</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.33.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
