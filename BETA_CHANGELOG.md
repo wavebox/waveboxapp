@@ -1,3 +1,12 @@
+<h3>Version 10.116.5 beta <span class="date">8/8/2023</span></h3>
+<ul>
+  <li>Fix a hard crash that could occur when using Wavebox on battery</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.116.5.3)
+
+---
+
 <h3>Version 10.116.4 beta <span class="date">8/8/2023</span></h3>
 <ul>
   <li>Update to Chromium 116.0.5845.49</li>
@@ -121,21 +130,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.14.3)
-
----
-
-<h3>Version 10.115.12 beta <span class="date">13/7/2023</span></h3>
-<ul>
-  <li>Update to Chromium 115.0.5790.90</li>
-  <li>Update dependencies</li>
-  <li>Compatibility improvements for the embedded iframe widget in workspaces</li>
-  <li>Add the bookmarks manager back into the app menu</li>
-  <li>Ensure notification sounds are not played when macOS is in focus mode</li>
-  <li>Remove lots of boilerplate code</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
