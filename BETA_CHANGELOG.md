@@ -1,3 +1,16 @@
+<h3>Version 10.116.4 beta <span class="date">8/8/2023</span></h3>
+<ul>
+  <li>Update to Chromium 116.0.5845.49</li>
+  <li>Allow different desktop web apps for different site paths</li>
+  <li>Auto expand the webdock when opening a group</li>
+  <li>Fix collection widget links incorrectly opening in-situ</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.116.4.3)
+
+---
+
 <h3>Version 10.115.27 beta <span class="date">3/8/2023</span></h3>
 <ul>
   <li>Update to Chromium 115.0.5790.171</li>
@@ -123,18 +136,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.12.3)
-
----
-
-<h3>Version 10.114.36 beta <span class="date">5/7/2023</span></h3>
-<ul>
-  <li>Tab styling was different between the primary and secondary windows. Fix this.</li>
-  <li>Updates to the network code so it's more resilient and makes sync more responsive</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.114.36.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
