@@ -1,3 +1,12 @@
+<h3>Version 10.116.6 beta <span class="date">10/8/2023</span></h3>
+<ul>
+  <li>Update to Chromium 116.0.5845.82</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.116.6.3)
+
+---
+
 <h3>Version 10.116.5 beta <span class="date">8/8/2023</span></h3>
 <ul>
   <li>Fix a hard crash that could occur when using Wavebox on battery</li>
@@ -117,19 +126,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.15.3)
-
----
-
-<h3>Version 10.115.14 beta <span class="date">18/7/2023</span></h3>
-<ul>
-  <li>Update to Chromium 115.0.5790.98</li>
-  <li>Fixes for the cookie container popup</li>
-  <li>Fix the Brainbox toggle shortcut not closing side panels</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
