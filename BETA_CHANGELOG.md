@@ -1,3 +1,17 @@
+<h3>Version 10.116.8 beta <span class="date">23/8/2023</span></h3>
+<ul>
+  <li>Update to Chromium 116.0.5845.111</li>
+  <li>Update dependencies</li>
+  <li>Fix the "New workspace" button not appearing for some users</li>
+  <li>Fix the search button not appearing in the toolbar</li>
+  <li>Stability fixes from crash reports</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.116.8.3)
+
+---
+
 <h3>Version 10.116.6 beta <span class="date">10/8/2023</span></h3>
 <ul>
   <li>Update to Chromium 116.0.5845.82</li>
@@ -117,15 +131,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.18.3)
-
----
-
-<h3>Version 10.115.15 beta <span class="date">19/7/2023</span></h3>
-<ul>
-  <li>The Chromium 115 update broke creating new profiles, fix this</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
