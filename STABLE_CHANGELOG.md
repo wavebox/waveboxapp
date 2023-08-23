@@ -1,3 +1,26 @@
+<h3>Version 10.116.8 <span class="date">23/8/2023</span></h3>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 116.0.5845.111</li>
+  <li>Update dependencies</li>
+  <li>Allow different desktop web apps for different site paths</li>
+  <li>Auto expand the webdock when opening a group</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix the "New workspace" button not appearing for some users</li>
+  <li>Fix the search button not appearing in the toolbar</li>
+  <li>Fix collection widget links incorrectly opening in-situ</li>
+  <li>Stability fixes from crash reports</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.116.8.2)
+
+---
+
 <h3>Version 10.115.27 <span class="date">3/8/2023</span></h3>
 <p>
 
@@ -399,40 +422,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.112.11.2)
-
----
-
-<h3>Version 10.112.6 <span class="date">3/4/2023</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Add a shortcut to expand/collapse all dividers by shift+clicking
-    the webdock mode button in the titlebar
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 112.0.5615.49</li>
-  <li>Update dependencies</li>
-  <li>Remove flow extensions from Wavebox when deleting them</li>
-  <li>Improve Brainbox text extraction to better support iframes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix being unable to set tab titles when the tabs are in deep sleep</li>
-  <li>Fix a focus issue with some keyboard shortcuts</li>
-  <li>Fix the "tabs from other devices" menu not being clickable when used with the explorer webdock</li>
-  <li>Fix an issue where external link open rules were not synced correctly</li>
-  <li>Fix an issue where apps could fail to load when switching to them</li>
-  <li>Fixes for extension sync</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.112.6.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
