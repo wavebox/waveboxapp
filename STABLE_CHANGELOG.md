@@ -1,3 +1,17 @@
+<h3>Version 10.116.10 <span class="date">30/8/2023</span></h3>
+<ul>
+  <li>Update to Chromium 116.0.5845.141</li>
+  <li>Fix a UI issue when the address bar was hidden</li>
+  <li>Fix being unable to remove passwords</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.116.10.2)
+
+---
+
 <h3>Version 10.116.8 <span class="date">23/8/2023</span></h3>
 
 <h4>🔧 Updates & improvements</h4>
@@ -376,52 +390,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.113.11.2)
-
----
-
-<h3>Version 10.112.11 <span class="date">17/4/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Save yourself a click or two with Wavebox site search. Type "Reddit" in the omnibox then
-    tab to start searching reddit 👍
-    <ul>
-      <li>Search Reddit, Wikipedia, Twitter, Figma, Github, Amazon, Google Drive, Google Docs, Google Calendar & Gmail</li>
-      <li>Add new site search rules under Settings > Search > Manage</li>
-    </ul>
-  </li>
-  <li>
-    Add an option to the link engine to allow opening links with the "New tab" or "New window"
-    behavior to also set their cookie container.
-  </li>
-  <li>
-    Add a flag to change what happens to unlinked tabs (usually opened by extensions). By
-    default they're moved into a new window, but they can now be moved into the active group.
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 112.0.5615.121</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue where a detached app could get confused about it's split screen status</li>
-  <li>Themes were failing to sync for some users. Fix this</li>
-  <li>Fix a silent crash in the network stack that would occur on launch</li>
-  <li>
-    Fix an issue where in some configurations a shared workspace would fail to connect
-    to the stores, making it appear readonly
-  </li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.112.11.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
