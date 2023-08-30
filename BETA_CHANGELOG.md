@@ -1,3 +1,12 @@
+<h3>Version 10.116.10 beta <span class="date">30/8/2023</span></h3>
+<ul>
+  <li>Update to Chromium 116.0.5845.141</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.116.10.3)
+
+---
+
 <h3>Version 10.116.9 beta <span class="date">25/8/2023</span></h3>
 <ul>
   <li>Fix a UI issue when the address bar was hidden</li>
@@ -103,26 +112,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.23.3)
-
----
-
-<h3>Version 10.115.19 beta <span class="date">24/7/2023</span></h3>
-<ul>
-  <li>Update to Chromium 115.0.5790.102</li>
-  <li>Update dependencies</li>
-  <li>Add menu item in Wavebox Mini to clear notifications older than</li>
-  <li>Improve sync for workspaces so workspace apps also sync the reference to the workspace that's open</li>
-  <li>Fixes for notifications that originate from ServiceWorkers</li>
-  <li>Fixes for clicking on notifications in Wavebox Mini</li>
-  <li>Fix an issue sending a single tab to a workspace</li>
-  <li>Fixes to the extension tabs API</li>
-  <li>Fix an issue with sync when importing bookmarks</li>
-  <li>Fix editing collections in workspaces</li>
-  <li>UI tweaks to the tab navigator</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.19.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
