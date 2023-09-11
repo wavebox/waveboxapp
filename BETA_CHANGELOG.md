@@ -1,3 +1,18 @@
+<h3>Version 10.117.8 beta <span class="date">11/9/2023</span></h3>
+<ul>
+  <li>Update to Chromium 117.0.5938.48</li>
+  <li>Add the option to the right click menu to duplicate a Group</li>
+  <li>New password manager</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+  <li>Update dependencies</li>
+  <li>Remove the Ctrl/Cmd+Enter keybinding for sending a Brainbox message and automatically including the page content</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.117.8.3)
+
+---
+
 <h3>Version 10.116.10 beta <span class="date">30/8/2023</span></h3>
 <ul>
   <li>Update to Chromium 116.0.5845.141</li>
@@ -94,24 +109,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.25.3)
-
----
-
-<h3>Version 10.115.23 beta <span class="date">27/7/2023</span></h3>
-<ul>
-  <li>
-    Add a feature to the collection widget, so changes you make when all links are opened in a window
-    can be sent back to the workspace. To use this, click the cog icon in the collection widget and
-    select 'Open & track shortcuts in a new window'.
-  </li>
-  <li>Update to Chromium 115.0.5790.114</li>
-  <li>UI fixes</li>
-  <li>Sync fixes</li>
-  <li>Fixes for profile sync</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
