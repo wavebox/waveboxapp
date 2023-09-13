@@ -1,3 +1,15 @@
+<h3>Version 10.117.10 beta <span class="date">13/9/2023</span></h3>
+<ul>
+  <li>Update to Chromium 117.0.5938.62</li>
+  <li>Update dependencies</li>
+  <li>Fixes for the titlebar on Windows</li>
+  <li>Performance fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.117.10.3)
+
+---
+
 <h3>Version 10.117.8 beta <span class="date">11/9/2023</span></h3>
 <ul>
   <li>Update to Chromium 117.0.5938.48</li>
@@ -95,20 +107,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.115.26.3)
-
----
-
-<h3>Version 10.115.25 beta <span class="date">2/8/2023</span></h3>
-<ul>
-  <li>Fix for opening tabs from a collection widget</li>
-  <li>Sync fixes</li>
-  <li>Fixes for the collection widgets</li>
-  <li>Fix the sticky notes widgets not being draggable</li>
-  <li>Fixes for new users</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.25.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
