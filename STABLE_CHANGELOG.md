@@ -1,3 +1,19 @@
+<h3>Version 10.117.10 <span class="date">13/9/2023</span></h3>
+<ul>
+  <li>Update to Chromium 117.0.5938.62</li>
+  <li>Add the option to the right click menu to duplicate a Group</li>
+  <li>New password manager</li>
+  <li>Update dependencies</li>
+  <li>Performance fixes</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+  <li>Remove the Ctrl/Cmd+Enter keybinding for sending a Brainbox message and automatically including the page content</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.117.10.2)
+
+---
+
 <h3>Version 10.116.10 <span class="date">30/8/2023</span></h3>
 <ul>
   <li>Update to Chromium 116.0.5845.141</li>
@@ -327,69 +343,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.113.19.2)
-
----
-
-<h3>Version 10.113.11 <span class="date">3/5/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Brainbox improvements
-    <ul>
-      <li>
-        Brainbox now remembers your conversations so you can drop back in to one at anytime
-      </li>
-      <li>
-        Conversation flow is now better preserved so you can ask more follow-up questions
-        and get better contextual replies
-      </li>
-      <li>
-        More actions to help when chatting with Brainbox such as, stopping the reply, retrying
-        the question, switching to a suggested app & more!
-      </li>
-      <li>
-        Brainbox is now more date & time aware so you can, for example what the time in a different
-        timezone is.
-      </li>
-      <li>
-        You can now switch Brainbox engines from within the chat. By default Brainbox uses GPT-3.5,
-        but if you have your own OpenAI API key, you can switch to GPT-4.
-      </li>
-      <li>
-        Styling fixes
-      </li>
-    </ul>
-  </li>
-  <li>
-    Add new configuration options for sleep. It's now possible to configure tabs
-    to sleep after a set amount of time and also when a certain amount of memory
-    has been used. Wavebox can now be placed into a lower resource usage mode, either
-    manually or when the machine is on battery
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 113.0.5672.63</li>
-  <li>Update dependencies</li>
-  <li>Auto-retry some network requests that have been failing</li>
-  <li>Try to restore tabs after the machine is hard powered off</li>
-  <li>UI updates</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix some silent crashes</li>
-  <li>Apps in deep-sleep were not displayed in search. Fix this</li>
-  <li>Stability fixes</li>
-  <li>Fix a crash in settings</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.113.11.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
