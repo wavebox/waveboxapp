@@ -1,3 +1,21 @@
+<h3>Version 10.117.18 beta <span class="date">22/9/2023</span></h3>
+<ul>
+  <li>Update to Chromium 117.0.5938.92</li>
+  <li>Fix an issue where popping out a Gmail window would not prevent the app from going to sleep and destroying the window</li>
+  <li>Fix an issue where in some configurations the tab bar could be incorrectly hidden when it only contains pinned tabs</li>
+  <li>Fix an issue with Desktop web apps where some would disappear after a restart</li>
+  <li>Fixes to the Desktop web apps UI</li>
+  <li>Fix an issue where Groups with a single App would continue showing the badge even with the group setting disabled</li>
+  <li>Fix a silent crash on window creation</li>
+  <li>Fix notifications from service workers failing to link back to their opening app</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.117.18.3)
+
+---
+
 <h3>Version 10.117.15 beta <span class="date">18/9/2023</span></h3>
 <ul>
   <li>Update to Chromium 117.0.5938.89</li>
@@ -104,15 +122,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.116.4.3)
-
----
-
-<h3>Version 10.115.27 beta <span class="date">3/8/2023</span></h3>
-<ul>
-  <li>Update to Chromium 115.0.5790.171</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.115.27.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
