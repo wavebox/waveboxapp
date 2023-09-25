@@ -1,3 +1,26 @@
+<h3>Version 10.117.18 <span class="date">25/9/2023</span></h3>
+<ul>
+  <li>Update to Chromium 117.0.5938.92</li>
+  <li>Add Brainbox to the tray menu</li>
+  <li>Fix an issue where popping out a Gmail window would not prevent the app from going to sleep and destroying the window</li>
+  <li>Fix an issue where in some configurations the tab bar could be incorrectly hidden when it only contains pinned tabs</li>
+  <li>Fix an issue with Desktop web apps where some would disappear after a restart</li>
+  <li>Fixes to the Desktop web apps UI</li>
+  <li>Fix an issue where Groups with a single App would continue showing the badge even with the group setting disabled</li>
+  <li>Fix a silent crash on window creation</li>
+  <li>Fix notifications from service workers failing to link back to their opening app</li>
+  <li>Fixes for Linux window styling</li>
+  <li>Remove Smart Notes from the right-click menu when disabled</li>
+  <li>Multiple other stability fixes</li>
+  <li>Speculative fix for a hard crash on Windows</li>
+  <li>UI fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.117.18.2)
+
+---
+
 <h3>Version 10.117.10 <span class="date">13/9/2023</span></h3>
 <ul>
   <li>Update to Chromium 117.0.5938.62</li>
@@ -299,50 +322,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.114.17.2)
-
----
-
-<h3>Version 10.113.19 <span class="date">11/5/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Make the Brainbox panel resizable in the main window</li>
-  <li>Add support for customizing and showing unread counts and activity badges in custom apps</li>
-  <li>Add right-click > open link in group > new group menu option</li>
-  <li>Add an option to collection widgets to customize grid icon alignment</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 113.0.5672.92</li>
-  <li>UI updates</li>
-  <li>Update dependencies</li>
-  <li>Support passing the Brainbox engine to custom skills</li>
-  <li>Updates for new users</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix for the HubSpot extension failing to sign in</li>
-  <li>Fix macOS TouchID not working</li>
-  <li>Stability fixes with extension APIs</li>
-  <li>Fix the proxy settings not taking effect in the default cookie container</li>
-  <li>Fix an unexpected behavior when adding apps that was dependent on the network speed</li>
-  <li>Fix a store sync error</li>
-  <li>Fix cases where Wavebox tries to update a tab, but that tab has already been destroyed</li>
-  <li>Stability fixes for password sync</li>
-  <li>Fixes for the Linux update popup being unresponsive</li>
-  <li>Fix an issue with Brainbox chat, where a missing chat name would cause the panel to crash</li>
-  <li>Fix an issue with the Brainbox popup sometimes failing to load depending on machine speed</li>
-  <li>Fix an issue that made split-screen un-draggable in some instances</li>
-  <li>Speculative fix for parts of the Wavebox UI failing to render</li>
-  <li>Speculative fix for rendering problems with some Mesa drivers</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.113.19.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
