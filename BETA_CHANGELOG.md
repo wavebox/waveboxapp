@@ -1,3 +1,22 @@
+<h3>Version 10.117.21 beta <span class="date">29/9/2023</span></h3>
+<ul>
+  <li>Update to Chromium 117.0.5938.132</li>
+  <li>Turn on the new bookmarks sidebar</li>
+  <li>Fix Brainbox skills not working from Smart Notes</li>
+  <li>Fix the send to Smart Notes button not working in Brainbox</li>
+  <li>Fix opening emails from Outlook failing to load the window</li>
+  <li>Fix a silent crash</li>
+  <li>Fix a crash in the extension tabs api</li>
+  <li>Don't open finder when updating a Desktop web app on macOS</li>
+  <li>Stability fixes for sync</li>
+  <li>UI Tweaks</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.117.21.3)
+
+---
+
 <h3>Version 10.117.18 beta <span class="date">22/9/2023</span></h3>
 <ul>
   <li>Update to Chromium 117.0.5938.92</li>
@@ -109,19 +128,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.116.5.3)
-
----
-
-<h3>Version 10.116.4 beta <span class="date">8/8/2023</span></h3>
-<ul>
-  <li>Update to Chromium 116.0.5845.49</li>
-  <li>Allow different desktop web apps for different site paths</li>
-  <li>Auto expand the webdock when opening a group</li>
-  <li>Fix collection widget links incorrectly opening in-situ</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.116.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
