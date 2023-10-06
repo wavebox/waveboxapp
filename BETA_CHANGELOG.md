@@ -1,3 +1,15 @@
+<h3>Version 10.118.3 beta <span class="date">6/10/2023</span></h3>
+<ul>
+  <li>Update to Chromium 118.0.5993.54</li>
+  <li>Update dependencies</li>
+  <li>Fix an issue with profile setup</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.118.3.3)
+
+---
+
 <h3>Version 10.117.21 beta <span class="date">29/9/2023</span></h3>
 <ul>
   <li>Update to Chromium 117.0.5938.132</li>
@@ -119,15 +131,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.116.6.3)
-
----
-
-<h3>Version 10.116.5 beta <span class="date">8/8/2023</span></h3>
-<ul>
-  <li>Fix a hard crash that could occur when using Wavebox on battery</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.116.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
