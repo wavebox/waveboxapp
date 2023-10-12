@@ -1,3 +1,24 @@
+<h3>Version 10.118.5 <span class="date">12/10/2023</span></h3>
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 118.0.5993.71</li>
+  <li>Compatibility fixes for macOS Sonoma</li>
+  <li>Improvements to editing managed profiles</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with profile setup</li>
+  <li>UI fixes</li>
+  <li>Fix an issue where quickly typing long strings into the location bar would lockup part of the UI</li>
+  <li>UI fixes for the location bar & profile picker popup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.118.5.2)
+
+---
+
 <h3>Version 10.117.21 <span class="date">2/10/2023</span></h3>
 <ul>
   <li>Update to Chromium 117.0.5938.132</li>
@@ -261,28 +282,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.114.32.2)
-
----
-
-<h3>Version 10.114.26 <span class="date">15/6/2023</span></h3>
-<ul>
-  <li>Update to Chromium 114.0.5735.134</li>
-  <li>Add Smart notes to the side panel</li>
-  <li>Add Wavebox Mini to the side panel</li>
-  <li>Add an option to cookie containers to clear cookies on exit</li>
-  <li>Add a menu item to clear all cookies in a single cookie container</li>
-  <li>Add an advanced flag to turn off what's new badges</li>
-  <li>Add "Wake all in group" to the tab right-click menu</li>
-  <li>Update dependencies</li>
-  <li>Fix tab thumbnails not generating</li>
-  <li>Fixes for new users</li>
-  <li>Fixes for settings</li>
-  <li>Fix bookmarks opened from the toolbar creating a new tab</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.114.26.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
