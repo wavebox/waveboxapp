@@ -1,3 +1,21 @@
+<h3>Version 10.118.9 beta <span class="date">23/10/2023</span></h3>
+<ul>
+  <li>Update to Chromium 118.0.5993.96</li>
+  <li>Updates to handle some Chromium deprecations</li>
+  <li>Add an option to set the workspace to be a fixed width and enable horizontal scrolling</li>
+  <li>Fixes for ClickUp sync</li>
+  <li>Add a setting to ClickUp to give better unread badges when using ClickUp 3</li>
+  <li>Remove the split screen button on incognito windows</li>
+  <li>Multiple fixes for managed installs</li>
+  <li>Fix linked files in Workspaces failing to open</li>
+  <li>Usability fixes in settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.118.9.3)
+
+---
+
 <h3>Version 10.118.5 beta <span class="date">11/10/2023</span></h3>
 <ul>
   <li>Update to Chromium 118.0.5993.71</li>
@@ -121,20 +139,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.116.9.3)
-
----
-
-<h3>Version 10.116.8 beta <span class="date">23/8/2023</span></h3>
-<ul>
-  <li>Update to Chromium 116.0.5845.111</li>
-  <li>Update dependencies</li>
-  <li>Fix the "New workspace" button not appearing for some users</li>
-  <li>Fix the search button not appearing in the toolbar</li>
-  <li>Stability fixes from crash reports</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.116.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
