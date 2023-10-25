@@ -1,3 +1,14 @@
+<h3>Version 10.118.10 beta <span class="date">25/10/2023</span></h3>
+<ul>
+  <li>Update to Chromium 118.0.5993.118</li>
+  <li>Always prompt before merging two groups</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.118.10.3)
+
+---
+
 <h3>Version 10.118.9 beta <span class="date">23/10/2023</span></h3>
 <ul>
   <li>Update to Chromium 118.0.5993.96</li>
@@ -127,18 +138,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.116.10.3)
-
----
-
-<h3>Version 10.116.9 beta <span class="date">25/8/2023</span></h3>
-<ul>
-  <li>Fix a UI issue when the address bar was hidden</li>
-  <li>Fix being unable to remove passwords</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.116.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
