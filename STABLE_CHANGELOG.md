@@ -1,3 +1,22 @@
+<h3>Version 10.118.10 <span class="date">26/10/2023</span></h3>
+<ul>
+  <li>Update to Chromium 118.0.5993.118</li>
+  <li>Always prompt before merging two groups</li>
+  <li>Updates to handle some Chromium deprecations</li>
+  <li>Add an option to set the workspace to be a fixed width and enable horizontal scrolling</li>
+  <li>Fixes for ClickUp sync</li>
+  <li>Add a setting to ClickUp to give better unread badges when using ClickUp 3</li>
+  <li>Remove the split screen button on incognito windows</li>
+  <li>Multiple fixes for managed installs</li>
+  <li>Fix linked files in Workspaces failing to open</li>
+  <li>Usability fixes in settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.118.10.2)
+
+---
+
 <h3>Version 10.118.5 <span class="date">12/10/2023</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
@@ -245,43 +264,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.115.14.2)
-
----
-
-<h3>Version 10.114.32 <span class="date">27/6/2023</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Add experimental support for running multiple copies of the same extension, a different
-    one for each cookie container. You can enable this by opening wavebox://extensions in a new
-    tab and opening the extensions settings.
-  </li>
-  <li>
-    Add support for Firefox contextual identity extension APIs, allowing extensions to
-    interact with cookie containers.
-  </li>
-  <li>UI updates to the extensions screens.</li>
-  <li>New cookie container popover when clicking the cookie container button in the toolbar.</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 114.0.5735.199.</li>
-  <li>Expose more Chromium settings to the main Wavebox settings.</li>
-  <li>UI tweaks.</li>
-  <li>Stability fixes.</li>
-  <li>Update dependencies.</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix Smart Notes not being scrollable with the on-screen scroll handle.</li>
-  <li>Fix the tab close button incorrectly showing on unfocused tabs when the tab strip is compressed.</li>
-  <li>Fix the connect button doing nothing when the side panel is disabled.</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.114.32.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
