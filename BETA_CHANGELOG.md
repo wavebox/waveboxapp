@@ -1,3 +1,15 @@
+<h3>Version 10.119.3 beta <span class="date">2/11/2023</span></h3>
+<ul>
+  <li>Update to Chromium 119.0.6045.106</li>
+  <li>Fix an issue with the search widget where it wouldn't allow you to search the web for the entered text</li>
+  <li>Fixes for settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.119.3.3)
+
+---
+
 <h3>Version 10.118.10 beta <span class="date">25/10/2023</span></h3>
 <ul>
   <li>Update to Chromium 118.0.5993.118</li>
@@ -129,15 +141,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.8.3)
-
----
-
-<h3>Version 10.116.10 beta <span class="date">30/8/2023</span></h3>
-<ul>
-  <li>Update to Chromium 116.0.5845.141</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.116.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
