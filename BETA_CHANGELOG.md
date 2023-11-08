@@ -1,3 +1,16 @@
+<h3>Version 10.119.6 beta <span class="date">8/11/2023</span></h3>
+<ul>
+  <li>Update to Chromium 119.0.6045.124</li>
+  <li>Fix an issue with the iCloud Passwords extension not working</li>
+  <li>Fixes for new users</li>
+  <li>Stability fixes and bug captures</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.119.6.3)
+
+---
+
 <h3>Version 10.119.3 beta <span class="date">2/11/2023</span></h3>
 <ul>
   <li>Update to Chromium 119.0.6045.106</li>
@@ -126,21 +139,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.10.3)
-
----
-
-<h3>Version 10.117.8 beta <span class="date">11/9/2023</span></h3>
-<ul>
-  <li>Update to Chromium 117.0.5938.48</li>
-  <li>Add the option to the right click menu to duplicate a Group</li>
-  <li>New password manager</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-  <li>Remove the Ctrl/Cmd+Enter keybinding for sending a Brainbox message and automatically including the page content</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.117.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
