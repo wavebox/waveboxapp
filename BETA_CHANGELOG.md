@@ -1,3 +1,13 @@
+<h3>Version 10.119.9 beta <span class="date">14/11/2023</span></h3>
+<ul>
+  <li>Fix an issue with workspaces, where the single app/link widget became unclickable</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.119.9.3)
+
+---
+
 <h3>Version 10.119.8 beta <span class="date">13/11/2023</span></h3>
 <ul>
   <li>Tweaks to the tab context menu to make it easier to use</li>
@@ -124,22 +134,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.18.3)
-
----
-
-<h3>Version 10.117.15 beta <span class="date">18/9/2023</span></h3>
-<ul>
-  <li>Update to Chromium 117.0.5938.89</li>
-  <li>Add Brainbox to the tray menu</li>
-  <li>Fixes for Linux window styling</li>
-  <li>Remove Smart Notes from the right-click menu when disabled</li>
-  <li>UI fixes</li>
-  <li>Multiple stability fixes</li>
-  <li>Speculative fix for a hard crash on Windows</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.117.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
