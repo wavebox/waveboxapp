@@ -1,3 +1,16 @@
+<h3>Version 10.119.8 beta <span class="date">13/11/2023</span></h3>
+<ul>
+  <li>Tweaks to the tab context menu to make it easier to use</li>
+  <li>Add resource usage info to the app and tab hover cards</li>
+  <li>Fix the Brainbox side panel not capturing focus when opened</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.119.8.3)
+
+---
+
 <h3>Version 10.119.6 beta <span class="date">8/11/2023</span></h3>
 <ul>
   <li>Update to Chromium 119.0.6045.124</li>
@@ -127,18 +140,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.15.3)
-
----
-
-<h3>Version 10.117.10 beta <span class="date">13/9/2023</span></h3>
-<ul>
-  <li>Update to Chromium 117.0.5938.62</li>
-  <li>Update dependencies</li>
-  <li>Fixes for the titlebar on Windows</li>
-  <li>Performance fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.117.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
