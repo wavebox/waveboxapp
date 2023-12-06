@@ -1,3 +1,32 @@
+<h3>Version 10.120.10 <span class="date">6/12/2023</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add an option to copy all urls from a collection widget</li>
+  <li>Add options to the divider context menu that allows you to sleep/wake all apps within the divider section</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 120.0.6099.62</li>
+  <li>Update dependencies</li>
+  <li>UI fixes</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with workspaces, where the single app/link widget became unclickable</li>
+  <li>Fix tab ordering when opening new tabs</li>
+  <li>Crash fix for Slack</li>
+  <li>Fixes for Gmail sync</li>
+  <li>Stability fixes</li>
+  <li>Fix urls not automatically parsing in connect</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.10.2)
+
+---
+
 <h3>Version 10.119.8 <span class="date">13/11/2023</span></h3>
 <p>
 
@@ -207,52 +236,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.115.27.2)
-
----
-
-<h3>Version 10.115.15 <span class="date">19/7/2023</span></h3>
-<p>
-  The previous release broke creating new profiles, this release fixes that.
-  Here's everything that's new...
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Add more options to the custom web app settings to allow for more control over
-    generating unread counts and activity. You can now create inline functions to
-    generate these values that run inside the apps tab.
-  </li>
-  <li>Add sorting for Smart Notes</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 115.0.5790.98</li>
-  <li>Update dependencies</li>
-  <li>Tab styling was different between the primary and secondary windows. Fix this.</li>
-  <li>Updates to the network code so it's more resilient and makes sync more responsive</li>
-  <li>Compatibility improvements for the embedded iframe widget in workspaces</li>
-  <li>Add the bookmarks manager back into the app menu</li>
-  <li>Ensure notification sounds are not played when macOS is in focus mode</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>
-    Fix an issue on Windows where dragging the sticky notes widget could make the
-    window resize unexpectedly
-  </li>
-  <li>Fix cookie container proxy settings not being configurable</li>
-  <li>Fix clearing the default cookie container on exit not being configurable</li>
-  <li>Fix text overflowing in workspaces</li>
-  <li>Fixes for the cookie container popup</li>
-  <li>Fix the Brainbox toggle shortcut not closing side panels</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.115.15.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
