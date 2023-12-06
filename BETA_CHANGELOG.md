@@ -1,3 +1,16 @@
+<h3>Version 10.120.10 beta <span class="date">6/12/2023</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.62</li>
+  <li>Add options to the divider context menu that allows you to sleep/wake all apps within the divider section</li>
+  <li>Update dependencies</li>
+  <li>UI fixes</li>
+  <li>Fix urls not automatically parsing in connect</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.10.3)
+
+---
+
 <h3>Version 10.120.5 beta <span class="date">30/11/2023</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.56</li>
@@ -107,19 +120,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.118.9.3)
-
----
-
-<h3>Version 10.118.5 beta <span class="date">11/10/2023</span></h3>
-<ul>
-  <li>Update to Chromium 118.0.5993.71</li>
-  <li>Improvements to editing managed profiles</li>
-  <li>Fix an issue where quickly typing long strings into the location bar would lockup part of the UI</li>
-  <li>UI fixes for the location bar & profile picker popup</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.118.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
