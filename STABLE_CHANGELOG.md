@@ -1,3 +1,39 @@
+<h3>Version 10.120.11 <span class="date">7/12/2023</span></h3>
+<p>
+  This bug fix release contains an update to Chromium 120.0.6099.71 which fixes
+  an issue from the previous Chromium (120.0.6099.62) where some sites that use
+  the &lt;canvas&gt; element would unexpectedly crash in some circumstances.
+</p>
+<p>
+  In case you missed Wavebox 10.120.10, here's everything else that's new...
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add an option to copy all urls from a collection widget</li>
+  <li>Add options to the divider context menu that allows you to sleep/wake all apps within the divider section</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 120.0.6099.71</li>
+  <li>Update dependencies</li>
+  <li>UI fixes</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with workspaces, where the single app/link widget became unclickable</li>
+  <li>Fix tab ordering when opening new tabs</li>
+  <li>Crash fix for Slack</li>
+  <li>Fixes for Gmail sync</li>
+  <li>Stability fixes</li>
+  <li>Fix urls not automatically parsing in connect</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.11.2)
+
+---
+
 <h3>Version 10.120.10 <span class="date">6/12/2023</span></h3>
 
 <h4>🆕 New!</h4>
@@ -191,51 +227,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.116.8.2)
-
----
-
-<h3>Version 10.115.27 <span class="date">3/8/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Add a feature to the collection widget, so changes you make when all links are opened in a window
-    can be sent back to the workspace. To use this, click the cog icon in the collection widget and
-    select 'Open & track shortcuts in a new window'.
-  </li>
-  <li>Add menu item in Wavebox Mini to clear notifications older than</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 115.0.5790.171</li>
-  <li>Update dependencies</li>
-  <li>Improve sync for workspaces so workspace apps also sync the reference to the workspace that's open</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixes for notifications that originate from ServiceWorkers</li>
-  <li>Fixes for clicking on notifications in Wavebox Mini</li>
-  <li>Fix an issue sending a single tab to a workspace</li>
-  <li>Fixes to the extension tabs API</li>
-  <li>Fix an issue with sync when importing bookmarks</li>
-  <li>Fix editing collections in workspaces</li>
-  <li>UI tweaks to the tab navigator</li>
-  <li>UI fixes</li>
-  <li>Sync fixes</li>
-  <li>Fix for opening tabs from a collection widget</li>
-  <li>Fixes for the collection widgets</li>
-  <li>Fix the sticky notes widgets not being draggable</li>
-  <li>Fixes for new users</li>
-  <li>Fix a data integrity issue with sync</li>
-  <li>Fix some apps failing to remember the url that's configured during the add wizard</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.115.27.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
