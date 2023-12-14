@@ -1,3 +1,17 @@
+<h3>Version 10.120.16 beta <span class="date">14/12/2023</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.109</li>
+  <li>Update dependencies</li>
+  <li>Geolocation fixes</li>
+  <li>Fix an issue with downloading files</li>
+  <li>Fix an issue that would prevent stores from repairing using the repair tool</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.16.3)
+
+---
+
 <h3>Version 10.120.11 beta <span class="date">7/12/2023</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.71</li>
@@ -100,17 +114,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.119.3.3)
-
----
-
-<h3>Version 10.118.10 beta <span class="date">25/10/2023</span></h3>
-<ul>
-  <li>Update to Chromium 118.0.5993.118</li>
-  <li>Always prompt before merging two groups</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.118.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
