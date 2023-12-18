@@ -1,3 +1,16 @@
+<h3>Version 10.120.16 <span class="date">18/12/2023</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.109</li>
+  <li>Update dependencies</li>
+  <li>Fix an issue with downloading files</li>
+  <li>Fix an issue that would prevent stores from repairing using the repair tool</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.16.2)
+
+---
+
 <h3>Version 10.120.11 <span class="date">7/12/2023</span></h3>
 <p>
   This bug fix release contains an update to Chromium 120.0.6099.71 which fixes
@@ -204,29 +217,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.116.10.2)
-
----
-
-<h3>Version 10.116.8 <span class="date">23/8/2023</span></h3>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 116.0.5845.111</li>
-  <li>Update dependencies</li>
-  <li>Allow different desktop web apps for different site paths</li>
-  <li>Auto expand the webdock when opening a group</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix the "New workspace" button not appearing for some users</li>
-  <li>Fix the search button not appearing in the toolbar</li>
-  <li>Fix collection widget links incorrectly opening in-situ</li>
-  <li>Stability fixes from crash reports</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.116.8.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
