@@ -1,3 +1,16 @@
+<h3>Version 10.120.17 <span class="date">22/12/2023</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.130</li>
+  <li>Fixes for settings</li>
+  <li>When choosing notification sounds through settings, play a sample sound</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.120.17.2)
+
+---
+
 <h3>Version 10.120.16 <span class="date">18/12/2023</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.109</li>
@@ -203,20 +216,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.10.2)
-
----
-
-<h3>Version 10.116.10 <span class="date">30/8/2023</span></h3>
-<ul>
-  <li>Update to Chromium 116.0.5845.141</li>
-  <li>Fix a UI issue when the address bar was hidden</li>
-  <li>Fix being unable to remove passwords</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.116.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
