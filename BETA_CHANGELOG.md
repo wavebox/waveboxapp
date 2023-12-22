@@ -1,3 +1,15 @@
+<h3>Version 10.120.17 beta <span class="date">22/12/2023</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.130</li>
+  <li>Fixes for settings</li>
+  <li>When choosing notification sounds through settings, play a sample sound</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.17.3)
+
+---
+
 <h3>Version 10.120.16 beta <span class="date">14/12/2023</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.109</li>
@@ -102,18 +114,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.119.6.3)
-
----
-
-<h3>Version 10.119.3 beta <span class="date">2/11/2023</span></h3>
-<ul>
-  <li>Update to Chromium 119.0.6045.106</li>
-  <li>Fix an issue with the search widget where it wouldn't allow you to search the web for the entered text</li>
-  <li>Fixes for settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.119.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
