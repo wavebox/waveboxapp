@@ -1,3 +1,19 @@
+<h3>Version 10.120.20 <span class="date">4/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.200</li>
+  <li>Update dependencies</li>
+  <li>Add a new keyboard shortcut to close all tabs in the main Wavebox window</li>
+  <li>Better error handling to improve app stability</li>
+  <li>Fix a text encoding issue that would sometimes cause the Wavebox sign-in flow to fail</li>
+  <li>Stability fixes for Slack</li>
+  <li>Tweaks for new users to make getting started easier</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.120.20.2)
+
+---
+
 <h3>Version 10.120.17 <span class="date">22/12/2023</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.130</li>
@@ -200,22 +216,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.18.2)
-
----
-
-<h3>Version 10.117.10 <span class="date">13/9/2023</span></h3>
-<ul>
-  <li>Update to Chromium 117.0.5938.62</li>
-  <li>Add the option to the right click menu to duplicate a Group</li>
-  <li>New password manager</li>
-  <li>Update dependencies</li>
-  <li>Performance fixes</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-  <li>Remove the Ctrl/Cmd+Enter keybinding for sending a Brainbox message and automatically including the page content</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.117.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
