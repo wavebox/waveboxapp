@@ -1,3 +1,18 @@
+<h3>Version 10.120.20 beta <span class="date">4/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.200</li>
+  <li>Update dependencies</li>
+  <li>Add a new keyboard shortcut to close all tabs in the main Wavebox window</li>
+  <li>Better error handling to improve app stability</li>
+  <li>Fix a text encoding issue that would sometimes cause the Wavebox sign-in flow to fail</li>
+  <li>Stability fixes for Slack</li>
+  <li>Tweaks for new users to make getting started easier</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.20.3)
+
+---
+
 <h3>Version 10.120.17 beta <span class="date">22/12/2023</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.130</li>
@@ -101,19 +116,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.119.8.3)
-
----
-
-<h3>Version 10.119.6 beta <span class="date">8/11/2023</span></h3>
-<ul>
-  <li>Update to Chromium 119.0.6045.124</li>
-  <li>Fix an issue with the iCloud Passwords extension not working</li>
-  <li>Fixes for new users</li>
-  <li>Stability fixes and bug captures</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.119.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
