@@ -1,3 +1,18 @@
+<h3>Version 10.120.22 beta <span class="date">9/1/2024</span></h3>
+<ul>
+  <li>Add a speculative fix for users who have been seeing the secondary window become unresponsive</li>
+  <li>Add a button to the tab navigator to close all tabs in the main Wavebox window</li>
+  <li>Fixes for new users</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+  <li>Add optional logging for Brainbox</li>
+  <li>Fix an issue where re-focusing the Brainbox side panel would re-affirm the "include selection" checkbox</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.22.3)
+
+---
+
 <h3>Version 10.120.20 beta <span class="date">4/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.200</li>
@@ -103,19 +118,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.119.9.3)
-
----
-
-<h3>Version 10.119.8 beta <span class="date">13/11/2023</span></h3>
-<ul>
-  <li>Tweaks to the tab context menu to make it easier to use</li>
-  <li>Add resource usage info to the app and tab hover cards</li>
-  <li>Fix the Brainbox side panel not capturing focus when opened</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.119.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
