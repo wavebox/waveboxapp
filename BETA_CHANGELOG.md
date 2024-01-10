@@ -1,3 +1,12 @@
+<h3>Version 10.120.23 beta <span class="date">10/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.217</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.23.3)
+
+---
+
 <h3>Version 10.120.22 beta <span class="date">9/1/2024</span></h3>
 <ul>
   <li>Add a speculative fix for users who have been seeing the secondary window become unresponsive</li>
@@ -108,16 +117,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.119.10.3)
-
----
-
-<h3>Version 10.119.9 beta <span class="date">14/11/2023</span></h3>
-<ul>
-  <li>Fix an issue with workspaces, where the single app/link widget became unclickable</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.119.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
