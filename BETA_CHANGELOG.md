@@ -1,3 +1,18 @@
+<h3>Version 10.120.25 beta <span class="date">17/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 120.0.6099.234</li>
+  <li>Fix for creating Desktop Web App shortcuts on Windows</li>
+  <li>Fix the sizing of the window controls on Windows</li>
+  <li>Improve theme parsing to ensure extra dark themes have enough contrast for certain UI elements</li>
+  <li>Fix a crash with Brainbox</li>
+  <li>Fix some widgets being uneditable when popped-out</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.25.3)
+
+---
+
 <h3>Version 10.120.23 beta <span class="date">10/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.217</li>
@@ -108,15 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.3.3)
-
----
-
-<h3>Version 10.119.10 beta <span class="date">15/11/2023</span></h3>
-<ul>
-  <li>Update to Chromium 119.0.6045.160</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.119.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
