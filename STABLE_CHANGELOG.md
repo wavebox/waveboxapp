@@ -1,3 +1,25 @@
+<h3>Version 10.120.25 <span class="date">17/1/2024</span></h3>
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Update to Chromium 120.0.6099.234</li>
+  <li>Add a button to the tab navigator to close all tabs in the main Wavebox window</li>
+  <li>Add a speculative fix for users who have been seeing the secondary window become unresponsive</li>
+  <li>Fixes for new users</li>
+  <li>Stability fixes</li>
+  <li>Add optional logging for Brainbox</li>
+  <li>Fix an issue where re-focusing the Brainbox side panel would re-affirm the "include selection" checkbox</li>
+  <li>Fix for creating Desktop Web App shortcuts on Windows</li>
+  <li>Fix the sizing of the window controls on Windows</li>
+  <li>Improve theme parsing to ensure extra dark themes have enough contrast for certain UI elements</li>
+  <li>Fix a crash with Brainbox</li>
+  <li>Fix some widgets being uneditable when popped-out</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.120.25.2)
+
+---
+
 <h3>Version 10.120.20 <span class="date">4/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.200</li>
@@ -193,29 +215,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.117.21.2)
-
----
-
-<h3>Version 10.117.18 <span class="date">25/9/2023</span></h3>
-<ul>
-  <li>Update to Chromium 117.0.5938.92</li>
-  <li>Add Brainbox to the tray menu</li>
-  <li>Fix an issue where popping out a Gmail window would not prevent the app from going to sleep and destroying the window</li>
-  <li>Fix an issue where in some configurations the tab bar could be incorrectly hidden when it only contains pinned tabs</li>
-  <li>Fix an issue with Desktop web apps where some would disappear after a restart</li>
-  <li>Fixes to the Desktop web apps UI</li>
-  <li>Fix an issue where Groups with a single App would continue showing the badge even with the group setting disabled</li>
-  <li>Fix a silent crash on window creation</li>
-  <li>Fix notifications from service workers failing to link back to their opening app</li>
-  <li>Fixes for Linux window styling</li>
-  <li>Remove Smart Notes from the right-click menu when disabled</li>
-  <li>Multiple other stability fixes</li>
-  <li>Speculative fix for a hard crash on Windows</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.117.18.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
