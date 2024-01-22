@@ -1,3 +1,14 @@
+<h3>Version 10.121.1 beta <span class="date">22/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 121.0.6167.75</li>
+  <li>Update dependencies</li>
+  <li>UX fixes for the right-click context menus</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.121.1.3)
+
+---
+
 <h3>Version 10.120.25 beta <span class="date">17/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 120.0.6099.234</li>
@@ -112,17 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.5.3)
-
----
-
-<h3>Version 10.120.3 beta <span class="date">20/11/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.28</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
