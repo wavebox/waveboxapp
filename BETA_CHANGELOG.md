@@ -1,3 +1,14 @@
+<h3>Version 10.121.4 beta <span class="date">24/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 121.0.6167.85</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.121.4.3)
+
+---
+
 <h3>Version 10.121.1 beta <span class="date">22/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 121.0.6167.75</li>
@@ -108,21 +119,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.10.3)
-
----
-
-<h3>Version 10.120.5 beta <span class="date">30/11/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.56</li>
-  <li>Add an option to copy all urls from a collection widget</li>
-  <li>Update dependencies</li>
-  <li>Fix tab ordering when opening new tabs</li>
-  <li>Crash fix for Slack</li>
-  <li>Fixes for Gmail sync</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
