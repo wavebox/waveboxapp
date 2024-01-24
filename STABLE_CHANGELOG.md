@@ -1,3 +1,17 @@
+<h3>Version 10.121.4 <span class="date">24/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 121.0.6167.85</li>
+  <li>UX fixes for the right-click context menus</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+
+
+[Downloads](https://wavebox.io/download/release/10.121.4.2)
+
+---
+
 <h3>Version 10.120.25 <span class="date">17/1/2024</span></h3>
 <h4>🐛 Fixes</h4>
 <ul>
@@ -196,25 +210,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.118.5.2)
-
----
-
-<h3>Version 10.117.21 <span class="date">2/10/2023</span></h3>
-<ul>
-  <li>Update to Chromium 117.0.5938.132</li>
-  <li>Turn on the new bookmarks sidebar</li>
-  <li>Fix Brainbox skills not working from Smart Notes</li>
-  <li>Fix the send to Smart Notes button not working in Brainbox</li>
-  <li>Fix opening emails from Outlook failing to load the window</li>
-  <li>Fix a silent crash</li>
-  <li>Fix a crash in the extension tabs api</li>
-  <li>Don't open finder when updating a Desktop web app on macOS</li>
-  <li>Stability fixes for sync</li>
-  <li>UI Tweaks</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.117.21.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
