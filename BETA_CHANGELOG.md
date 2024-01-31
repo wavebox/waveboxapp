@@ -1,3 +1,17 @@
+<h3>Version 10.121.6 beta <span class="date">31/1/2024</span></h3>
+<ul>
+  <li>Update to Chromium 121.0.6167.140</li>
+  <li>Fixes for desktop web app shortcuts</li>
+  <li>Enable search in the side panel</li>
+  <li>More help for users setting up sync</li>
+  <li>UI tweaks and polish</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.121.6.3)
+
+---
+
 <h3>Version 10.121.4 beta <span class="date">24/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 121.0.6167.85</li>
@@ -106,19 +120,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.11.3)
-
----
-
-<h3>Version 10.120.10 beta <span class="date">6/12/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.62</li>
-  <li>Add options to the divider context menu that allows you to sleep/wake all apps within the divider section</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-  <li>Fix urls not automatically parsing in connect</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
