@@ -1,3 +1,18 @@
+<h3>Version 10.121.6 <span class="date">31/1/2024</span></h3>
+
+<ul>
+  <li>Update to Chromium 121.0.6167.140</li>
+  <li>Fixes for desktop web app shortcuts</li>
+  <li>Enable search in the side panel</li>
+  <li>More help for users setting up sync</li>
+  <li>UI tweaks and polish</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.121.6.2)
+
+---
+
 <h3>Version 10.121.4 <span class="date">24/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 121.0.6167.85</li>
@@ -189,27 +204,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.118.10.2)
-
----
-
-<h3>Version 10.118.5 <span class="date">12/10/2023</span></h3>
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 118.0.5993.71</li>
-  <li>Compatibility fixes for macOS Sonoma</li>
-  <li>Improvements to editing managed profiles</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with profile setup</li>
-  <li>UI fixes</li>
-  <li>Fix an issue where quickly typing long strings into the location bar would lockup part of the UI</li>
-  <li>UI fixes for the location bar & profile picker popup</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.118.5.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
