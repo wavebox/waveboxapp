@@ -1,3 +1,27 @@
+<h3>Version 10.121.8 beta <span class="date">1/2/2024</span></h3>
+<ul>
+  <li>
+    Lots of improvements to the drag drop experience in the main window!
+    <ul>
+      <li>Change the underlying drag-drop libraries to provide a move consistent dragging experience</li>
+      <li>Add support for dragging tabs in and out of the main Wavebox window</li>
+      <li>Add support for dragging files/images over groups and app icons allowing you to change the active app during the drag</li>
+      <li>Make app toolbars scrollable when needed</li>
+      <li>Add options to make the tabstrip scrollable</li>
+      <li>Add subtle scroll indicators to the webdock & toolbars to make it easier to see when there's more content</li>
+      <li>Add dividers to the app toolbars. These can be created by right-clicking on any app</li>
+      <li>Intelligently collapse groups & apps in the unified sidebar when not in use</li>
+    </ul>
+  </li>
+  <li>UI tweaks in the Group, App, Tab dividers</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.121.8.3)
+
+---
+
 <h3>Version 10.121.6 beta <span class="date">31/1/2024</span></h3>
 <ul>
   <li>Update to Chromium 121.0.6167.140</li>
@@ -111,15 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.16.3)
-
----
-
-<h3>Version 10.120.11 beta <span class="date">7/12/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.71</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
