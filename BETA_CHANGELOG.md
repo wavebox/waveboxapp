@@ -1,3 +1,17 @@
+<h3>Version 10.121.9 beta <span class="date">7/2/2024</span></h3>
+<ul>
+  <li>Fix the middle mouse button failing to close tabs on Windows</li>
+  <li>Fix pinned tabs taking too much width</li>
+  <li>Scroll tabs into view on creation</li>
+  <li>Improve favicon parsing</li>
+  <li>Fixes for settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.121.9.3)
+
+---
+
 <h3>Version 10.121.8 beta <span class="date">1/2/2024</span></h3>
 <ul>
   <li>
@@ -121,20 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.17.3)
-
----
-
-<h3>Version 10.120.16 beta <span class="date">14/12/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.109</li>
-  <li>Update dependencies</li>
-  <li>Geolocation fixes</li>
-  <li>Fix an issue with downloading files</li>
-  <li>Fix an issue that would prevent stores from repairing using the repair tool</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
