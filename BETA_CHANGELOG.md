@@ -1,3 +1,17 @@
+<h3>Version 10.122.15 beta <span class="date">19/2/2024</span></h3>
+<ul>
+  <li>Chromium 122.0.6261.49</li>
+  <li>Improve iCloud passkey support</li>
+  <li>Stability fixes and bug fixes</li>
+  <li>Add an option to merge groups to the right-click context menu</li>
+  <li>Fix apps in the sidebar failing to collapse</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.15.3)
+
+---
+
 <h3>Version 10.121.9 beta <span class="date">7/2/2024</span></h3>
 <ul>
   <li>Fix the middle mouse button failing to close tabs on Windows</li>
@@ -123,18 +137,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.20.3)
-
----
-
-<h3>Version 10.120.17 beta <span class="date">22/12/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.130</li>
-  <li>Fixes for settings</li>
-  <li>When choosing notification sounds through settings, play a sample sound</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
