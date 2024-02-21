@@ -1,3 +1,15 @@
+<h3>Version 10.122.18 beta <span class="date">21/2/2024</span></h3>
+<ul>
+  <li>Update to Chromium 122.0.6261.58</li>
+  <li>Add a keyboard shortcut to switch to the last active group</li>
+  <li>Add an option to name & bookmark notes in Smart notes</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.18.3)
+
+---
+
 <h3>Version 10.122.15 beta <span class="date">19/2/2024</span></h3>
 <ul>
   <li>Chromium 122.0.6261.49</li>
@@ -122,21 +134,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.22.3)
-
----
-
-<h3>Version 10.120.20 beta <span class="date">4/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.200</li>
-  <li>Update dependencies</li>
-  <li>Add a new keyboard shortcut to close all tabs in the main Wavebox window</li>
-  <li>Better error handling to improve app stability</li>
-  <li>Fix a text encoding issue that would sometimes cause the Wavebox sign-in flow to fail</li>
-  <li>Stability fixes for Slack</li>
-  <li>Tweaks for new users to make getting started easier</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.20.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
