@@ -1,3 +1,39 @@
+<h3>Version 10.122.18 <span class="date">22/2/2024</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Update to Chromium 122.0.6261.58</li>
+  <li>
+    Lots of improvements to the drag drop experience in the main window!
+    <ul>
+      <li>Change the underlying drag-drop libraries to provide a move consistent dragging experience</li>
+      <li>Add support for dragging tabs in and out of the main Wavebox window</li>
+      <li>Add support for dragging files/images over groups and app icons allowing you to change the active app during the drag</li>
+      <li>Make app toolbars scrollable when needed</li>
+      <li>Add options to make the tabstrip scrollable</li>
+      <li>Add subtle scroll indicators to the webdock & toolbars to make it easier to see when there's more content</li>
+      <li>Add dividers to the app toolbars. These can be created by right-clicking on any app</li>
+      <li>Intelligently collapse groups & apps in the unified sidebar when not in use</li>
+    </ul>
+  </li>
+  <li>Improve iCloud passkey support</li>
+  <li>Add an option to merge groups to the right-click context menu</li>
+  <li>Add a keyboard shortcut to switch to the last active group</li>
+  <li>Add an option to name & bookmark notes in Smart notes</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update dependencies</li>
+  <li>Improve favicon parsing</li>
+  <li>Fixes for settings</li>
+  <li>Stability fixes and bug fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.122.18.2)
+
+---
+
 <h3>Version 10.121.6 <span class="date">31/1/2024</span></h3>
 
 <ul>
@@ -185,25 +221,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.119.8.2)
-
----
-
-<h3>Version 10.118.10 <span class="date">26/10/2023</span></h3>
-<ul>
-  <li>Update to Chromium 118.0.5993.118</li>
-  <li>Always prompt before merging two groups</li>
-  <li>Updates to handle some Chromium deprecations</li>
-  <li>Add an option to set the workspace to be a fixed width and enable horizontal scrolling</li>
-  <li>Fixes for ClickUp sync</li>
-  <li>Add a setting to ClickUp to give better unread badges when using ClickUp 3</li>
-  <li>Remove the split screen button on incognito windows</li>
-  <li>Multiple fixes for managed installs</li>
-  <li>Fix linked files in Workspaces failing to open</li>
-  <li>Usability fixes in settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.118.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
