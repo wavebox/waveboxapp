@@ -1,3 +1,13 @@
+<h3>Version 10.122.24 beta <span class="date">23/2/2024</span></h3>
+<ul>
+  <li>Confirmed fix for the draggable regions become unresponsive after a short swift drag</li>
+  <li>Other stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.24.3)
+
+---
+
 <h3>Version 10.122.23 beta <span class="date">23/2/2024</span></h3>
 <ul>
   <li>Update to Chromium 122.0.6261.70</li>
@@ -127,15 +137,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.25.3)
-
----
-
-<h3>Version 10.120.23 beta <span class="date">10/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.217</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
