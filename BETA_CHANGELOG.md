@@ -1,3 +1,20 @@
+<h3>Version 10.122.23 beta <span class="date">23/2/2024</span></h3>
+<ul>
+  <li>Update to Chromium 122.0.6261.70</li>
+  <li>A keyboard shortcut that could open the cookie container popup was accidentally removed, add this back</li>
+  <li>Fix Cmd/Ctrl+T failing to work properly on empty groups</li>
+  <li>Fix an issue with the webdock where nested folders would fail to render correctly</li>
+  <li>Fix a drag issue where starting and then stopping a drag without moving would sometimes still re-order the webdock</li>
+  <li>Fix an issue where dragging an item at speed would sometimes see its placeholder offset</li>
+  <li>Speculative fix for an edge case where closing tabs can stop working and instead they just show as Untitled</li>
+  <li>Style fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.23.3)
+
+---
+
 <h3>Version 10.122.18 beta <span class="date">21/2/2024</span></h3>
 <ul>
   <li>Update to Chromium 122.0.6261.58</li>
@@ -119,21 +136,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.23.3)
-
----
-
-<h3>Version 10.120.22 beta <span class="date">9/1/2024</span></h3>
-<ul>
-  <li>Add a speculative fix for users who have been seeing the secondary window become unresponsive</li>
-  <li>Add a button to the tab navigator to close all tabs in the main Wavebox window</li>
-  <li>Fixes for new users</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-  <li>Add optional logging for Brainbox</li>
-  <li>Fix an issue where re-focusing the Brainbox side panel would re-affirm the "include selection" checkbox</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.22.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
