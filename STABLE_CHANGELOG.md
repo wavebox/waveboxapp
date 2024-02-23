@@ -1,3 +1,22 @@
+<h3>Version 10.122.24 <span class="date">23/2/2024</span></h3>
+
+<ul>
+  <li>Update to Chromium 122.0.6261.70</li>
+  <li>A keyboard shortcut that could open the cookie container popup was accidentally removed, add this back</li>
+  <li>Fix Cmd/Ctrl+T failing to work properly on empty groups</li>
+  <li>Fix an issue with the webdock where nested folders would fail to render correctly</li>
+  <li>Fix a drag issue where starting and then stopping a drag without moving would sometimes still re-order the webdock</li>
+  <li>Fix an issue where dragging an item at speed would sometimes see its placeholder offset</li>
+  <li>Fix an issue where quickly dragging an item a few pixels would lock the drag areas up</li>
+  <li>Style fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.122.24.2)
+
+---
+
 <h3>Version 10.122.18 <span class="date">22/2/2024</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -189,38 +208,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.10.2)
-
----
-
-<h3>Version 10.119.8 <span class="date">13/11/2023</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Tweaks to the tab context menu to make it easier to use</li>
-  <li>Add resource usage info to the app and tab hover cards</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 119.0.6045.124</li>
-  <li>Update dependencies</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with the iCloud Passwords extension not working</li>
-  <li>Fix the Brainbox side panel not capturing focus when opened</li>
-  <li>Fix an issue with the search widget where it wouldn't allow you to search the web for the entered text</li>
-  <li>Fixes for settings</li>
-  <li>Fixes for new users</li>
-  <li>Stability fixes and bug captures</li>
-</ul>
-
-
-
-[Downloads](https://wavebox.io/download/release/10.119.8.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
