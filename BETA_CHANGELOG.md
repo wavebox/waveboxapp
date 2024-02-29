@@ -1,3 +1,22 @@
+<h3>Version 10.122.26 beta <span class="date">29/2/2024</span></h3>
+<ul>
+  <li>Update to Chromium 122.0.6261.95</li>
+  <li>Re-add the option to combine items on drag, for example by dragging tabs over groups</li>
+  <li>Turn off tab scrolling by default. If you want to continue using it, head to Settings and search for Tab scrolling</li>
+  <li>Add an experimental flag to change the theme parsing behavior to give greater contrast on high-contrast themes</li>
+  <li>Stop explorer webdock groups collapsing when interacting with the context menu</li>
+  <li>Fix dragging apps in the webdock, sometimes leading to misplacement on drag end</li>
+  <li>Turning app badges off and on wasn't very intuitive, provide some additional visual feedback</li>
+  <li>Managed sync fixes</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>Style fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.26.3)
+
+---
+
 <h3>Version 10.122.24 beta <span class="date">23/2/2024</span></h3>
 <ul>
   <li>Confirmed fix for the draggable regions become unresponsive after a short swift drag</li>
@@ -122,21 +141,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.121.1.3)
-
----
-
-<h3>Version 10.120.25 beta <span class="date">17/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.234</li>
-  <li>Fix for creating Desktop Web App shortcuts on Windows</li>
-  <li>Fix the sizing of the window controls on Windows</li>
-  <li>Improve theme parsing to ensure extra dark themes have enough contrast for certain UI elements</li>
-  <li>Fix a crash with Brainbox</li>
-  <li>Fix some widgets being uneditable when popped-out</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.25.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
