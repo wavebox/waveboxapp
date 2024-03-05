@@ -1,3 +1,16 @@
+<h3>Version 10.122.30 beta <span class="date">5/3/2024</span></h3>
+<ul>
+  <li>When dragging tabs in the webdock, don't place them in collapsed groups</li>
+  <li>UI fixes for settings</li>
+  <li>Update dependencies</li>
+  <li>Fixes for managed teams</li>
+  <li>Default the ClickUp integration to version 3</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.30.3)
+
+---
+
 <h3>Version 10.122.28 beta <span class="date">1/3/2024</span></h3>
 <ul>
   <li>Speculative fix for a hard crash when opening a profile</li>
@@ -129,17 +142,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.121.6.3)
-
----
-
-<h3>Version 10.121.4 beta <span class="date">24/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 121.0.6167.85</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.121.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
