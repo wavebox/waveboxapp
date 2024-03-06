@@ -1,3 +1,29 @@
+<h3>Version 10.122.30 <span class="date">5/3/2024</span></h3>
+
+<ul>
+  <li>Re-add the option to combine items on drag, for example by dragging tabs over groups</li>
+  <li>Turn off tab scrolling by default. If you want to continue using it, head to Settings and search for Tab scrolling</li>
+  <li>Add an experimental flag to change the theme parsing behavior to give greater contrast on high-contrast themes</li>
+  <li>Stop explorer webdock groups collapsing when interacting with the context menu</li>
+  <li>Update to Chromium 122.0.6261.95</li>
+  <li>When dragging tabs in the webdock, don't place them in collapsed groups</li>
+  <li>Fix dragging apps in the webdock, sometimes leading to misplacement on drag end</li>
+  <li>Default the ClickUp integration to version 3</li>
+  <li>Turning app badges off and on wasn't very intuitive, provide some additional visual feedback</li>
+  <li>Speculative fix for a hard crash when opening a profile</li>
+  <li>Fixes for managed users</li>
+  <li>UI fixes for settings</li>
+  <li>Update dependencies</li>
+  <li>Fixes for managed teams</li>
+  <li>Stability fixes</li>
+  <li>Style fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.122.30.2)
+
+---
+
 <h3>Version 10.122.24 <span class="date">23/2/2024</span></h3>
 
 <ul>
@@ -179,35 +205,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.11.2)
-
----
-
-<h3>Version 10.120.10 <span class="date">6/12/2023</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add an option to copy all urls from a collection widget</li>
-  <li>Add options to the divider context menu that allows you to sleep/wake all apps within the divider section</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 120.0.6099.62</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with workspaces, where the single app/link widget became unclickable</li>
-  <li>Fix tab ordering when opening new tabs</li>
-  <li>Crash fix for Slack</li>
-  <li>Fixes for Gmail sync</li>
-  <li>Stability fixes</li>
-  <li>Fix urls not automatically parsing in connect</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
