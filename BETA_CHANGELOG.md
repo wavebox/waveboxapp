@@ -1,3 +1,14 @@
+<h3>Version 10.122.33 beta <span class="date">12/3/2024</span></h3>
+<ul>
+  <li>Fix an issue with sync, that could cause two machines to fall out of sync for a period of time</li>
+  <li>In certain configurations, dragging folders in the webdock would place them in the wrong location. Fix this</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.33.3)
+
+---
+
 <h3>Version 10.122.30 beta <span class="date">5/3/2024</span></h3>
 <ul>
   <li>When dragging tabs in the webdock, don't place them in collapsed groups</li>
@@ -128,20 +139,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.121.8.3)
-
----
-
-<h3>Version 10.121.6 beta <span class="date">31/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 121.0.6167.140</li>
-  <li>Fixes for desktop web app shortcuts</li>
-  <li>Enable search in the side panel</li>
-  <li>More help for users setting up sync</li>
-  <li>UI tweaks and polish</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.121.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
