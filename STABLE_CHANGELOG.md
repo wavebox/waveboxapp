@@ -1,3 +1,15 @@
+<h3>Version 10.122.35 <span class="date">14/3/2024</span></h3>
+<ul>
+  <li>Update to Chromium 122.0.6261.128</li>
+  <li>Fix an issue with sync, that could cause two machines to fall out of sync for a period of time</li>
+  <li>In certain configurations, dragging folders in the webdock would place them in the wrong location. Fix this</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.35.2)
+
+---
+
 <h3>Version 10.122.30 <span class="date">5/3/2024</span></h3>
 
 <ul>
@@ -169,42 +181,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.16.2)
-
----
-
-<h3>Version 10.120.11 <span class="date">7/12/2023</span></h3>
-<p>
-  This bug fix release contains an update to Chromium 120.0.6099.71 which fixes
-  an issue from the previous Chromium (120.0.6099.62) where some sites that use
-  the &lt;canvas&gt; element would unexpectedly crash in some circumstances.
-</p>
-<p>
-  In case you missed Wavebox 10.120.10, here's everything else that's new...
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add an option to copy all urls from a collection widget</li>
-  <li>Add options to the divider context menu that allows you to sleep/wake all apps within the divider section</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 120.0.6099.71</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with workspaces, where the single app/link widget became unclickable</li>
-  <li>Fix tab ordering when opening new tabs</li>
-  <li>Crash fix for Slack</li>
-  <li>Fixes for Gmail sync</li>
-  <li>Stability fixes</li>
-  <li>Fix urls not automatically parsing in connect</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.11.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
