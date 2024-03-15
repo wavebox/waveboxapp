@@ -1,3 +1,14 @@
+<h3>Version 10.122.38 beta <span class="date">15/3/2024</span></h3>
+<ul>
+  <li>Fix an issue with password sync</li>
+  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.122.38.3)
+
+---
+
 <h3>Version 10.122.35 beta <span class="date">14/3/2024</span></h3>
 <ul>
   <li>Update to Chromium 122.0.6261.128</li>
@@ -110,20 +121,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.15.3)
-
----
-
-<h3>Version 10.121.9 beta <span class="date">7/2/2024</span></h3>
-<ul>
-  <li>Fix the middle mouse button failing to close tabs on Windows</li>
-  <li>Fix pinned tabs taking too much width</li>
-  <li>Scroll tabs into view on creation</li>
-  <li>Improve favicon parsing</li>
-  <li>Fixes for settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.121.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
