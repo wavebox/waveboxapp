@@ -1,3 +1,18 @@
+<h3>Version 10.123.1 beta <span class="date">21/3/2024</span></h3>
+<ul>
+  <li>Update to Chromium 123.0.6312.59</li>
+  <li>Style tweaks for pinned sleeping tabs so it's clearer what site they are</li>
+  <li>Dragging tabs out of the main Wavebox window into a tab group wouldn't assign the group on drop. Fix this</li>
+  <li>Fix an issue with password sync</li>
+  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
+  <li>Update dependencies</li>
+  <li>UI updates</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.123.1.3)
+
+---
+
 <h3>Version 10.122.38 beta <span class="date">15/3/2024</span></h3>
 <ul>
   <li>Fix an issue with password sync</li>
@@ -107,20 +122,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.18.3)
-
----
-
-<h3>Version 10.122.15 beta <span class="date">19/2/2024</span></h3>
-<ul>
-  <li>Chromium 122.0.6261.49</li>
-  <li>Improve iCloud passkey support</li>
-  <li>Stability fixes and bug fixes</li>
-  <li>Add an option to merge groups to the right-click context menu</li>
-  <li>Fix apps in the sidebar failing to collapse</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
