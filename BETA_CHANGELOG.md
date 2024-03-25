@@ -1,3 +1,12 @@
+<h3>Version 10.123.5 beta <span class="date">25/3/2024</span></h3>
+<ul>
+  <li>Fix 2 hard crashes reported by some users with the last release</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.123.5.3)
+
+---
+
 <h3>Version 10.123.2 beta <span class="date">25/3/2024</span></h3>
 <ul>
   <li>Usability fixes for the managed team UX</li>
@@ -104,23 +113,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.24.3)
-
----
-
-<h3>Version 10.122.23 beta <span class="date">23/2/2024</span></h3>
-<ul>
-  <li>Update to Chromium 122.0.6261.70</li>
-  <li>A keyboard shortcut that could open the cookie container popup was accidentally removed, add this back</li>
-  <li>Fix Cmd/Ctrl+T failing to work properly on empty groups</li>
-  <li>Fix an issue with the webdock where nested folders would fail to render correctly</li>
-  <li>Fix a drag issue where starting and then stopping a drag without moving would sometimes still re-order the webdock</li>
-  <li>Fix an issue where dragging an item at speed would sometimes see its placeholder offset</li>
-  <li>Speculative fix for an edge case where closing tabs can stop working and instead they just show as Untitled</li>
-  <li>Style fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
