@@ -1,3 +1,21 @@
+<h3>Version 10.123.2 <span class="date">25/3/2024</span></h3>
+
+<ul>
+  <li>Update to Chromium 123.0.6312.59</li>
+  <li>Style tweaks for pinned sleeping tabs so it's clearer what site they are</li>
+  <li>Dragging tabs out of the main Wavebox window into a tab group wouldn't assign the group on drop. Fix this</li>
+  <li>Fix an issue with password sync</li>
+  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
+  <li>Usability fixes for the managed team UX</li>
+  <li>Update dependencies</li>
+  <li>UI updates</li>
+  <li>Remove some old code that was used to support Chromium 122</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.123.2.2)
+
+---
+
 <h3>Version 10.122.35 <span class="date">14/3/2024</span></h3>
 <ul>
   <li>Update to Chromium 122.0.6261.128</li>
@@ -168,19 +186,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.120.17.2)
-
----
-
-<h3>Version 10.120.16 <span class="date">18/12/2023</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.109</li>
-  <li>Update dependencies</li>
-  <li>Fix an issue with downloading files</li>
-  <li>Fix an issue that would prevent stores from repairing using the repair tool</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.16.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
