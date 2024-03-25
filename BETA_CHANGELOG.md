@@ -1,3 +1,14 @@
+<h3>Version 10.123.2 beta <span class="date">25/3/2024</span></h3>
+<ul>
+  <li>Usability fixes for the managed team UX</li>
+  <li>Update dependencies</li>
+  <li>Remove some old code that was used to support Chromium 122</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.123.2.3)
+
+---
+
 <h3>Version 10.123.1 beta <span class="date">21/3/2024</span></h3>
 <ul>
   <li>Update to Chromium 123.0.6312.59</li>
@@ -110,18 +121,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.23.3)
-
----
-
-<h3>Version 10.122.18 beta <span class="date">21/2/2024</span></h3>
-<ul>
-  <li>Update to Chromium 122.0.6261.58</li>
-  <li>Add a keyboard shortcut to switch to the last active group</li>
-  <li>Add an option to name & bookmark notes in Smart notes</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.18.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
