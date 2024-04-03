@@ -1,3 +1,17 @@
+<h3>Version 10.123.9 beta <span class="date">3/4/2024</span></h3>
+<ul>
+  <li>Wavebox now has a discord server! Find the link by hovering over the settings menu</li>
+  <li>Update to Chromium 123.0.6312.107</li>
+  <li>Improvements to the readability of sleeping tab favicons</li>
+  <li>Fixes for generating usage time in the "My Wavebox" widget</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.123.9.3)
+
+---
+
 <h3>Version 10.123.5 beta <span class="date">25/3/2024</span></h3>
 <ul>
   <li>Fix 2 hard crashes reported by some users with the last release</li>
@@ -103,16 +117,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.26.3)
-
----
-
-<h3>Version 10.122.24 beta <span class="date">23/2/2024</span></h3>
-<ul>
-  <li>Confirmed fix for the draggable regions become unresponsive after a short swift drag</li>
-  <li>Other stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.24.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
