@@ -1,3 +1,18 @@
+<h3>Version 10.123.9 <span class="date">4/4/2024</span></h3>
+<ul>
+  <li>Wavebox now has a discord server! Find the link by hovering over the settings menu</li>
+  <li>Update to Chromium 123.0.6312.107</li>
+  <li>Improvements to the readability of sleeping tab favicons</li>
+  <li>Fixes for generating usage time in the "My Wavebox" widget</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.123.9.2)
+
+---
+
 <h3>Version 10.123.5 <span class="date">25/3/2024</span></h3>
 <p>
   This patch release fixes 2 hard crashes reported by some users. If you missed 10.123.2,
@@ -178,22 +193,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.120.25.2)
-
----
-
-<h3>Version 10.120.20 <span class="date">4/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 120.0.6099.200</li>
-  <li>Update dependencies</li>
-  <li>Add a new keyboard shortcut to close all tabs in the main Wavebox window</li>
-  <li>Better error handling to improve app stability</li>
-  <li>Fix a text encoding issue that would sometimes cause the Wavebox sign-in flow to fail</li>
-  <li>Stability fixes for Slack</li>
-  <li>Tweaks for new users to make getting started easier</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.120.20.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
