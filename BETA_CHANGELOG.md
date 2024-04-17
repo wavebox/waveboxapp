@@ -1,3 +1,18 @@
+<h3>Version 10.124.7 beta <span class="date">17/4/2024</span></h3>
+<ul>
+  <li>Update Chromium to 124.0.6367.29</li>
+  <li>When bulk restoring tabs from another device, ensure the original cookie containers are used when possible</li>
+  <li>Make new tabs that open in the main window, with no backlink to an owner stay within the window instead of ejecting out</li>
+  <li>Fixes for new users</li>
+  <li>Update dependencies</li>
+  <li>Fix an issue with discord not staying logged in</li>
+  <li>Fix an issue where Gmail would incorrectly report that you're logged out</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.7.3)
+
+---
+
 <h3>Version 10.123.9 beta <span class="date">3/4/2024</span></h3>
 <ul>
   <li>Wavebox now has a discord server! Find the link by hovering over the settings menu</li>
@@ -98,25 +113,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.28.3)
-
----
-
-<h3>Version 10.122.26 beta <span class="date">29/2/2024</span></h3>
-<ul>
-  <li>Update to Chromium 122.0.6261.95</li>
-  <li>Re-add the option to combine items on drag, for example by dragging tabs over groups</li>
-  <li>Turn off tab scrolling by default. If you want to continue using it, head to Settings and search for Tab scrolling</li>
-  <li>Add an experimental flag to change the theme parsing behavior to give greater contrast on high-contrast themes</li>
-  <li>Stop explorer webdock groups collapsing when interacting with the context menu</li>
-  <li>Fix dragging apps in the webdock, sometimes leading to misplacement on drag end</li>
-  <li>Turning app badges off and on wasn't very intuitive, provide some additional visual feedback</li>
-  <li>Managed sync fixes</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Style fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.26.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
