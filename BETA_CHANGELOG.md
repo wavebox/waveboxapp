@@ -1,3 +1,13 @@
+<h3>Version 10.124.11 beta <span class="date">18/4/2024</span></h3>
+<ul>
+  <li>Fix some UI issues reported in the previous beta</li>
+  <li>Fix the Windows updater reporting that the update was improperly signed</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.11.3)
+
+---
+
 <h3>Version 10.124.9 beta <span class="date">18/4/2024</span></h3>
 <ul>
   <li>Some users reported a crash with the previous beta. Add a speculative fix for this</li>
@@ -100,19 +110,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.33.3)
-
----
-
-<h3>Version 10.122.30 beta <span class="date">5/3/2024</span></h3>
-<ul>
-  <li>When dragging tabs in the webdock, don't place them in collapsed groups</li>
-  <li>UI fixes for settings</li>
-  <li>Update dependencies</li>
-  <li>Fixes for managed teams</li>
-  <li>Default the ClickUp integration to version 3</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
