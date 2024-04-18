@@ -1,3 +1,13 @@
+<h3>Version 10.124.9 beta <span class="date">18/4/2024</span></h3>
+<ul>
+  <li>Some users reported a crash with the previous beta. Add a speculative fix for this</li>
+  <li>Update Chromium to 124.0.6367.60</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.9.3)
+
+---
+
 <h3>Version 10.124.7 beta <span class="date">17/4/2024</span></h3>
 <ul>
   <li>Update Chromium to 124.0.6367.29</li>
@@ -103,16 +113,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.30.3)
-
----
-
-<h3>Version 10.122.28 beta <span class="date">1/3/2024</span></h3>
-<ul>
-  <li>Speculative fix for a hard crash when opening a profile</li>
-  <li>Fixes for managed users</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.28.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
