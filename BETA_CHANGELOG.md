@@ -1,3 +1,17 @@
+<h3>Version 10.124.17 beta <span class="date">25/4/2024</span></h3>
+<ul>
+  <li>Update to Chromium 124.0.6367.79</li>
+  <li>Add a flag to advanced, so that when you open and track a collection widget in a new window it can live save tabs back to the collection</li>
+  <li>Fix an issue where opening an app from search would not always expand the webdock</li>
+  <li>Add an option to settings to automatically download and install updates on macOS</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.17.3)
+
+---
+
 <h3>Version 10.124.11 beta <span class="date">18/4/2024</span></h3>
 <ul>
   <li>Fix some UI issues reported in the previous beta</li>
@@ -99,17 +113,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.35.3)
-
----
-
-<h3>Version 10.122.33 beta <span class="date">12/3/2024</span></h3>
-<ul>
-  <li>Fix an issue with sync, that could cause two machines to fall out of sync for a period of time</li>
-  <li>In certain configurations, dragging folders in the webdock would place them in the wrong location. Fix this</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.33.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
