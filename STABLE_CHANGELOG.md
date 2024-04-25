@@ -1,3 +1,25 @@
+<h3>Version 10.124.17 <span class="date">25/4/2024</span></h3>
+<ul>
+  <li>Update to Chromium 124.0.6367.79</li>
+  <li>Make new tabs that open in the main window, with no backlink to an owner stay within the window instead of ejecting out</li>
+  <li>When bulk restoring tabs from another device, ensure the original cookie containers are used when possible</li>
+  <li>Add a flag to advanced, so that when you open and track a collection widget in a new window it can live save tabs back to the collection</li>
+  <li>Add an option to settings to automatically download and install updates on macOS</li>
+  <li>Fix an issue with discord not staying logged in</li>
+  <li>Fix an issue where Gmail would incorrectly report that you're logged out</li>
+  <li>Fix some UI issues reported in the previous beta</li>
+  <li>Fix the Windows updater reporting that the update was improperly signed</li>
+  <li>Fix an issue where opening an app from search would not always expand the webdock</li>
+  <li>Fixes for new users</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.124.17.2)
+
+---
+
 <h3>Version 10.123.9 <span class="date">4/4/2024</span></h3>
 <ul>
   <li>Wavebox now has a discord server! Find the link by hovering over the settings menu</li>
@@ -171,28 +193,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.121.4.2)
-
----
-
-<h3>Version 10.120.25 <span class="date">17/1/2024</span></h3>
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Update to Chromium 120.0.6099.234</li>
-  <li>Add a button to the tab navigator to close all tabs in the main Wavebox window</li>
-  <li>Add a speculative fix for users who have been seeing the secondary window become unresponsive</li>
-  <li>Fixes for new users</li>
-  <li>Stability fixes</li>
-  <li>Add optional logging for Brainbox</li>
-  <li>Fix an issue where re-focusing the Brainbox side panel would re-affirm the "include selection" checkbox</li>
-  <li>Fix for creating Desktop Web App shortcuts on Windows</li>
-  <li>Fix the sizing of the window controls on Windows</li>
-  <li>Improve theme parsing to ensure extra dark themes have enough contrast for certain UI elements</li>
-  <li>Fix a crash with Brainbox</li>
-  <li>Fix some widgets being uneditable when popped-out</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.120.25.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
