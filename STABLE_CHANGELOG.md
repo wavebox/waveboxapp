@@ -1,3 +1,22 @@
+<h3>Version 10.124.23 <span class="date">2/5/2024</span></h3>
+<ul>
+  <li>Update to Chromium 124.0.6367.119</li>
+  <li>Add Desktop Web Apps to the search results</li>
+  <li>Add a keyboard shortcut to open the Desktop Web App library</li>
+  <li>Add a flag to enable webdock hiding when floating webviews are disabled</li>
+  <li>Add a flag to globally disable sleep auto-wakeup</li>
+  <li>Fixes for some Linux users seeing issues with Wayland</li>
+  <li>Fix an issue where Desktop Web App sync would incorrectly re-install the same app, sometimes causing popups on Windows</li>
+  <li>Fix an issue with devtools where the device emulator would have the wrong window dimensions</li>
+  <li>Tracking shortcuts from the collection widget lost the identity when saving the tabs back, fix this</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.23.2)
+
+---
+
 <h3>Version 10.124.17 <span class="date">25/4/2024</span></h3>
 <ul>
   <li>Update to Chromium 124.0.6367.79</li>
@@ -179,20 +198,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.121.6.2)
-
----
-
-<h3>Version 10.121.4 <span class="date">24/1/2024</span></h3>
-<ul>
-  <li>Update to Chromium 121.0.6167.85</li>
-  <li>UX fixes for the right-click context menus</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-
-[Downloads](https://wavebox.io/download/release/10.121.4.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
