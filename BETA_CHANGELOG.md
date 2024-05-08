@@ -1,3 +1,15 @@
+<h3>Version 10.124.27 beta <span class="date">8/5/2024</span></h3>
+<ul>
+  <li>Update to Chromium 124.0.6367.156</li>
+  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.27.3)
+
+---
+
 <h3>Version 10.124.23 beta <span class="date">1/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 124.0.6367.119</li>
@@ -111,17 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.123.1.3)
-
----
-
-<h3>Version 10.122.38 beta <span class="date">15/3/2024</span></h3>
-<ul>
-  <li>Fix an issue with password sync</li>
-  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.122.38.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
