@@ -1,3 +1,13 @@
+<h3>Version 10.124.28 beta <span class="date">9/5/2024</span></h3>
+<ul>
+  <li>Stability fixes</li>
+  <li>Add some additional logging tools for users having issues with sleep</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.28.3)
+
+---
+
 <h3>Version 10.124.27 beta <span class="date">8/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 124.0.6367.156</li>
@@ -108,21 +118,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.123.2.3)
-
----
-
-<h3>Version 10.123.1 beta <span class="date">21/3/2024</span></h3>
-<ul>
-  <li>Update to Chromium 123.0.6312.59</li>
-  <li>Style tweaks for pinned sleeping tabs so it's clearer what site they are</li>
-  <li>Dragging tabs out of the main Wavebox window into a tab group wouldn't assign the group on drop. Fix this</li>
-  <li>Fix an issue with password sync</li>
-  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
-  <li>Update dependencies</li>
-  <li>UI updates</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.123.1.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
