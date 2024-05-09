@@ -1,3 +1,12 @@
+<h3>Version 10.124.29 beta <span class="date">9/5/2024</span></h3>
+<ul>
+  <li>Fix a hard crash reported by some users on startup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.29.3)
+
+---
+
 <h3>Version 10.124.28 beta <span class="date">9/5/2024</span></h3>
 <ul>
   <li>Stability fixes</li>
@@ -107,17 +116,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.123.5.3)
-
----
-
-<h3>Version 10.123.2 beta <span class="date">25/3/2024</span></h3>
-<ul>
-  <li>Usability fixes for the managed team UX</li>
-  <li>Update dependencies</li>
-  <li>Remove some old code that was used to support Chromium 122</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.123.2.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
