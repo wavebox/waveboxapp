@@ -1,3 +1,17 @@
+<h3>Version 10.124.29 <span class="date">9/5/2024</span></h3>
+<ul>
+  <li>Update to Chromium 124.0.6367.156</li>
+  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
+  <li>Add some additional logging tools for users having issues with sleep</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>Fix a hard crash reported by some users on startup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.29.2)
+
+---
+
 <h3>Version 10.124.23 <span class="date">2/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 124.0.6367.119</li>
@@ -183,21 +197,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.122.18.2)
-
----
-
-<h3>Version 10.121.6 <span class="date">31/1/2024</span></h3>
-
-<ul>
-  <li>Update to Chromium 121.0.6167.140</li>
-  <li>Fixes for desktop web app shortcuts</li>
-  <li>Enable search in the side panel</li>
-  <li>More help for users setting up sync</li>
-  <li>UI tweaks and polish</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.121.6.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
