@@ -1,3 +1,22 @@
+<h3>Version 10.124.30 <span class="date">9/5/2024</span></h3>
+
+<ul>
+  <li>
+    Some users have reported that Wavebox unexpectedly takes focus.
+    This release includes a speculative fix for this bug.
+  </li>
+  <li>Update to Chromium 124.0.6367.156</li>
+  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
+  <li>Add some additional logging tools for users having issues with sleep</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>Fix a hard crash reported by some users on startup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.30.2)
+
+---
+
 <h3>Version 10.124.29 <span class="date">9/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 124.0.6367.156</li>
@@ -161,42 +180,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.122.24.2)
-
----
-
-<h3>Version 10.122.18 <span class="date">22/2/2024</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Update to Chromium 122.0.6261.58</li>
-  <li>
-    Lots of improvements to the drag drop experience in the main window!
-    <ul>
-      <li>Change the underlying drag-drop libraries to provide a move consistent dragging experience</li>
-      <li>Add support for dragging tabs in and out of the main Wavebox window</li>
-      <li>Add support for dragging files/images over groups and app icons allowing you to change the active app during the drag</li>
-      <li>Make app toolbars scrollable when needed</li>
-      <li>Add options to make the tabstrip scrollable</li>
-      <li>Add subtle scroll indicators to the webdock & toolbars to make it easier to see when there's more content</li>
-      <li>Add dividers to the app toolbars. These can be created by right-clicking on any app</li>
-      <li>Intelligently collapse groups & apps in the unified sidebar when not in use</li>
-    </ul>
-  </li>
-  <li>Improve iCloud passkey support</li>
-  <li>Add an option to merge groups to the right-click context menu</li>
-  <li>Add a keyboard shortcut to switch to the last active group</li>
-  <li>Add an option to name & bookmark notes in Smart notes</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update dependencies</li>
-  <li>Improve favicon parsing</li>
-  <li>Fixes for settings</li>
-  <li>Stability fixes and bug fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.122.18.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)

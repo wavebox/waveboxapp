@@ -1,3 +1,15 @@
+<h3>Version 10.124.30 beta <span class="date">9/5/2024</span></h3>
+<ul>
+  <li>
+    Some users have reported that Wavebox unexpectedly takes focus.
+    This release includes a speculative fix for this bug.
+  </li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.124.30.3)
+
+---
+
 <h3>Version 10.124.29 beta <span class="date">9/5/2024</span></h3>
 <ul>
   <li>Fix a hard crash reported by some users on startup</li>
@@ -107,15 +119,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.123.9.3)
-
----
-
-<h3>Version 10.123.5 beta <span class="date">25/3/2024</span></h3>
-<ul>
-  <li>Fix 2 hard crashes reported by some users with the last release</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.123.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
