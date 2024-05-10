@@ -1,3 +1,16 @@
+<h3>Version 10.124.31 beta <span class="date">10/5/2024</span></h3>
+<p>
+  Update to Chromium 124.0.6367.202. This includes a critical security fix
+  for CVE-2024-4671 that affects all Chromium-based browsers.
+</p>
+<p>
+  Sorry about the batch of releases over the last two days - we'll stop now :-)
+</p>
+
+[Downloads](https://wavebox.io/download/release/10.124.31.3)
+
+---
+
 <h3>Version 10.124.30 beta <span class="date">9/5/2024</span></h3>
 <ul>
   <li>
@@ -105,20 +118,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.7.3)
-
----
-
-<h3>Version 10.123.9 beta <span class="date">3/4/2024</span></h3>
-<ul>
-  <li>Wavebox now has a discord server! Find the link by hovering over the settings menu</li>
-  <li>Update to Chromium 123.0.6312.107</li>
-  <li>Improvements to the readability of sleeping tab favicons</li>
-  <li>Fixes for generating usage time in the "My Wavebox" widget</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.123.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
