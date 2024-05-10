@@ -1,3 +1,32 @@
+<h3>Version 10.124.31 <span class="date">10/5/2024</span></h3>
+<p>
+  Update to Chromium 124.0.6367.202. This includes a critical security fix
+  for CVE-2024-4671 that affects all Chromium-based browsers.
+</p>
+<p>
+  Sorry about the batch of releases over the last two days - we'll stop now :-)
+</p>
+<p>
+  If you have missed any of the interim releases, here's what else is new:
+</p>
+<ul>
+  <li>
+    Some users have reported that Wavebox unexpectedly takes focus.
+    This release includes a speculative fix for this bug.
+  </li>
+  <li>Update to Chromium 124.0.6367.202</li>
+  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
+  <li>Add some additional logging tools for users having issues with sleep</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+  <li>Fix a hard crash reported by some users on startup</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.124.31.2)
+
+---
+
 <h3>Version 10.124.30 <span class="date">9/5/2024</span></h3>
 
 <ul>
@@ -161,25 +190,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.122.30.2)
-
----
-
-<h3>Version 10.122.24 <span class="date">23/2/2024</span></h3>
-
-<ul>
-  <li>Update to Chromium 122.0.6261.70</li>
-  <li>A keyboard shortcut that could open the cookie container popup was accidentally removed, add this back</li>
-  <li>Fix Cmd/Ctrl+T failing to work properly on empty groups</li>
-  <li>Fix an issue with the webdock where nested folders would fail to render correctly</li>
-  <li>Fix a drag issue where starting and then stopping a drag without moving would sometimes still re-order the webdock</li>
-  <li>Fix an issue where dragging an item at speed would sometimes see its placeholder offset</li>
-  <li>Fix an issue where quickly dragging an item a few pixels would lock the drag areas up</li>
-  <li>Style fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.122.24.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
