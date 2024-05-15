@@ -1,3 +1,13 @@
+<h3>Version 10.124.32 <span class="date">15/5/2024</span></h3>
+<p>
+  Update to Chromium 124.0.6367.207. This includes a critical security fix
+  for CVE-2024-4761 that affects all Chromium-based browsers.
+</p>
+
+[Downloads](https://wavebox.io/download/release/10.124.32.2)
+
+---
+
 <h3>Version 10.124.31 <span class="date">10/5/2024</span></h3>
 <p>
   Update to Chromium 124.0.6367.202. This includes a critical security fix
@@ -164,32 +174,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.122.35.2)
-
----
-
-<h3>Version 10.122.30 <span class="date">5/3/2024</span></h3>
-
-<ul>
-  <li>Re-add the option to combine items on drag, for example by dragging tabs over groups</li>
-  <li>Turn off tab scrolling by default. If you want to continue using it, head to Settings and search for Tab scrolling</li>
-  <li>Add an experimental flag to change the theme parsing behavior to give greater contrast on high-contrast themes</li>
-  <li>Stop explorer webdock groups collapsing when interacting with the context menu</li>
-  <li>Update to Chromium 122.0.6261.95</li>
-  <li>When dragging tabs in the webdock, don't place them in collapsed groups</li>
-  <li>Fix dragging apps in the webdock, sometimes leading to misplacement on drag end</li>
-  <li>Default the ClickUp integration to version 3</li>
-  <li>Turning app badges off and on wasn't very intuitive, provide some additional visual feedback</li>
-  <li>Speculative fix for a hard crash when opening a profile</li>
-  <li>Fixes for managed users</li>
-  <li>UI fixes for settings</li>
-  <li>Update dependencies</li>
-  <li>Fixes for managed teams</li>
-  <li>Stability fixes</li>
-  <li>Style fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.122.30.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
