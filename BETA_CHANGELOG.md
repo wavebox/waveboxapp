@@ -1,3 +1,16 @@
+<h3>Version 10.125.15 beta <span class="date">17/5/2024</span></h3>
+<ul>
+  <li>Update to Chromium 125.0.6422.61</li>
+  <li>Add an option to hide the plus button in the space webdock</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+  <li>Fix Brainbox failing to launch</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.125.15.3)
+
+---
+
 <h3>Version 10.125.14 beta <span class="date">17/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 125.0.6422.61</li>
@@ -240,16 +253,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.17.3)
-
----
-
-<h3>Version 10.124.11 beta <span class="date">18/4/2024</span></h3>
-<ul>
-  <li>Fix some UI issues reported in the previous beta</li>
-  <li>Fix the Windows updater reporting that the update was improperly signed</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
