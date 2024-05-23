@@ -1,3 +1,32 @@
+<h3>Version 10.125.24 beta <span class="date">23/5/2024</span></h3>
+<ul>
+  <li>Upgrade to Chromium 125.0.6422.77</li>
+  <li>Add context menu items to sleep/wake a whole space</li>
+  <li>When switching spaces, ensure the same space is selected when returning</li>
+  <li>Fix the site search engines not appearing in settings</li>
+  <li>Fix settings styling on Linux</li>
+  <li>Fix the group name incorrectly changing when boosting an app</li>
+  <li>Stability fixes when batch configuring settings</li>
+  <li>Rename some of the missed cookie containers to spaces</li>
+  <li>Fix some Desktop web apps repeatedly requiring the Gatekeeper configuration on startup</li>
+  <li>Updates to the first run installer</li>
+  <li>Make the grid group styling consistent with other apps when sleeping</li>
+  <li>Add an alert state (audio playing, sharing video etc) icon to space icons in the webdock</li>
+  <li>Fix an issue where there would be empty space in the webdock when there's less than 3 spaces</li>
+  <li>Ensure spaces are populated when creating them through settings</li>
+  <li>Update the Dashboard and Connect icons</li>
+  <li>Style updates for groups so there's less grey blur</li>
+  <li>Fixes for the Slack integration</li>
+  <li>Desktop web apps installed from the location bar would vanish, fix this</li>
+  <li>Style fixes for the link open manager (lots of things were still blue!)</li>
+  <li>Fix an issue where adding chrome://newtab as an app would result in collection widgets failing to launch</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.125.24.3)
+
+---
+
 <h3>Version 10.125.15 beta <span class="date">17/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 125.0.6422.61</li>
@@ -239,20 +268,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.23.3)
-
----
-
-<h3>Version 10.124.17 beta <span class="date">25/4/2024</span></h3>
-<ul>
-  <li>Update to Chromium 124.0.6367.79</li>
-  <li>Add a flag to advanced, so that when you open and track a collection widget in a new window it can live save tabs back to the collection</li>
-  <li>Fix an issue where opening an app from search would not always expand the webdock</li>
-  <li>Add an option to settings to automatically download and install updates on macOS</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
