@@ -1,3 +1,15 @@
+<h3>Version 10.125.28 beta <span class="date">24/5/2024</span></h3>
+<ul>
+  <li>Update to Chromium 125.0.6422.113</li>
+  <li>Add an option to disable app store suggestions in the omnibox</li>
+  <li>Reduce the amount of animation on start pages</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.125.28.3)
+
+---
+
 <h3>Version 10.125.24 beta <span class="date">23/5/2024</span></h3>
 <ul>
   <li>Upgrade to Chromium 125.0.6422.77</li>
@@ -250,24 +262,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.27.3)
-
----
-
-<h3>Version 10.124.23 beta <span class="date">1/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 124.0.6367.119</li>
-  <li>Add Desktop Web Apps to the search results</li>
-  <li>Add a keyboard shortcut to open the Desktop Web App library</li>
-  <li>Add a flag to enable webdock hiding when floating webviews are disabled</li>
-  <li>Add a flag to globally disable sleep auto-wakeup</li>
-  <li>Fix an issue where Desktop Web App sync would incorrectly re-install the same app, sometimes causing popups on Windows</li>
-  <li>Fix an issue with devtools where the device emulator would have the wrong window dimensions</li>
-  <li>Tracking shortcuts from the collection widget lost the identity when saving the tabs back, fix this</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
