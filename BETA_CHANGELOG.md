@@ -1,3 +1,27 @@
+<h3>Version 10.125.29 beta <span class="date">29/5/2024</span></h3>
+<ul>
+  <li>Add options to customize the space unread badge in the webdock</li>
+  <li>Fix an issue where the menu bar/tray settings would fail to open</li>
+  <li>
+    Usability fixes when using the space webdock, where it was possible to
+    easily add apps from multiple spaces in a single group
+  </li>
+  <li>
+    When using the spaces webdock, show a space indicator in groups that have
+    a mix of different spaces
+  </li>
+  <li>Fix the background failing to set correctly on the new tab page</li>
+  <li>Fix the icon picker failing to update icon previews in some configurations</li>
+  <li>Fix a crash in settings where searching for an item and then clicking on it would show a blank window</li>
+  <li>Fix an overflow issue in the dashboard drawer</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.125.29.3)
+
+---
+
 <h3>Version 10.125.28 beta <span class="date">24/5/2024</span></h3>
 <ul>
   <li>Update to Chromium 125.0.6422.113</li>
@@ -250,18 +274,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.28.3)
-
----
-
-<h3>Version 10.124.27 beta <span class="date">8/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 124.0.6367.156</li>
-  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.27.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
