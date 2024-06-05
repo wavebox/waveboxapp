@@ -1,3 +1,16 @@
+<h3>Version 10.125.53 beta <span class="date">5/6/2024</span></h3>
+<ul>
+  <li>Add support for 'Collapse webdock apps when the group is inactive' in spaces sidebar</li>
+  <li>Chromium 125.0.6422.142</li>
+  <li>Add a flag to show the tabstrip for groups containing a single dashboard</li>
+  <li>UI fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.125.53.3)
+
+---
+
 <h3>Version 10.125.29 beta <span class="date">29/5/2024</span></h3>
 <ul>
   <li>Add options to customize the space unread badge in the webdock</li>
@@ -264,16 +277,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.29.3)
-
----
-
-<h3>Version 10.124.28 beta <span class="date">9/5/2024</span></h3>
-<ul>
-  <li>Stability fixes</li>
-  <li>Add some additional logging tools for users having issues with sleep</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.28.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
