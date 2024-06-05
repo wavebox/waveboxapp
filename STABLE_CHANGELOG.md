@@ -1,3 +1,33 @@
+<h3>Version 10.125.53 <span class="date">5/6/2024</span></h3>
+
+<ul>
+  <li>Add options to customize the space unread badge in the webdock</li>
+  <li>Fix an issue where the menu bar/tray settings would fail to open</li>
+  <li>
+    Usability fixes when using the space webdock, where it was possible to
+    easily add apps from multiple spaces in a single group
+  </li>
+  <li>
+    When using the spaces webdock, show a space indicator in groups that have
+    a mix of different spaces
+  </li>
+  <li>Add support for 'Collapse webdock apps when the group is inactive' in spaces sidebar</li>
+  <li>Chromium 125.0.6422.142</li>
+  <li>Add a flag to show the tabstrip for groups containing a single dashboard</li>
+  <li>Fix the background failing to set correctly on the new tab page</li>
+  <li>Fix the icon picker failing to update icon previews in some configurations</li>
+  <li>Fix a crash in settings where searching for an item and then clicking on it would show a blank window</li>
+  <li>Fix an overflow issue in the dashboard drawer</li>
+  <li>Stability fixes</li>
+  <li>UI fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.125.53.2)
+
+---
+
 <h3>Version 10.125.28 <span class="date">28/5/2024</span></h3>
 <p>
   We've been busy working on a whole range of new UI updates for Wavebox, with the aim of
@@ -297,24 +327,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.123.5.2)
-
----
-
-<h3>Version 10.123.2 <span class="date">25/3/2024</span></h3>
-
-<ul>
-  <li>Update to Chromium 123.0.6312.59</li>
-  <li>Style tweaks for pinned sleeping tabs so it's clearer what site they are</li>
-  <li>Dragging tabs out of the main Wavebox window into a tab group wouldn't assign the group on drop. Fix this</li>
-  <li>Fix an issue with password sync</li>
-  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
-  <li>Usability fixes for the managed team UX</li>
-  <li>Update dependencies</li>
-  <li>UI updates</li>
-  <li>Remove some old code that was used to support Chromium 122</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.123.2.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
