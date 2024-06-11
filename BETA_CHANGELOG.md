@@ -1,3 +1,22 @@
+<h3>Version 10.126.2 beta <span class="date">11/6/2024</span></h3>
+<ul>
+  <li>Update to Chromium 126.0.6478.36</li>
+  <li>Add a new mode to the Ctrl+Tab switcher that allows you to switch between ordered tabs/apps in the current group/window</li>
+  <li>Add an option to disable tab tooltips</li>
+  <li>Fix an issue with some link open rules that cross identities failing to work correctly</li>
+  <li>Fix the group new tab url not working when opening tabs using Ctrl/Cmd+T</li>
+  <li>Prompt to restart when changing the built-in system theme to ensure all changes are applied</li>
+  <li>Add a warning when overwriting a keyboard shortcut</li>
+  <li>Drag and drop fixes</li>
+  <li>Performance & stability fixes</li>
+  <li>Styling fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.2.3)
+
+---
+
 <h3>Version 10.125.53 beta <span class="date">5/6/2024</span></h3>
 <ul>
   <li>Add support for 'Collapse webdock apps when the group is inactive' in spaces sidebar</li>
@@ -268,15 +287,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.30.3)
-
----
-
-<h3>Version 10.124.29 beta <span class="date">9/5/2024</span></h3>
-<ul>
-  <li>Fix a hard crash reported by some users on startup</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.29.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
