@@ -1,3 +1,13 @@
+<h3>Version 10.126.5 beta <span class="date">13/6/2024</span></h3>
+<ul>
+  <li>Update to Chromium 126.0.6478.57</li>
+  <li>UI & Stability fixex</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.5.3)
+
+---
+
 <h3>Version 10.126.2 beta <span class="date">11/6/2024</span></h3>
 <ul>
   <li>Update to Chromium 126.0.6478.36</li>
@@ -275,18 +285,6 @@
 </p>
 
 [Downloads](https://wavebox.io/download/release/10.124.31.3)
-
----
-
-<h3>Version 10.124.30 beta <span class="date">9/5/2024</span></h3>
-<ul>
-  <li>
-    Some users have reported that Wavebox unexpectedly takes focus.
-    This release includes a speculative fix for this bug.
-  </li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
