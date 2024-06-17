@@ -1,3 +1,17 @@
+<h3>Version 10.126.9 beta <span class="date">17/6/2024</span></h3>
+<ul>
+  <li>Update to Chromium 126.0.6478.62</li>
+  <li>Automatically open Smart Notes in the side panel. Add an option to change this to popout/side panel</li>
+  <li>Add an option to Smart Notes so it's possible to open them from the toolbar and not create a new note</li>
+  <li>UI Fixes</li>
+  <li>Fix when repairing store integrity</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.9.3)
+
+---
+
 <h3>Version 10.126.5 beta <span class="date">13/6/2024</span></h3>
 <ul>
   <li>Update to Chromium 126.0.6478.57</li>
@@ -272,19 +286,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.125.8.3)
-
----
-
-<h3>Version 10.124.31 beta <span class="date">10/5/2024</span></h3>
-<p>
-  Update to Chromium 124.0.6367.202. This includes a critical security fix
-  for CVE-2024-4671 that affects all Chromium-based browsers.
-</p>
-<p>
-  Sorry about the batch of releases over the last two days - we'll stop now :-)
-</p>
-
-[Downloads](https://wavebox.io/download/release/10.124.31.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
