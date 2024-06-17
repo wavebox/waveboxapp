@@ -1,3 +1,38 @@
+<h3>Version 10.126.9 <span class="date">17/6/2024</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add a new mode to the Ctrl+Tab switcher that allows you to switch between ordered tabs/apps in the current group/window</li>
+  <li>Add an option to disable tab tooltips</li>
+  <li>Add a warning when overwriting a keyboard shortcut</li>
+  <li>Automatically open Smart Notes in the side panel. Add an option to change this to popout/side panel</li>
+  <li>Add an option to Smart Notes so it's possible to open them from the toolbar and not create a new note</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 126.0.6478.62</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with some link open rules that cross identities failing to work correctly</li>
+  <li>Fix the group new tab url not working when opening tabs using Ctrl/Cmd+T</li>
+  <li>Prompt to restart when changing the built-in system theme to ensure all changes are applied</li>
+  <li>Drag and drop fixes</li>
+  <li>Performance & stability fixes</li>
+  <li>Styling fixes</li>
+  <li>Update dependencies</li>
+  <li>UI & Stability fixes</li>
+  <li>Fix when repairing store integrity</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.9.2)
+
+---
+
 <h3>Version 10.125.53 <span class="date">5/6/2024</span></h3>
 
 <ul>
@@ -306,27 +341,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.123.9.2)
-
----
-
-<h3>Version 10.123.5 <span class="date">25/3/2024</span></h3>
-<p>
-  This patch release fixes 2 hard crashes reported by some users. If you missed 10.123.2,
-  here's what else is new
-</p>
-<ul>
-  <li>Update to Chromium 123.0.6312.59</li>
-  <li>Style tweaks for pinned sleeping tabs so it's clearer what site they are</li>
-  <li>Dragging tabs out of the main Wavebox window into a tab group wouldn't assign the group on drop. Fix this</li>
-  <li>Fix an issue with password sync</li>
-  <li>Fix an issue with extension sync, when the multiple instances mode is selected</li>
-  <li>Usability fixes for the managed team UX</li>
-  <li>Update dependencies</li>
-  <li>UI updates</li>
-  <li>Remove some old code that was used to support Chromium 122</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.123.5.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
