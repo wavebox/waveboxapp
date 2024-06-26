@@ -1,3 +1,22 @@
+<h3>Version 10.126.14 <span class="date">26/6/2024</span></h3>
+<ul>
+  <li>Update to Chromium 126.0.6478.127</li>
+  <li>Add a space indicator to tabs when using the spaces webdock and the group uses mixed spaces</li>
+  <li>Add new shortcuts to change to the prev/next space and space at index when using the spaces webdock</li>
+  <li>Make it possible to delete in-use spaces through settings</li>
+  <li>Automatically suggest an icon when creating a custom Wavebox app</li>
+  <li>Add the current pages favicon as a preset when picking an icon for a custom app</li>
+  <li>Fix an issue where restoring a tab could sometimes open it in the wrong window</li>
+  <li>Fix the prev/next group keyboard shortcuts not being bound to the active space when using the spaced webdock</li>
+  <li>Resiliency fixes when updating integrations on the fly</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.126.14.2)
+
+---
+
 <h3>Version 10.126.9 <span class="date">17/6/2024</span></h3>
 <p>
 
@@ -326,21 +345,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.124.17.2)
-
----
-
-<h3>Version 10.123.9 <span class="date">4/4/2024</span></h3>
-<ul>
-  <li>Wavebox now has a discord server! Find the link by hovering over the settings menu</li>
-  <li>Update to Chromium 123.0.6312.107</li>
-  <li>Improvements to the readability of sleeping tab favicons</li>
-  <li>Fixes for generating usage time in the "My Wavebox" widget</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.123.9.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
