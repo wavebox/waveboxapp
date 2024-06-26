@@ -1,3 +1,12 @@
+<h3>Version 10.126.15 beta <span class="date">26/6/2024</span></h3>
+<ul>
+  <li>Speculative fix for a crash on launch</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.15.3)
+
+---
+
 <h3>Version 10.126.14 beta <span class="date">25/6/2024</span></h3>
 <ul>
   <li>Update to Chromium 126.0.6478.127</li>
@@ -147,18 +156,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.125.15.3)
-
----
-
-<h3>Version 10.125.14 beta <span class="date">17/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 125.0.6422.61</li>
-  <li>Add an option to hide the plus button in the space webdock</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.125.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
