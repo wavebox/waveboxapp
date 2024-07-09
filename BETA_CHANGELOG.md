@@ -1,3 +1,27 @@
+<h3>Version 10.126.16 beta <span class="date">9/7/2024</span></h3>
+<ul>
+  <li>Add a setting to the space settings to blanket change all the group, app & badge colors</li>
+  <li>Make the active app color the same as the app and add an option to change this back to the default highlight</li>
+  <li>When boosting a tab into an app, automatically pick the icon from the pages favicon</li>
+  <li>Change the visual ordering of groups in some menus and other parts of the UI when using the spaces webdock</li>
+  <li>In some configurations, some of the moving options were missing from the group & app right-click menus - fix this</li>
+  <li>UI fixes for overly long text in Wavebox Mini</li>
+  <li>Fix the navigator being undraggable & zoomable on first launch</li>
+  <li>Style fixes for the navigator</li>
+  <li>Moving the last app in a group somewhere else could result in the group & and any tabs left in it being automatically destroyed - fix this</li>
+  <li>Fix the webdock text preview size in settings getting larger the smaller the selected size 🤦‍♂️</li>
+  <li>Change the arrows in settings to be smooth</li>
+  <li>Fix an issue where a set of links opened from a dashboard would open them in reverse order</li>
+  <li>Fix a crash when trying to remove a space through settings</li>
+  <li>We broke dragging tabs in and out of the main window during a Chromium update. Fix this so it works again</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.16.3)
+
+---
+
 <h3>Version 10.126.15 beta <span class="date">26/6/2024</span></h3>
 <ul>
   <li>Speculative fix for a crash on launch</li>
@@ -143,19 +167,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.125.24.3)
-
----
-
-<h3>Version 10.125.15 beta <span class="date">17/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 125.0.6422.61</li>
-  <li>Add an option to hide the plus button in the space webdock</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-  <li>Fix Brainbox failing to launch</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.125.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
