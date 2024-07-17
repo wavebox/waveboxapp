@@ -1,3 +1,54 @@
+<h3>Version 10.126.22 <span class="date">17/7/2024</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Add a new settings section for the spaces in the webdock. This includes
+    some extra options such as
+    <ul>
+      <li>Disable the space popups</li>
+      <li>Show sleeping spaces in grey</li>
+      <li>Customize opacity and greyscale of inactive and sleeping spaces</li>
+    </ul>
+  </li>
+  <li>Make the space name editable in the location bar popup</li>
+  <li>Add the option to name a space when creating one through the add app wizard</li>
+  <li>Add a setting to the space settings to blanket change all the group, app & badge colors</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 126.0.6478.183</li>
+  <li>Update dependencies</li>
+  <li>Make the active app color the same as the app and add an option to change this back to the default highlight</li>
+  <li>When boosting a tab into an app, automatically pick the icon from the pages favicon</li>
+  <li>Change the visual ordering of groups in some menus and other parts of the UI when using the spaces webdock</li>
+  <li>In some configurations, some of the moving options were missing from the group & app right-click menus - fix this</li>
+  <li>UI fixes for overly long text in Wavebox Mini</li>
+  <li>Style fixes for the navigator</li>
+  <li>Change the arrows in settings to be smooth</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue where moving an app into a new window, would sometimes unexpectedly change the active app</li>
+  <li>Fix an issue where some first time users would sometimes be signed back out the second time the launch the app</li>
+  <li>Fixes for the Slack integration</li>
+  <li>Fix some naming issues when creating a group/app</li>
+  <li>Fix the navigator being undraggable & zoomable on first launch</li>
+  <li>Style fixes</li>
+  <li>Stability fixes</li>
+  <li>Moving the last app in a group somewhere else could result in the group & and any tabs left in it being automatically destroyed - fix this</li>
+  <li>Fix the webdock text preview size in settings getting larger the smaller the selected size 🤦‍♂️</li>
+  <li>Fix an issue where a set of links opened from a dashboard would open them in reverse order</li>
+  <li>Fix a crash when trying to remove a space through settings</li>
+  <li>We broke dragging tabs in and out of the main window during a Chromium update. Fix this so it works again</li>
+  <li>Fix for a hard crash on launch</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.126.22.2)
+
+---
+
 <h3>Version 10.126.14 <span class="date">26/6/2024</span></h3>
 <ul>
   <li>Update to Chromium 126.0.6478.127</li>
@@ -323,28 +374,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.23.2)
-
----
-
-<h3>Version 10.124.17 <span class="date">25/4/2024</span></h3>
-<ul>
-  <li>Update to Chromium 124.0.6367.79</li>
-  <li>Make new tabs that open in the main window, with no backlink to an owner stay within the window instead of ejecting out</li>
-  <li>When bulk restoring tabs from another device, ensure the original cookie containers are used when possible</li>
-  <li>Add a flag to advanced, so that when you open and track a collection widget in a new window it can live save tabs back to the collection</li>
-  <li>Add an option to settings to automatically download and install updates on macOS</li>
-  <li>Fix an issue with discord not staying logged in</li>
-  <li>Fix an issue where Gmail would incorrectly report that you're logged out</li>
-  <li>Fix some UI issues reported in the previous beta</li>
-  <li>Fix the Windows updater reporting that the update was improperly signed</li>
-  <li>Fix an issue where opening an app from search would not always expand the webdock</li>
-  <li>Fixes for new users</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.124.17.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
