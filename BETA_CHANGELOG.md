@@ -1,3 +1,12 @@
+<h3>Version 10.127.3 beta <span class="date">18/7/2024</span></h3>
+<ul>
+  <li>Update to Chromium 127.0.6533.57</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.3.3)
+
+---
+
 <h3>Version 10.126.22 beta <span class="date">17/7/2024</span></h3>
 <ul>
   <li>Update to Chromium 126.0.6478.183</li>
@@ -153,18 +162,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.125.29.3)
-
----
-
-<h3>Version 10.125.28 beta <span class="date">24/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 125.0.6422.113</li>
-  <li>Add an option to disable app store suggestions in the omnibox</li>
-  <li>Reduce the amount of animation on start pages</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.125.28.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
