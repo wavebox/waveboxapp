@@ -1,3 +1,16 @@
+<h3>Version 10.127.6 beta <span class="date">24/7/2024</span></h3>
+<ul>
+  <li>Update to Chromium 127.0.6533.73</li>
+  <li>Fix right-click open in group/space crashing</li>
+  <li>Fix the split-state of tabs not restoring on restart</li>
+  <li>Fixes when downloading untrusted files</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.6.3)
+
+---
+
 <h3>Version 10.127.4 beta <span class="date">19/7/2024</span></h3>
 <ul>
   <li>Speculative fix for a hard crash on startup</li>
@@ -138,19 +151,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.126.2.3)
-
----
-
-<h3>Version 10.125.53 beta <span class="date">5/6/2024</span></h3>
-<ul>
-  <li>Add support for 'Collapse webdock apps when the group is inactive' in spaces sidebar</li>
-  <li>Chromium 125.0.6422.142</li>
-  <li>Add a flag to show the tabstrip for groups containing a single dashboard</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.125.53.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
