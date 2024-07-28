@@ -1,3 +1,15 @@
+<h3>Version 10.127.7 beta <span class="date">28/7/2024</span></h3>
+<ul>
+  <li>Add an indicator to show which group/app tabs have been opened from by adding the parents color to the tab along with some extra info in the tooltip</li>
+  <li>Add a hint that using the home button in the toolbar returns the app to it's base url</li>
+  <li>Fix some bugs when reordering tabs</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.7.3)
+
+---
+
 <h3>Version 10.127.6 beta <span class="date">24/7/2024</span></h3>
 <ul>
   <li>Update to Chromium 127.0.6533.73</li>
@@ -132,25 +144,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.126.5.3)
-
----
-
-<h3>Version 10.126.2 beta <span class="date">11/6/2024</span></h3>
-<ul>
-  <li>Update to Chromium 126.0.6478.36</li>
-  <li>Add a new mode to the Ctrl+Tab switcher that allows you to switch between ordered tabs/apps in the current group/window</li>
-  <li>Add an option to disable tab tooltips</li>
-  <li>Fix an issue with some link open rules that cross identities failing to work correctly</li>
-  <li>Fix the group new tab url not working when opening tabs using Ctrl/Cmd+T</li>
-  <li>Prompt to restart when changing the built-in system theme to ensure all changes are applied</li>
-  <li>Add a warning when overwriting a keyboard shortcut</li>
-  <li>Drag and drop fixes</li>
-  <li>Performance & stability fixes</li>
-  <li>Styling fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.126.2.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
