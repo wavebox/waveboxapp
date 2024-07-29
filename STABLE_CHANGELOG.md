@@ -1,3 +1,23 @@
+<h3>Version 10.127.7 <span class="date">29/7/2024</span></h3>
+<ul>
+  <li>Add an indicator to show which group/app tabs have been opened from by adding the parents color to the tab along with some extra info in the tooltip</li>
+  <li>Add a hint that using the home button in the toolbar returns the app to it's base url</li>
+  <li>Update to Chromium 127.0.6533.73</li>
+  <li>Speculative fix for a hard crash on startup</li>
+  <li>Fixes for space settings</li>
+  <li>Fix some edit fields in the UI being unfocusable</li>
+  <li>Fix a bug where removing the last app in a space, would sometimes remove the space despite tabs still using it</li>
+  <li>Fix right-click open in group/space crashing</li>
+  <li>Fix the split-state of tabs not restoring on restart</li>
+  <li>Fixes when downloading untrusted files</li>
+  <li>Fix some bugs when reordering tabs</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.7.2)
+
+---
+
 <h3>Version 10.126.22 <span class="date">17/7/2024</span></h3>
 <h4>🆕 New!</h4>
 <ul>
@@ -355,25 +375,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.29.2)
-
----
-
-<h3>Version 10.124.23 <span class="date">2/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 124.0.6367.119</li>
-  <li>Add Desktop Web Apps to the search results</li>
-  <li>Add a keyboard shortcut to open the Desktop Web App library</li>
-  <li>Add a flag to enable webdock hiding when floating webviews are disabled</li>
-  <li>Add a flag to globally disable sleep auto-wakeup</li>
-  <li>Fixes for some Linux users seeing issues with Wayland</li>
-  <li>Fix an issue where Desktop Web App sync would incorrectly re-install the same app, sometimes causing popups on Windows</li>
-  <li>Fix an issue with devtools where the device emulator would have the wrong window dimensions</li>
-  <li>Tracking shortcuts from the collection widget lost the identity when saving the tabs back, fix this</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.23.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
