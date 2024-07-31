@@ -1,3 +1,17 @@
+<h3>Version 10.127.9 beta <span class="date">31/7/2024</span></h3>
+<ul>
+  <li>Update to Chromium 127.0.6533.89</li>
+  <li>When adding an app through the omnibox ensure it's added to the active group</li>
+  <li>Make it easier to configure enhanced safe browsing protection</li>
+  <li>Some routes to making a new tab would incorrectly link the tab to the group instead of the active app</li>
+  <li>Auto-reported stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.9.3)
+
+---
+
 <h3>Version 10.127.7 beta <span class="date">28/7/2024</span></h3>
 <ul>
   <li>Add an indicator to show which group/app tabs have been opened from by adding the parents color to the tab along with some extra info in the tooltip</li>
@@ -134,16 +148,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.126.9.3)
-
----
-
-<h3>Version 10.126.5 beta <span class="date">13/6/2024</span></h3>
-<ul>
-  <li>Update to Chromium 126.0.6478.57</li>
-  <li>UI & Stability fixex</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.126.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
