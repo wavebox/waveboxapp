@@ -1,3 +1,19 @@
+<h3>Version 10.127.10 <span class="date">31/7/2024</span></h3>
+<ul>
+  <li>Update to Chromium 127.0.6533.89</li>
+  <li>When adding an app through the omnibox ensure it's added to the active group</li>
+  <li>Make it easier to configure enhanced safe browsing protection</li>
+  <li>Fix the history side panel failing to open</li>
+  <li>Always enable the history and reading list side panels by default</li>
+  <li>Some routes to making a new tab would incorrectly link the tab to the group instead of the active app</li>
+  <li>Auto-reported stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.10.2)
+
+---
+
 <h3>Version 10.127.7 <span class="date">29/7/2024</span></h3>
 <ul>
   <li>Add an indicator to show which group/app tabs have been opened from by adding the parents color to the tab along with some extra info in the tooltip</li>
@@ -361,20 +377,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.124.30.2)
-
----
-
-<h3>Version 10.124.29 <span class="date">9/5/2024</span></h3>
-<ul>
-  <li>Update to Chromium 124.0.6367.156</li>
-  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
-  <li>Add some additional logging tools for users having issues with sleep</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Fix a hard crash reported by some users on startup</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.29.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
