@@ -1,3 +1,19 @@
+<h3>Version 10.127.10 beta <span class="date">31/7/2024</span></h3>
+<ul>
+  <li>Update to Chromium 127.0.6533.89</li>
+  <li>When adding an app through the omnibox ensure it's added to the active group</li>
+  <li>Make it easier to configure enhanced safe browsing protection</li>
+  <li>Fix the history side panel failing to open</li>
+  <li>Always enable the history and reading list side panels by default</li>
+  <li>Some routes to making a new tab would incorrectly link the tab to the group instead of the active app</li>
+  <li>Auto-reported stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.10.3)
+
+---
+
 <h3>Version 10.127.9 beta <span class="date">31/7/2024</span></h3>
 <ul>
   <li>Update to Chromium 127.0.6533.89</li>
@@ -134,20 +150,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.126.14.3)
-
----
-
-<h3>Version 10.126.9 beta <span class="date">17/6/2024</span></h3>
-<ul>
-  <li>Update to Chromium 126.0.6478.62</li>
-  <li>Automatically open Smart Notes in the side panel. Add an option to change this to popout/side panel</li>
-  <li>Add an option to Smart Notes so it's possible to open them from the toolbar and not create a new note</li>
-  <li>UI Fixes</li>
-  <li>Fix when repairing store integrity</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.126.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
