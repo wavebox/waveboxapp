@@ -1,3 +1,15 @@
+<h3>Version 10.127.12 beta <span class="date">7/8/2024</span></h3>
+<ul>
+  <li>Update to Chromium 127.0.6533.100</li>
+  <li>Speculative fix for Slack, where it would incorrectly show an unread indicator</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.12.3)
+
+---
+
 <h3>Version 10.127.10 beta <span class="date">31/7/2024</span></h3>
 <ul>
   <li>Update to Chromium 127.0.6533.89</li>
@@ -132,24 +144,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.126.15.3)
-
----
-
-<h3>Version 10.126.14 beta <span class="date">25/6/2024</span></h3>
-<ul>
-  <li>Update to Chromium 126.0.6478.127</li>
-  <li>Add a space indicator to tabs when using the spaces webdock and the group uses mixed spaces</li>
-  <li>Add new shortcuts to change to the prev/next space and space at index when using the spaces webdock</li>
-  <li>Make it possible to delete in-use spaces through settings</li>
-  <li>Automatically suggest an icon when creating a custom Wavebox app</li>
-  <li>Add the current pages favicon as a preset when picking an icon for a custom app</li>
-  <li>Fix an issue where restoring a tab could sometimes open it in the wrong window</li>
-  <li>Fix the prev/next group keyboard shortcuts not being bound to the active space when using the spaced webdock</li>
-  <li>Resiliency fixes when updating integrations on the fly</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.126.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
