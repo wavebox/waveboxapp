@@ -11,6 +11,10 @@
   <a href="https://wavebox.io/download">Download</a>
   ·
   <a href="https://wavebox.io/blog">Blog</a>
+  ·
+  <a href="https://discord.gg/gJJhJMecxk">Discord</a>
+  ·
+  <a href="https://wavebox.supahub.com">Feature requests</a>
 </p>
 
 <a href="https://wavebox.io">
@@ -59,6 +63,10 @@ Wavebox keeps parity with the latest version of Chromium , which means we tend t
 For dedicated support, we recommend reaching out to our support team, either by using the in-app support button, or by visiting the [support page](https://wavebox.io/support).
 
 You can also visit our the [Wavebox knowledge base](https://wavebox.io/kb) which has answers to lots of common problems, or raise an [issue in this repo](https://github.com/wavebox/waveboxapp)
+
+To request a feature or upvote one that's already open use [Wavebox Supahub](https://wavebox.supahub.com)
+
+Want to chat with follow Waveboxers? Then check out our [Discord channel](https://discord.gg/gJJhJMecxk)
 
 ## 💻 Developer resources
 
