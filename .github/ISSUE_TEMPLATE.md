@@ -1,14 +1,11 @@
 <!--
 Thanks for reporting an issue with Wavebox!
 
-For up to date help articles, we recommend visiting the Wavebox 10 Knowledge Base: https://kb.wavebox.io/
+Feature requests: https://wavebox.supahub.com/
 
-For dedicated support we recommend contacting Wavebox support directly: https://wavebox.io/support
+Discord server: https://discord.gg/gJJhJMecxk
+
+Help and Knowledge base: https://kb.wavebox.io/
+
+Dedicated support: support@wavebox.io
 -->
-
-* Wavebox Version: [e.g. 10.101.16]
-* Operating System & Version: [e.g. Windows 11, Mac OSX 12.3.1, Ubuntu 20]
-
-### Bug/Feature description
-
-### Steps to reproduce (if applicable)
