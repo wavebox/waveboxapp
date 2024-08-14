@@ -1,3 +1,18 @@
+<h3>Version 10.127.16 <span class="date">14/8/2024</span></h3>
+
+<ul>
+  <li>Update to Chromium 127.0.6533.120</li>
+  <li>When switching spaces in the webdock, remember the scroll position</li>
+  <li>Add an option to open external links in an incognito window</li>
+  <li>Speculative fix for Slack, where it would incorrectly show an unread indicator</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.127.16.2)
+
+---
+
 <h3>Version 10.127.10 <span class="date">31/7/2024</span></h3>
 <ul>
   <li>Update to Chromium 127.0.6533.89</li>
@@ -358,25 +373,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.124.31.2)
-
----
-
-<h3>Version 10.124.30 <span class="date">9/5/2024</span></h3>
-
-<ul>
-  <li>
-    Some users have reported that Wavebox unexpectedly takes focus.
-    This release includes a speculative fix for this bug.
-  </li>
-  <li>Update to Chromium 124.0.6367.156</li>
-  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
-  <li>Add some additional logging tools for users having issues with sleep</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Fix a hard crash reported by some users on startup</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.124.30.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
