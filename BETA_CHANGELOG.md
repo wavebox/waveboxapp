@@ -1,3 +1,16 @@
+<h3>Version 10.128.2 beta <span class="date">16/8/2024</span></h3>
+<ul>
+  <li>Update to Chromium 128.0.6613.36</li>
+  <li>Add close all tabs to the group context menu</li>
+  <li>Fix an issue where the closing the color picker popup in the add group/space popup would also close the add popup</li>
+  <li>Opening links from outside of Wavebox would sometimes fail to focus the window, fix this</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.2.3)
+
+---
+
 <h3>Version 10.127.16 beta <span class="date">14/8/2024</span></h3>
 <ul>
   <li>Update to Chromium 127.0.6533.120</li>
@@ -111,33 +124,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.3.3)
-
----
-
-<h3>Version 10.126.22 beta <span class="date">17/7/2024</span></h3>
-<ul>
-  <li>Update to Chromium 126.0.6478.183</li>
-  <li>
-    Add a new settings section for the spaces in the webdock. This includes
-    some extra options such as
-    <ul>
-      <li>Disable the space popups</li>
-      <li>Show sleeping spaces in grey</li>
-      <li>Customize opacity and greyscale of inactive and sleeping spaces</li>
-    </ul>
-  </li>
-  <li>Make the space name editable in the location bar popup</li>
-  <li>Add the option to name a space when creating one through the add app wizard</li>
-  <li>Fix an issue where moving an app into a new window, would sometimes unexpectedly change the active app</li>
-  <li>Fix an issue where some first time users would sometimes be signed back out the second time the launch the app</li>
-  <li>Fixes for the Slack integration</li>
-  <li>Fix some naming issues when creating a group/app</li>
-  <li>Update dependencies</li>
-  <li>Style fixes</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.126.22.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
