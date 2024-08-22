@@ -1,3 +1,18 @@
+<h3>Version 10.128.3 beta <span class="date">22/8/2024</span></h3>
+<ul>
+  <li>Update to Chromium 128.0.6613.85</li>
+  <li>Add restore last closed window/tab to the right-click tabstrip menu</li>
+  <li>Add a button to create a saved item in the app tooltip, rather than always needing to create one from a history item</li>
+  <li>Fix a large toolbar that appeared on macOS when using Wavebox in fullscreen</li>
+  <li>Fixes for settings</li>
+  <li>Fixes for refocusing the window when opening links</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.3.3)
+
+---
+
 <h3>Version 10.128.2 beta <span class="date">16/8/2024</span></h3>
 <ul>
   <li>Update to Chromium 128.0.6613.36</li>
@@ -115,15 +130,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.4.3)
-
----
-
-<h3>Version 10.127.3 beta <span class="date">18/7/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.57</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
