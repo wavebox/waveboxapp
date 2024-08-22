@@ -1,3 +1,20 @@
+<h3>Version 10.128.3 <span class="date">22/8/2024</span></h3>
+<ul>
+  <li>Update to Chromium 128.0.6613.85</li>
+  <li>Add close all tabs to the group context menu</li>
+  <li>Add restore last closed window/tab to the right-click tabstrip menu</li>
+  <li>Add a button to create a saved item in the app tooltip, rather than always needing to create one from a history item</li>
+  <li>Fix an issue where the closing the color picker popup in the add group/space popup would also close the add popup</li>
+  <li>Opening links from outside of Wavebox would sometimes fail to focus the window, fix this</li>
+  <li>Fix a large toolbar that appeared on macOS when using Wavebox in fullscreen</li>
+  <li>Fixes for settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.3.2)
+
+---
+
 <h3>Version 10.127.16 <span class="date">14/8/2024</span></h3>
 
 <ul>
@@ -344,35 +361,6 @@
 </p>
 
 [Downloads](https://wavebox.io/download/release/10.124.32.2)
-
----
-
-<h3>Version 10.124.31 <span class="date">10/5/2024</span></h3>
-<p>
-  Update to Chromium 124.0.6367.202. This includes a critical security fix
-  for CVE-2024-4671 that affects all Chromium-based browsers.
-</p>
-<p>
-  Sorry about the batch of releases over the last two days - we'll stop now :-)
-</p>
-<p>
-  If you have missed any of the interim releases, here's what else is new:
-</p>
-<ul>
-  <li>
-    Some users have reported that Wavebox unexpectedly takes focus.
-    This release includes a speculative fix for this bug.
-  </li>
-  <li>Update to Chromium 124.0.6367.202</li>
-  <li>Make sure the webdock is sticky on-screen when dragging and the webdock set to auto hide</li>
-  <li>Add some additional logging tools for users having issues with sleep</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Fix a hard crash reported by some users on startup</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.124.31.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
