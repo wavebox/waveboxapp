@@ -1,3 +1,14 @@
+<h3>Version 10.128.4 beta <span class="date">27/8/2024</span></h3>
+<ul>
+  <li>Speculative fix for crash on launch</li>
+  <li>When sending all tabs to the dashboard save the custom tab titles</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.4.3)
+
+---
+
 <h3>Version 10.128.3 beta <span class="date">22/8/2024</span></h3>
 <ul>
   <li>Update to Chromium 128.0.6613.85</li>
@@ -117,19 +128,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.6.3)
-
----
-
-<h3>Version 10.127.4 beta <span class="date">19/7/2024</span></h3>
-<ul>
-  <li>Speculative fix for a hard crash on startup</li>
-  <li>Fixes for space settings</li>
-  <li>Fix some edit fields in the UI being unfocusable</li>
-  <li>Fix a bug where removing the last app in a space, would sometimes remove the space despite tabs still using it</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
