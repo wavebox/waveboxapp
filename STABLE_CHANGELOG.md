@@ -1,3 +1,15 @@
+<h3>Version 10.128.4 <span class="date">27/8/2024</span></h3>
+
+<ul>
+  <li>Speculative fix for crash on launch</li>
+  <li>When sending all tabs to the dashboard save the custom tab titles</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.4.2)
+
+---
+
 <h3>Version 10.128.3 <span class="date">22/8/2024</span></h3>
 <ul>
   <li>Update to Chromium 128.0.6613.85</li>
@@ -351,16 +363,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.125.28.2)
-
----
-
-<h3>Version 10.124.32 <span class="date">15/5/2024</span></h3>
-<p>
-  Update to Chromium 124.0.6367.207. This includes a critical security fix
-  for CVE-2024-4761 that affects all Chromium-based browsers.
-</p>
-
-[Downloads](https://wavebox.io/download/release/10.124.32.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
