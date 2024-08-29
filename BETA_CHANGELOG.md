@@ -1,3 +1,14 @@
+<h3>Version 10.128.5 beta <span class="date">29/8/2024</span></h3>
+<ul>
+  <li>Update to Chromium 128.0.6613.114</li>
+  <li>Fix an issue where closing a window with a split tab would cause a crash</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.5.3)
+
+---
+
 <h3>Version 10.128.4 beta <span class="date">27/8/2024</span></h3>
 <ul>
   <li>Speculative fix for crash on launch</li>
@@ -115,19 +126,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.7.3)
-
----
-
-<h3>Version 10.127.6 beta <span class="date">24/7/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.73</li>
-  <li>Fix right-click open in group/space crashing</li>
-  <li>Fix the split-state of tabs not restoring on restart</li>
-  <li>Fixes when downloading untrusted files</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
