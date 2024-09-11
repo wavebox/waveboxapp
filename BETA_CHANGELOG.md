@@ -1,3 +1,19 @@
+<h3>Version 10.129.19 beta <span class="date">11/9/2024</span></h3>
+<ul>
+  <li>Add an experimental flag that allows groups with more than one spaces to either be displayed in both spaces or just one</li>
+  <li>Add a helper for when using a group with multiple spaces</li>
+  <li>When saving tabs to a dashboard, custom tab names were saved from secondary windows but not the main Wavebox window. Fix this.</li>
+  <li>Add a duplicate option to window open rules through the right-click menu</li>
+  <li>Style fixes for the window open rule table</li>
+  <li>Fix an issue where some global window open rules were not migrated properly</li>
+  <li>Stability fixes for preference saving</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.19.3)
+
+---
+
 <h3>Version 10.129.17 beta <span class="date">9/9/2024</span></h3>
 <ul>
   <li>
@@ -155,20 +171,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.10.3)
-
----
-
-<h3>Version 10.127.9 beta <span class="date">31/7/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.89</li>
-  <li>When adding an app through the omnibox ensure it's added to the active group</li>
-  <li>Make it easier to configure enhanced safe browsing protection</li>
-  <li>Some routes to making a new tab would incorrectly link the tab to the group instead of the active app</li>
-  <li>Auto-reported stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
