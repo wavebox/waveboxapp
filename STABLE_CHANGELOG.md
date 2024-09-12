@@ -1,3 +1,12 @@
+<h3>Version 10.128.7 <span class="date">12/9/2024</span></h3>
+<ul>
+  <li>Update to Chromium 128.0.6613.13</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.128.7.2)
+
+---
+
 <h3>Version 10.128.5 <span class="date">1/9/2024</span></h3>
 <ul>
   <li>Update to Chromium 128.0.6613.114</li>
@@ -191,36 +200,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.126.9.2)
-
----
-
-<h3>Version 10.125.53 <span class="date">5/6/2024</span></h3>
-
-<ul>
-  <li>Add options to customize the space unread badge in the webdock</li>
-  <li>Fix an issue where the menu bar/tray settings would fail to open</li>
-  <li>
-    Usability fixes when using the space webdock, where it was possible to
-    easily add apps from multiple spaces in a single group
-  </li>
-  <li>
-    When using the spaces webdock, show a space indicator in groups that have
-    a mix of different spaces
-  </li>
-  <li>Add support for 'Collapse webdock apps when the group is inactive' in spaces sidebar</li>
-  <li>Chromium 125.0.6422.142</li>
-  <li>Add a flag to show the tabstrip for groups containing a single dashboard</li>
-  <li>Fix the background failing to set correctly on the new tab page</li>
-  <li>Fix the icon picker failing to update icon previews in some configurations</li>
-  <li>Fix a crash in settings where searching for an item and then clicking on it would show a blank window</li>
-  <li>Fix an overflow issue in the dashboard drawer</li>
-  <li>Stability fixes</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.125.53.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
