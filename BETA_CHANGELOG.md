@@ -1,3 +1,24 @@
+<h3>Version 10.129.26 beta <span class="date">19/9/2024</span></h3>
+<ul>
+  <li>Update to Chromium 129.0.6668.59</li>
+  <li>Speculative fix for privacy badger</li>
+  <li>Under certain configurations the font used in the webdock would display incorrectly</li>
+  <li>Usability fixes for the first install tooltips</li>
+  <li>Fixes for Slack sign-in</li>
+  <li>Usability fixes when creating a group from the webdock</li>
+  <li>Make it easier to create a custom app from toolbar</li>
+  <li>Stability fixes for the tab loading indicator</li>
+  <li>Fixes for the focus mode popup not resizing the window correctly</li>
+  <li>Fixes for the url pattern migration of link open rules</li>
+  <li>Update dependencies</li>
+  <li>UI tweaks</li>
+  <li>UI updates for the switcher</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.26.3)
+
+---
+
 <h3>Version 10.129.19 beta <span class="date">11/9/2024</span></h3>
 <ul>
   <li>Add an experimental flag that allows groups with more than one spaces to either be displayed in both spaces or just one</li>
@@ -155,22 +176,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.12.3)
-
----
-
-<h3>Version 10.127.10 beta <span class="date">31/7/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.89</li>
-  <li>When adding an app through the omnibox ensure it's added to the active group</li>
-  <li>Make it easier to configure enhanced safe browsing protection</li>
-  <li>Fix the history side panel failing to open</li>
-  <li>Always enable the history and reading list side panels by default</li>
-  <li>Some routes to making a new tab would incorrectly link the tab to the group instead of the active app</li>
-  <li>Auto-reported stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
