@@ -1,3 +1,86 @@
+<h3>Version 10.129.27 <span class="date">25/9/2024</span></h3>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    An all new, more capable link open engine with more flexibility to
+    create global rules and tailor your Wavebox! We've added an all-new UI
+    for rule management - no more hunting through apps to find where a rule
+    was created. Wavebox now features an intuitive list (with search of course)
+    so you can easily find and manage each rule.
+    <br /><br />
+    We've added robust support for cross-space rules across the board. If you need
+    to move a link to a new space, Wavebox gives you the tools to do this!
+    <br /><br />
+    We've also made it easier to figure out when a rule is being applied, with
+    a new indicator in the URL bar. This will show you which rule is being applied
+    to the current page, and you can click on it to see more details.
+    <br /><br />
+    Rules now have support for more scopes (where they're opened from), with then new
+    version allowing matches for:
+    <ul>
+      <li>Anywhere in Wavebox</li>
+      <li>Typed into the Omnibox/Location bar</li>
+      <li>Anywhere in a Space</li>
+      <li>Anywhere in a Group</li>
+      <li>From within an app</li>
+      <li>Outside of Wavebox (if Wavebox is set as your default browser)</li>
+    </ul>
+
+    URL matching has been enhanced, making it simpler to create URL matches with support for:
+    <ul>
+      <li>Contains</li>
+      <li>Starts with</li>
+      <li>Equality</li>
+      <li>Patterns</li>
+      <li>Hostnames</li>
+    </ul>
+  </li>
+  <li>Add more options to customize and re-order the items in the Group, App & Tab tooltips</li>
+  <li>Add an experimental flag that allows groups with more than one spaces to either be displayed in both spaces or just one</li>
+  <li>Add a helper for when using a group with multiple spaces</li>
+  <li>Make it easier to create a custom app from toolbar by pre-filling a bunch of things based on the search</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 129.0.6668.71</li>
+  <li>Usability improvements and fixes to the drag & drop space manager</li>
+  <li>Update our underlying UI libraries for faster performance</li>
+  <li>Add a duplicate option to window open rules through the right-click menu</li>
+  <li>Under certain configurations the font used in the webdock would display incorrectly, fix this</li>
+  <li>Usability fixes when creating a group from the webdock</li>
+  <li>Stability fixes for the tab loading indicator</li>
+  <li>UI updates for the switcher</li>
+  <li>UI tweaks for restoring cloud sync</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>When saving tabs to a dashboard, custom tab names were saved from secondary windows but not the main Wavebox window. Fix this.</li>
+  <li>Fix a hard crash with the side panel</li>
+  <li>Fix incognito search sometimes not working</li>
+  <li>Fix crash on launch</li>
+  <li>Fix theming for context menus</li>
+  <li>Speculative fix for tab restore sometimes failing</li>
+  <li>Fixes for the first-run tooltips</li>
+  <li>Stability fixes for preference saving</li>
+  <li>Stability fixes</li>
+  <li>Speculative fix for privacy badger</li>
+  <li>Usability fixes for the first install tooltips</li>
+  <li>Fixes for Slack sign-in</li>
+  <li>Fixes for the focus mode popup not resizing the window correctly</li>
+  <li>Fixes for the url pattern migration of link open rules</li>
+  <li>Fix some links failing to open</li>
+  <li>Under some configurations a cross space rule would fail to re-assign the space correctly. Fix this.</li>
+  <li>Theme fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.129.27.2)
+
+---
+
 <h3>Version 10.128.7 <span class="date">12/9/2024</span></h3>
 <ul>
   <li>Update to Chromium 128.0.6613.13</li>
@@ -165,41 +248,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.126.14.2)
-
----
-
-<h3>Version 10.126.9 <span class="date">17/6/2024</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Add a new mode to the Ctrl+Tab switcher that allows you to switch between ordered tabs/apps in the current group/window</li>
-  <li>Add an option to disable tab tooltips</li>
-  <li>Add a warning when overwriting a keyboard shortcut</li>
-  <li>Automatically open Smart Notes in the side panel. Add an option to change this to popout/side panel</li>
-  <li>Add an option to Smart Notes so it's possible to open them from the toolbar and not create a new note</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 126.0.6478.62</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with some link open rules that cross identities failing to work correctly</li>
-  <li>Fix the group new tab url not working when opening tabs using Ctrl/Cmd+T</li>
-  <li>Prompt to restart when changing the built-in system theme to ensure all changes are applied</li>
-  <li>Drag and drop fixes</li>
-  <li>Performance & stability fixes</li>
-  <li>Styling fixes</li>
-  <li>Update dependencies</li>
-  <li>UI & Stability fixes</li>
-  <li>Fix when repairing store integrity</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.126.9.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
