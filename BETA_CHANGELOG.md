@@ -1,3 +1,16 @@
+<h3>Version 10.129.27 beta <span class="date">25/9/2024</span></h3>
+<ul>
+  <li>Update to Chromium 129.0.6668.71</li>
+  <li>Fix some links failing to open</li>
+  <li>UI tweaks for restoring cloud sync</li>
+  <li>Under some configurations a cross space rule would fail to re-assign the space correctly. Fix this.</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.27.3)
+
+---
+
 <h3>Version 10.129.26 beta <span class="date">19/9/2024</span></h3>
 <ul>
   <li>Update to Chromium 129.0.6668.59</li>
@@ -164,18 +177,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.14.3)
-
----
-
-<h3>Version 10.127.12 beta <span class="date">7/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.100</li>
-  <li>Speculative fix for Slack, where it would incorrectly show an unread indicator</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
