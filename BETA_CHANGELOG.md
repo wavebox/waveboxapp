@@ -1,3 +1,14 @@
+<h3>Version 10.129.28 beta <span class="date">26/9/2024</span></h3>
+<ul>
+  <li>A small number of extensions could cause Wavebox to crash, fix this</li>
+  <li>Add a dense display mode to the tasks widget</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.28.3)
+
+---
+
 <h3>Version 10.129.27 beta <span class="date">25/9/2024</span></h3>
 <ul>
   <li>Update to Chromium 129.0.6668.71</li>
@@ -164,19 +175,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.16.3)
-
----
-
-<h3>Version 10.127.14 beta <span class="date">14/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.120</li>
-  <li>When switching spaces in the webdock, remember the scroll position</li>
-  <li>Add an option to open external links in an incognito window</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
