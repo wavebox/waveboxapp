@@ -1,3 +1,15 @@
+<h3>Version 10.129.29 beta <span class="date">27/9/2024</span></h3>
+<ul>
+  <li>Add the 'Create your own' link to the app search when creating a group</li>
+  <li>Some of the action buttons in the tooltip headings vanished. Bring them back</li>
+  <li>Update dependencies</li>
+  <li>Fix some urls not launching from the omnibox</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.29.3)
+
+---
+
 <h3>Version 10.129.28 beta <span class="date">26/9/2024</span></h3>
 <ul>
   <li>A small number of extensions could cause Wavebox to crash, fix this</li>
@@ -161,20 +173,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.128.2.3)
-
----
-
-<h3>Version 10.127.16 beta <span class="date">14/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.120</li>
-  <li>When switching spaces in the webdock, remember the scroll position</li>
-  <li>Add an option to open external links in an incognito window</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Crash fix</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
