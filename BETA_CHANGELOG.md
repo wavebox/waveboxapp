@@ -1,3 +1,16 @@
+<h3>Version 10.129.30 beta <span class="date">2/10/2024</span></h3>
+<ul>
+  <li>Update to Chromium 129.0.6668.90</li>
+  <li>Fixes for the Omnibox sometimes failing to open urls</li>
+  <li>Fix an issue with the link engine where Omnibox matches would fail to change spaces in some configurations</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.30.3)
+
+---
+
 <h3>Version 10.129.29 beta <span class="date">27/9/2024</span></h3>
 <ul>
   <li>Add the 'Create your own' link to the app search when creating a group</li>
@@ -160,19 +173,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.128.3.3)
-
----
-
-<h3>Version 10.128.2 beta <span class="date">16/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 128.0.6613.36</li>
-  <li>Add close all tabs to the group context menu</li>
-  <li>Fix an issue where the closing the color picker popup in the add group/space popup would also close the add popup</li>
-  <li>Opening links from outside of Wavebox would sometimes fail to focus the window, fix this</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.128.2.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
