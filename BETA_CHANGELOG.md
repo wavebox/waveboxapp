@@ -1,3 +1,18 @@
+<h3>Version 10.129.32 beta <span class="date">9/10/2024</span></h3>
+<ul>
+  <li>Update to Chromium 129.0.6668.101</li>
+  <li>Fix an issue where duplicate tooltip titles were shown on the collection widget</li>
+  <li>Update Brainbox so it doesn't scroll away from you as you're scrolling</li>
+  <li>Update dependencies</li>
+  <li>Fix a couple of typos</li>
+  <li>Fix some tooltips failing to stay open when hovering over them</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.129.32.3)
+
+---
+
 <h3>Version 10.129.30 beta <span class="date">2/10/2024</span></h3>
 <ul>
   <li>Update to Chromium 129.0.6668.90</li>
@@ -158,21 +173,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.128.4.3)
-
----
-
-<h3>Version 10.128.3 beta <span class="date">22/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 128.0.6613.85</li>
-  <li>Add restore last closed window/tab to the right-click tabstrip menu</li>
-  <li>Add a button to create a saved item in the app tooltip, rather than always needing to create one from a history item</li>
-  <li>Fix a large toolbar that appeared on macOS when using Wavebox in fullscreen</li>
-  <li>Fixes for settings</li>
-  <li>Fixes for refocusing the window when opening links</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.128.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
