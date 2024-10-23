@@ -1,3 +1,13 @@
+<h3>Version 10.130.2 beta <span class="date">23/10/2024</span></h3>
+<ul>
+  <li>Update to Chromium 130.0.6723.70</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.130.2.3)
+
+---
+
 <h3>Version 10.130.1 beta <span class="date">16/10/2024</span></h3>
 <ul>
   <li>Update to Chromium 130.0.6723.59</li>
@@ -165,17 +175,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.17.3)
-
----
-
-<h3>Version 10.128.5 beta <span class="date">29/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 128.0.6613.114</li>
-  <li>Fix an issue where closing a window with a split tab would cause a crash</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.128.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
