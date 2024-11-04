@@ -1,3 +1,12 @@
+<h3>Version 10.130.3 beta <span class="date">4/11/2024</span></h3>
+<ul>
+  <li>Update to Chromium 130.0.6723.92</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.130.3.3)
+
+---
+
 <h3>Version 10.130.2 beta <span class="date">23/10/2024</span></h3>
 <ul>
   <li>Update to Chromium 130.0.6723.70</li>
@@ -120,61 +129,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.19.3)
-
----
-
-<h3>Version 10.129.17 beta <span class="date">9/9/2024</span></h3>
-<ul>
-  <li>
-    An all new, more capable link open engine with more flexibility to
-    create global rules and tailor your Wavebox! We've added an all-new UI
-    for rule management - no more hunting through apps to find where a rule
-    was created. Wavebox now features an intuitive list (with search of course)
-    so you can easily find and manage each rule.
-    <br /><br />
-    We've added robust support for cross-space rules across the board. If you need
-    to move a link to a new space, Wavebox gives you the tools to do this!
-    <br /><br />
-    We've also made it easier to figure out when a rule is being applied, with
-    a new indicator in the URL bar. This will show you which rule is being applied
-    to the current page, and you can click on it to see more details.
-    <br /><br />
-    Rules now have support for more scopes (where they're opened from), with then new
-    version allowing matches for:
-    <ul>
-      <li>Anywhere in Wavebox</li>
-      <li>Typed into the Omnibox/Location bar</li>
-      <li>Anywhere in a Space</li>
-      <li>Anywhere in a Group</li>
-      <li>From within an app</li>
-      <li>Outside of Wavebox (if Wavebox is set as your default browser)</li>
-    </ul>
-
-    URL matching has been enhanced, making it simpler to create URL matches with support for:
-    <ul>
-      <li>Contains</li>
-      <li>Starts with</li>
-      <li>Equality</li>
-      <li>Patterns</li>
-      <li>Hostnames</li>
-    </ul>
-  </li>
-  <li>Add more options to customize and re-order the items in the Group, App & Tab tooltips</li>
-  <li>Usability improvements and fixes to the drag & drop space manager</li>
-  <li>Update to Chromium 129.0.6668.29</li>
-  <li>Update our underlying UI libraries for faster performance</li>
-  <li>Fix a hard crash with the side panel</li>
-  <li>Fix incognito search sometimes not working</li>
-  <li>Fix crash on launch</li>
-  <li>Fix theming for context menus</li>
-  <li>Speculative fix for tab restore sometimes failing</li>
-  <li>Fixes for the first-run tooltips</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-  <li>Theme fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
