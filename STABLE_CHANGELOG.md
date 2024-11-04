@@ -1,3 +1,17 @@
+<h3>Version 10.130.3 <span class="date">4/11/2024</span></h3>
+<ul>
+  <li>Update to Chromium 130.0.6723.92</li>
+  <li>Fixes for dashboards</li>
+  <li>Fix an issue where some Omnibox link rules would fail to trigger an action</li>
+  <li>Fix notifications sometimes failing to re-open in the correct app</li>
+  <li>Add support for middle mouse click on dashboard shortcuts opening them as background tabs</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.130.3.2)
+
+---
+
 <h3>Version 10.129.32 <span class="date">10/10/2024</span></h3>
 <ul>
   <li>Update to Chromium 129.0.6668.101</li>
@@ -271,26 +285,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.10.2)
-
----
-
-<h3>Version 10.127.7 <span class="date">29/7/2024</span></h3>
-<ul>
-  <li>Add an indicator to show which group/app tabs have been opened from by adding the parents color to the tab along with some extra info in the tooltip</li>
-  <li>Add a hint that using the home button in the toolbar returns the app to it's base url</li>
-  <li>Update to Chromium 127.0.6533.73</li>
-  <li>Speculative fix for a hard crash on startup</li>
-  <li>Fixes for space settings</li>
-  <li>Fix some edit fields in the UI being unfocusable</li>
-  <li>Fix a bug where removing the last app in a space, would sometimes remove the space despite tabs still using it</li>
-  <li>Fix right-click open in group/space crashing</li>
-  <li>Fix the split-state of tabs not restoring on restart</li>
-  <li>Fixes when downloading untrusted files</li>
-  <li>Fix some bugs when reordering tabs</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.7.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
