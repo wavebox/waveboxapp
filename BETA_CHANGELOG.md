@@ -1,3 +1,15 @@
+<h3>Version 10.131.8 beta <span class="date">11/11/2024</span></h3>
+<ul>
+  <li>
+    Update to Chromium 131.0.6778.33 which alongside security and stability
+    fixes includes new CSS tools and web APIs that sites can make use of
+  </li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.8.3)
+
+---
+
 <h3>Version 10.130.3 beta <span class="date">4/11/2024</span></h3>
 <ul>
   <li>Update to Chromium 130.0.6723.92</li>
@@ -113,22 +125,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.26.3)
-
----
-
-<h3>Version 10.129.19 beta <span class="date">11/9/2024</span></h3>
-<ul>
-  <li>Add an experimental flag that allows groups with more than one spaces to either be displayed in both spaces or just one</li>
-  <li>Add a helper for when using a group with multiple spaces</li>
-  <li>When saving tabs to a dashboard, custom tab names were saved from secondary windows but not the main Wavebox window. Fix this.</li>
-  <li>Add a duplicate option to window open rules through the right-click menu</li>
-  <li>Style fixes for the window open rule table</li>
-  <li>Fix an issue where some global window open rules were not migrated properly</li>
-  <li>Stability fixes for preference saving</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.19.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
