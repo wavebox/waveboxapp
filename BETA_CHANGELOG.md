@@ -1,3 +1,19 @@
+<h3>Version 10.131.11 beta <span class="date">14/11/2024</span></h3>
+<ul>
+  <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
+  <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
+  <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
+  <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
+  <li>Fixed an issue leading to duplicate tooltips appearing on some widgets</li>
+  <li>Fix an issue were themes could generate some wildly different colors for parts of the UI</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.11.3)
+
+---
+
 <h3>Version 10.131.8 beta <span class="date">11/11/2024</span></h3>
 <ul>
   <li>
@@ -104,27 +120,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.27.3)
-
----
-
-<h3>Version 10.129.26 beta <span class="date">19/9/2024</span></h3>
-<ul>
-  <li>Update to Chromium 129.0.6668.59</li>
-  <li>Speculative fix for privacy badger</li>
-  <li>Under certain configurations the font used in the webdock would display incorrectly</li>
-  <li>Usability fixes for the first install tooltips</li>
-  <li>Fixes for Slack sign-in</li>
-  <li>Usability fixes when creating a group from the webdock</li>
-  <li>Make it easier to create a custom app from toolbar</li>
-  <li>Stability fixes for the tab loading indicator</li>
-  <li>Fixes for the focus mode popup not resizing the window correctly</li>
-  <li>Fixes for the url pattern migration of link open rules</li>
-  <li>Update dependencies</li>
-  <li>UI tweaks</li>
-  <li>UI updates for the switcher</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.26.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
