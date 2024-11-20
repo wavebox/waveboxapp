@@ -1,20 +1,14 @@
 <h3>Version 10.131.12 <span class="date">20/11/2024</span></h3>
-<p>
 
-</p>
-<h4>🆕 New!</h4>
 <ul>
-
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-
+  <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
+  <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
+  <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
+  <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
+  <li>Fixed an issue leading to duplicate tooltips appearing on some widgets</li>
+  <li>Fix an issue were themes could generate some wildly different colors for parts of the UI</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.12.2)
