@@ -1,3 +1,26 @@
+<h3>Version 10.131.12 <span class="date">20/11/2024</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.12.2)
+
+---
+
 <h3>Version 10.130.3 <span class="date">4/11/2024</span></h3>
 <ul>
   <li>Update to Chromium 130.0.6723.92</li>
@@ -269,22 +292,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.127.16.2)
-
----
-
-<h3>Version 10.127.10 <span class="date">31/7/2024</span></h3>
-<ul>
-  <li>Update to Chromium 127.0.6533.89</li>
-  <li>When adding an app through the omnibox ensure it's added to the active group</li>
-  <li>Make it easier to configure enhanced safe browsing protection</li>
-  <li>Fix the history side panel failing to open</li>
-  <li>Always enable the history and reading list side panels by default</li>
-  <li>Some routes to making a new tab would incorrectly link the tab to the group instead of the active app</li>
-  <li>Auto-reported stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)

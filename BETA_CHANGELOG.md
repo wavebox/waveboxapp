@@ -11,7 +11,8 @@
 
 <h3>Version 10.131.11 beta <span class="date">14/11/2024</span></h3>
 <ul>
-  <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
+  <li>Upgrade to Chromium 131.0.6778.86 for enhanced security and performance optimizations.</li>
+  <li>Fix an issue where entering and exiting the webdock before it had time to open, would not cancel the open</li>
   <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
   <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
   <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
