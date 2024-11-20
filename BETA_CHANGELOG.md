@@ -1,3 +1,14 @@
+<h3>Version 10.131.12 beta <span class="date">20/11/2024</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.86</li>
+  <li>Fix an issue where entering and exiting the webdock before it had time to open, would not cancel the open</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.12.3)
+
+---
+
 <h3>Version 10.131.11 beta <span class="date">14/11/2024</span></h3>
 <ul>
   <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
@@ -107,19 +118,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.28.3)
-
----
-
-<h3>Version 10.129.27 beta <span class="date">25/9/2024</span></h3>
-<ul>
-  <li>Update to Chromium 129.0.6668.71</li>
-  <li>Fix some links failing to open</li>
-  <li>UI tweaks for restoring cloud sync</li>
-  <li>Under some configurations a cross space rule would fail to re-assign the space correctly. Fix this.</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.27.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
