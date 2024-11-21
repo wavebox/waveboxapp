@@ -1,3 +1,25 @@
+<h3>Version 10.131.15 <span class="date">21/11/2024</span></h3>
+<p>
+  This hot fix release, contains bug fixes for some hard crashes that
+  were reported in version 10.131.12. Here's everything that's new:
+</p>
+<ul>
+  <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
+  <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
+  <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
+  <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
+  <li>Fixed an issue leading to duplicate tooltips appearing on some widgets</li>
+  <li>Fix an issue were themes could generate some wildly different colors for parts of the UI</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+  <li>Fix a hard crash when using the right-click menu in secondary windows</li>
+  <li>Fix styling issues with the extensions page</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.15.2)
+
+---
+
 <h3>Version 10.131.12 <span class="date">20/11/2024</span></h3>
 
 <ul>
@@ -271,21 +293,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.128.3.2)
-
----
-
-<h3>Version 10.127.16 <span class="date">14/8/2024</span></h3>
-
-<ul>
-  <li>Update to Chromium 127.0.6533.120</li>
-  <li>When switching spaces in the webdock, remember the scroll position</li>
-  <li>Add an option to open external links in an incognito window</li>
-  <li>Speculative fix for Slack, where it would incorrectly show an unread indicator</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.127.16.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
