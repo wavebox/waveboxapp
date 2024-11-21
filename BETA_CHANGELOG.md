@@ -1,3 +1,14 @@
+<h3>Version 10.131.15 beta <span class="date">21/11/2024</span></h3>
+<ul>
+  <li>Fix a hard crash when using the right-click menu in secondary windows</li>
+  <li>Fix styling issues with the extensions page</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.15.3)
+
+---
+
 <h3>Version 10.131.12 beta <span class="date">20/11/2024</span></h3>
 <ul>
   <li>Update to Chromium 131.0.6778.86</li>
@@ -108,17 +119,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.29.3)
-
----
-
-<h3>Version 10.129.28 beta <span class="date">26/9/2024</span></h3>
-<ul>
-  <li>A small number of extensions could cause Wavebox to crash, fix this</li>
-  <li>Add a dense display mode to the tasks widget</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.28.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
