@@ -1,3 +1,18 @@
+<h3>Version 10.131.16 <span class="date">4/12/2024</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.109</li>
+  <li>Fix the cookies setting not working</li>
+  <li>Performance fixes when searching for apps in Wavebox</li>
+  <li>Add some pre-rendering to the webdock when there's a large amount of apps for speedier scrolling</li>
+  <li>Fixes for Wavebox connect when using file sharing behind a proxy</li>
+  <li>UI tweaks</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.16.2)
+
+---
+
 <h3>Version 10.131.15 <span class="date">21/11/2024</span></h3>
 <p>
   This hot fix release, contains bug fixes for some hard crashes that
@@ -276,23 +291,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.128.4.2)
-
----
-
-<h3>Version 10.128.3 <span class="date">22/8/2024</span></h3>
-<ul>
-  <li>Update to Chromium 128.0.6613.85</li>
-  <li>Add close all tabs to the group context menu</li>
-  <li>Add restore last closed window/tab to the right-click tabstrip menu</li>
-  <li>Add a button to create a saved item in the app tooltip, rather than always needing to create one from a history item</li>
-  <li>Fix an issue where the closing the color picker popup in the add group/space popup would also close the add popup</li>
-  <li>Opening links from outside of Wavebox would sometimes fail to focus the window, fix this</li>
-  <li>Fix a large toolbar that appeared on macOS when using Wavebox in fullscreen</li>
-  <li>Fixes for settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.128.3.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
