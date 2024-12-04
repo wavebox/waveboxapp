@@ -1,3 +1,18 @@
+<h3>Version 10.131.16 beta <span class="date">4/12/2024</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.109</li>
+  <li>Fix the cookies setting not working</li>
+  <li>Performance fixes when searching for apps in Wavebox</li>
+  <li>Add some pre-rendering to the webdock when there's a large amount of apps for speedier scrolling</li>
+  <li>Fixes for Wavebox connect when using file sharing behind a proxy</li>
+  <li>UI tweaks</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.16.3)
+
+---
+
 <h3>Version 10.131.15 beta <span class="date">21/11/2024</span></h3>
 <ul>
   <li>Fix a hard crash when using the right-click menu in secondary windows</li>
@@ -107,18 +122,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.30.3)
-
----
-
-<h3>Version 10.129.29 beta <span class="date">27/9/2024</span></h3>
-<ul>
-  <li>Add the 'Create your own' link to the app search when creating a group</li>
-  <li>Some of the action buttons in the tooltip headings vanished. Bring them back</li>
-  <li>Update dependencies</li>
-  <li>Fix some urls not launching from the omnibox</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.29.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
