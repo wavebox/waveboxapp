@@ -1,3 +1,17 @@
+<h3>Version 10.131.17 beta <span class="date">12/12/2024</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.140 - this includes some important security updates for 3rd party libraries</li>
+  <li>Update some UI so it's clear if you're closing a popover or removing an icon</li>
+  <li>Fix an issue where settings would sometimes fail to launch correctly</li>
+  <li>Under some configurations, Wavebox could incorrectly open/hide the side panel, fix for this</li>
+  <li>Performance fix for some graphics layers, especially on slower devices</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.17.3)
+
+---
+
 <h3>Version 10.131.16 beta <span class="date">4/12/2024</span></h3>
 <ul>
   <li>Update to Chromium 131.0.6778.109</li>
@@ -109,19 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.129.32.3)
-
----
-
-<h3>Version 10.129.30 beta <span class="date">2/10/2024</span></h3>
-<ul>
-  <li>Update to Chromium 129.0.6668.90</li>
-  <li>Fixes for the Omnibox sometimes failing to open urls</li>
-  <li>Fix an issue with the link engine where Omnibox matches would fail to change spaces in some configurations</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
