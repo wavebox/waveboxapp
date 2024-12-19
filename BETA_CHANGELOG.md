@@ -1,3 +1,14 @@
+<h3>Version 10.131.18 beta <span class="date">19/12/2024</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.205 which includes some important security updates</li>
+  <li>Fixes for the ClickUp integration</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.18.3)
+
+---
+
 <h3>Version 10.131.17 beta <span class="date">12/12/2024</span></h3>
 <ul>
   <li>Update to Chromium 131.0.6778.140 - this includes some important security updates for 3rd party libraries</li>
@@ -108,21 +119,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.130.1.3)
-
----
-
-<h3>Version 10.129.32 beta <span class="date">9/10/2024</span></h3>
-<ul>
-  <li>Update to Chromium 129.0.6668.101</li>
-  <li>Fix an issue where duplicate tooltip titles were shown on the collection widget</li>
-  <li>Update Brainbox so it doesn't scroll away from you as you're scrolling</li>
-  <li>Update dependencies</li>
-  <li>Fix a couple of typos</li>
-  <li>Fix some tooltips failing to stay open when hovering over them</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.129.32.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
