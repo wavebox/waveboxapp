@@ -1,3 +1,15 @@
+<h3>Version 10.131.18 <span class="date">20/12/2024</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.205 which includes some important security updates</li>
+  <li>Fixes for the ClickUp integration</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.131.18.2)
+
+---
+
 <h3>Version 10.131.17 <span class="date">12/12/2024</span></h3>
 
 <ul>
@@ -284,17 +296,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.128.7.2)
-
----
-
-<h3>Version 10.128.5 <span class="date">1/9/2024</span></h3>
-<ul>
-  <li>Update to Chromium 128.0.6613.114</li>
-  <li>Fix an issue where closing a window with a split tab would cause a crash</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.128.5.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
