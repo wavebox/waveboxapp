@@ -1,3 +1,13 @@
+<h3>Version 10.131.19 beta <span class="date">9/1/2025</span></h3>
+<ul>
+  <li>Update to Chromium 131.0.6778.265</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.131.19.3)
+
+---
+
 <h3>Version 10.131.18 beta <span class="date">19/12/2024</span></h3>
 <ul>
   <li>Update to Chromium 131.0.6778.205 which includes some important security updates</li>
@@ -105,20 +115,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.130.2.3)
-
----
-
-<h3>Version 10.130.1 beta <span class="date">16/10/2024</span></h3>
-<ul>
-  <li>Update to Chromium 130.0.6723.59</li>
-  <li>Fixes for dashboards</li>
-  <li>Fix an issue where some Omnibox link rules would fail to trigger an action</li>
-  <li>Fix notifications sometimes failing to re-open in the correct app</li>
-  <li>Add support for middle mouse click on dashboard shortcuts opening them as background tabs</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.130.1.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
