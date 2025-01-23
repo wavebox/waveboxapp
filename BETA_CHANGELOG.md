@@ -1,3 +1,15 @@
+<h3>Version 10.132.2 beta <span class="date">23/1/2025</span></h3>
+<ul>
+  <li>Update to Chromium 132.0.6834.111</li>
+  <li>When moving tabs & using the Spaces webdock, auto update the tabs space on move</li>
+  <li>Update dependencies</li>
+  <li>Usability fixes for the profile popup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.132.2.3)
+
+---
+
 <h3>Version 10.132.1 beta <span class="date">16/1/2025</span></h3>
 <ul>
   <li>Update to Chromium 132.0.6834.83</li>
@@ -126,15 +138,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.8.3)
-
----
-
-<h3>Version 10.130.3 beta <span class="date">4/11/2024</span></h3>
-<ul>
-  <li>Update to Chromium 130.0.6723.92</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.130.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
