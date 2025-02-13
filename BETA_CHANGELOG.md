@@ -1,3 +1,16 @@
+<h3>Version 10.133.4 beta <span class="date">13/2/2025</span></h3>
+<ul>
+  <li>Update to Chromium 133.0.6943.99 which includes some important security fixes</li>
+  <li>Fix an issue where the "Anywhere" link open rule would fail to match under some configurations and use cases</li>
+  <li>UI updates when adding apps to make it easier to create custom apps from urls/wildcard searches</li>
+  <li>Set the window title in Wavebox Mini to include the current profile when there's more than 1</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.133.4.3)
+
+---
+
 <h3>Version 10.133.3 beta <span class="date">5/2/2025</span></h3>
 <ul>
   <li>Update to Chromium 133.0.6943.54.</li>
@@ -139,23 +152,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.12.3)
-
----
-
-<h3>Version 10.131.11 beta <span class="date">14/11/2024</span></h3>
-<ul>
-  <li>Upgrade to Chromium 131.0.6778.86 for enhanced security and performance optimizations.</li>
-  <li>Fix an issue where entering and exiting the webdock before it had time to open, would not cancel the open</li>
-  <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
-  <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
-  <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
-  <li>Fixed an issue leading to duplicate tooltips appearing on some widgets</li>
-  <li>Fix an issue were themes could generate some wildly different colors for parts of the UI</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
