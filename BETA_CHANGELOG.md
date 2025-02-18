@@ -1,3 +1,21 @@
+<h3>Version 10.134.2 beta <span class="date">18/2/2025</span></h3>
+<ul>
+  <li>Update to Chromium 134.0.6998.15</li>
+  <li>Add a slider to customize the space/group background tint behind the webdock</li>
+  <li>Performance fixes when switching between split/non-split tabs</li>
+  <li>Huge startup performance improvement, especially for setups that have lots of tabs (e.g. more than 500)</li>
+  <li>Fix for extensions not always being locked to a single space when set through settings</li>
+  <li>Fix Google sign-in for some extensions that use the Identity APIs (originally reported with Autoclicker)</li>
+  <li>Fix the webdock auto-hiding when context menus are open</li>
+  <li>Improve the quality of the macOS menu bar icon, especially on retina displays</li>
+  <li>Remove some redundant items from the customize side panel</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.134.2.3)
+
+---
+
 <h3>Version 10.133.4 beta <span class="date">13/2/2025</span></h3>
 <ul>
   <li>Update to Chromium 133.0.6943.99 which includes some important security fixes</li>
@@ -141,17 +159,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.15.3)
-
----
-
-<h3>Version 10.131.12 beta <span class="date">20/11/2024</span></h3>
-<ul>
-  <li>Update to Chromium 131.0.6778.86</li>
-  <li>Fix an issue where entering and exiting the webdock before it had time to open, would not cancel the open</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
