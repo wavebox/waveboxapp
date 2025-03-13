@@ -1,3 +1,12 @@
+<h3>Version 10.134.15 beta <span class="date">13/3/2025</span></h3>
+<ul>
+  <li>Fix a hard crash that some users reported when downloading files from popup windows</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.134.15.3)
+
+---
+
 <h3>Version 10.134.14 beta <span class="date">13/3/2025</span></h3>
 <ul>
   <li>Speculative fixes for hard crashes</li>
@@ -161,17 +170,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.19.3)
-
----
-
-<h3>Version 10.131.18 beta <span class="date">19/12/2024</span></h3>
-<ul>
-  <li>Update to Chromium 131.0.6778.205 which includes some important security updates</li>
-  <li>Fixes for the ClickUp integration</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.18.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
