@@ -1,3 +1,14 @@
+<h3>Version 10.134.14 beta <span class="date">13/3/2025</span></h3>
+<ul>
+  <li>Speculative fixes for hard crashes</li>
+  <li>Fix Brainbox skills opening and reopening the side panel in some states</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.134.14.3)
+
+---
+
 <h3>Version 10.134.11 beta <span class="date">11/3/2025</span></h3>
 <ul>
   <li>Update to Chromium 134.0.6998.89</li>
@@ -161,20 +172,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.18.3)
-
----
-
-<h3>Version 10.131.17 beta <span class="date">12/12/2024</span></h3>
-<ul>
-  <li>Update to Chromium 131.0.6778.140 - this includes some important security updates for 3rd party libraries</li>
-  <li>Update some UI so it's clear if you're closing a popover or removing an icon</li>
-  <li>Fix an issue where settings would sometimes fail to launch correctly</li>
-  <li>Under some configurations, Wavebox could incorrectly open/hide the side panel, fix for this</li>
-  <li>Performance fix for some graphics layers, especially on slower devices</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
