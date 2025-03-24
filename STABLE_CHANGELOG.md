@@ -1,3 +1,16 @@
+<h3>Version 10.134.18 <span class="date">24/3/2025</span></h3>
+<ul>
+  <li>Update to Chromium 134.0.6998.166 with important security fixes</li>
+  <li>Fix for settings sometimes failing to write</li>
+  <li>UI fixes and tweaks</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.134.18.2)
+
+---
+
 <h3>Version 10.134.15 <span class="date">14/3/2025</span></h3>
 <p>
   This release contains some fixes for crashes that were reported in the previous version.
@@ -225,23 +238,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.15.2)
-
----
-
-<h3>Version 10.131.12 <span class="date">20/11/2024</span></h3>
-
-<ul>
-  <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
-  <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
-  <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
-  <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
-  <li>Fixed an issue leading to duplicate tooltips appearing on some widgets</li>
-  <li>Fix an issue were themes could generate some wildly different colors for parts of the UI</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
