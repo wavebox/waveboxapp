@@ -1,3 +1,18 @@
+<h3>Version 10.135.4 beta <span class="date">2/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.52</li>
+  <li>Update some of the boosted apps for better reliability</li>
+  <li>Fix an issue where moving a tab to a different group could also move it to a different space</li>
+  <li>Update dependencies</li>
+  <li>Fixes for dragging items on dashboards</li>
+  <li>Performance fixes</li>
+  <li>Fixes for first-time installs</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.4.3)
+
+---
+
 <h3>Version 10.134.18 beta <span class="date">24/3/2025</span></h3>
 <ul>
   <li>Update to Chromium 134.0.6998.166</li>
@@ -138,18 +153,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.133.3.3)
-
----
-
-<h3>Version 10.132.2 beta <span class="date">23/1/2025</span></h3>
-<ul>
-  <li>Update to Chromium 132.0.6834.111</li>
-  <li>When moving tabs & using the Spaces webdock, auto update the tabs space on move</li>
-  <li>Update dependencies</li>
-  <li>Usability fixes for the profile popup</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.132.2.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
