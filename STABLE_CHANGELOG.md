@@ -1,3 +1,33 @@
+<h3>Version 10.135.5 <span class="date">3/4/2025</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Update to Chromium 135.0.7049.52</li>
+  <li>Update some of the boosted apps for better reliability</li>
+  <li>Fix an issue where moving a tab to a different group could also move it to a different space</li>
+  <li>Update dependencies</li>
+  <li>Fixes for dragging items on dashboards</li>
+  <li>Performance fixes</li>
+  <li>Fixes for first-time installs</li>
+  <li>Fix an issue with emoji parsing</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.5.2)
+
+---
+
 <h3>Version 10.134.18 <span class="date">24/3/2025</span></h3>
 <ul>
   <li>Update to Chromium 134.0.6998.166 with important security fixes</li>
@@ -216,28 +246,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.131.16.2)
-
----
-
-<h3>Version 10.131.15 <span class="date">21/11/2024</span></h3>
-<p>
-  This hot fix release, contains bug fixes for some hard crashes that
-  were reported in version 10.131.12. Here's everything that's new:
-</p>
-<ul>
-  <li>Upgrade to Chromium 131.0.6778.70 for enhanced security and performance optimizations.</li>
-  <li>Improved resource management to prevent potential memory leaks when the app has been running for long periods</li>
-  <li>Fixed an issue causing dashboards to not load completely under certain configurations</li>
-  <li>Resolved a bug where notifications would intermittently fail to open in the corresponding app</li>
-  <li>Fixed an issue leading to duplicate tooltips appearing on some widgets</li>
-  <li>Fix an issue were themes could generate some wildly different colors for parts of the UI</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-  <li>Fix a hard crash when using the right-click menu in secondary windows</li>
-  <li>Fix styling issues with the extensions page</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.15.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
