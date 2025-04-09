@@ -1,3 +1,17 @@
+<h3>Version 10.135.10 <span class="date">9/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.85</li>
+  <li>Fix update preferences not saving on Linux</li>
+  <li>Fix some Linux configurations failing to persist cookies and session data</li>
+  <li>Fix an issue where setting the download directory would fail</li>
+  <li>Fix the copy current url keyboard shortcut not working</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.10.2)
+
+---
+
 <h3>Version 10.135.5 <span class="date">3/4/2025</span></h3>
 <p>
 
@@ -231,21 +245,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.131.17.2)
-
----
-
-<h3>Version 10.131.16 <span class="date">4/12/2024</span></h3>
-<ul>
-  <li>Update to Chromium 131.0.6778.109</li>
-  <li>Fix the cookies setting not working</li>
-  <li>Performance fixes when searching for apps in Wavebox</li>
-  <li>Add some pre-rendering to the webdock when there's a large amount of apps for speedier scrolling</li>
-  <li>Fixes for Wavebox connect when using file sharing behind a proxy</li>
-  <li>UI tweaks</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.131.16.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
