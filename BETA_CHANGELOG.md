@@ -1,3 +1,12 @@
+<h3>Version 10.135.10 beta <span class="date">9/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.85</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.10.3)
+
+---
+
 <h3>Version 10.135.5 beta <span class="date">3/4/2025</span></h3>
 <ul>
   <li>Fix an issue with emoji parsing</li>
@@ -119,19 +128,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.134.2.3)
-
----
-
-<h3>Version 10.133.4 beta <span class="date">13/2/2025</span></h3>
-<ul>
-  <li>Update to Chromium 133.0.6943.99 which includes some important security fixes</li>
-  <li>Fix an issue where the "Anywhere" link open rule would fail to match under some configurations and use cases</li>
-  <li>UI updates when adding apps to make it easier to create custom apps from urls/wildcard searches</li>
-  <li>Set the window title in Wavebox Mini to include the current profile when there's more than 1</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.133.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
