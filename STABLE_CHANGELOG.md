@@ -1,3 +1,19 @@
+<h3>Version 10.135.15 <span class="date">10/4/2025</span></h3>
+<ul>
+  <li>Update dependencies</li>
+  <li>Fix some Linux configurations failing to persist cookies and session data</li>
+  <li>Fix some configurations failing to keep passwords across restarts</li>
+  <li>Fix some character encoding issues in parts of the Wavebox UI</li>
+  <li>Fix LongPoll sockets not working under some configurations</li>
+  <li>Fix code failing to reload on update for some manifest 3 extensions</li>
+  <li>Fix Gmail failing to show signed out helper</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.135.15.2)
+
+---
+
 <h3>Version 10.135.10 <span class="date">9/4/2025</span></h3>
 <ul>
   <li>Update to Chromium 135.0.7049.85</li>
@@ -229,22 +245,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.131.18.2)
-
----
-
-<h3>Version 10.131.17 <span class="date">12/12/2024</span></h3>
-
-<ul>
-  <li>Update to Chromium 131.0.6778.140 - this includes some important security updates for 3rd party libraries</li>
-  <li>Update some UI so it's clear if you're closing a popover or removing an icon</li>
-  <li>Fix an issue where settings would sometimes fail to launch correctly</li>
-  <li>Under some configurations, Wavebox could incorrectly open/hide the side panel, fix for this</li>
-  <li>Performance fix for some graphics layers, especially on slower devices</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.131.17.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
