@@ -1,3 +1,19 @@
+<h3>Version 10.135.17 <span class="date">22/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.96</li>
+  <li>Fix the Wavebox connect ringer failing to stop</li>
+  <li>Fix an issue where some settings were not reflecting their changes in the ui immediately</li>
+  <li>Update menubar styling for macOS</li>
+  <li>Performance fixes with desktop web apps & sync</li>
+  <li>Add our new Wavebox Assistant to the settings popover menu</li>
+  <li>Fix desktop web app icon loading with MV3</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.17.2)
+
+---
+
 <h3>Version 10.135.15 <span class="date">10/4/2025</span></h3>
 <ul>
   <li>Update dependencies</li>
@@ -233,18 +249,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.132.2.2)
-
----
-
-<h3>Version 10.131.18 <span class="date">20/12/2024</span></h3>
-<ul>
-  <li>Update to Chromium 131.0.6778.205 which includes some important security updates</li>
-  <li>Fixes for the ClickUp integration</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.131.18.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
