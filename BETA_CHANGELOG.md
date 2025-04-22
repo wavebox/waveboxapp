@@ -1,3 +1,19 @@
+<h3>Version 10.135.17 beta <span class="date">22/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.96</li>
+  <li>Fix the Wavebox connect ringer failing to stop</li>
+  <li>Fix an issue where some settings were not reflecting their changes in the ui immediately</li>
+  <li>Update menubar styling for macOS</li>
+  <li>Performance fixes with desktop web apps & sync</li>
+  <li>Add our new Wavebox Assistant to the settings popover menu</li>
+  <li>Fix desktop web app icon loading with MV3</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.17.3)
+
+---
+
 <h3>Version 10.135.15 beta <span class="date">10/4/2025</span></h3>
 <ul>
   <li>Update dependencies</li>
@@ -105,26 +121,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.134.11.3)
-
----
-
-<h3>Version 10.134.6 beta <span class="date">5/3/2025</span></h3>
-<ul>
-  <li>Updated to Chromium 134.0.6998.45 for better speed, security, and latest web features.</li>
-  <li>Build performance optimizations to keep things snappy.</li>
-  <li>You can now pin downloads to the toolbar for quick access!</li>
-  <li>Improvements to creating custom Wavebox apps.</li>
-  <li>Styling fixes for side panels to keep the look and feel consistent with the theme.</li>
-  <li>Various dark mode fixes, including improvements to the app switcher.</li>
-  <li>Resolved an issue where the tab loading spinner would mysteriously vanish too soon.</li>
-  <li>Improvements to the first-run experience to make onboarding smoother for new users.</li>
-  <li>Developers can now fully customize HTML select elements for a more tailored UI experience.</li>
-  <li>New dialog styling options for sites to make pop-ups look even better.</li>
-  <li>Added support for weblocks, allowing sites to seamlessly update shared storage across tabs.</li>
-  <li>Updated dependencies to keep everything running smoothly.</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.134.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
