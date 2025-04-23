@@ -1,3 +1,15 @@
+<h3>Version 10.135.21 beta <span class="date">23/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.115</li>
+  <li>Fix a hard crash some users reported when launching Wavebox or signing into Google</li>
+  <li>Fix a hard crash when installing extensions during sync or profile restore</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.21.3)
+
+---
+
 <h3>Version 10.135.17 beta <span class="date">22/4/2025</span></h3>
 <ul>
   <li>Update to Chromium 135.0.7049.96</li>
@@ -99,28 +111,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.134.14.3)
-
----
-
-<h3>Version 10.134.11 beta <span class="date">11/3/2025</span></h3>
-<ul>
-  <li>Update to Chromium 134.0.6998.89</li>
-  <li>
-    Move some of the Wavebox tools like Brainbox, Smartnotes & Connect out of
-    the extension area and into the main toolbar (just to the side of the extension area).
-    This gives more customization options and makes them easier to access.
-  </li>
-  <li>Saved items can now be opened in a new tab using Ctrl/Cmd+Click</li>
-  <li>Performance improvements that will shave a little bit of memory usage</li>
-  <li>Fix naming issue where importing from Chrome was actually called importing from Wavebox</li>
-  <li>Under the hood improvements in prep for some upcoming features</li>
-  <li>Usability fixes for the pin input when locking Wavebox</li>
-  <li>Fix for the tray icon flickering and sometimes behaving erratically on Linux</li>
-  <li>Remove and cleanup some now unused dependencies</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.134.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
