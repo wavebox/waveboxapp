@@ -1,3 +1,15 @@
+<h3>Version 10.135.21 <span class="date">24/4/2025</span></h3>
+<ul>
+  <li>Update to Chromium 135.0.7049.115</li>
+  <li>Fix a hard crash some users reported when launching Wavebox or signing into Google</li>
+  <li>Fix a hard crash when installing extensions during sync or profile restore</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.135.21.2)
+
+---
+
 <h3>Version 10.135.17 <span class="date">22/4/2025</span></h3>
 <ul>
   <li>Update to Chromium 135.0.7049.96</li>
@@ -217,38 +229,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.133.3.2)
-
----
-
-<h3>Version 10.132.2 <span class="date">23/1/2025</span></h3>
-<ul>
-  <li>Update to Chromium 132.0.6834.111</li>
-  <li>Fix a UI issue where the add app wizard would show the next button offscreen</li>
-  <li>
-    We're continuing to expand our support for new WebGPU APIs in line with other
-    browsers, to make WebGPU in the browser more capable. This opens new possibilities
-    for sites to utilize WebGPU for more advanced graphics and other exciting things
-    like on-device AI. New features include support for Texture view usage, 32-bit float
-    texture blending, experimental support for 16-bit normalized texture formats and more.
-  </li>
-  <li>When moving tabs & using the Spaces webdock, auto update the tabs space on move</li>
-  <li>
-    We've been improving the dialog element that sites can use for easy on-screen
-    dialogs and popups. Although the dialog element is widely supported across browsers,
-    it's been missing a few important event handlers that make it more useful for sites.
-    Alongside the web-specification, we've added support for these additional events so
-    sites can make more use of this feature.
-  </li>
-  <li>Usability fixes for the profile popup</li>
-  <li>
-    Further support for network request handlers to deal with raw data as opposed
-    to needing to pre-serialize data and run expensive deserialization tasks. This
-    should lead to improved performance for sites that choose to use it.
-  </li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.132.2.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
