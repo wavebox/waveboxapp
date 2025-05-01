@@ -1,3 +1,17 @@
+<h3>Version 10.136.5 beta <span class="date">1/5/2025</span></h3>
+<ul>
+  <li>Update to Chromium 136.0.7103.59</li>
+  <li>Add tooltips as an option for focus mode</li>
+  <li>Fix a fullscreen issue on macOS where it incorrectly show parts of the UI when watching videos</li>
+  <li>Fix duplicate tab in new window</li>
+  <li>Update dependencies</li>
+  <li>Fix Wavebox flow failing to start in Wavebox</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.5.3)
+
+---
+
 <h3>Version 10.135.21 beta <span class="date">23/4/2025</span></h3>
 <ul>
   <li>Update to Chromium 135.0.7049.115</li>
@@ -100,17 +114,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.134.15.3)
-
----
-
-<h3>Version 10.134.14 beta <span class="date">13/3/2025</span></h3>
-<ul>
-  <li>Speculative fixes for hard crashes</li>
-  <li>Fix Brainbox skills opening and reopening the side panel in some states</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.134.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
