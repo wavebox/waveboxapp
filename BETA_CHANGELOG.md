@@ -1,3 +1,17 @@
+<h3>Version 10.136.7 beta <span class="date">7/5/2025</span></h3>
+<ul>
+  <li>Update to Chromium 136.0.7103.93</li>
+  <li>Fix a race condition when making calls to other processes resulting in sporadic errors</li>
+  <li>Stability fixes for socket connections</li>
+  <li>Fix a crash reported by some users</li>
+  <li>Performance fix for some sites that could see high CPU usage</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.7.3)
+
+---
+
 <h3>Version 10.136.6 beta <span class="date">1/5/2025</span></h3>
 <ul>
   <li>Update to Chromium 136.0.7103.59</li>
@@ -109,17 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.134.18.3)
-
----
-
-<h3>Version 10.134.16 beta <span class="date">20/3/2025</span></h3>
-<ul>
-  <li>Update to Chromium 134.0.6998.118</li>
-  <li>UI fixes and tweaks</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.134.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
