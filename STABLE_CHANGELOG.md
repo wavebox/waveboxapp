@@ -1,3 +1,23 @@
+<h3>Version 10.136.8 <span class="date">8/5/2025</span></h3>
+
+<ul>
+  <li>Update to Chromium 136.0.7103.93</li>
+  <li>Add tooltips as an option for focus mode</li>
+  <li>Fix a fullscreen issue on macOS where it incorrectly show parts of the UI when watching videos</li>
+  <li>Fix duplicate tab in new window</li>
+  <li>Fix Wavebox flow failing to start in Wavebox</li>
+  <li>Fix a race condition when making calls to other processes resulting in sporadic errors</li>
+  <li>Stability fixes for socket connections</li>
+  <li>Fix a crash reported by some users</li>
+  <li>Performance fix for some sites that could see high CPU usage</li>
+  <li>Update dependencies</li>
+  <li>Fix a permission check that was too strict and prevented some file upload dialog boxes from opening</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.8.2)
+
+---
+
 <h3>Version 10.135.21 <span class="date">24/4/2025</span></h3>
 <ul>
   <li>Update to Chromium 135.0.7049.115</li>
@@ -199,36 +219,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.133.4.2)
-
----
-
-<h3>Version 10.133.3 <span class="date">6/2/2025</span></h3>
-<ul>
-  <li>Update to Chromium 133.0.6943.54.</li>
-  <li>Speculative fix for notifications that do nothing when clicked.</li>
-  <li>Add "Open in split tab" to the right-click menu.</li>
-  <li>Add a "Skills" option to the Brainbox chat side panel that shows some skills that were previously only accessible from the right-click menu.</li>
-  <li>Add an experimental customize side panel under the main burger menu &gt; more tools &gt; customize that allows you to change Wavebox theming and what's shown in the toolbar.</li>
-  <li>Add the ability to pin frequently used Wavebox tools to the toolbar, like the password manager, bookmarks, etc.</li>
-  <li>Update the styling of webdock groups that have no icon set and that contain only tabs, so they now show the tabs within them.</li>
-  <li>Unify the favicon resolver so favicons always resolve to be the same throughout the app.</li>
-  <li>When opening tabs from the main app burger menu, these tabs would always use the default space. They are now spatially aware and inherit from the currently active space.</li>
-  <li>Make our builds more resilient so we can save some CPU-build time on failed builds.</li>
-  <li>Fix an issue in Brainbox where using the "Open links" button would sometimes open duplicate tabs depending on the original text.</li>
-  <li>Update the styling when searching for apps so it's easier to create your own.</li>
-  <li>Change the default setting for new installs so that new users don't have the mixed space webdock view.</li>
-  <li>Update dependencies.</li>
-  <li>We've been continuing to broaden our support for the latest CSS standards with new support for the attr() function, open pseudo classes, scroll state container queries and more!</li>
-  <li>This Wavebox brings new Web APIs for developers to use, which means no matter how advanced the site you visit, Wavebox has all the tools to support it. These APIs include new progress callbacks for animations, DOM state preserving moves and more enhancements for native popovers.</li>
-  <li>Efficiency improvements when Wavebox has energy saver active. This suspends unused tab groups so they use less resources and preserve battery life so you can keep going.</li>
-  <li>Rendering large blocks of code in Brainbox was becoming very CPU intensive. Add a fix to defer formatted rendering until the AI has finished generating</li>
-  <li>Add options to customize what's show in the group grid views</li>
-  <li>Updates for new users</li>
-  <li>Slack was playing duplicate sounds for notifications, fix this</li>
-  <li>Slack was not sending desktop notifications for channels that had their notification preference set to "Everything". Re-add support for this.</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.133.3.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
