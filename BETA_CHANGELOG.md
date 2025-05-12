@@ -1,3 +1,14 @@
+<h3>Version 10.136.11 beta <span class="date">12/5/2025</span></h3>
+<ul>
+  <li>Fix regression with linux password saving</li>
+  <li>Fix for right-clicking dashboard shortcuts auto-launching the shortcuts on Windows</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.11.3)
+
+---
+
 <h3>Version 10.136.8 beta <span class="date">8/5/2025</span></h3>
 <ul>
   <li>Fix a permission check that was too strict and prevented some file upload dialog boxes from opening</li>
@@ -108,21 +119,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.5.3)
-
----
-
-<h3>Version 10.135.4 beta <span class="date">2/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.52</li>
-  <li>Update some of the boosted apps for better reliability</li>
-  <li>Fix an issue where moving a tab to a different group could also move it to a different space</li>
-  <li>Update dependencies</li>
-  <li>Fixes for dragging items on dashboards</li>
-  <li>Performance fixes</li>
-  <li>Fixes for first-time installs</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
