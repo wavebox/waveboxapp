@@ -1,3 +1,14 @@
+<h3>Version 10.136.12 beta <span class="date">14/5/2025</span></h3>
+<ul>
+  <li>Update dependencies</li>
+  <li>Fix a hard crash when switching between versions</li>
+  <li>Speculative fix for a crash on startup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.12.3)
+
+---
+
 <h3>Version 10.136.11 beta <span class="date">12/5/2025</span></h3>
 <ul>
   <li>Fix regression with linux password saving</li>
@@ -110,15 +121,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.10.3)
-
----
-
-<h3>Version 10.135.5 beta <span class="date">3/4/2025</span></h3>
-<ul>
-  <li>Fix an issue with emoji parsing</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
