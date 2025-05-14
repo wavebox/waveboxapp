@@ -1,3 +1,16 @@
+<h3>Version 10.136.12 <span class="date">14/5/2025</span></h3>
+<ul>
+  <li>Fix regression with linux password saving</li>
+  <li>Fix for right-clicking dashboard shortcuts auto-launching the shortcuts on Windows</li>
+  <li>Update dependencies</li>
+  <li>Fix a hard crash when switching between versions</li>
+  <li>Speculative fix for a crash on startup</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.12.2)
+
+---
+
 <h3>Version 10.136.8 <span class="date">8/5/2025</span></h3>
 
 <ul>
@@ -206,19 +219,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.134.11.2)
-
----
-
-<h3>Version 10.133.4 <span class="date">13/2/2025</span></h3>
-<ul>
-  <li>Update to Chromium 133.0.6943.99 which includes some important security fixes</li>
-  <li>Fix an issue where the "Anywhere" link open rule would fail to match under some configurations and use cases</li>
-  <li>UI updates when adding apps to make it easier to create custom apps from urls/wildcard searches</li>
-  <li>Set the window title in Wavebox Mini to include the current profile when there's more than 1</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.133.4.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
