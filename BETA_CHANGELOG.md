@@ -1,3 +1,12 @@
+<h3>Version 10.136.15 beta <span class="date">15/5/2025</span></h3>
+<ul>
+  <li>Update to Chromium 136.0.7103.114, which includes some important security fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.136.15.3)
+
+---
+
 <h3>Version 10.136.12 beta <span class="date">14/5/2025</span></h3>
 <ul>
   <li>Update dependencies</li>
@@ -112,15 +121,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.15.3)
-
----
-
-<h3>Version 10.135.10 beta <span class="date">9/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.85</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
