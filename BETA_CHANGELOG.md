@@ -1,3 +1,15 @@
+<h3>Version 10.137.3 beta <span class="date">22/5/2025</span></h3>
+<ul>
+  <li>Chromium 137.0.7151.42</li>
+  <li>Fix a usability issue when opening links from outside Wavebox and using spaces webdock</li>
+  <li>Multiple bug fixes from auto-reported errors</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.3.3)
+
+---
+
 <h3>Version 10.136.15 beta <span class="date">15/5/2025</span></h3>
 <ul>
   <li>Update to Chromium 136.0.7103.114, which includes some important security fixes</li>
@@ -106,21 +118,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.17.3)
-
----
-
-<h3>Version 10.135.15 beta <span class="date">10/4/2025</span></h3>
-<ul>
-  <li>Update dependencies</li>
-  <li>Fix some Linux configurations failing to persist cookies and session data</li>
-  <li>Fix some configurations failing to keep passwords across restarts</li>
-  <li>Fix some character encoding issues in parts of the Wavebox UI</li>
-  <li>Fix LongPoll sockets not working under some configurations</li>
-  <li>Fix code failing to reload on update for some manifest 3 extensions</li>
-  <li>Fix Gmail failing to show signed out helper</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
