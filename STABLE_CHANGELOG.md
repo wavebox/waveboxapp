@@ -1,3 +1,23 @@
+<h3>Version 10.137.9 <span class="date">4/6/2025</span></h3>
+<ul>
+  <li>Update to Chromium 137.0.7151.69</li>
+  <li>Add an option to delay the opening of next tooltips</li>
+  <li>Fixed an issue where adding a new pinned item would fail to link it back to the app</li>
+  <li>Fix an issue with diagnostics failing to generate everything</li>
+  <li>Fix not being able to share dashboards from the share menu</li>
+  <li>Performance and stability fixes for Wavebox connect</li>
+  <li>Fix a hard crash that could happen when opening an app</li>
+  <li>Fix an issue where new users could have the incorrect configuration on first launch</li>
+  <li>Sleep exclusions used to match the url exactly, not accounting for "www." at the beginning. They now match this more gracefully.</li>
+  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
+  <li>Upgrade our UI to React 19, which includes several performance improvements and new features</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.9.2)
+
+---
+
 <h3>Version 10.136.20 <span class="date">2/6/2025</span></h3>
 <ul>
   <li>Chromium 136.0.7103.149</li>
@@ -143,19 +163,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.5.2)
-
----
-
-<h3>Version 10.134.18 <span class="date">24/3/2025</span></h3>
-<ul>
-  <li>Update to Chromium 134.0.6998.166 with important security fixes</li>
-  <li>Fix for settings sometimes failing to write</li>
-  <li>UI fixes and tweaks</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.134.18.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
