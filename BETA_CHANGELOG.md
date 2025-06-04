@@ -1,3 +1,23 @@
+<h3>Version 10.137.9 beta <span class="date">4/6/2025</span></h3>
+<ul>
+  <li>Update to Chromium 137.0.7151.69</li>
+  <li>Add an option to delay the opening of next tooltips</li>
+  <li>Fixed an issue where adding a new pinned item would fail to link it back to the app</li>
+  <li>Fix an issue with diagnostics failing to generate everything</li>
+  <li>Fix not being able to share dashboards from the share menu</li>
+  <li>Performance and stability fixes for Wavebox connect</li>
+  <li>Fix a hard crash that could happen when opening an app</li>
+  <li>Fix an issue where new users could have the incorrect configuration on first launch</li>
+  <li>Sleep exclusions used to match the url exactly, not accounting for "www." at the beginning. They now match this more gracefully.</li>
+  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
+  <li>Upgrade our UI to React 19, which includes several performance improvements and new features</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.9.3)
+
+---
+
 <h3>Version 10.137.3 beta <span class="date">22/5/2025</span></h3>
 <ul>
   <li>Chromium 137.0.7151.42</li>
@@ -102,22 +122,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.21.3)
-
----
-
-<h3>Version 10.135.17 beta <span class="date">22/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.96</li>
-  <li>Fix the Wavebox connect ringer failing to stop</li>
-  <li>Fix an issue where some settings were not reflecting their changes in the ui immediately</li>
-  <li>Update menubar styling for macOS</li>
-  <li>Performance fixes with desktop web apps & sync</li>
-  <li>Add our new Wavebox Assistant to the settings popover menu</li>
-  <li>Fix desktop web app icon loading with MV3</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
