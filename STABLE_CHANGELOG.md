@@ -1,3 +1,18 @@
+<h3>Version 10.137.11 <span class="date">11/6/2025</span></h3>
+<ul>
+  <li>Update to Chromium 137.0.7151.104</li>
+  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
+  <li>Performance and memory improvements when using the side panel</li>
+  <li>Fixes for sync & new users</li>
+  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
+  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.11.2)
+
+---
+
 <h3>Version 10.137.9 <span class="date">4/6/2025</span></h3>
 <ul>
   <li>Update to Chromium 137.0.7151.69</li>
@@ -133,36 +148,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.10.2)
-
----
-
-<h3>Version 10.135.5 <span class="date">3/4/2025</span></h3>
-<p>
-
-</p>
-<h4>🆕 New!</h4>
-<ul>
-
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Update to Chromium 135.0.7049.52</li>
-  <li>Update some of the boosted apps for better reliability</li>
-  <li>Fix an issue where moving a tab to a different group could also move it to a different space</li>
-  <li>Update dependencies</li>
-  <li>Fixes for dragging items on dashboards</li>
-  <li>Performance fixes</li>
-  <li>Fixes for first-time installs</li>
-  <li>Fix an issue with emoji parsing</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.5.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
