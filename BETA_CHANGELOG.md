@@ -1,3 +1,22 @@
+<h3>Version 10.137.11 beta <span class="date">11/6/2025</span></h3>
+<ul>
+  <li>Update to Chromium 137.0.7151.104</li>
+  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
+  <li>Performance and memory improvements when using the side panel</li>
+  <li>Fixes for sync & new users</li>
+  <li>
+    Split screen had some stability issues with the state not being propagated everywhere
+    properly. Fix this and hopefully resolve a bunch of flakey split-screen related issues.
+  </li>
+  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
+  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.11.3)
+
+---
+
 <h3>Version 10.137.9 beta <span class="date">4/6/2025</span></h3>
 <ul>
   <li>Update to Chromium 137.0.7151.69</li>
@@ -110,18 +129,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.5.3)
-
----
-
-<h3>Version 10.135.21 beta <span class="date">23/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.115</li>
-  <li>Fix a hard crash some users reported when launching Wavebox or signing into Google</li>
-  <li>Fix a hard crash when installing extensions during sync or profile restore</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.21.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
