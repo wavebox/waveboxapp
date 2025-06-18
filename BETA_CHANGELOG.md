@@ -1,3 +1,14 @@
+<h3>Version 10.137.12 beta <span class="date">18/6/2025</span></h3>
+<ul>
+  <li>Update to Chromium 137.0.7151.120</li>
+  <li>Update other dependencies</li>
+  <li>Usability fixes when creating link open rules</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.12.3)
+
+---
+
 <h3>Version 10.137.11 beta <span class="date">11/6/2025</span></h3>
 <ul>
   <li>Update to Chromium 137.0.7151.104</li>
@@ -115,20 +126,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.6.3)
-
----
-
-<h3>Version 10.136.5 beta <span class="date">1/5/2025</span></h3>
-<ul>
-  <li>Update to Chromium 136.0.7103.59</li>
-  <li>Add tooltips as an option for focus mode</li>
-  <li>Fix a fullscreen issue on macOS where it incorrectly show parts of the UI when watching videos</li>
-  <li>Fix duplicate tab in new window</li>
-  <li>Update dependencies</li>
-  <li>Fix Wavebox flow failing to start in Wavebox</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.136.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
