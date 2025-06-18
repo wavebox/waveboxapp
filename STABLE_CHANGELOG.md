@@ -1,3 +1,14 @@
+<h3>Version 10.137.12 <span class="date">18/6/2025</span></h3>
+<ul>
+  <li>Update to Chromium 137.0.7151.120</li>
+  <li>Update other dependencies</li>
+  <li>Usability fixes when creating link open rules</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.137.12.2)
+
+---
+
 <h3>Version 10.137.11 <span class="date">11/6/2025</span></h3>
 <ul>
   <li>Update to Chromium 137.0.7151.104</li>
@@ -134,20 +145,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.135.15.2)
-
----
-
-<h3>Version 10.135.10 <span class="date">9/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.85</li>
-  <li>Fix update preferences not saving on Linux</li>
-  <li>Fix some Linux configurations failing to persist cookies and session data</li>
-  <li>Fix an issue where setting the download directory would fail</li>
-  <li>Fix the copy current url keyboard shortcut not working</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.10.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
