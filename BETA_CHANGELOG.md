@@ -1,3 +1,13 @@
+<h3>Version 10.138.7 beta <span class="date">1/7/2025</span></h3>
+<ul>
+  <li>Update to Chromium 138.0.7204.97</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.138.7.3)
+
+---
+
 <h3>Version 10.138.5 beta <span class="date">25/6/2025</span></h3>
 <ul>
   <li>Update to Chromium 138.0.7204.50</li>
@@ -119,15 +129,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.11.3)
-
----
-
-<h3>Version 10.136.8 beta <span class="date">8/5/2025</span></h3>
-<ul>
-  <li>Fix a permission check that was too strict and prevented some file upload dialog boxes from opening</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.136.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
