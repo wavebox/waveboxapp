@@ -1,3 +1,32 @@
+<h3>Version 10.138.8 <span class="date">3/7/2025</span></h3>
+<p>
+  The previous 10.138 version (10.138.7) had a hard crash on launch that affected
+  some installs with a specific set of desktop web apps installed. This version includes
+  a fix for that crash. Here's the full set of release notes for Wavebox 10.138, in case
+  you missed the previous update!
+</p>
+<ul>
+  <li>Fix a hard crash on launch that affected some users with specific desktop web apps installed</li>
+  <li>Update to Chromium 138.0.7204.97</li>
+  <li>Add a customize Wavebox button to the new tab page</li>
+  <li>Performance and memory improvements when using the side panel</li>
+  <li>Fixes for sync & new users</li>
+  <li>Fixes for the customize side panel</li>
+  <li>Theme fixes when using custom colors</li>
+  <li>Theme fixes for Wavebox Connect</li>
+  <li>
+    Split screen had some stability issues with the state not being propagated everywhere
+    properly. Fix this and hopefully resolve a bunch of flakey split-screen related issues.
+  </li>
+  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
+  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.138.8.2)
+
+---
+
 <h3>Version 10.138.7 <span class="date">2/7/2025</span></h3>
 <ul>
   <li>Update to Chromium 138.0.7204.97</li>
@@ -135,22 +164,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.135.21.2)
-
----
-
-<h3>Version 10.135.17 <span class="date">22/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.96</li>
-  <li>Fix the Wavebox connect ringer failing to stop</li>
-  <li>Fix an issue where some settings were not reflecting their changes in the ui immediately</li>
-  <li>Update menubar styling for macOS</li>
-  <li>Performance fixes with desktop web apps & sync</li>
-  <li>Add our new Wavebox Assistant to the settings popover menu</li>
-  <li>Fix desktop web app icon loading with MV3</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.17.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
