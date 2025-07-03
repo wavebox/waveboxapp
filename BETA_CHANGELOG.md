@@ -1,3 +1,12 @@
+<h3>Version 10.138.8 beta <span class="date">3/7/2025</span></h3>
+<ul>
+  <li>Fix a hard crash on launch that affected some users with specific desktop web apps installed</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.138.8.3)
+
+---
+
 <h3>Version 10.138.7 beta <span class="date">1/7/2025</span></h3>
 <ul>
   <li>Update to Chromium 138.0.7204.97</li>
@@ -118,17 +127,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.12.3)
-
----
-
-<h3>Version 10.136.11 beta <span class="date">12/5/2025</span></h3>
-<ul>
-  <li>Fix regression with linux password saving</li>
-  <li>Fix for right-clicking dashboard shortcuts auto-launching the shortcuts on Windows</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.136.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
