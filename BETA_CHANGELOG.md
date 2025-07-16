@@ -1,3 +1,15 @@
+<h3>Version 10.138.14 beta <span class="date">16/7/2025</span></h3>
+<ul>
+  <li>Update to Chromium 138.0.7204.158</li>
+  <li>Speculative fix for one of our rendering services returning an error</li>
+  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.138.14.3)
+
+---
+
 <h3>Version 10.138.12 beta <span class="date">10/7/2025</span></h3>
 <ul>
   <li>Update to Chromium 138.0.7204.101</li>
@@ -120,15 +132,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.137.3.3)
-
----
-
-<h3>Version 10.136.15 beta <span class="date">15/5/2025</span></h3>
-<ul>
-  <li>Update to Chromium 136.0.7103.114, which includes some important security fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.136.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
