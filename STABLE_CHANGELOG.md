@@ -1,3 +1,19 @@
+<h3>Version 10.138.14 <span class="date">16/7/2025</span></h3>
+
+<ul>
+  <li>Update to Chromium 138.0.7204.158</li>
+  <li>Speculative fix for one of our rendering services returning an error</li>
+  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
+  <li>Fix an instance where a tab crashing, could crash the entire app</li>
+  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
+  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.138.14.2)
+
+---
+
 <h3>Version 10.138.8 <span class="date">3/7/2025</span></h3>
 <p>
   The previous 10.138 version (10.138.7) had a hard crash on launch that affected
@@ -152,18 +168,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.8.2)
-
----
-
-<h3>Version 10.135.21 <span class="date">24/4/2025</span></h3>
-<ul>
-  <li>Update to Chromium 135.0.7049.115</li>
-  <li>Fix a hard crash some users reported when launching Wavebox or signing into Google</li>
-  <li>Fix a hard crash when installing extensions during sync or profile restore</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.135.21.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
