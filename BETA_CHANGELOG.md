@@ -1,3 +1,23 @@
+<h3>Version 10.139.8 beta <span class="date">1/8/2025</span></h3>
+<ul>
+  <li>Update to Chromium 139.0.7258.66</li>
+  <li>Speculative fix for one of our rendering services returning an error</li>
+  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
+  <li>Fix an instance where a tab crashing, could crash the entire app</li>
+  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
+  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
+  <li>Fixes for dragging split screen on macOS</li>
+  <li>Fix Smart notes failing to auto-open or auto-create a new note when using the side panel mode</li>
+  <li>A whole bunch of UI fixes</li>
+  <li>Add a flag to hide the add group button in the webdock</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.8.3)
+
+---
+
 <h3>Version 10.139.7 beta <span class="date">1/8/2025</span></h3>
 <ul>
   <li>Update to Chromium 139.0.7258.66</li>
@@ -120,26 +140,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.137.11.3)
-
----
-
-<h3>Version 10.137.9 beta <span class="date">4/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 137.0.7151.69</li>
-  <li>Add an option to delay the opening of next tooltips</li>
-  <li>Fixed an issue where adding a new pinned item would fail to link it back to the app</li>
-  <li>Fix an issue with diagnostics failing to generate everything</li>
-  <li>Fix not being able to share dashboards from the share menu</li>
-  <li>Performance and stability fixes for Wavebox connect</li>
-  <li>Fix a hard crash that could happen when opening an app</li>
-  <li>Fix an issue where new users could have the incorrect configuration on first launch</li>
-  <li>Sleep exclusions used to match the url exactly, not accounting for "www." at the beginning. They now match this more gracefully.</li>
-  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
-  <li>Upgrade our UI to React 19, which includes several performance improvements and new features</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.137.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
