@@ -1,3 +1,23 @@
+<h3>Version 10.139.7 beta <span class="date">1/8/2025</span></h3>
+<ul>
+  <li>Update to Chromium 139.0.7258.66</li>
+  <li>Speculative fix for one of our rendering services returning an error</li>
+  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
+  <li>Fix an instance where a tab crashing, could crash the entire app</li>
+  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
+  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
+  <li>Fixes for dragging split screen on macOS</li>
+  <li>Fix Smart notes failing to auto-open or auto-create a new note when using the side panel mode</li>
+  <li>A whole bunch of UI fixes</li>
+  <li>Add a flag to hide the add group button in the webdock</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.7.3)
+
+---
+
 <h3>Version 10.138.14 beta <span class="date">16/7/2025</span></h3>
 <ul>
   <li>Update to Chromium 138.0.7204.158</li>
@@ -120,18 +140,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.137.9.3)
-
----
-
-<h3>Version 10.137.3 beta <span class="date">22/5/2025</span></h3>
-<ul>
-  <li>Chromium 137.0.7151.42</li>
-  <li>Fix a usability issue when opening links from outside Wavebox and using spaces webdock</li>
-  <li>Multiple bug fixes from auto-reported errors</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.137.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
