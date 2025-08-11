@@ -1,3 +1,27 @@
+<h3>Version 10.139.10 <span class="date">11/8/2025</span></h3>
+<ul>
+  <li>Update to Chromium 139.0.7258.66</li>
+  <li>Speculative fix for one of our rendering services returning an error</li>
+  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
+  <li>Fix an instance where a tab crashing, could crash the entire app</li>
+  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
+  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
+  <li>Fixes for dragging split screen on macOS</li>
+  <li>Fix Smart notes failing to auto-open or auto-create a new note when using the side panel mode</li>
+  <li>A whole bunch of UI fixes</li>
+  <li>Add a flag to hide the add group button in the webdock</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+  <li>Fix an issue where it was almost impossible to resize the webdock</li>
+  <li>Performance improvements when opening smaller popup windows</li>
+  <li>UI tweaks for focus mode to make it clearer</li>
+  <li>Speculative fix for Slack audio issues reported by some users</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.10.2)
+
+---
+
 <h3>Version 10.138.14 <span class="date">16/7/2025</span></h3>
 
 <ul>
@@ -148,26 +172,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.12.2)
-
----
-
-<h3>Version 10.136.8 <span class="date">8/5/2025</span></h3>
-
-<ul>
-  <li>Update to Chromium 136.0.7103.93</li>
-  <li>Add tooltips as an option for focus mode</li>
-  <li>Fix a fullscreen issue on macOS where it incorrectly show parts of the UI when watching videos</li>
-  <li>Fix duplicate tab in new window</li>
-  <li>Fix Wavebox flow failing to start in Wavebox</li>
-  <li>Fix a race condition when making calls to other processes resulting in sporadic errors</li>
-  <li>Stability fixes for socket connections</li>
-  <li>Fix a crash reported by some users</li>
-  <li>Performance fix for some sites that could see high CPU usage</li>
-  <li>Update dependencies</li>
-  <li>Fix a permission check that was too strict and prevented some file upload dialog boxes from opening</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.136.8.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
