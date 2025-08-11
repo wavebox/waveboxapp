@@ -1,3 +1,15 @@
+<h3>Version 10.139.10 beta <span class="date">11/8/2025</span></h3>
+<ul>
+  <li>Update dependencies</li>
+  <li>UI tweaks for focus mode to make it clearer</li>
+  <li>Speculative fix for Slack audio issues reported by some users</li>
+  <li>Stability improvements</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.10.3)
+
+---
+
 <h3>Version 10.139.9 beta <span class="date">4/8/2025</span></h3>
 <ul>
   <li>Fix an issue where it was almost impossible to resize the webdock</li>
@@ -122,17 +134,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.4.3)
-
----
-
-<h3>Version 10.137.12 beta <span class="date">18/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 137.0.7151.120</li>
-  <li>Update other dependencies</li>
-  <li>Usability fixes when creating link open rules</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.137.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
