@@ -1,3 +1,15 @@
+<h3>Version 10.139.12 beta <span class="date">12/8/2025</span></h3>
+<ul>
+  <li>Fix styling issue for new users</li>
+  <li>Fix the webdock being inaccessible when offscreen hiding is enabled</li>
+  <li>Fix the styling with the "Sign back in" panel</li>
+  <li>Fix split screen failing to resize on Linux & Windows</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.12.3)
+
+---
+
 <h3>Version 10.139.10 beta <span class="date">11/8/2025</span></h3>
 <ul>
   <li>Update dependencies</li>
@@ -112,28 +124,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.5.3)
-
----
-
-<h3>Version 10.138.4 beta <span class="date">24/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 138.0.7204.35</li>
-  <li>Add a customize Wavebox button to the new tab page</li>
-  <li>Performance and memory improvements when using the side panel</li>
-  <li>Fixes for sync & new users</li>
-  <li>Fixes for the customize side panel</li>
-  <li>Theme fixes when using custom colors</li>
-  <li>Theme fixes for Wavebox Connect</li>
-  <li>
-    Split screen had some stability issues with the state not being propagated everywhere
-    properly. Fix this and hopefully resolve a bunch of flakey split-screen related issues.
-  </li>
-  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
-  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
