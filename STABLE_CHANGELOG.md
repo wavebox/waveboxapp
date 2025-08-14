@@ -1,3 +1,14 @@
+<h3>Version 10.139.20 <span class="date">14/8/2025</span></h3>
+<ul>
+  <li>Update to Chromium 139.0.7258.128</li>
+  <li>Fix an issue with the 1Password extension reporting Wavebox is out of date</li>
+  <li>Fix an issue that could cause some antivirus software to incorrectly quarantine Wavebox</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.20.2)
+
+---
+
 <h3>Version 10.139.12 <span class="date">11/8/2025</span></h3>
 <p>
   This patch release fixes a number of important issues that were reported
@@ -181,21 +192,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.136.20.2)
-
----
-
-<h3>Version 10.136.15 <span class="date">15/5/2025</span></h3>
-<ul>
-  <li>Update to Chromium 136.0.7103.114, which includes some important security fixes</li>
-  <li>Fix regression with linux password saving</li>
-  <li>Fix for right-clicking dashboard shortcuts auto-launching the shortcuts on Windows</li>
-  <li>Update dependencies</li>
-  <li>Fix a hard crash when switching between versions</li>
-  <li>Speculative fix for a crash on startup</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.136.15.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
