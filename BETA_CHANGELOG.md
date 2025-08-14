@@ -1,3 +1,14 @@
+<h3>Version 10.139.20 beta <span class="date">14/8/2025</span></h3>
+<ul>
+  <li>Update to Chromium 139.0.7258.128</li>
+  <li>Fix an issue with the 1Password extension reporting Wavebox is out of date</li>
+  <li>Fix an issue that could cause some antivirus software to incorrectly quarantine Wavebox</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.139.20.3)
+
+---
+
 <h3>Version 10.139.12 beta <span class="date">12/8/2025</span></h3>
 <ul>
   <li>Fix styling issue for new users</li>
@@ -115,15 +126,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.7.3)
-
----
-
-<h3>Version 10.138.5 beta <span class="date">25/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 138.0.7204.50</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
