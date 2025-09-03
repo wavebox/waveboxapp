@@ -1,3 +1,14 @@
+<h3>Version 10.139.23 <span class="date">3/9/2025</span></h3>
+<ul>
+  <li>Update to Chromium 139.0.7258.155</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.139.23.2)
+
+---
+
 <h3>Version 10.139.20 <span class="date">14/8/2025</span></h3>
 <ul>
   <li>Update to Chromium 139.0.7258.128</li>
@@ -180,18 +191,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.137.9.2)
-
----
-
-<h3>Version 10.136.20 <span class="date">2/6/2025</span></h3>
-<ul>
-  <li>Chromium 136.0.7103.149</li>
-  <li>Fix a usability issue when opening links from outside Wavebox and using spaces webdock</li>
-  <li>Multiple bug fixes from auto-reported errors</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.136.20.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
