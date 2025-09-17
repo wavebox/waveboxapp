@@ -1,3 +1,24 @@
+<h3>Version 10.140.30 <span class="date">17/9/2025</span></h3>
+<ul>
+  <li>
+    New Dock & Split View replaces classic split-screen with flexible multitasking: dock
+    apps across groups, split tabs side-by-side and 2+ views. Access via address bar,
+    right-click menu, tooltips, or page context menus for seamless workflow enhancement.
+  </li>
+  <li>Update to Chromium 140.0.7339.133</li>
+  <li>Improve macOS Tahoe compatibility</li>
+  <li>Add sleep all in group to context menus</li>
+  <li>Fix an issue where under some configurations the bookmarks bar could incorrectly show in the main Wavebox window</li>
+  <li>Fix the new tab page url failing to save when http or https are omitted</li>
+  <li>Add new wallpapers to dashboards</li>
+  <li>Fix a focus issue, that under some configs could see a tab focused after sleeping another rather than switching to the 'sleeping' holder</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.140.30.2)
+
+---
+
 <h3>Version 10.139.23 <span class="date">3/9/2025</span></h3>
 <ul>
   <li>Update to Chromium 139.0.7258.155</li>
@@ -171,26 +192,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.137.11.2)
-
----
-
-<h3>Version 10.137.9 <span class="date">4/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 137.0.7151.69</li>
-  <li>Add an option to delay the opening of next tooltips</li>
-  <li>Fixed an issue where adding a new pinned item would fail to link it back to the app</li>
-  <li>Fix an issue with diagnostics failing to generate everything</li>
-  <li>Fix not being able to share dashboards from the share menu</li>
-  <li>Performance and stability fixes for Wavebox connect</li>
-  <li>Fix a hard crash that could happen when opening an app</li>
-  <li>Fix an issue where new users could have the incorrect configuration on first launch</li>
-  <li>Sleep exclusions used to match the url exactly, not accounting for "www." at the beginning. They now match this more gracefully.</li>
-  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
-  <li>Upgrade our UI to React 19, which includes several performance improvements and new features</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.137.9.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
