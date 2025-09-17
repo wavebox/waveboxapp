@@ -1,3 +1,20 @@
+<h3>Version 10.140.30 beta <span class="date">17/9/2025</span></h3>
+<ul>
+  <li>Add sleep all in group to context menus</li>
+  <li>Fix an issue where under some configurations the bookmarks bar could incorrectly show in the main Wavebox window</li>
+  <li>Fix the new tab page url failing to save when http or https are omitted</li>
+  <li>More fixes and improvements for split & docked tabs</li>
+  <li>Fix a crash when reversing views</li>
+  <li>Update dependencies</li>
+  <li>Add new wallpapers to dashboards</li>
+  <li>Fix a focus issue, that under some configs could see a tab focused after sleeping another rather than switching to the 'sleeping' holder</li>
+  <li>Fix split & dock losing resize</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.140.30.3)
+
+---
+
 <h3>Version 10.140.26 beta <span class="date">11/9/2025</span></h3>
 <ul>
   <li>
@@ -125,19 +142,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.14.3)
-
----
-
-<h3>Version 10.138.12 beta <span class="date">10/7/2025</span></h3>
-<ul>
-  <li>Update to Chromium 138.0.7204.101</li>
-  <li>Fix an instance where a tab crashing, could crash the entire app</li>
-  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
-  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
