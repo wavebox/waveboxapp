@@ -1,3 +1,16 @@
+<h3>Version 10.140.34 <span class="date">18/9/2025</span></h3>
+<ul>
+  <li>Update to Chromium 140.0.7339.186</li>
+  <li>Crash fix when splitting tabs</li>
+  <li>Fix an issue with tabs collapsing too small and not respecting the tab scroll settings</li>
+  <li>Add keyboard shortcuts to replace docked tabs</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.140.34.2)
+
+---
+
 <h3>Version 10.140.30 <span class="date">17/9/2025</span></h3>
 <ul>
   <li>
@@ -177,21 +190,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.137.12.2)
-
----
-
-<h3>Version 10.137.11 <span class="date">11/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 137.0.7151.104</li>
-  <li>Fix the link opener rules sometimes not matching when a site includes a www. prefix</li>
-  <li>Performance and memory improvements when using the side panel</li>
-  <li>Fixes for sync & new users</li>
-  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
-  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.137.11.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
