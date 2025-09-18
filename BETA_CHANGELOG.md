@@ -1,3 +1,15 @@
+<h3>Version 10.140.34 beta <span class="date">18/9/2025</span></h3>
+<ul>
+  <li>Update to Chromium 140.0.7339.186</li>
+  <li>Crash fix when splitting tabs</li>
+  <li>Fix an issue with tabs collapsing too small and not respecting the tab scroll settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.140.34.3)
+
+---
+
 <h3>Version 10.140.30 beta <span class="date">17/9/2025</span></h3>
 <ul>
   <li>Add sleep all in group to context menus</li>
@@ -130,18 +142,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.7.3)
-
----
-
-<h3>Version 10.138.14 beta <span class="date">16/7/2025</span></h3>
-<ul>
-  <li>Update to Chromium 138.0.7204.158</li>
-  <li>Speculative fix for one of our rendering services returning an error</li>
-  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
