@@ -1,3 +1,25 @@
+<h3>Version 10.140.38 <span class="date">24/9/2025</span></h3>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Update Chromium to 140.0.7339.208</li>
+  <li>Crash fix when closing tab groups</li>
+  <li>Updated bookmark sync (this is currently opt-in. Contact support for more information)</li>
+  <li>Fix pinned tab styling</li>
+  <li>Various bug fixes for soft-crashes</li>
+  <li>Improve Feedly token exchange for more reliable sync</li>
+  <li>Update the WhatsApp integration for the latest UI update</li>
+  <li>Fix for hard crash with split screen</li>
+  <li>Fix tooltips sometimes staying on screen too long and messing up other parts of the UI</li>
+  <li>Fix a crash when opening the bookmarks side panel</li>
+  <li>Other stability improvements</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.140.38.2)
+
+---
+
 <h3>Version 10.140.34 <span class="date">18/9/2025</span></h3>
 <ul>
   <li>Update to Chromium 140.0.7339.186</li>
@@ -179,17 +201,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.7.2)
-
----
-
-<h3>Version 10.137.12 <span class="date">18/6/2025</span></h3>
-<ul>
-  <li>Update to Chromium 137.0.7151.120</li>
-  <li>Update other dependencies</li>
-  <li>Usability fixes when creating link open rules</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.137.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
