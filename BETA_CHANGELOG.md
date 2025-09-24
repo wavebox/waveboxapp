@@ -1,3 +1,19 @@
+<h3>Version 10.140.38 beta <span class="date">24/9/2025</span></h3>
+<ul>
+  <li>Update Chromium to 140.0.7339.208</li>
+  <li>Crash fix when closing tab groups</li>
+  <li>Updated bookmark sync (this is currently opt-in. Contact support for more information)</li>
+  <li>Fix pinned tab styling</li>
+  <li>Various bug fixes for soft-crashes</li>
+  <li>Improve Feedly token exchange for more reliable sync</li>
+  <li>Update the WhatsApp integration for the latest UI update</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.140.38.3)
+
+---
+
 <h3>Version 10.140.37 beta <span class="date">19/9/2025</span></h3>
 <ul>
   <li>Fix for hard crash with split screen</li>
@@ -114,26 +130,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.9.3)
-
----
-
-<h3>Version 10.139.8 beta <span class="date">1/8/2025</span></h3>
-<ul>
-  <li>Update to Chromium 139.0.7258.66</li>
-  <li>Speculative fix for one of our rendering services returning an error</li>
-  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
-  <li>Fix an instance where a tab crashing, could crash the entire app</li>
-  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
-  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
-  <li>Fixes for dragging split screen on macOS</li>
-  <li>Fix Smart notes failing to auto-open or auto-create a new note when using the side panel mode</li>
-  <li>A whole bunch of UI fixes</li>
-  <li>Add a flag to hide the add group button in the webdock</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
