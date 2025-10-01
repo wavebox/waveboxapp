@@ -1,3 +1,29 @@
+<h3>Version 10.141.22 beta <span class="date">1/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 141.0.7390.55</li>
+  <li>Allow the main Wavebox window to be dragged around by using un-used tabstrip and webdock space</li>
+  <li>
+    Added new up & down layouts for docked and splits along with left & right, giving you
+    more flexibility in how you organize your workspace
+  </li>
+  <li>Stability fixes for the updater on macOS and Windows</li>
+  <li>Build updates and improvements</li>
+  <li>Add clearer explanation in the "What are spaces" popover</li>
+  <li>Update links to use the new help hub</li>
+  <li>Style fix on the internal settings pages</li>
+  <li>Fixed reload issues that were causing DevTools to behave unexpectedly</li>
+  <li>Faster build times</li>
+  <li>Fix a split screen issue where splitting in the window didn't work</li>
+  <li>Fix a Slack issue with generating debug logs</li>
+  <li>Update the naming of docked and split positioning</li>
+  <li>Speculative fix for tabs being greyed out</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.22.3)
+
+---
+
 <h3>Version 10.140.38 beta <span class="date">24/9/2025</span></h3>
 <ul>
   <li>Update Chromium to 140.0.7339.208</li>
@@ -118,18 +144,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.10.3)
-
----
-
-<h3>Version 10.139.9 beta <span class="date">4/8/2025</span></h3>
-<ul>
-  <li>Fix an issue where it was almost impossible to resize the webdock</li>
-  <li>Stability fixes</li>
-  <li>Performance improvements when opening smaller popup windows</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
