@@ -1,3 +1,14 @@
+<h3>Version 10.141.23 beta <span class="date">6/10/2025</span></h3>
+<ul>
+  <li>Fix a link rule matching error, where "anywhere" rules were initially matched through the omnibox, but then dropped later on</li>
+  <li>Update dependencies</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.23.3)
+
+---
+
 <h3>Version 10.141.22 beta <span class="date">1/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 141.0.7390.55</li>
@@ -132,18 +143,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.12.3)
-
----
-
-<h3>Version 10.139.10 beta <span class="date">11/8/2025</span></h3>
-<ul>
-  <li>Update dependencies</li>
-  <li>UI tweaks for focus mode to make it clearer</li>
-  <li>Speculative fix for Slack audio issues reported by some users</li>
-  <li>Stability improvements</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
