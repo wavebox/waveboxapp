@@ -1,3 +1,30 @@
+<h3>Version 10.141.23 <span class="date">6/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 141.0.7390.55</li>
+  <li>Allow the main Wavebox window to be dragged around by using un-used tabstrip and webdock space</li>
+  <li>
+    Added new up & down layouts for docked and splits along with left & right, giving you
+    more flexibility in how you organize your workspace
+  </li>
+  <li>Stability fixes for the updater on macOS and Windows</li>
+  <li>Build updates and improvements</li>
+  <li>Add clearer explanation in the "What are spaces" popover</li>
+  <li>Update links to use the new help hub</li>
+  <li>Style fix on the internal settings pages</li>
+  <li>Fixed reload issues that were causing DevTools to behave unexpectedly</li>
+  <li>Faster build times</li>
+  <li>Fix a split screen issue where splitting in the window didn't work</li>
+  <li>Fix a Slack issue with generating debug logs</li>
+  <li>Update the naming of docked and split positioning</li>
+  <li>Speculative fix for tabs being greyed out</li>
+  <li>Fix a link rule matching error, where "anywhere" rules were initially matched through the omnibox, but then dropped later on</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.23.2)
+
+---
+
 <h3>Version 10.140.38 <span class="date">24/9/2025</span></h3>
 
 <h4>🐛 Fixes</h4>
@@ -179,28 +206,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.8.2)
-
----
-
-<h3>Version 10.138.7 <span class="date">2/7/2025</span></h3>
-<ul>
-  <li>Update to Chromium 138.0.7204.97</li>
-  <li>Add a customize Wavebox button to the new tab page</li>
-  <li>Performance and memory improvements when using the side panel</li>
-  <li>Fixes for sync & new users</li>
-  <li>Fixes for the customize side panel</li>
-  <li>Theme fixes when using custom colors</li>
-  <li>Theme fixes for Wavebox Connect</li>
-  <li>
-    Split screen had some stability issues with the state not being propagated everywhere
-    properly. Fix this and hopefully resolve a bunch of flakey split-screen related issues.
-  </li>
-  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
-  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.7.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
