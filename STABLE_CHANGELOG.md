@@ -1,3 +1,23 @@
+<h3>Version 10.141.25 <span class="date">8/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 141.0.7390.66</li>
+  <li>Fix an overflow issue with tooltips issue</li>
+  <li>Fix the split and docked icons not always taking the window orientation into account</li>
+  <li>Fix a crash when double clicking split tabs</li>
+  <li>Some Apple apps send HTML to 3rd party mail clients when sharing via email. Attempt to sanitize this and strip markup</li>
+  <li>Speculative fix for a crash when switching tabs</li>
+  <li>Fix a crash when importing passwords from another browser</li>
+  <li>Improve the feed discovery in the RSS widget</li>
+  <li>Fix the RSS widget failing to fetch some feeds</li>
+  <li>Fix a docked keyboard shortcut erroring</li>
+  <li>Fix keyboard shortcuts not working on restart for some users</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.25.2)
+
+---
+
 <h3>Version 10.141.23 <span class="date">6/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 141.0.7390.55</li>
@@ -177,35 +197,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.138.14.2)
-
----
-
-<h3>Version 10.138.8 <span class="date">3/7/2025</span></h3>
-<p>
-  The previous 10.138 version (10.138.7) had a hard crash on launch that affected
-  some installs with a specific set of desktop web apps installed. This version includes
-  a fix for that crash. Here's the full set of release notes for Wavebox 10.138, in case
-  you missed the previous update!
-</p>
-<ul>
-  <li>Fix a hard crash on launch that affected some users with specific desktop web apps installed</li>
-  <li>Update to Chromium 138.0.7204.97</li>
-  <li>Add a customize Wavebox button to the new tab page</li>
-  <li>Performance and memory improvements when using the side panel</li>
-  <li>Fixes for sync & new users</li>
-  <li>Fixes for the customize side panel</li>
-  <li>Theme fixes when using custom colors</li>
-  <li>Theme fixes for Wavebox Connect</li>
-  <li>
-    Split screen had some stability issues with the state not being propagated everywhere
-    properly. Fix this and hopefully resolve a bunch of flakey split-screen related issues.
-  </li>
-  <li>Fix the switcher favicons sometimes incorrectly falling back to the default icon</li>
-  <li>Opening external links through a rule would not automatically focus the main Wavebox window. Fix this.</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.8.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
