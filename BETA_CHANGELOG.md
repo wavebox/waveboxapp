@@ -1,3 +1,17 @@
+<h3>Version 10.141.27 beta <span class="date">13/10/2025</span></h3>
+<ul>
+    <li>Update the styling for the split tab page</li>
+    <li>Update integrations with slack enterprise speculative fix</li>
+    <li>Fix keyboard shortcuts with suggested keys being overwritten on start</li>
+    <li>Add a context menu option to close tabs in an app when using the unified sidebar</li>
+    <li>Other stability fixes</li>
+    <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.27.3)
+
+---
+
 <h3>Version 10.141.25 beta <span class="date">8/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 141.0.7390.66</li>
@@ -140,17 +154,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.23.3)
-
----
-
-<h3>Version 10.139.20 beta <span class="date">14/8/2025</span></h3>
-<ul>
-  <li>Update to Chromium 139.0.7258.128</li>
-  <li>Fix an issue with the 1Password extension reporting Wavebox is out of date</li>
-  <li>Fix an issue that could cause some antivirus software to incorrectly quarantine Wavebox</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.20.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
