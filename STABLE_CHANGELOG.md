@@ -1,3 +1,19 @@
+<h3>Version 10.141.29 <span class="date">15/10/2025</span></h3>
+
+<ul>
+  <li>Update to Chromium 141.0.7390.108</li>
+  <li>Update the styling for the split tab page</li>
+  <li>Update integrations with slack enterprise speculative fix</li>
+  <li>Fix keyboard shortcuts with suggested keys being overwritten on start</li>
+  <li>Add a context menu option to close tabs in an app when using the unified sidebar</li>
+  <li>Other stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.29.2)
+
+---
+
 <h3>Version 10.141.25 <span class="date">8/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 141.0.7390.66</li>
@@ -181,22 +197,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.10.2)
-
----
-
-<h3>Version 10.138.14 <span class="date">16/7/2025</span></h3>
-
-<ul>
-  <li>Update to Chromium 138.0.7204.158</li>
-  <li>Speculative fix for one of our rendering services returning an error</li>
-  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
-  <li>Fix an instance where a tab crashing, could crash the entire app</li>
-  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
-  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.138.14.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
