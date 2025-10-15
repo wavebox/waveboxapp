@@ -1,3 +1,12 @@
+<h3>Version 10.141.29 beta <span class="date">15/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 141.0.7390.108</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.29.3)
+
+---
+
 <h3>Version 10.141.27 beta <span class="date">13/10/2025</span></h3>
 <ul>
     <li>Update the styling for the split tab page</li>
@@ -144,16 +153,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.26.3)
-
----
-
-<h3>Version 10.139.23 beta <span class="date">28/8/2025</span></h3>
-<ul>
-  <li>Update to Chromium 139.0.7258.155</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
