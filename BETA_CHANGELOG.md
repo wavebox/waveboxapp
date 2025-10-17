@@ -1,3 +1,14 @@
+<h3>Version 10.141.30 beta <span class="date">17/10/2025</span></h3>
+<ul>
+  <li>Fix an issue that prevented passwords from being saved on some setups</li>
+  <li>Update the knowledge base urls</li>
+  <li>Stability fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.30.3)
+
+---
+
 <h3>Version 10.141.29 beta <span class="date">15/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 141.0.7390.108</li>
@@ -132,27 +143,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.30.3)
-
----
-
-<h3>Version 10.140.26 beta <span class="date">11/9/2025</span></h3>
-<ul>
-  <li>
-    Multitask like never before with the all-new Wavebox split-screen & docked features. Our intuitive
-    redesign allows you to create custom layouts by splitting tabs into focused
-    groups and docking essential apps to the side of your window. Go beyond a simple
-    two-pane view and see everything you need at a glance.
-  </li>
-  <li>Update to Chromium 140.0.7339.133</li>
-  <li>Split screen fixes</li>
-  <li>Improve macOS Tahoe compatibility</li>
-  <li>Add sleep all in group to context menus</li>
-  <li>Fix an issue where under some configurations the bookmarks bar could incorrectly show in the main Wavebox window</li>
-  <li>Fix the new tab page url failing to save when http or https are omitted</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.26.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
