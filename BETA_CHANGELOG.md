@@ -1,3 +1,12 @@
+<h3>Version 10.141.33 beta <span class="date">22/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 141.0.7390.123</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.141.33.3)
+
+---
+
 <h3>Version 10.141.30 beta <span class="date">17/10/2025</span></h3>
 <ul>
   <li>Fix an issue that prevented passwords from being saved on some setups</li>
@@ -126,23 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.34.3)
-
----
-
-<h3>Version 10.140.30 beta <span class="date">17/9/2025</span></h3>
-<ul>
-  <li>Add sleep all in group to context menus</li>
-  <li>Fix an issue where under some configurations the bookmarks bar could incorrectly show in the main Wavebox window</li>
-  <li>Fix the new tab page url failing to save when http or https are omitted</li>
-  <li>More fixes and improvements for split & docked tabs</li>
-  <li>Fix a crash when reversing views</li>
-  <li>Update dependencies</li>
-  <li>Add new wallpapers to dashboards</li>
-  <li>Fix a focus issue, that under some configs could see a tab focused after sleeping another rather than switching to the 'sleeping' holder</li>
-  <li>Fix split & dock losing resize</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
