@@ -1,3 +1,17 @@
+<h3>Version 10.142.25 beta <span class="date">24/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 142.0.7444.56</li>
+  <li>Stability fixes</li>
+  <li>Fix an issue with dragging files from the OS to file upload areas not working</li>
+  <li>Speculative fix for the menu bar icon on macOS sometimes vanishing when theres more than one profile</li>
+  <li>Fix the cycle docked sizes keyboard shortcut not working</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.25.3)
+
+---
+
 <h3>Version 10.141.33 beta <span class="date">22/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 141.0.7390.123</li>
@@ -123,18 +137,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.37.3)
-
----
-
-<h3>Version 10.140.34 beta <span class="date">18/9/2025</span></h3>
-<ul>
-  <li>Update to Chromium 140.0.7339.186</li>
-  <li>Crash fix when splitting tabs</li>
-  <li>Fix an issue with tabs collapsing too small and not respecting the tab scroll settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.34.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
