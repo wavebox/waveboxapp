@@ -1,3 +1,13 @@
+<h3>Version 10.142.27 beta <span class="date">28/10/2025</span></h3>
+<ul>
+  <li>Update dependencies</li>
+  <li>Add experimental support for in-page translate with Brainbox - this needs to be enabled under advanced flags</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.27.3)
+
+---
+
 <h3>Version 10.142.25 beta <span class="date">24/10/2025</span></h3>
 <ul>
   <li>Update to Chromium 142.0.7444.56</li>
@@ -125,18 +135,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.38.3)
-
----
-
-<h3>Version 10.140.37 beta <span class="date">19/9/2025</span></h3>
-<ul>
-  <li>Fix for hard crash with split screen</li>
-  <li>Fix tooltips sometimes staying on screen too long and messing up other parts of the UI</li>
-  <li>Fix a crash when opening the bookmarks side panel</li>
-  <li>Other stability improvements</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.37.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
