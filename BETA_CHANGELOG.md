@@ -1,3 +1,13 @@
+<h3>Version 10.142.30 beta <span class="date">29/10/2025</span></h3>
+<ul>
+  <li>Update to Chromium 142.0.7444.60</li>
+  <li>Translation fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.30.3)
+
+---
+
 <h3>Version 10.142.27 beta <span class="date">28/10/2025</span></h3>
 <ul>
   <li>Update dependencies</li>
@@ -119,22 +129,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.22.3)
-
----
-
-<h3>Version 10.140.38 beta <span class="date">24/9/2025</span></h3>
-<ul>
-  <li>Update Chromium to 140.0.7339.208</li>
-  <li>Crash fix when closing tab groups</li>
-  <li>Updated bookmark sync (this is currently opt-in. Contact support for more information)</li>
-  <li>Fix pinned tab styling</li>
-  <li>Various bug fixes for soft-crashes</li>
-  <li>Improve Feedly token exchange for more reliable sync</li>
-  <li>Update the WhatsApp integration for the latest UI update</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.38.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
