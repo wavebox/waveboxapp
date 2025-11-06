@@ -1,3 +1,53 @@
+<h3>Version 10.142.42 <span class="date">6/11/2025</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add support for in-page translate with Brainbox using both local and cloud models</li>
+  <li>Added automatic picture-in-picture mode that opens playing videos in a separate window when you navigate away from the tab</li>
+  <li>Make shift+clicking the Webdock mode also collapse/expand dividers in the explorer view</li>
+  <li>When changing app or tab, ensure that it's always scrolled into view in the Webdock</li>
+  <li>Add support for dragging & dropping spaces in the drag & drop spaces editor</li>
+  <li>Added "Now Playing" helper to quickly return to tabs with active audio or video</li>
+  <li>Added display options to the switcher (Ctrl+Tab) to toggle between showing apps & tabs or apps only</li>
+  <li>Updated group sleep/wake menu with more granular controls for sleeping/waking apps or tabs</li>
+  <li>Improved group sleep/wake menu logic to better handle toggling between current states of apps and tabs</li>
+  <li>
+    Add the "Webview layout composer" flag. This uses a different layout engine for webviews and tabs, but comes
+    with a number of bug fixes and advantages. This flag is disabled by default and can be turned on under Settings > Advanced > Advanced flags.
+    <ul>
+      <li>Add support for space background gradients in secondary windows</li>
+      <li>Fix issues with file dragging files on macOS (first reported with Gmail & Google Chat)</li>
+      <li>Fix issues with in-page drag on some HubSpot pages</li>
+      <li>Rendering performance improvements</li>
+      <li>Fixes some graphical glitches</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 142.0.7444.135</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with dragging files from the OS to file upload areas not working</li>
+  <li>Speculative fix for the menu bar icon on macOS sometimes vanishing when theres more than one profile</li>
+  <li>Fix the cycle docked sizes keyboard shortcut not working</li>
+  <li>Fix some cookie/space consistency issues when duplicating groups in the spaces Webdock</li>
+  <li>Fixed tabs to properly undock when moved away from the main Wavebox window</li>
+  <li>Ensure tabs are saved for session restore when shutting down a profile</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.42.2)
+
+---
+
 <h3>Version 10.141.33 <span class="date">22/10/2025</span></h3>
 
 <ul>
@@ -149,43 +199,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.139.20.2)
-
----
-
-<h3>Version 10.139.12 <span class="date">11/8/2025</span></h3>
-<p>
-  This patch release fixes a number of important issues that were reported
-  in version 10.139.10.
-</p>
-<ul>
-  <li>Fix styling issue for new users</li>
-  <li>Fix the webdock being inaccessible when offscreen hiding is enabled</li>
-  <li>Fix the styling with the "Sign back in" panel</li>
-  <li>Fix split screen failing to resize on Linux & Windows</li>
-</ul>
-<p>
-  If you hadn't updated to 10.139.10, here's everything else new in the 10.139.x series:
-</p>
-<ul>
-  <li>Update to Chromium 139.0.7258.66</li>
-  <li>Speculative fix for one of our rendering services returning an error</li>
-  <li>Performance fixes for split-screen, particularly in the main Wavebox window</li>
-  <li>Fix an instance where a tab crashing, could crash the entire app</li>
-  <li>When opening the app store from the Omnibox, it would add an app in a new group. Instead reuse the current group</li>
-  <li>When opening links from outside of Wavebox, give the option to open the link in a group or empty group rather than just apps</li>
-  <li>Fixes for dragging split screen on macOS</li>
-  <li>Fix Smart notes failing to auto-open or auto-create a new note when using the side panel mode</li>
-  <li>A whole bunch of UI fixes</li>
-  <li>Add a flag to hide the add group button in the webdock</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-  <li>Fix an issue where it was almost impossible to resize the webdock</li>
-  <li>Performance improvements when opening smaller popup windows</li>
-  <li>UI tweaks for focus mode to make it clearer</li>
-  <li>Speculative fix for Slack audio issues reported by some users</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.12.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
