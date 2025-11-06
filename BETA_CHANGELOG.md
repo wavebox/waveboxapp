@@ -1,3 +1,13 @@
+<h3>Version 10.142.42 beta <span class="date">6/11/2025</span></h3>
+<ul>
+  <li>Update to Chromium 142.0.7444.135</li>
+  <li>UI fixes</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.42.3)
+
+---
+
 <h3>Version 10.142.40 beta <span class="date">5/11/2025</span></h3>
 <ul>
   <li>
@@ -127,17 +137,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.25.3)
-
----
-
-<h3>Version 10.141.23 beta <span class="date">6/10/2025</span></h3>
-<ul>
-  <li>Fix a link rule matching error, where "anywhere" rules were initially matched through the omnibox, but then dropped later on</li>
-  <li>Update dependencies</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.23.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
