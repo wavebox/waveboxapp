@@ -1,3 +1,14 @@
+<h3>Version 10.142.43 beta <span class="date">10/11/2025</span></h3>
+<ul>
+  <li>Fix a crash that could happen on startup depending on current config</li>
+  <li>Fix the webdock resizer only being available in the top part of the window</li>
+  <li>Network stability fix</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.43.3)
+
+---
+
 <h3>Version 10.142.42 beta <span class="date">6/11/2025</span></h3>
 <ul>
   <li>Update to Chromium 142.0.7444.135</li>
@@ -117,26 +128,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.27.3)
-
----
-
-<h3>Version 10.141.25 beta <span class="date">8/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 141.0.7390.66</li>
-  <li>Fix an overflow issue with tooltips issue</li>
-  <li>Fix the split and docked icons not always taking the window orientation into account</li>
-  <li>Fix a crash when double clicking split tabs</li>
-  <li>Some Apple apps send HTML to 3rd party mail clients when sharing via email. Attempt to sanitize this and strip markup</li>
-  <li>Speculative fix for a crash when switching tabs</li>
-  <li>Fix a crash when importing passwords from another browser</li>
-  <li>Improve the feed discovery in the RSS widget</li>
-  <li>Fix the RSS widget failing to fetch some feeds</li>
-  <li>Fix a docked keyboard shortcut erroring</li>
-  <li>Fix keyboard shortcuts not working on restart for some users</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.25.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)

@@ -1,3 +1,14 @@
+<h3>Version 10.142.43 <span class="date">10/11/2025</span></h3>
+<ul>
+  <li>Fix a crash that could happen on startup depending on current config</li>
+  <li>Fix the webdock resizer only being available in the top part of the window</li>
+  <li>Network stability fix</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.43.2)
+
+---
+
 <h3>Version 10.142.42 <span class="date">6/11/2025</span></h3>
 <p>
 
@@ -188,17 +199,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/10.139.23.2)
-
----
-
-<h3>Version 10.139.20 <span class="date">14/8/2025</span></h3>
-<ul>
-  <li>Update to Chromium 139.0.7258.128</li>
-  <li>Fix an issue with the 1Password extension reporting Wavebox is out of date</li>
-  <li>Fix an issue that could cause some antivirus software to incorrectly quarantine Wavebox</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.139.20.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
