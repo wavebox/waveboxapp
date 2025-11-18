@@ -1,3 +1,12 @@
+<h3>Version 10.142.47 beta <span class="date">18/11/2025</span></h3>
+<ul>
+  <li>Update to Chromium 142.0.7444.176</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.47.3)
+
+---
+
 <h3>Version 10.142.43 beta <span class="date">10/11/2025</span></h3>
 <ul>
   <li>Fix a crash that could happen on startup depending on current config</li>
@@ -114,20 +123,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.29.3)
-
----
-
-<h3>Version 10.141.27 beta <span class="date">13/10/2025</span></h3>
-<ul>
-    <li>Update the styling for the split tab page</li>
-    <li>Update integrations with slack enterprise speculative fix</li>
-    <li>Fix keyboard shortcuts with suggested keys being overwritten on start</li>
-    <li>Add a context menu option to close tabs in an app when using the unified sidebar</li>
-    <li>Other stability fixes</li>
-    <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.27.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
