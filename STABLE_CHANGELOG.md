@@ -1,3 +1,12 @@
+<h3>Version 10.142.47 <span class="date">18/11/2025</span></h3>
+<ul>
+  <li>Update to Chromium 142.0.7444.176</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.142.47.2)
+
+---
+
 <h3>Version 10.142.43 <span class="date">10/11/2025</span></h3>
 <ul>
   <li>Fix a crash that could happen on startup depending on current config</li>
@@ -188,17 +197,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.30.2)
-
----
-
-<h3>Version 10.139.23 <span class="date">3/9/2025</span></h3>
-<ul>
-  <li>Update to Chromium 139.0.7258.155</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/10.139.23.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
