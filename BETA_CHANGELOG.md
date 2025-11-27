@@ -1,3 +1,31 @@
+<h3>Version 10.143.10 beta <span class="date">24/11/2025</span></h3>
+<ul>
+  <li>Update to Chromium 143.0.7499.41</li>
+  <li>Performance improvements for long virtualized lists</li>
+  <li>Fix the process info sometimes failing to populate</li>
+  <li>UI tweaks to settings so it's easier to enable advanced mode</li>
+  <li>Add a marker to the macOS menus to differentiate the main Wavebox window</li>
+  <li>Add an option to the collection widget, so links can be opened in a specific group</li>
+  <li>Speculative crashfix that involved the bookmark bar and split view</li>
+  <li>Fix an issue with the webdock auto-hiding when window dragging is enabled</li>
+  <li>Stability fixes</li>
+  <li>UI fixes for settings and creating custom apps</li>
+  <li>Changing to empty group would not update the active tab, fix this</li>
+  <li>Save the icon state from the icon picker to make it easier between sessions</li>
+  <li>Fix a crash that could happen with some keyboard shortcuts</li>
+  <li>Smooth out some UI jank during launch</li>
+  <li>Fix frameless windows not actually being frameless</li>
+  <li>Fix a style issue in the tooltip menus</li>
+  <li>Fix the status bubble and new tab buttons having bright red backgrounds with some theme configurations</li>
+  <li>Fix a couple of typographical whoopsies</li>
+  <li>A couple of stability fixes picked up by the team</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.10.3)
+
+---
+
 <h3>Version 10.142.47 beta <span class="date">18/11/2025</span></h3>
 <ul>
   <li>Update to Chromium 142.0.7444.176</li>
@@ -114,15 +142,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.30.3)
-
----
-
-<h3>Version 10.141.29 beta <span class="date">15/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 141.0.7390.108</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.29.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
