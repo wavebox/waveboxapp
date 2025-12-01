@@ -1,3 +1,20 @@
+<h3>Version 10.143.12 beta <span class="date">1/12/2025</span></h3>
+<ul>
+  <li>Update the ClickUp integration and add support for getting chat counts</li>
+  <li>Update the group and space pickers across the app with a unified component that includes search</li>
+  <li>Update the context menus when opening items in groups/spaces so you can search across your groups/spaces</li>
+  <li>Add an option to import old Brainbox chats</li>
+  <li>Update dependencies</li>
+  <li>Add deep-sleep feature that reduces tab power consumption further after an extended period of inactivity</li>
+  <li>Fixes for the side panels</li>
+  <li>Stability fixes</li>
+  <li>Brainbox work</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.12.3)
+
+---
+
 <h3>Version 10.143.10 beta <span class="date">24/11/2025</span></h3>
 <ul>
   <li>Update to Chromium 143.0.7499.41</li>
@@ -131,17 +148,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.33.3)
-
----
-
-<h3>Version 10.141.30 beta <span class="date">17/10/2025</span></h3>
-<ul>
-  <li>Fix an issue that prevented passwords from being saved on some setups</li>
-  <li>Update the knowledge base urls</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
