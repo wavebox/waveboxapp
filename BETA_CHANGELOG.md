@@ -1,3 +1,12 @@
+<h3>Version 10.143.15 beta <span class="date">3/12/2025</span></h3>
+<ul>
+  <li>Stability updates</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.15.3)
+
+---
+
 <h3>Version 10.143.12 beta <span class="date">1/12/2025</span></h3>
 <ul>
   <li>Update the ClickUp integration and add support for getting chat counts</li>
@@ -139,15 +148,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.25.3)
-
----
-
-<h3>Version 10.141.33 beta <span class="date">22/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 141.0.7390.123</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.33.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)

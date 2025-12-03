@@ -1,3 +1,48 @@
+<h3>Version 10.143.15 <span class="date">3/12/2025</span></h3>
+<p>
+
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add a marker to the macOS menus to differentiate the main Wavebox window</li>
+  <li>Add an option to the collection widget, so links can be opened in a specific group</li>
+  <li>Update the ClickUp integration and add support for getting chat counts</li>
+  <li>Update the context menus when opening items in groups/spaces so you can search across your groups/spaces</li>
+  <li>Add deep-sleep feature that reduces tab power consumption further after an extended period of inactivity</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Save the icon state from the icon picker to make it easier between sessions</li>
+  <li>Update to Chromium 143.0.7499.41</li>
+  <li>Performance improvements for long virtualized lists</li>
+  <li>Smooth out some UI jank during launch</li>
+  <li>Update the group and space pickers across the app with a unified component that includes search</li>
+  <li>Update dependencies</li>
+  <li>Some behind the scenes Brainbox stuff ready for our next update :-)</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix the process info sometimes failing to populate</li>
+  <li>UI tweaks to settings so it's easier to enable advanced mode</li>
+  <li>Speculative crashfix that involved the bookmark bar and split view</li>
+  <li>Fix an issue with the webdock auto-hiding when window dragging is enabled</li>
+  <li>UI fixes for settings and creating custom apps</li>
+  <li>Changing to empty group would not update the active tab, fix this</li>
+  <li>Fix a crash that could happen with some keyboard shortcuts</li>
+  <li>Fix frameless windows not actually being frameless</li>
+  <li>Fix a style issue in the tooltip menus</li>
+  <li>Fix the status bubble and new tab buttons having bright red backgrounds with some theme configurations</li>
+  <li>Fix a couple of typographical whoopsies</li>
+  <li>A couple of stability fixes picked up by the team</li>
+  <li>Fixes for the side panels</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.15.2)
+
+---
+
 <h3>Version 10.142.47 <span class="date">18/11/2025</span></h3>
 <ul>
   <li>Update to Chromium 142.0.7444.176</li>
@@ -176,27 +221,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.140.34.2)
-
----
-
-<h3>Version 10.140.30 <span class="date">17/9/2025</span></h3>
-<ul>
-  <li>
-    New Dock & Split View replaces classic split-screen with flexible multitasking: dock
-    apps across groups, split tabs side-by-side and 2+ views. Access via address bar,
-    right-click menu, tooltips, or page context menus for seamless workflow enhancement.
-  </li>
-  <li>Update to Chromium 140.0.7339.133</li>
-  <li>Improve macOS Tahoe compatibility</li>
-  <li>Add sleep all in group to context menus</li>
-  <li>Fix an issue where under some configurations the bookmarks bar could incorrectly show in the main Wavebox window</li>
-  <li>Fix the new tab page url failing to save when http or https are omitted</li>
-  <li>Add new wallpapers to dashboards</li>
-  <li>Fix a focus issue, that under some configs could see a tab focused after sleeping another rather than switching to the 'sleeping' holder</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.30.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
