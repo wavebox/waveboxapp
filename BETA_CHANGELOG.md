@@ -1,3 +1,12 @@
+<h3>Version 10.143.16 beta <span class="date">3/12/2025</span></h3>
+<ul>
+  <li>Fix an issue with context menus</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.16.3)
+
+---
+
 <h3>Version 10.143.15 beta <span class="date">3/12/2025</span></h3>
 <ul>
   <li>Stability updates</li>
@@ -134,20 +143,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.27.3)
-
----
-
-<h3>Version 10.142.25 beta <span class="date">24/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 142.0.7444.56</li>
-  <li>Stability fixes</li>
-  <li>Fix an issue with dragging files from the OS to file upload areas not working</li>
-  <li>Speculative fix for the menu bar icon on macOS sometimes vanishing when theres more than one profile</li>
-  <li>Fix the cycle docked sizes keyboard shortcut not working</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.25.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
