@@ -1,3 +1,13 @@
+<h3>Version 10.143.17 beta <span class="date">3/12/2025</span></h3>
+<ul>
+  <li>On macOS when using a window in fullscreen, the contents of the tab would fail to show. Fix this</li>
+  <li>The icon pickers in the context menus had vanished, add these back in</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.17.3)
+
+---
+
 <h3>Version 10.143.16 beta <span class="date">3/12/2025</span></h3>
 <ul>
   <li>Fix an issue with context menus</li>
@@ -133,16 +143,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.30.3)
-
----
-
-<h3>Version 10.142.27 beta <span class="date">28/10/2025</span></h3>
-<ul>
-  <li>Update dependencies</li>
-  <li>Add experimental support for in-page translate with Brainbox - this needs to be enabled under advanced flags</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.27.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)

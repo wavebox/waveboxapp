@@ -1,3 +1,49 @@
+<h3>Version 10.143.17 <span class="date">3/12/2025</span></h3>
+<p>
+  This patch release fixes a number of issue that were reported early with the 10.143 branch. Here's everything else that's new in these versions
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add a marker to the macOS menus to differentiate the main Wavebox window</li>
+  <li>Add an option to the collection widget, so links can be opened in a specific group</li>
+  <li>Update the ClickUp integration and add support for getting chat counts</li>
+  <li>Update the context menus when opening items in groups/spaces so you can search across your groups/spaces</li>
+  <li>Add deep-sleep feature that reduces tab power consumption further after an extended period of inactivity</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Save the icon state from the icon picker to make it easier between sessions</li>
+  <li>Update to Chromium 143.0.7499.41</li>
+  <li>Performance improvements for long virtualized lists</li>
+  <li>Smooth out some UI jank during launch</li>
+  <li>Update the group and space pickers across the app with a unified component that includes search</li>
+  <li>Update dependencies</li>
+  <li>Some behind the scenes Brainbox stuff ready for our next update :-)</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix the process info sometimes failing to populate</li>
+  <li>UI tweaks to settings so it's easier to enable advanced mode</li>
+  <li>Speculative crashfix that involved the bookmark bar and split view</li>
+  <li>Fix an issue with the webdock auto-hiding when window dragging is enabled</li>
+  <li>UI fixes for settings and creating custom apps</li>
+  <li>Changing to empty group would not update the active tab, fix this</li>
+  <li>Fix a crash that could happen with some keyboard shortcuts</li>
+  <li>Fix frameless windows not actually being frameless</li>
+  <li>Fix a style issue in the tooltip menus</li>
+  <li>Fix the status bubble and new tab buttons having bright red backgrounds with some theme configurations</li>
+  <li>Fix a couple of typographical whoopsies</li>
+  <li>A couple of stability fixes picked up by the team</li>
+  <li>Fixes for the side panels</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/10.143.17.2)
+
+---
+
 <h3>Version 10.143.16 <span class="date">3/12/2025</span></h3>
 <p>
   This patch release fixes an issue with the context menus. Here's everything else that's new
@@ -231,28 +277,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.23.2)
-
----
-
-<h3>Version 10.140.38 <span class="date">24/9/2025</span></h3>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Update Chromium to 140.0.7339.208</li>
-  <li>Crash fix when closing tab groups</li>
-  <li>Updated bookmark sync (this is currently opt-in. Contact support for more information)</li>
-  <li>Fix pinned tab styling</li>
-  <li>Various bug fixes for soft-crashes</li>
-  <li>Improve Feedly token exchange for more reliable sync</li>
-  <li>Update the WhatsApp integration for the latest UI update</li>
-  <li>Fix for hard crash with split screen</li>
-  <li>Fix tooltips sometimes staying on screen too long and messing up other parts of the UI</li>
-  <li>Fix a crash when opening the bookmarks side panel</li>
-  <li>Other stability improvements</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.140.38.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
