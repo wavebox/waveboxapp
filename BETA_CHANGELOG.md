@@ -1,3 +1,24 @@
+<h3>Version 10.143.19 beta <span class="date">7/12/2025</span></h3>
+<ul>
+  <li>
+    Improved search for things like the app store and tabs, making it both
+    faster and more accurate.
+  </li>
+  <li>
+    Add some optimizations for users with a large number of tabs per window (800+)
+    that should help with some performance issues.
+  </li>
+  <li>Fix an issue with the positioning of some widget menus</li>
+  <li>Fix copying the current url not working</li>
+  <li>Fix the titlebar height when the collapsed titlebar is turned off</li>
+  <li>Add escape keybinding to open link in group & space dialogs</li>
+  <li>Clearer styling for settings windows</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.19.3)
+
+---
+
 <h3>Version 10.143.17 beta <span class="date">3/12/2025</span></h3>
 <ul>
   <li>On macOS when using a window in fullscreen, the contents of the tab would fail to show. Fix this</li>
@@ -133,16 +154,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.40.3)
-
----
-
-<h3>Version 10.142.30 beta <span class="date">29/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 142.0.7444.60</li>
-  <li>Translation fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.30.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
