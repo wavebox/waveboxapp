@@ -1,3 +1,16 @@
+<h3>Version 10.143.21 beta <span class="date">11/12/2025</span></h3>
+<ul>
+  <li>Update to Chromium 143.0.7499.110</li>
+  <li>Add tooltips to the dividers</li>
+  <li>Show more search results in global search when using the individual tabs</li>
+  <li>Stability fixes in settings</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.21.3)
+
+---
+
 <h3>Version 10.143.20 beta <span class="date">8/12/2025</span></h3>
 <ul>
   <li>Fix a crash that popped up in the previous version</li>
@@ -119,16 +132,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.43.3)
-
----
-
-<h3>Version 10.142.42 beta <span class="date">6/11/2025</span></h3>
-<ul>
-  <li>Update to Chromium 142.0.7444.135</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.42.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
