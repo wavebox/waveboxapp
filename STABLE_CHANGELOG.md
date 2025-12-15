@@ -1,3 +1,41 @@
+<h3>Version 10.143.21 <span class="date">15/12/2025</span></h3>
+
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Improved search for things like the app store and tabs, making it both
+    faster and more accurate.
+  </li>
+  <li>
+    Add some optimizations for users with a large number of tabs per window (800+)
+    that should help with some performance issues.
+  </li>
+  <li>Add tooltips to the dividers</li>
+  <li>Show more search results in global search when using the individual tabs</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 143.0.7499.110</li>
+  <li>Add escape keybinding to open link in group & space dialogs</li>
+  <li>Clearer styling for settings windows</li>
+  <li>Stability fixes in settings</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix an issue with the positioning of some widget menus</li>
+  <li>Fix copying the current url not working</li>
+  <li>Fix the titlebar height when the collapsed titlebar is turned off</li>
+  <li>Fix a crash that popped up in the previous version</li>
+  <li>On macOS the toolbar was incorrectly showing on fullscreen videos, fix this</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.143.21.2)
+
+---
+
 <h3>Version 10.143.17 <span class="date">3/12/2025</span></h3>
 <p>
   This patch release fixes a number of issue that were reported early with the 10.143 branch. Here's everything else that's new in these versions
@@ -250,33 +288,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.25.2)
-
----
-
-<h3>Version 10.141.23 <span class="date">6/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 141.0.7390.55</li>
-  <li>Allow the main Wavebox window to be dragged around by using un-used tabstrip and webdock space</li>
-  <li>
-    Added new up & down layouts for docked and splits along with left & right, giving you
-    more flexibility in how you organize your workspace
-  </li>
-  <li>Stability fixes for the updater on macOS and Windows</li>
-  <li>Build updates and improvements</li>
-  <li>Add clearer explanation in the "What are spaces" popover</li>
-  <li>Update links to use the new help hub</li>
-  <li>Style fix on the internal settings pages</li>
-  <li>Fixed reload issues that were causing DevTools to behave unexpectedly</li>
-  <li>Faster build times</li>
-  <li>Fix a split screen issue where splitting in the window didn't work</li>
-  <li>Fix a Slack issue with generating debug logs</li>
-  <li>Update the naming of docked and split positioning</li>
-  <li>Speculative fix for tabs being greyed out</li>
-  <li>Fix a link rule matching error, where "anywhere" rules were initially matched through the omnibox, but then dropped later on</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.23.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
