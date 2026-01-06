@@ -1,3 +1,62 @@
+<h3>Version 10.144.11 beta <span class="date">6/1/2026</span></h3>
+<ul>
+  <li>Update to Chromium 144.0.7559.31</li>
+  <li>
+    Introducing Wavebox Snapshots & Profile Sync - your safety net for peace of mind.
+    <ul>
+      <li>
+        Our new snapshot feature automatically
+        captures your entire Wavebox configuration at key moments, creating restore points you
+        can jump back to whenever you need. Whether you're experimenting with new settings or
+        something unexpected happens, you're always just a click away from getting back on track.
+      </li>
+      <li>
+        Syncing passwords across devices just got easier and more secure. You can now use your
+        existing Google or Microsoft account as the secret key for password sync - no need to
+        remember yet another master password.
+      </li>
+      <li>
+        A fresh, streamlined interface for Snapshots and Profile Sync makes managing your backups
+        and keeping multiple devices in harmony simpler than ever.
+      </li>
+    </ul>
+  </li>
+  <li>
+    Brainbox gets a major upgrade with a completely redesigned experience that makes AI assistance
+    feel more natural and powerful than ever.
+    <ul>
+      <li>
+        Share context effortlessly - drag and drop images, upload attachments, or capture screenshots
+        directly into your conversation. Brainbox can now see what you see.
+      </li>
+      <li>
+        Reference your open tabs instantly by typing @tab followed by the name, or use the handy
+        menu to attach tab content to your chat. It's the fastest way to get AI help with what
+        you're working on.
+      </li>
+      <li>
+        Discover the power of Skills - specialized AI commands that supercharge your workflow.
+        Trigger them your way: hit a keyboard shortcut, right-click for the context menu, or
+        simply type /skill in the chat.
+      </li>
+      <li>
+        Find past conversations in a flash with the new chat search, and let automatic chat naming
+        keep everything organized without lifting a finger.
+      </li>
+    </ul>
+  </li>
+  <li>Fix a visual glitch where a white border would appear around non-floating webviews when using dark themes</li>
+  <li>Resolve an issue where Zoom wasn't displaying virtual backgrounds correctly</li>
+  <li>Fix a white border appearing around tabs in certain display configurations</li>
+  <li>Streamline the experience when setting up a second profile for smoother multi-account workflows</li>
+  <li>Squash several stability issues including crashes on launch and exit that affected some users</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.11.3)
+
+---
+
 <h3>Version 10.143.24 beta <span class="date">19/12/2025</span></h3>
 <ul>
   <li>Update to Chromium 143.0.7499.170</li>
@@ -128,15 +187,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.10.3)
-
----
-
-<h3>Version 10.142.47 beta <span class="date">18/11/2025</span></h3>
-<ul>
-  <li>Update to Chromium 142.0.7444.176</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.47.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
