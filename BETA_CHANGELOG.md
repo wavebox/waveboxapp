@@ -1,3 +1,16 @@
+<h3>Version 10.144.64 beta <span class="date">19/1/2026</span></h3>
+<ul>
+  <li>Add browser support for sites and extensions that use speech to text</li>
+  <li>Fix some edge case issues with Wavebox sign in</li>
+  <li>Update the Outlook integration so it gracefully handles accounts that don't support API access</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.64.3)
+
+---
+
 <h3>Version 10.144.14 beta <span class="date">8/1/2026</span></h3>
 <ul>
   <li>Update to Chromium 144.0.7559.59</li>
@@ -158,23 +171,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.15.3)
-
----
-
-<h3>Version 10.143.12 beta <span class="date">1/12/2025</span></h3>
-<ul>
-  <li>Update the ClickUp integration and add support for getting chat counts</li>
-  <li>Update the group and space pickers across the app with a unified component that includes search</li>
-  <li>Update the context menus when opening items in groups/spaces so you can search across your groups/spaces</li>
-  <li>Add an option to import old Brainbox chats</li>
-  <li>Update dependencies</li>
-  <li>Add deep-sleep feature that reduces tab power consumption further after an extended period of inactivity</li>
-  <li>Fixes for the side panels</li>
-  <li>Stability fixes</li>
-  <li>Brainbox work</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
