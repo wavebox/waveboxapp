@@ -1,3 +1,13 @@
+<h3>Version 10.144.66 beta <span class="date">21/1/2026</span></h3>
+<ul>
+  <li>Update to Chromium 144.0.7559.97</li>
+  <li>Fix a display issue with the tab switcher when holding down Ctrl+Tab</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.66.3)
+
+---
+
 <h3>Version 10.144.64 beta <span class="date">19/1/2026</span></h3>
 <ul>
   <li>Add browser support for sites and extensions that use speech to text</li>
@@ -162,15 +172,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.16.3)
-
----
-
-<h3>Version 10.143.15 beta <span class="date">3/12/2025</span></h3>
-<ul>
-  <li>Stability updates</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.15.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
