@@ -1,3 +1,37 @@
+<h3>Version 10.144.66 <span class="date">21/1/2026</span></h3>
+<ul>
+  <li>Update to Chromium 144.0.7559.97</li>
+  <li>Add browser support for sites and extensions that use speech to text</li>
+  <li>Add more support for customizing the left and right click actions on the menu bar (macOS) and tray (Windows)</li>
+  <li>Experiment with a new Wavebox mini experience when Wavebox mini is opened from the menu bar/tray</li>
+  <li>Fix the unread count for LinkedIn when there's more than 99 unreads</li>
+  <li>Fix the unread count not showing for Discord</li>
+  <li>Fix a display issue with the tab switcher when holding down Ctrl+Tab</li>
+  <li>Fix the Brainbox popout button not working</li>
+  <li>Fix a crash when dragging a tab group into a new window</li>
+  <li>Fix a visual glitch where a white border would appear around non-floating webviews when using dark themes</li>
+  <li>Fix some edge case issues with Wavebox sign in</li>
+  <li>Update the Outlook integration so it gracefully handles accounts that don't support API access</li>
+  <li>Update dependencies</li>
+  <li>Resolve an issue where Zoom wasn't displaying virtual backgrounds correctly</li>
+  <li>Fix a white border appearing around tabs in certain display configurations</li>
+  <li>Streamline the experience when setting up a second profile for smoother multi-account workflows</li>
+  <li>Squash several stability issues including crashes on launch and exit that affected some users</li>
+  <li>Update dependencies</li>
+  <li>Re-order settings when searching to bubble the most relevant results to the top</li>
+  <li>Speculative fix for a split view crash</li>
+  <li>UI fixes for the focus mode popover</li>
+  <li>Style fixes for the tab strip on varying display widths</li>
+  <li>Tidy a bunch of the dialog actions to make them more uniform</li>
+  <li>Fixes for the Chrome webstore</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.66.2)
+
+---
+
 <h3>Version 10.143.21 <span class="date">15/12/2025</span></h3>
 
 <h4>🆕 New!</h4>
@@ -268,26 +302,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.29.2)
-
----
-
-<h3>Version 10.141.25 <span class="date">8/10/2025</span></h3>
-<ul>
-  <li>Update to Chromium 141.0.7390.66</li>
-  <li>Fix an overflow issue with tooltips issue</li>
-  <li>Fix the split and docked icons not always taking the window orientation into account</li>
-  <li>Fix a crash when double clicking split tabs</li>
-  <li>Some Apple apps send HTML to 3rd party mail clients when sharing via email. Attempt to sanitize this and strip markup</li>
-  <li>Speculative fix for a crash when switching tabs</li>
-  <li>Fix a crash when importing passwords from another browser</li>
-  <li>Improve the feed discovery in the RSS widget</li>
-  <li>Fix the RSS widget failing to fetch some feeds</li>
-  <li>Fix a docked keyboard shortcut erroring</li>
-  <li>Fix keyboard shortcuts not working on restart for some users</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.25.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
