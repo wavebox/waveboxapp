@@ -1,3 +1,20 @@
+<h3>Version 10.144.71 beta <span class="date">27/1/2026</span></h3>
+<ul>
+  <li>Add email tab to sharing menu and space popovers</li>
+  <li>Add speech to text support for Brainbox 5</li>
+  <li>Fix tab titles not being populated when sending tabs to a dashboard</li>
+  <li>Fix an issue where the sidepanel title would not update</li>
+  <li>Fix two launch crashes</li>
+  <li>UI updates for settings</li>
+  <li>Improve the auto-focus behaviour in the tabstrip when tab scrolling is enabled</li>
+  <li>Fix Zoom not opening in the desktop app by default</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.71.3)
+
+---
+
 <h3>Version 10.144.66 beta <span class="date">21/1/2026</span></h3>
 <ul>
   <li>Update to Chromium 144.0.7559.97</li>
@@ -163,15 +180,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.17.3)
-
----
-
-<h3>Version 10.143.16 beta <span class="date">3/12/2025</span></h3>
-<ul>
-  <li>Fix an issue with context menus</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
