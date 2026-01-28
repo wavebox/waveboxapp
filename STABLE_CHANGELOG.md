@@ -1,3 +1,22 @@
+<h3>Version 10.144.72 <span class="date">28/1/2026</span></h3>
+<ul>
+  <li>Update to Chromium 144.0.7559.110</li>
+  <li>Fix dependency issue with the RPM distribution</li>
+  <li>Add email tab to sharing menu and space popovers</li>
+  <li>Add speech to text support for Brainbox 5</li>
+  <li>Fix tab titles not being populated when sending tabs to a dashboard</li>
+  <li>Fix an issue where the sidepanel title would not update</li>
+  <li>Fix two launch crashes</li>
+  <li>UI updates for settings</li>
+  <li>Improve the auto-focus behaviour in the tabstrip when tab scrolling is enabled</li>
+  <li>Fix Zoom not opening in the desktop app by default</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.72.2)
+
+---
+
 <h3>Version 10.144.66 <span class="date">21/1/2026</span></h3>
 <ul>
   <li>Update to Chromium 144.0.7559.97</li>
@@ -286,22 +305,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.141.33.2)
-
----
-
-<h3>Version 10.141.29 <span class="date">15/10/2025</span></h3>
-
-<ul>
-  <li>Update to Chromium 141.0.7390.108</li>
-  <li>Update the styling for the split tab page</li>
-  <li>Update integrations with slack enterprise speculative fix</li>
-  <li>Fix keyboard shortcuts with suggested keys being overwritten on start</li>
-  <li>Add a context menu option to close tabs in an app when using the unified sidebar</li>
-  <li>Other stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.29.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
