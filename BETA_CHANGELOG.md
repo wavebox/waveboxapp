@@ -1,3 +1,12 @@
+<h3>Version 10.144.72 beta <span class="date">28/1/2026</span></h3>
+<ul>
+  <li>Update to Chromium 144.0.7559.110</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.144.72.3)
+
+---
+
 <h3>Version 10.144.71 beta <span class="date">27/1/2026</span></h3>
 <ul>
   <li>Add email tab to sharing menu and space popovers</li>
@@ -170,16 +179,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.19.3)
-
----
-
-<h3>Version 10.143.17 beta <span class="date">3/12/2025</span></h3>
-<ul>
-  <li>On macOS when using a window in fullscreen, the contents of the tab would fail to show. Fix this</li>
-  <li>The icon pickers in the context menus had vanished, add these back in</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
