@@ -1,3 +1,18 @@
+<h3>Version 10.145.5 beta <span class="date">3/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.27</li>
+  <li>Save the tabstrip scroll position when switching Groups</li>
+  <li>Fix some parts of the UI still being visible when the privacy lock shows</li>
+  <li>Fix a bug where the webdock divider state didn't save when switching spaces</li>
+  <li>Speculative fix for silent crash that could then cause graphical issues</li>
+  <li>Fix crash on exit after using an incognito window</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.5.3)
+
+---
+
 <h3>Version 10.144.72 beta <span class="date">28/1/2026</span></h3>
 <ul>
   <li>Update to Chromium 144.0.7559.110</li>
@@ -158,27 +173,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.20.3)
-
----
-
-<h3>Version 10.143.19 beta <span class="date">7/12/2025</span></h3>
-<ul>
-  <li>
-    Improved search for things like the app store and tabs, making it both
-    faster and more accurate.
-  </li>
-  <li>
-    Add some optimizations for users with a large number of tabs per window (800+)
-    that should help with some performance issues.
-  </li>
-  <li>Fix an issue with the positioning of some widget menus</li>
-  <li>Fix copying the current url not working</li>
-  <li>Fix the titlebar height when the collapsed titlebar is turned off</li>
-  <li>Add escape keybinding to open link in group & space dialogs</li>
-  <li>Clearer styling for settings windows</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.19.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
