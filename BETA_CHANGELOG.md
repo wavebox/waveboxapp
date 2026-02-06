@@ -1,3 +1,18 @@
+<h3>Version 10.145.7 beta <span class="date">6/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.46</li>
+  <li>Allow the space webdock to be resized further and have group & app names show once it's over 100px</li>
+  <li>Improve frameless window styling on Windows</li>
+  <li>Speculative fix for some windows growing automatically when opened</li>
+  <li>Fix split screen resize not working</li>
+  <li>Make the webdock dragger easier to grab</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.7.3)
+
+---
+
 <h3>Version 10.145.5 beta <span class="date">3/2/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.27</li>
@@ -163,16 +178,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.21.3)
-
----
-
-<h3>Version 10.143.20 beta <span class="date">8/12/2025</span></h3>
-<ul>
-  <li>Fix a crash that popped up in the previous version</li>
-  <li>On macOS the toolbar was incorrectly showing on fullscreen videos, fix this</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.20.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
