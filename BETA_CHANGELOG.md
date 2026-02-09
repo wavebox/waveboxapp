@@ -1,3 +1,14 @@
+<h3>Version 10.145.8 beta <span class="date">9/2/2026</span></h3>
+<ul>
+  <li>Additional fixes for split screen and docked modes</li>
+  <li>Fixes for desktop web apps</li>
+  <li>Fixes for certain extensions that allow them to open tabs in the active space by default</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.8.3)
+
+---
+
 <h3>Version 10.145.7 beta <span class="date">6/2/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.46</li>
@@ -165,19 +176,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.24.3)
-
----
-
-<h3>Version 10.143.21 beta <span class="date">11/12/2025</span></h3>
-<ul>
-  <li>Update to Chromium 143.0.7499.110</li>
-  <li>Add tooltips to the dividers</li>
-  <li>Show more search results in global search when using the individual tabs</li>
-  <li>Stability fixes in settings</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.21.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
