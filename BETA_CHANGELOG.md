@@ -1,3 +1,15 @@
+<h3>Version 10.145.11 beta <span class="date">11/2/2026</span></h3>
+<ul>
+  <li>Make dragging the main Wavebox window on Windows easier</li>
+  <li>UI updates</li>
+  <li>Fixes for the docked and split mini toolbar incorrectly showing 2 icons</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.11.3)
+
+---
+
 <h3>Version 10.145.8 beta <span class="date">9/2/2026</span></h3>
 <ul>
   <li>Additional fixes for split screen and docked modes</li>
@@ -160,22 +172,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.144.11.3)
-
----
-
-<h3>Version 10.143.24 beta <span class="date">19/12/2025</span></h3>
-<ul>
-  <li>Update to Chromium 143.0.7499.170</li>
-  <li>Re-order settings when searching to bubble the most relevant results to the top</li>
-  <li>Speculative fix for a split view crash</li>
-  <li>UI fixes for the focus mode popover</li>
-  <li>Style fixes for the tab strip on varying display widths</li>
-  <li>Tidy a bunch of the dialog actions to make them more uniform</li>
-  <li>Fixes for the Chrome webstore</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.24.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
