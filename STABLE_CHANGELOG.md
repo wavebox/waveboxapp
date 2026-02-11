@@ -1,3 +1,25 @@
+<h3>Version 10.145.11 <span class="date">11/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.46</li>
+  <li>Allow the space webdock to be resized further and have group & app names show once it's over 100px</li>
+  <li>Save the tabstrip scroll position when switching Groups</li>
+  <li>Make dragging the main Wavebox window on Windows easier</li>
+  <li>Fixes for desktop web apps</li>
+  <li>Improve frameless window styling on Windows</li>
+  <li>Speculative fix for some windows growing automatically when opened</li>
+  <li>Make the webdock dragger easier to grab</li>
+  <li>Fix some parts of the UI still being visible when the privacy lock shows</li>
+  <li>Fix a bug where the webdock divider state didn't save when switching spaces</li>
+  <li>Speculative fix for silent crash that could then cause graphical issues</li>
+  <li>Fix crash on exit after using an incognito window</li>
+  <li>UI updates</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.11.2)
+
+---
+
 <h3>Version 10.144.72 <span class="date">28/1/2026</span></h3>
 <ul>
   <li>Update to Chromium 144.0.7559.110</li>
@@ -292,19 +314,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.42.2)
-
----
-
-<h3>Version 10.141.33 <span class="date">22/10/2025</span></h3>
-
-<ul>
-  <li>Update to Chromium 141.0.7390.123</li>
-  <li>Fix an issue that prevented passwords from being saved on some setups</li>
-  <li>Update the knowledge base urls</li>
-  <li>Stability fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.141.33.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
