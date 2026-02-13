@@ -1,3 +1,13 @@
+<h3>Version 10.145.16 beta <span class="date">13/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.68</li>
+  <li>Fix a hard crash reported by some users</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.16.3)
+
+---
+
 <h3>Version 10.145.14 beta <span class="date">12/2/2026</span></h3>
 <ul>
   <li>Fix a startup crash reported by some users</li>
@@ -108,22 +118,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.144.64.3)
-
----
-
-<h3>Version 10.144.14 beta <span class="date">8/1/2026</span></h3>
-<ul>
-  <li>Update to Chromium 144.0.7559.59</li>
-  <li>Add more support for customizing the left and right click actions on the menu bar (macOS) and tray (Windows)</li>
-  <li>Experiment with a new Wavebox mini experience when Wavebox mini is opened from the menu bar/tray</li>
-  <li>Fix the unread count for LinkedIn when there's more than 99 unreads</li>
-  <li>Fix the unread count not showing for Discord</li>
-  <li>Fix the Brainbox popout button not working</li>
-  <li>Use app names in Brainbox 5 rather than the underlying tab names</li>
-  <li>Fix a crash when dragging a tab group into a new window</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.144.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
