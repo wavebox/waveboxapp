@@ -1,3 +1,12 @@
+<h3>Version 10.145.17 beta <span class="date">16/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.76</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.17.3)
+
+---
+
 <h3>Version 10.145.16 beta <span class="date">13/2/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.68</li>
@@ -105,19 +114,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.144.66.3)
-
----
-
-<h3>Version 10.144.64 beta <span class="date">19/1/2026</span></h3>
-<ul>
-  <li>Add browser support for sites and extensions that use speech to text</li>
-  <li>Fix some edge case issues with Wavebox sign in</li>
-  <li>Update the Outlook integration so it gracefully handles accounts that don't support API access</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.144.64.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
