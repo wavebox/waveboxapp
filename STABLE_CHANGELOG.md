@@ -1,3 +1,22 @@
+<h3>Version 10.145.41 <span class="date">24/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.117</li>
+  <li>Fix an edge case issue reported by some users where the UI starts to render incorrectly and parts of Wavebox stop working</li>
+  <li>Add data integrity protection for the stores to make them more reliable</li>
+  <li>Multiple stability fixes and error handling cases for a faster and more reliable Wavebox</li>
+  <li>Fix an issue where dragging Groups/Apps/Tabs around could fail</li>
+  <li>Fix an issue that could see the loading dots render incorrectly on launch</li>
+  <li>Speculative fix for crash when using tab groups</li>
+  <li>Speculative fix for a hard crash on startup when using tab groups</li>
+  <li>Speculative fix for parts of the UI becoming unresponsive</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.41.2)
+
+---
+
 <h3>Version 10.145.17 <span class="date">16/2/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.76</li>
@@ -266,17 +285,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.142.47.2)
-
----
-
-<h3>Version 10.142.43 <span class="date">10/11/2025</span></h3>
-<ul>
-  <li>Fix a crash that could happen on startup depending on current config</li>
-  <li>Fix the webdock resizer only being available in the top part of the window</li>
-  <li>Network stability fix</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.43.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
