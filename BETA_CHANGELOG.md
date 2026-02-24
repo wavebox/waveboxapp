@@ -1,3 +1,12 @@
+<h3>Version 10.145.41 beta <span class="date">24/2/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.117</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.41.3)
+
+---
+
 <h3>Version 10.145.39 beta <span class="date">23/2/2026</span></h3>
 <ul>
   <li>Speculative fix for a hard crash on startup when using tab groups</li>
@@ -106,15 +115,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.5.3)
-
----
-
-<h3>Version 10.144.72 beta <span class="date">28/1/2026</span></h3>
-<ul>
-  <li>Update to Chromium 144.0.7559.110</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.144.72.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
