@@ -1,3 +1,12 @@
+<h3>Version 10.145.60 beta <span class="date">4/3/2026</span></h3>
+<ul>
+  <li>Update to Chromium 145.0.7632.160</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.145.60.3)
+
+---
+
 <h3>Version 10.145.41 beta <span class="date">24/2/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.117</li>
@@ -100,21 +109,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.7.3)
-
----
-
-<h3>Version 10.145.5 beta <span class="date">3/2/2026</span></h3>
-<ul>
-  <li>Update to Chromium 145.0.7632.27</li>
-  <li>Save the tabstrip scroll position when switching Groups</li>
-  <li>Fix some parts of the UI still being visible when the privacy lock shows</li>
-  <li>Fix a bug where the webdock divider state didn't save when switching spaces</li>
-  <li>Speculative fix for silent crash that could then cause graphical issues</li>
-  <li>Fix crash on exit after using an incognito window</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
