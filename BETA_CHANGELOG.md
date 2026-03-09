@@ -1,3 +1,15 @@
+<h3>Version 10.146.10 beta <span class="date">9/3/2026</span></h3>
+<ul>
+  <li>Update to Chromium 146.0.7680.66</li>
+  <li>Fix recent tab ordering in the search popup</li>
+  <li>Fix an issue where Wavebox would sometimes take focus on macOS during a FedCM sign-in</li>
+  <li>Fix the current space not being used correctly during a FedCM sign-in</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.10.3)
+
+---
+
 <h3>Version 10.145.60 beta <span class="date">4/3/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.160</li>
@@ -94,21 +106,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.8.3)
-
----
-
-<h3>Version 10.145.7 beta <span class="date">6/2/2026</span></h3>
-<ul>
-  <li>Update to Chromium 145.0.7632.46</li>
-  <li>Allow the space webdock to be resized further and have group & app names show once it's over 100px</li>
-  <li>Improve frameless window styling on Windows</li>
-  <li>Speculative fix for some windows growing automatically when opened</li>
-  <li>Fix split screen resize not working</li>
-  <li>Make the webdock dragger easier to grab</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.7.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
