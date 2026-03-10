@@ -1,3 +1,12 @@
+<h3>Version 10.146.11 beta <span class="date">10/3/2026</span></h3>
+<ul>
+  <li>Fix a hard crash on launch</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.11.3)
+
+---
+
 <h3>Version 10.146.10 beta <span class="date">9/3/2026</span></h3>
 <ul>
   <li>Update to Chromium 146.0.7680.66</li>
@@ -95,17 +104,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.11.3)
-
----
-
-<h3>Version 10.145.8 beta <span class="date">9/2/2026</span></h3>
-<ul>
-  <li>Additional fixes for split screen and docked modes</li>
-  <li>Fixes for desktop web apps</li>
-  <li>Fixes for certain extensions that allow them to open tabs in the active space by default</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.8.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
