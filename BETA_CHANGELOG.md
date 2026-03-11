@@ -1,3 +1,12 @@
+<h3>Version 10.146.14 beta <span class="date">11/3/2026</span></h3>
+<ul>
+  <li>Update to Chromium 146.0.7680.72</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.14.3)
+
+---
+
 <h3>Version 10.146.11 beta <span class="date">10/3/2026</span></h3>
 <ul>
   <li>Fix a hard crash on launch</li>
@@ -92,18 +101,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.14.3)
-
----
-
-<h3>Version 10.145.11 beta <span class="date">11/2/2026</span></h3>
-<ul>
-  <li>Make dragging the main Wavebox window on Windows easier</li>
-  <li>UI updates</li>
-  <li>Fixes for the docked and split mini toolbar incorrectly showing 2 icons</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
