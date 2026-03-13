@@ -1,3 +1,17 @@
+<h3>Version 10.146.21 beta <span class="date">13/3/2026</span></h3>
+<ul>
+  <li>Upgrade to Chromium 146.0.7680.76</li>
+  <li>UI updates</li>
+  <li>Fixes for the macOS updater on Tahoe</li>
+  <li>Speculative fixes for Wavebox stealing focus when it's not in the foreground</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.21.3)
+
+---
+
 <h3>Version 10.146.14 beta <span class="date">11/3/2026</span></h3>
 <ul>
   <li>Update to Chromium 146.0.7680.72</li>
@@ -90,17 +104,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.16.3)
-
----
-
-<h3>Version 10.145.14 beta <span class="date">12/2/2026</span></h3>
-<ul>
-  <li>Fix a startup crash reported by some users</li>
-  <li>Add an auto setting for which app to launch on startup, allowing you to restore the last used app/tab</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
