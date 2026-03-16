@@ -1,3 +1,20 @@
+<h3>Version 10.146.26 <span class="date">16/3/2026</span></h3>
+<ul>
+  <li>Update to Chromium 146.0.7680.80</li>
+  <li>Fix recent tab ordering in the search popup</li>
+  <li>Fix an issue where Wavebox would sometimes take focus on macOS during a FedCM sign-in</li>
+  <li>Fix the current space not being used correctly during a FedCM sign-in</li>
+  <li>Fix a hard crash on launch</li>
+  <li>Fixes for the macOS updater on Tahoe</li>
+  <li>Speculative fixes for Wavebox stealing focus when it's not in the foreground</li>
+  <li>Stability fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.26.2)
+
+---
+
 <h3>Version 10.145.41 <span class="date">24/2/2026</span></h3>
 <ul>
   <li>Update to Chromium 145.0.7632.117</li>
@@ -276,15 +293,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.143.15.2)
-
----
-
-<h3>Version 10.142.47 <span class="date">18/11/2025</span></h3>
-<ul>
-  <li>Update to Chromium 142.0.7444.176</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.142.47.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
