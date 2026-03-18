@@ -1,3 +1,12 @@
+<h3>Version 10.146.31 beta <span class="date">18/3/2026</span></h3>
+<ul>
+  <li>Fix a crash on launch that could affect certain configs</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.31.3)
+
+---
+
 <h3>Version 10.146.29 beta <span class="date">18/3/2026</span></h3>
 <ul>
   <li>Crashfix</li>
@@ -85,18 +94,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.41.3)
-
----
-
-<h3>Version 10.145.39 beta <span class="date">23/2/2026</span></h3>
-<ul>
-  <li>Speculative fix for a hard crash on startup when using tab groups</li>
-  <li>Speculative fix for parts of the UI becoming unresponsive</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.39.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
