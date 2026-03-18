@@ -1,3 +1,12 @@
+<h3>Version 10.146.29 beta <span class="date">18/3/2026</span></h3>
+<ul>
+  <li>Crashfix</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.29.3)
+
+---
+
 <h3>Version 10.146.28 beta <span class="date">17/3/2026</span></h3>
 <ul>
   <li>Speculative fix for crash on launch under certain configurations</li>
@@ -88,22 +97,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.39.3)
-
----
-
-<h3>Version 10.145.27 beta <span class="date">19/2/2026</span></h3>
-<ul>
-  <li>Update to Chromium 145.0.7632.110</li>
-  <li>Fix an edge case issue reported by some users where the UI starts to render incorrectly and parts of Wavebox stop working</li>
-  <li>Add data integrity protection for the stores to make them more reliable</li>
-  <li>Multiple stability fixes and error handling cases for a faster and more reliable Wavebox</li>
-  <li>Fix an issue where dragging Groups/Apps/Tabs around could fail</li>
-  <li>Fix an issue that could see the loading dots render incorrectly on launch</li>
-  <li>Speculative fix for crash when using tab groups</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.27.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
