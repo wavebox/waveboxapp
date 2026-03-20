@@ -1,3 +1,19 @@
+<h3>Version 10.146.36 beta <span class="date">20/3/2026</span></h3>
+<ul>
+  <li>UI refresh</li>
+  <li>Add an option to disable tab tooltips</li>
+  <li>Add new springtime wallpapers to the wallpaper gallery</li>
+  <li>Add an option to disable search customization</li>
+  <li>Fixed pinned tabs not showing their favicon</li>
+  <li>Fix tab cycling when all group tabs are docked</li>
+  <li>Fix the docked alert state not showing on apps</li>
+  <li>Dependency updates</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.146.36.3)
+
+---
+
 <h3>Version 10.146.31 beta <span class="date">18/3/2026</span></h3>
 <ul>
   <li>Fix a crash on launch that could affect certain configs</li>
@@ -85,15 +101,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.60.3)
-
----
-
-<h3>Version 10.145.41 beta <span class="date">24/2/2026</span></h3>
-<ul>
-  <li>Update to Chromium 145.0.7632.117</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.41.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
