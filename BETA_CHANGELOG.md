@@ -1,3 +1,13 @@
+<h3>Version 10.147.12 beta <span class="date">2/4/2026</span></h3>
+<ul>
+  <li>Crash fix for certain locales</li>
+  <li>Add options to customize the height of the title bar in the main Wavebox window</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.147.12.3)
+
+---
+
 <h3>Version 10.147.9 beta <span class="date">2/4/2026</span></h3>
 <ul>
   <li>Update to Chromium 147.0.7727.49</li>
@@ -98,18 +108,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.11.3)
-
----
-
-<h3>Version 10.146.10 beta <span class="date">9/3/2026</span></h3>
-<ul>
-  <li>Update to Chromium 146.0.7680.66</li>
-  <li>Fix recent tab ordering in the search popup</li>
-  <li>Fix an issue where Wavebox would sometimes take focus on macOS during a FedCM sign-in</li>
-  <li>Fix the current space not being used correctly during a FedCM sign-in</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.10.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
