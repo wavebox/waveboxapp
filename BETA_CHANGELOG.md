@@ -1,3 +1,21 @@
+<h3>Version 10.147.9 beta <span class="date">2/4/2026</span></h3>
+<ul>
+  <li>Update to Chromium 147.0.7727.49</li>
+  <li>Fix an issue where some windows could infinitely resize</li>
+  <li>Fixes to make tab groups play nicer with Wavebox groups</li>
+  <li>Add right-click > create link rule in all tabs</li>
+  <li>Add a capture tool to the link opener to help creating new rules</li>
+  <li>Speculative fix for macOS where you could see white flashing</li>
+  <li>Fix a crash when the vertical tabs flag is enabled</li>
+  <li>Fix extensions failed to show inactive for the current space</li>
+  <li>UI fixes</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.147.9.3)
+
+---
+
 <h3>Version 10.146.36 beta <span class="date">20/3/2026</span></h3>
 <ul>
   <li>UI refresh</li>
@@ -92,15 +110,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.10.3)
-
----
-
-<h3>Version 10.145.60 beta <span class="date">4/3/2026</span></h3>
-<ul>
-  <li>Update to Chromium 145.0.7632.160</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.60.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
