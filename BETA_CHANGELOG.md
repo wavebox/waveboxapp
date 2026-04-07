@@ -1,3 +1,18 @@
+<h3>Version 10.147.41 beta <span class="date">7/4/2026</span></h3>
+<p>
+  <b>⚠️ Windows users on 10.147.9 or 10.147.12 beta</b> — the auto-update for this version will appear
+  to download and apply, but when you click install the app will quit without updating. Please
+  download and install this version manually from
+  <a href="https://wavebox.io/beta">https://wavebox.io/beta</a>.
+</p>
+<ul>
+  <li>Less intrusive update notifications</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.147.41.3)
+
+---
+
 <h3>Version 10.147.12 beta <span class="date">2/4/2026</span></h3>
 <ul>
   <li>Crash fix for certain locales</li>
@@ -99,15 +114,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.14.3)
-
----
-
-<h3>Version 10.146.11 beta <span class="date">10/3/2026</span></h3>
-<ul>
-  <li>Fix a hard crash on launch</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.11.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
