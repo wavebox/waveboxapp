@@ -1,3 +1,13 @@
+<h3>Version 10.147.44 beta <span class="date">8/4/2026</span></h3>
+<ul>
+  <li>Update to Chromium 147.0.7727.56</li>
+  <li>Bugfix</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.147.44.3)
+
+---
+
 <h3>Version 10.147.43 beta <span class="date">8/4/2026</span></h3>
 <ul>
   <li>Update to Chromium 147.0.7727.56</li>
@@ -100,20 +110,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.27.3)
-
----
-
-<h3>Version 10.146.21 beta <span class="date">13/3/2026</span></h3>
-<ul>
-  <li>Upgrade to Chromium 146.0.7680.76</li>
-  <li>UI updates</li>
-  <li>Fixes for the macOS updater on Tahoe</li>
-  <li>Speculative fixes for Wavebox stealing focus when it's not in the foreground</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.21.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
