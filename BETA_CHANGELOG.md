@@ -1,3 +1,12 @@
+<h3>Version 10.147.43 beta <span class="date">8/4/2026</span></h3>
+<ul>
+  <li>Update to Chromium 147.0.7727.56</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/10.147.43.3)
+
+---
+
 <h3>Version 10.147.41 beta <span class="date">7/4/2026</span></h3>
 <p>
   <b>⚠️ Windows users on 10.147.9 or 10.147.12 beta</b> — the auto-update for this version will appear
@@ -105,15 +114,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.21.3)
-
----
-
-<h3>Version 10.146.14 beta <span class="date">11/3/2026</span></h3>
-<ul>
-  <li>Update to Chromium 146.0.7680.72</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
