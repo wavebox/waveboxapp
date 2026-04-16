@@ -1,3 +1,30 @@
+<h3>Version 147.1.54 beta <span class="date">16/4/2026</span></h3>
+<p>
+  Notice something different about the numbers? We're
+  dropping the '10' prefix from our versioning.
+</p>
+<p>
+  Previously, today's update would have been <i>10.147.55</i>. For a
+  bunch of boring technical reasons, we're switching to a
+  <i>[chromium major].version.version</i> format, which makes
+  this release <i>147.1.54</i>. This new setup actually allows us
+  to ship Chromium updates to our beta channel with less friction!
+</p>
+<p>
+  So, it might look like we just skipped ahead 137 versions overnight.
+  If you're impressed by that, then yes, we are coding time-travelers 🛸.
+  If not, it's just a naming tweak to keep things running smoothly.
+</p>
+<ul>
+  <li>Update to Chromium 147.0.7727.102</li>
+  <li>Update dependencies</li>
+  <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/147.1.54.3)
+
+---
+
 <h3>Version 10.147.47 beta <span class="date">16/4/2026</span></h3>
 <ul>
   <li>Update to Chromium 147.0.7727.102</li>
@@ -102,15 +129,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.29.3)
-
----
-
-<h3>Version 10.146.28 beta <span class="date">17/3/2026</span></h3>
-<ul>
-  <li>Speculative fix for crash on launch under certain configurations</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.28.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
