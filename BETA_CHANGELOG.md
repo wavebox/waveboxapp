@@ -1,3 +1,14 @@
+<h3>Version 148.1.59 beta <span class="date">20/4/2026</span></h3>
+<ul>
+    <li>Update Chromium to 148.0.7778.40</li>
+    <li>Fix the webdock hiding behind the signed out panel in some configurations</li>
+    <li>Update dependencies</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/148.1.59.3)
+
+---
+
 <h3>Version 147.1.54 beta <span class="date">16/4/2026</span></h3>
 <p>
   Notice something different about the numbers? We're
@@ -120,15 +131,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.31.3)
-
----
-
-<h3>Version 10.146.29 beta <span class="date">18/3/2026</span></h3>
-<ul>
-  <li>Crashfix</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.29.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
