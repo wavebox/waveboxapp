@@ -1,3 +1,27 @@
+<h3>Version 148.2.1 beta <span class="date">30/4/2026</span></h3>
+<ul>
+  <li>Update to Chromium 148.0.7778.96</li>
+  <li>Fixed a Windows update issue that could leave a corrupt database after restart</li>
+  <li>Stability fixes for the Slack integration</li>
+  <li>Slack emoji rendering now supports extended icon codes and skin tone variants</li>
+  <li>Fixed custom notification sound uploads silently failing to appear in the sound list</li>
+  <li>Fixed dragging a tab branch between groups sometimes leaving stale references</li>
+  <li>Replaced Group &amp; App icons are now cleaned up properly instead of accumulating in local storage</li>
+  <li>Fixed an issues that prevented spacial-navigator search fallback from finding the active tab</li>
+  <li>Moving apps or groups to the end of a list now behaves consistently</li>
+  <li>Fixes for crash uploads and Brainbox backups</li>
+  <li>Various stability and reliability improvements from internal fuzzing</li>
+  <li>Various stability and code-quality improvements</li>
+  <li>Update dependencies</li>
+  <li>UI tweaks</li>
+  <li>Release test</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.1.3)
+
+---
+
 <h3>Version 148.1.63 beta <span class="date">27/4/2026</span></h3>
 <ul>
   <li>Update to Chromium 148.0.7778.56</li>
@@ -135,22 +159,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.9.3)
-
----
-
-<h3>Version 10.146.36 beta <span class="date">20/3/2026</span></h3>
-<ul>
-  <li>UI refresh</li>
-  <li>Add an option to disable tab tooltips</li>
-  <li>Add new springtime wallpapers to the wallpaper gallery</li>
-  <li>Add an option to disable search customization</li>
-  <li>Fixed pinned tabs not showing their favicon</li>
-  <li>Fix tab cycling when all group tabs are docked</li>
-  <li>Fix the docked alert state not showing on apps</li>
-  <li>Dependency updates</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.36.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
