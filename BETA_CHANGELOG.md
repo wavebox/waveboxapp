@@ -1,3 +1,16 @@
+<h3>Version 148.2.3 beta <span class="date">1/5/2026</span></h3>
+<ul>
+  <li>Fixed a connection leak in Slack that could exhaust resources during reconnects on unstable networks</li>
+  <li>Customized spaces are now preserved when their last group, app or tab is removed</li>
+  <li>Added an 'Add group' option to the webdock divider context menu</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.3.3)
+
+---
+
 <h3>Version 148.2.1 beta <span class="date">30/4/2026</span></h3>
 <ul>
   <li>Update to Chromium 148.0.7778.96</li>
@@ -141,24 +154,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.12.3)
-
----
-
-<h3>Version 10.147.9 beta <span class="date">2/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 147.0.7727.49</li>
-  <li>Fix an issue where some windows could infinitely resize</li>
-  <li>Fixes to make tab groups play nicer with Wavebox groups</li>
-  <li>Add right-click > create link rule in all tabs</li>
-  <li>Add a capture tool to the link opener to help creating new rules</li>
-  <li>Speculative fix for macOS where you could see white flashing</li>
-  <li>Fix a crash when the vertical tabs flag is enabled</li>
-  <li>Fix extensions failed to show inactive for the current space</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
