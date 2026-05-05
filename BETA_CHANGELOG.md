@@ -1,3 +1,18 @@
+<h3>Version 148.2.4 beta <span class="date">5/5/2026</span></h3>
+<ul>
+  <li>AppImage builds now run on newer Linux distributions such as Fedora 44 that no longer ship libfuse2</li>
+  <li>Fixed a crash that could occur when bulk-moving two or more tabs from the same group</li>
+  <li>Improved resilience of internal messaging so transient data-copy failures no longer break communication between windows</li>
+  <li>Fixed a bug where setting Wavebox as the default mail handler always showed an error toast even when registration succeeded</li>
+  <li>Hardened notification sound playback to avoid errors when no sound is configured</li>
+  <li>Fixed several small UI issues</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.4.3)
+
+---
+
 <h3>Version 148.2.3 beta <span class="date">1/5/2026</span></h3>
 <ul>
   <li>Fixed a connection leak in Slack that could exhaust resources during reconnects on unstable networks</li>
@@ -144,16 +159,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.41.3)
-
----
-
-<h3>Version 10.147.12 beta <span class="date">2/4/2026</span></h3>
-<ul>
-  <li>Crash fix for certain locales</li>
-  <li>Add options to customize the height of the title bar in the main Wavebox window</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
