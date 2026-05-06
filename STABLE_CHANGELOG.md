@@ -1,3 +1,99 @@
+<h3>Version 148.2.4 <span class="date">6/5/2026</span></h3>
+<p>
+  Notice something different about the numbers? We're
+  dropping the '10' prefix from our versioning.
+</p>
+<p>
+  Previously, today's update would have been something like <i>10.148.4</i>. For a
+  bunch of boring technical reasons, we're switching to a
+  <i>[chromium major].version.version</i> format, which makes
+  this release <i>148.2.4</i>. This new setup actually allows us
+  to ship Chromium updates to our beta channel with less friction!
+</p>
+<p>
+  So, it might look like we just skipped ahead 137 versions overnight.
+  If you're impressed by that, then yes, we are coding time-travelers 🛸.
+  If not, it's just a naming tweak to keep things running smoothly.
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    Brainbox gets a major upgrade with a completely redesigned experience that makes AI assistance
+    feel more natural and powerful than ever.
+    <ul>
+      <li>
+        Share context effortlessly - drag and drop images, upload attachments, or capture screenshots
+        directly into your conversation. Brainbox can now see what you see.
+      </li>
+      <li>
+        Reference your open tabs instantly by typing @tab followed by the name, or use the handy
+        menu to attach tab content to your chat. It's the fastest way to get AI help with what
+        you're working on.
+      </li>
+      <li>
+        Discover the power of Skills - specialized AI commands that supercharge your workflow.
+        Trigger them your way: hit a keyboard shortcut, right-click for the context menu, or
+        simply type /skill in the chat.
+      </li>
+      <li>
+        Find past conversations in a flash with the new chat search, and let automatic chat naming
+        keep everything organized without lifting a finger.
+      </li>
+    </ul>
+  </li>
+  <li>Added account sign-in recovery option to the sync join password dialog</li>
+  <li>Added a flag to restore colored fill backgrounds on group icons</li>
+  <li>Added an 'Add group' option to the webdock divider context menu</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 148.0.7778.96</li>
+  <li>~2x faster cross-process messaging</li>
+  <li>Updated the Outlook integration to map additional url configurations</li>
+  <li>Improved the Slack notification emoji parsing and rendering now supports extended icon codes and skin tone variants</li>
+  <li>AppImage builds now run on newer Linux distributions such as Fedora 44 that no longer ship libfuse2</li>
+  <li>Improved resilience of internal messaging so transient data-copy failures no longer break communication between windows</li>
+  <li>Hardened notification sound playback to avoid errors when no sound is configured</li>
+  <li>Performance fixes for integrated apps</li>
+  <li>Update dependencies</li>
+  <li>Various stability and reliability improvements from internal fuzzing</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a Windows update issue that could leave a corrupt database after restart</li>
+  <li>Fixed a crash on macOS when entering or exiting fullscreen mode</li>
+  <li>Fixed a crash that could occur when bulk-moving two or more tabs from the same group</li>
+  <li>Fixed a connection leak in Slack that could exhaust resources during reconnects on unstable networks</li>
+  <li>Stability fixes for the Slack integration</li>
+  <li>Fixes for crash uploads and Brainbox backups</li>
+  <li>PWAs are now correctly restored when importing from a backup</li>
+  <li>Fixed extension restore during snapshot import now correctly handling locally installed extensions</li>
+  <li>Customized spaces are now preserved when their last group, app or tab is removed</li>
+  <li>Replaced Group &amp; App icons are now cleaned up properly instead of accumulating in local storage</li>
+  <li>Fixed split tabs not updating their title, favicon, URL, or audio indicator in real time</li>
+  <li>Fixed tabs in the tab strip failing to shrink correctly in scroll modes</li>
+  <li>Fixed trackpad scrolling across the tab strip and restored overflow indicators</li>
+  <li>Fixed custom notification sound uploads silently failing to appear in the sound list</li>
+  <li>Fixed a bug where setting Wavebox as the default mail handler always showed an error toast even when registration succeeded</li>
+  <li>Fixed the correct app now being selected when closing a tab, respecting the last-active app</li>
+  <li>Moving apps or groups to the end of a list now behaves consistently</li>
+  <li>Fixed dragging a tab branch between groups sometimes leaving stale references</li>
+  <li>Fixed an issues that prevented spacial-navigator search fallback from finding the active tab</li>
+  <li>Fix the webdock hiding behind the signed out panel in some configurations</li>
+  <li>Fixed an issue on macOS where fullscreen mode could show a black bar when the toolbar is hidden</li>
+  <li>Fixed the scroll shadow not appearing at the end of the tab strip</li>
+  <li>Brainbox updates and fixes</li>
+  <li>Various UI polish and visual fixes</li>
+  <li>Fixed several small UI issues</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.4.2)
+
+---
+
 <h3>Version 10.147.47 <span class="date">16/4/2026</span></h3>
 <ul>
   <li>Update to Chromium 147.0.7727.102</li>
@@ -193,44 +289,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.144.66.2)
-
----
-
-<h3>Version 10.143.21 <span class="date">15/12/2025</span></h3>
-
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    Improved search for things like the app store and tabs, making it both
-    faster and more accurate.
-  </li>
-  <li>
-    Add some optimizations for users with a large number of tabs per window (800+)
-    that should help with some performance issues.
-  </li>
-  <li>Add tooltips to the dividers</li>
-  <li>Show more search results in global search when using the individual tabs</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 143.0.7499.110</li>
-  <li>Add escape keybinding to open link in group & space dialogs</li>
-  <li>Clearer styling for settings windows</li>
-  <li>Stability fixes in settings</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix an issue with the positioning of some widget menus</li>
-  <li>Fix copying the current url not working</li>
-  <li>Fix the titlebar height when the collapsed titlebar is turned off</li>
-  <li>Fix a crash that popped up in the previous version</li>
-  <li>On macOS the toolbar was incorrectly showing on fullscreen videos, fix this</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.143.21.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
