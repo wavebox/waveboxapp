@@ -1,3 +1,15 @@
+<h3>Version 148.2.6 beta <span class="date">7/5/2026</span></h3>
+<ul>
+  <li>Fixed sign-in failures across Google, Microsoft and Wavebox accounts</li>
+  <li>Fixed an issue on startup where some URLs were incorrectly treated as external links</li>
+  <li>Improved error reporting when a tab is destroyed mid-action for easier diagnosis</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.6.3)
+
+---
+
 <h3>Version 148.2.5 beta <span class="date">7/5/2026</span></h3>
 <ul>
   <li>New 'Move to new group' option in the tab right-click menu, with a clearer label when moving multiple tabs</li>
@@ -157,15 +169,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.44.3)
-
----
-
-<h3>Version 10.147.43 beta <span class="date">8/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 147.0.7727.56</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.43.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
