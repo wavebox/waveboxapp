@@ -1,3 +1,25 @@
+<h3>Version 148.2.5 beta <span class="date">7/5/2026</span></h3>
+<ul>
+  <li>New 'Move to new group' option in the tab right-click menu, with a clearer label when moving multiple tabs</li>
+  <li>Startup restore and start-up URLs are now combined into a single, clearer settings panel with an empty-state hint</li>
+  <li>Diagnostics now report data integrity issues for your apps and offer to include store data when uploading a report</li>
+  <li>Notification action buttons (e.g. Snooze in Google Calendar) no longer steal focus by activating the underlying app</li>
+  <li>Fixed a sync issue that could cause synced data to be written to the wrong location</li>
+  <li>Fixed an issue where tabs could be stranded in a separate window on startup when start-up URLs mode had no URLs configured</li>
+  <li>Fixed a rare race during cloud snapshot uploads that could keep scheduling new uploads after being stopped</li>
+  <li>Fixed widget deletion so workspaces no longer keep stale references to removed widgets</li>
+  <li>Fixed orphaned tab cleanup on startup so removed tabs no longer linger in memory</li>
+  <li>More reliable opening of dialog windows in cases where a stale focus cache could prevent them from appearing</li>
+  <li>Improved error reporting for tab messaging and chromium API failures</li>
+  <li>Various stability and reliability fixes across apps, spaces and the webdock</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.5.3)
+
+---
+
 <h3>Version 148.2.4 beta <span class="date">5/5/2026</span></h3>
 <ul>
   <li>AppImage builds now run on newer Linux distributions such as Fedora 44 that no longer ship libfuse2</li>
@@ -144,21 +166,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.43.3)
-
----
-
-<h3>Version 10.147.41 beta <span class="date">7/4/2026</span></h3>
-<p>
-  <b>⚠️ Windows users on 10.147.9 or 10.147.12 beta</b> — the auto-update for this version will appear
-  to download and apply, but when you click install the app will quit without updating. Please
-  download and install this version manually from
-  <a href="https://wavebox.io/beta">https://wavebox.io/beta</a>.
-</p>
-<ul>
-  <li>Less intrusive update notifications</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.41.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
