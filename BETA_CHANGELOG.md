@@ -1,3 +1,20 @@
+<h3>Version 148.2.9 beta <span class="date">8/5/2026</span></h3>
+<ul>
+  <li>Restored profile sync reliability by clearing stale cluster IDs when the server reports none, preventing sync errors</li>
+  <li>Fixed traffic control and partition routing so rules targeting the default partition open correctly again</li>
+  <li>Fixed several default-space edge cases when switching, duplicating, or routing tabs between spaces</li>
+  <li>Fixed Clear browsing data being skipped for the default space in privacy settings and dialogs</li>
+  <li>Fixed links opened from an app sometimes inheriting the wrong space</li>
+  <li>Fixed exact-match lookups for id: and source: searches in the window opener manager</li>
+  <li>Resolved an onboarding error when fetching containers and tidied tile alignment plus broken search engine favicons</li>
+  <li>Improved internal reliability of app and space data handling to prevent future issues</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.9.3)
+
+---
+
 <h3>Version 148.2.6 beta <span class="date">7/5/2026</span></h3>
 <ul>
   <li>Fixed sign-in failures across Google, Microsoft and Wavebox accounts</li>
@@ -159,16 +176,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.47.3)
-
----
-
-<h3>Version 10.147.44 beta <span class="date">8/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 147.0.7727.56</li>
-  <li>Bugfix</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.44.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
