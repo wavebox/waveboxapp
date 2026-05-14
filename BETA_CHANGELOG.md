@@ -1,3 +1,19 @@
+<h3>Version 148.2.14 beta <span class="date">13/5/2026</span></h3>
+<ul>
+  <li>Update to Chromium 148.0.7778.168</li>
+  <li>All new more intelligent Brainbox assistant</li>
+  <li>Enter no longer prematurely commits unfinished input while composing characters with an IME (Japanese, Chinese, Korean)</li>
+  <li>Fixed users with a configured LiveSync key being prompted for the team master password on every relaunch</li>
+  <li>Fixed the Brainbox side panel refusing to close after tool usage</li>
+  <li>Fixed some Smartnote launch actions failing</li>
+  <li>Update dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.14.3)
+
+---
+
 <h3>Version 148.2.9 beta <span class="date">8/5/2026</span></h3>
 <ul>
   <li>Restored profile sync reliability by clearing stale cluster IDs when the server reports none, preventing sync errors</li>
@@ -165,17 +181,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/147.1.54.3)
-
----
-
-<h3>Version 10.147.47 beta <span class="date">16/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 147.0.7727.102</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.47.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
