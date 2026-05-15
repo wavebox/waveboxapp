@@ -1,3 +1,17 @@
+<h3>Version 148.2.16 beta <span class="date">15/5/2026</span></h3>
+<ul>
+  <li>Add support for tab groups to the Wavebox tabstrip in the main window, matching the experience of secondary windows</li>
+  <li>Tab right-click menu is now fully multi-select aware — close, reload, mute, pin, sleep, move and group actions all apply to every selected tab</li>
+  <li>Tabs filed inside a tab group are now preserved across restarts, just like pinned tabs</li>
+  <li>Faster multi-tab sleep, wake and move operations</li>
+  <li>Added a Webdock layout option to the Webdock context menu for quicker access to the layout switcher</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.16.3)
+
+---
+
 <h3>Version 148.2.14 beta <span class="date">13/5/2026</span></h3>
 <ul>
   <li>Update to Chromium 148.0.7778.168</li>
@@ -154,33 +168,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/148.1.59.3)
-
----
-
-<h3>Version 147.1.54 beta <span class="date">16/4/2026</span></h3>
-<p>
-  Notice something different about the numbers? We're
-  dropping the '10' prefix from our versioning.
-</p>
-<p>
-  Previously, today's update would have been <i>10.147.55</i>. For a
-  bunch of boring technical reasons, we're switching to a
-  <i>[chromium major].version.version</i> format, which makes
-  this release <i>147.1.54</i>. This new setup actually allows us
-  to ship Chromium updates to our beta channel with less friction!
-</p>
-<p>
-  So, it might look like we just skipped ahead 137 versions overnight.
-  If you're impressed by that, then yes, we are coding time-travelers 🛸.
-  If not, it's just a naming tweak to keep things running smoothly.
-</p>
-<ul>
-  <li>Update to Chromium 147.0.7727.102</li>
-  <li>Update dependencies</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/147.1.54.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
