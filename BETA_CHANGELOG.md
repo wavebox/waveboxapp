@@ -1,3 +1,17 @@
+<h3>Version 149.2.23 beta <span class="date">20/5/2026</span></h3>
+<ul>
+  <li>Update to Chromium 148.0.7778.179</li>
+  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
+  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
+  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
+  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.23.3)
+
+---
+
 <h3>Version 148.2.16 beta <span class="date">15/5/2026</span></h3>
 <ul>
   <li>Add support for tab groups to the Wavebox tabstrip in the main window, matching the experience of secondary windows</li>
@@ -157,17 +171,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.1.63.3)
-
----
-
-<h3>Version 148.1.59 beta <span class="date">20/4/2026</span></h3>
-<ul>
-    <li>Update Chromium to 148.0.7778.40</li>
-    <li>Fix the webdock hiding behind the signed out panel in some configurations</li>
-    <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/148.1.59.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
