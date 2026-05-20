@@ -1,3 +1,59 @@
+<h3>Version 148.2.23 <span class="date">20/5/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add support for tab groups to the Wavebox tabstrip in the main window, matching the experience of secondary windows</li>
+  <li>Tabs filed inside a tab group are now preserved across restarts, just like pinned tabs</li>
+  <li>New 'Move to new group' option in the tab right-click menu, with a clearer label when moving multiple tabs</li>
+  <li>Added a Webdock layout option to the Webdock context menu for quicker access to the layout switcher</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 148.0.7778.179</li>
+  <li>Tab right-click menu is now fully multi-select aware — close, reload, mute, pin, sleep, move and group actions all apply to every selected tab</li>
+  <li>Faster multi-tab sleep, wake and move operations</li>
+  <li>Startup restore and start-up URLs are now combined into a single, clearer settings panel with an empty-state hint</li>
+  <li>Diagnostics now report data integrity issues for your apps and offer to include store data when uploading a report</li>
+  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
+  <li>Improved error reporting for tab messaging and chromium API failures</li>
+  <li>Improved error reporting when a tab is destroyed mid-action for easier diagnosis</li>
+  <li>Improved internal reliability of app and space data handling to prevent future issues</li>
+  <li>Update dependencies</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a sync issue that could cause synced data to be written to the wrong location</li>
+  <li>Restored profile sync reliability by clearing stale cluster IDs when the server reports none, preventing sync errors</li>
+  <li>Fixed users with a configured sync key being prompted for the team master password on every relaunch</li>
+  <li>Fixed a rare race during cloud snapshot uploads that could keep scheduling new uploads after being stopped</li>
+  <li>Fixed link open rules and space routing so rules targeting the default space open correctly again</li>
+  <li>Fixed several default-space edge cases when switching, duplicating, or routing tabs between spaces</li>
+  <li>Fixed links opened from an app sometimes inheriting the wrong space</li>
+  <li>Notification action buttons (e.g. Snooze in Google Calendar) no longer steal focus by activating the underlying app</li>
+  <li>Enter no longer prematurely commits unfinished input while composing characters with an IME (Japanese, Chinese, Korean)</li>
+  <li>Fixed an issue where tabs could be stranded in a separate window on startup when start-up URLs mode had no URLs configured</li>
+  <li>Fixed orphaned tab cleanup on startup so removed tabs no longer linger in memory</li>
+  <li>Fixed an issue on startup where some URLs were incorrectly treated as external links</li>
+  <li>Fixed widget deletion so workspaces no longer keep stale references to removed widgets</li>
+  <li>More reliable opening of dialog windows in cases where a stale focus cache could prevent them from appearing</li>
+  <li>Fixed the Brainbox side panel refusing to close after tool usage</li>
+  <li>Fixed some Smartnote launch actions failing</li>
+  <li>Fixed exact-match lookups for id: and source: searches in the window opener manager</li>
+  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
+  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
+  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
+  <li>Resolved an onboarding error when fetching containers and tidied tile alignment plus broken search engine favicons</li>
+  <li>Various stability and reliability fixes across apps, spaces and the webdock</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.23.2)
+
+---
+
 <h3>Version 148.2.4 <span class="date">6/5/2026</span></h3>
 <p>
   Notice something different about the numbers? We're
@@ -255,40 +311,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.144.72.2)
-
----
-
-<h3>Version 10.144.66 <span class="date">21/1/2026</span></h3>
-<ul>
-  <li>Update to Chromium 144.0.7559.97</li>
-  <li>Add browser support for sites and extensions that use speech to text</li>
-  <li>Add more support for customizing the left and right click actions on the menu bar (macOS) and tray (Windows)</li>
-  <li>Experiment with a new Wavebox mini experience when Wavebox mini is opened from the menu bar/tray</li>
-  <li>Fix the unread count for LinkedIn when there's more than 99 unreads</li>
-  <li>Fix the unread count not showing for Discord</li>
-  <li>Fix a display issue with the tab switcher when holding down Ctrl+Tab</li>
-  <li>Fix the Brainbox popout button not working</li>
-  <li>Fix a crash when dragging a tab group into a new window</li>
-  <li>Fix a visual glitch where a white border would appear around non-floating webviews when using dark themes</li>
-  <li>Fix some edge case issues with Wavebox sign in</li>
-  <li>Update the Outlook integration so it gracefully handles accounts that don't support API access</li>
-  <li>Update dependencies</li>
-  <li>Resolve an issue where Zoom wasn't displaying virtual backgrounds correctly</li>
-  <li>Fix a white border appearing around tabs in certain display configurations</li>
-  <li>Streamline the experience when setting up a second profile for smoother multi-account workflows</li>
-  <li>Squash several stability issues including crashes on launch and exit that affected some users</li>
-  <li>Update dependencies</li>
-  <li>Re-order settings when searching to bubble the most relevant results to the top</li>
-  <li>Speculative fix for a split view crash</li>
-  <li>UI fixes for the focus mode popover</li>
-  <li>Style fixes for the tab strip on varying display widths</li>
-  <li>Tidy a bunch of the dialog actions to make them more uniform</li>
-  <li>Fixes for the Chrome webstore</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.144.66.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
