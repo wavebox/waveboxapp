@@ -1,4 +1,4 @@
-<h3>Version 149.2.23 beta <span class="date">20/5/2026</span></h3>
+<h3>Version 148.2.23 beta <span class="date">20/5/2026</span></h3>
 <ul>
   <li>Update to Chromium 148.0.7778.179</li>
   <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
@@ -8,7 +8,7 @@
 </ul>
 
 
-[Downloads](https://wavebox.io/download/release/149.2.23.3)
+[Downloads](https://wavebox.io/download/release/148.2.23.3)
 
 ---
 
