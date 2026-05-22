@@ -1,3 +1,22 @@
+<h3>Version 149.2.34 beta <span class="date">22/5/2026</span></h3>
+<ul>
+  <li>Update to Chromium 149.0.7827.22</li>
+  <li>Groundwork for translating Wavebox into other languages</li>
+  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
+  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
+  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
+  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
+  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
+  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
+  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
+  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.34.3)
+
+---
+
 <h3>Version 148.2.23 beta <span class="date">20/5/2026</span></h3>
 <ul>
   <li>Update to Chromium 148.0.7778.179</li>
@@ -142,35 +161,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.1.3)
-
----
-
-<h3>Version 148.1.63 beta <span class="date">27/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 148.0.7778.56</li>
-  <li>Added account sign-in recovery option to the sync join password dialog</li>
-  <li>~2x faster cross-process messaging</li>
-  <li>Performance fixes for integrated apps</li>
-  <li>Updated the Outlook integration to mac additional url configurations</li>
-  <li>Improved the Slack notification emoji parsing</li>
-  <li>Added a flag to restore colored fill backgrounds on group icons</li>
-  <li>Fixed a crash on macOS when entering or exiting fullscreen mode</li>
-  <li>PWAs are now correctly restored when importing from a backup</li>
-  <li>Fixed extension restore during snapshot import now correctly handling locally installed extensions</li>
-  <li>Fixed split tabs not updating their title, favicon, URL, or audio indicator in real time</li>
-  <li>Fixed the correct app now being selected when closing a tab, respecting the last-active app</li>
-  <li>Fixed tabs in the tab strip failing to shrink correctly in scroll modes</li>
-  <li>Fixed trackpad scrolling across the tab strip and restored overflow indicators</li>
-  <li>Fixed the scroll shadow not appearing at the end of the tab strip</li>
-  <li>Fixed an issue on macOS where fullscreen mode could show a black bar when the toolbar is hidden</li>
-  <li>Fixed the privacy settings page not displaying correctly</li>
-  <li>Various UI polish and visual fixes</li>
-  <li>Brainbox updates and fixes</li>
-  <li>Various internal type-safety and code-quality improvements across the codebase</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.1.63.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
