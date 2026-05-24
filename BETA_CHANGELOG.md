@@ -1,3 +1,16 @@
+<h3>Version 149.2.35 beta <span class="date">24/5/2026</span></h3>
+<ul>
+  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
+  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
+  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
+  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.35.3)
+
+---
+
 <h3>Version 149.2.34 beta <span class="date">22/5/2026</span></h3>
 <ul>
   <li>Update to Chromium 149.0.7827.22</li>
@@ -137,30 +150,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.3.3)
-
----
-
-<h3>Version 148.2.1 beta <span class="date">30/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 148.0.7778.96</li>
-  <li>Fixed a Windows update issue that could leave a corrupt database after restart</li>
-  <li>Stability fixes for the Slack integration</li>
-  <li>Slack emoji rendering now supports extended icon codes and skin tone variants</li>
-  <li>Fixed custom notification sound uploads silently failing to appear in the sound list</li>
-  <li>Fixed dragging a tab branch between groups sometimes leaving stale references</li>
-  <li>Replaced Group &amp; App icons are now cleaned up properly instead of accumulating in local storage</li>
-  <li>Fixed an issues that prevented spacial-navigator search fallback from finding the active tab</li>
-  <li>Moving apps or groups to the end of a list now behaves consistently</li>
-  <li>Fixes for crash uploads and Brainbox backups</li>
-  <li>Various stability and reliability improvements from internal fuzzing</li>
-  <li>Various stability and code-quality improvements</li>
-  <li>Update dependencies</li>
-  <li>UI tweaks</li>
-  <li>Release test</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.1.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
