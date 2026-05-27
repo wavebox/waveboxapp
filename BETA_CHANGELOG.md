@@ -1,3 +1,18 @@
+<h3>Version 149.2.38 beta <span class="date">27/5/2026</span></h3>
+<ul>
+  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
+  <li>Improved crash reporting</li>
+  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
+  <li>Fixed shadows and rounded corners on the side panel</li>
+  <li>Refreshed the Gmail app icon</li>
+  <li>Various stability and polish improvements</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.38.3)
+
+---
+
 <h3>Version 149.2.35 beta <span class="date">24/5/2026</span></h3>
 <ul>
   <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
@@ -137,19 +152,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.4.3)
-
----
-
-<h3>Version 148.2.3 beta <span class="date">1/5/2026</span></h3>
-<ul>
-  <li>Fixed a connection leak in Slack that could exhaust resources during reconnects on unstable networks</li>
-  <li>Customized spaces are now preserved when their last group, app or tab is removed</li>
-  <li>Added an 'Add group' option to the webdock divider context menu</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.3.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
