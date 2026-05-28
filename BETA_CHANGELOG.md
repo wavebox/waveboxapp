@@ -1,3 +1,15 @@
+<h3>Version 149.2.44 beta <span class="date">28/5/2026</span></h3>
+<ul>
+  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
+  <li>Fixes for Windows installer packaging</li>
+  <li>Fixed an issue on Windows where crash reports were not being uploaded</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.44.3)
+
+---
+
 <h3>Version 149.2.43 beta <span class="date">28/5/2026</span></h3>
 <ul>
   <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
@@ -126,28 +138,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.6.3)
-
----
-
-<h3>Version 148.2.5 beta <span class="date">7/5/2026</span></h3>
-<ul>
-  <li>New 'Move to new group' option in the tab right-click menu, with a clearer label when moving multiple tabs</li>
-  <li>Startup restore and start-up URLs are now combined into a single, clearer settings panel with an empty-state hint</li>
-  <li>Diagnostics now report data integrity issues for your apps and offer to include store data when uploading a report</li>
-  <li>Notification action buttons (e.g. Snooze in Google Calendar) no longer steal focus by activating the underlying app</li>
-  <li>Fixed a sync issue that could cause synced data to be written to the wrong location</li>
-  <li>Fixed an issue where tabs could be stranded in a separate window on startup when start-up URLs mode had no URLs configured</li>
-  <li>Fixed a rare race during cloud snapshot uploads that could keep scheduling new uploads after being stopped</li>
-  <li>Fixed widget deletion so workspaces no longer keep stale references to removed widgets</li>
-  <li>Fixed orphaned tab cleanup on startup so removed tabs no longer linger in memory</li>
-  <li>More reliable opening of dialog windows in cases where a stale focus cache could prevent them from appearing</li>
-  <li>Improved error reporting for tab messaging and chromium API failures</li>
-  <li>Various stability and reliability fixes across apps, spaces and the webdock</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
