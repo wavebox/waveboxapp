@@ -1,3 +1,44 @@
+<h3>Version 148.2.43 <span class="date">28/5/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Groundwork for translating Wavebox into other languages</li>
+  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 148.0.7778.217</li>
+  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
+  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
+  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
+  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
+  <li>Improved crash reporting</li>
+  <li>Refreshed the Gmail app icon</li>
+  <li>Various stability and polish improvements</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
+  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
+  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
+  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
+  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
+  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
+  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
+  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
+  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
+  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
+  <li>Fixed shadows and rounded corners on the side panel</li>
+  <li>Fixes for Windows installer packaging</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/148.2.43.2)
+
+---
+
 <h3>Version 148.2.23 <span class="date">20/5/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -292,25 +333,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.145.11.2)
-
----
-
-<h3>Version 10.144.72 <span class="date">28/1/2026</span></h3>
-<ul>
-  <li>Update to Chromium 144.0.7559.110</li>
-  <li>Fix dependency issue with the RPM distribution</li>
-  <li>Add email tab to sharing menu and space popovers</li>
-  <li>Add speech to text support for Brainbox 5</li>
-  <li>Fix tab titles not being populated when sending tabs to a dashboard</li>
-  <li>Fix an issue where the sidepanel title would not update</li>
-  <li>Fix two launch crashes</li>
-  <li>UI updates for settings</li>
-  <li>Improve the auto-focus behaviour in the tabstrip when tab scrolling is enabled</li>
-  <li>Fix Zoom not opening in the desktop app by default</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.144.72.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
