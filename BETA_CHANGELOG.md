@@ -1,3 +1,14 @@
+<h3>Version 149.2.43 beta <span class="date">28/5/2026</span></h3>
+<ul>
+  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
+  <li>Fixes for Windows installer packaging</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.43.3)
+
+---
+
 <h3>Version 149.2.38 beta <span class="date">27/5/2026</span></h3>
 <ul>
   <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
@@ -137,21 +148,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.5.3)
-
----
-
-<h3>Version 148.2.4 beta <span class="date">5/5/2026</span></h3>
-<ul>
-  <li>AppImage builds now run on newer Linux distributions such as Fedora 44 that no longer ship libfuse2</li>
-  <li>Fixed a crash that could occur when bulk-moving two or more tabs from the same group</li>
-  <li>Improved resilience of internal messaging so transient data-copy failures no longer break communication between windows</li>
-  <li>Fixed a bug where setting Wavebox as the default mail handler always showed an error toast even when registration succeeded</li>
-  <li>Hardened notification sound playback to avoid errors when no sound is configured</li>
-  <li>Fixed several small UI issues</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.4.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
