@@ -1,3 +1,14 @@
+<h3>Version 149.2.45 beta <span class="date">29/5/2026</span></h3>
+<ul>
+  <li>Fixed crash report auto-upload not being enabled on Linux and Mac</li>
+  <li>Ctrl+click and middle-click on bookmarks now open them in a new tab within the same space</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.45.3)
+
+---
+
 <h3>Version 149.2.44 beta <span class="date">28/5/2026</span></h3>
 <ul>
   <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
@@ -126,18 +137,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.9.3)
-
----
-
-<h3>Version 148.2.6 beta <span class="date">7/5/2026</span></h3>
-<ul>
-  <li>Fixed sign-in failures across Google, Microsoft and Wavebox accounts</li>
-  <li>Fixed an issue on startup where some URLs were incorrectly treated as external links</li>
-  <li>Improved error reporting when a tab is destroyed mid-action for easier diagnosis</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.6.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
