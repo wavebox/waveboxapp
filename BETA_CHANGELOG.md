@@ -1,3 +1,15 @@
+<h3>Version 149.2.48 beta <span class="date">1/6/2026</span></h3>
+<ul>
+  <li>Update to Chromium 149.0.7827.53</li>
+  <li>Closing a backgrounded child tab now advances to the next tab like Chrome, instead of jumping back to the tab that opened it</li>
+  <li>Updated bundled dependencies</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.48.3)
+
+---
+
 <h3>Version 149.2.45 beta <span class="date">29/5/2026</span></h3>
 <ul>
   <li>Fixed crash report auto-upload not being enabled on Linux and Mac</li>
@@ -120,23 +132,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.14.3)
-
----
-
-<h3>Version 148.2.9 beta <span class="date">8/5/2026</span></h3>
-<ul>
-  <li>Restored profile sync reliability by clearing stale cluster IDs when the server reports none, preventing sync errors</li>
-  <li>Fixed traffic control and partition routing so rules targeting the default partition open correctly again</li>
-  <li>Fixed several default-space edge cases when switching, duplicating, or routing tabs between spaces</li>
-  <li>Fixed Clear browsing data being skipped for the default space in privacy settings and dialogs</li>
-  <li>Fixed links opened from an app sometimes inheriting the wrong space</li>
-  <li>Fixed exact-match lookups for id: and source: searches in the window opener manager</li>
-  <li>Resolved an onboarding error when fetching containers and tidied tile alignment plus broken search engine favicons</li>
-  <li>Improved internal reliability of app and space data handling to prevent future issues</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.9.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
