@@ -1,3 +1,15 @@
+<h3>Version 149.2.53 beta <span class="date">2/6/2026</span></h3>
+<ul>
+  <li>Connect has been rebuilt to run natively inside Wavebox, for faster startup and a smoother, more reliable experience across calls, notifications and messaging</li>
+  <li>External links that focus an existing window now preserve its fullscreen or maximized state</li>
+  <li>UI tweaks to the Windows installer</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.53.3)
+
+---
+
 <h3>Version 149.2.48 beta <span class="date">1/6/2026</span></h3>
 <ul>
   <li>Update to Chromium 149.0.7827.53</li>
@@ -116,22 +128,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.16.3)
-
----
-
-<h3>Version 148.2.14 beta <span class="date">13/5/2026</span></h3>
-<ul>
-  <li>Update to Chromium 148.0.7778.168</li>
-  <li>All new more intelligent Brainbox assistant</li>
-  <li>Enter no longer prematurely commits unfinished input while composing characters with an IME (Japanese, Chinese, Korean)</li>
-  <li>Fixed users with a configured LiveSync key being prompted for the team master password on every relaunch</li>
-  <li>Fixed the Brainbox side panel refusing to close after tool usage</li>
-  <li>Fixed some Smartnote launch actions failing</li>
-  <li>Update dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
