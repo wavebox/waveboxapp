@@ -1,3 +1,80 @@
+<h3>Version 149.2.63 <span class="date">3/6/2026</span></h3>
+<p><em>This version is small patchfix over 149.2.58 that addresses some crashing issues seen by some users. Here's everything else that's new...</em></p>
+
+<p>
+  We're working on bringing Wavebox to a language near you! If you'd like to help
+  us test Wavebox in your language, please reach out to support!
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Groundwork for translating Wavebox into other languages.</li>
+  <li>Ctrl+click and middle-click on bookmarks now open them in a new tab within the same space</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 149.0.7827.54</li>
+  <li>Connect has been rebuilt to run natively inside Wavebox, for faster startup and a smoother, more reliable experience across calls, notifications and messaging</li>
+  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
+  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
+  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
+  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
+  <li>Closing a backgrounded child tab now advances to the next tab like Chrome, instead of jumping back to the tab that opened it</li>
+  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
+  <li>External links that focus an existing window now preserve its fullscreen or maximized state</li>
+  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
+  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
+  <li>Upgraded the underlying Material UI library to version 9 for a more consistent and polished look across settings and dialogs</li>
+  <li>Refreshed the Gmail app icon</li>
+  <li>UI tweaks to the Windows installer</li>
+  <li>Improved crash reporting</li>
+  <li>Updated bundled dependencies</li>
+  <li>Various stability and polish improvements</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
+  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
+  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
+  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
+  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
+  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
+  <li>Fixed an issue on Windows where crash reports were not being uploaded</li>
+  <li>Fixed crash report auto-upload not being enabled on Linux and Mac</li>
+  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
+  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
+  <li>Fixed shadows and rounded corners on the side panel</li>
+  <li>Fixes for Windows installer packaging</li>
+</ul>
+
+
+
+
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>UI tweaks</li>
+  <li>Dependency updates and under-the-hood improvements</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Speculative fix for hard crash reported on Linux, but potentially affecting all platforms</li>
+  <li>Split-view tabs now stay paired correctly when the main window reorders them</li>
+  <li>Removed a stray focus outline on dialog windows</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.63.2)
+
+---
+
 <h3>Version 149.2.58 <span class="date">3/6/2026</span></h3>
 <p>
   We're working on bringing Wavebox to a language near you! If you'd like to help
@@ -375,25 +452,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.146.26.2)
-
----
-
-<h3>Version 10.145.41 <span class="date">24/2/2026</span></h3>
-<ul>
-  <li>Update to Chromium 145.0.7632.117</li>
-  <li>Fix an edge case issue reported by some users where the UI starts to render incorrectly and parts of Wavebox stop working</li>
-  <li>Add data integrity protection for the stores to make them more reliable</li>
-  <li>Multiple stability fixes and error handling cases for a faster and more reliable Wavebox</li>
-  <li>Fix an issue where dragging Groups/Apps/Tabs around could fail</li>
-  <li>Fix an issue that could see the loading dots render incorrectly on launch</li>
-  <li>Speculative fix for crash when using tab groups</li>
-  <li>Speculative fix for a hard crash on startup when using tab groups</li>
-  <li>Speculative fix for parts of the UI becoming unresponsive</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.145.41.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
