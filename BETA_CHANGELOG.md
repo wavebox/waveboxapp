@@ -1,3 +1,15 @@
+<h3>Version 149.2.58 beta <span class="date">3/6/2026</span></h3>
+<ul>
+  <li>Update to Chromium 149.0.7827.54</li>
+  <li>Added support for our first test language (British English). More to come!</li>
+  <li>Upgraded the underlying Material UI library to version 9 for a more consistent and polished look across settings and dialogs</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.58.3)
+
+---
+
 <h3>Version 149.2.53 beta <span class="date">2/6/2026</span></h3>
 <ul>
   <li>Connect has been rebuilt to run natively inside Wavebox, for faster startup and a smoother, more reliable experience across calls, notifications and messaging</li>
@@ -114,20 +126,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.23.3)
-
----
-
-<h3>Version 148.2.16 beta <span class="date">15/5/2026</span></h3>
-<ul>
-  <li>Add support for tab groups to the Wavebox tabstrip in the main window, matching the experience of secondary windows</li>
-  <li>Tab right-click menu is now fully multi-select aware — close, reload, mute, pin, sleep, move and group actions all apply to every selected tab</li>
-  <li>Tabs filed inside a tab group are now preserved across restarts, just like pinned tabs</li>
-  <li>Faster multi-tab sleep, wake and move operations</li>
-  <li>Added a Webdock layout option to the Webdock context menu for quicker access to the layout switcher</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.16.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
