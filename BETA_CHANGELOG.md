@@ -1,3 +1,21 @@
+<h3>Version 149.2.66 beta <span class="date">5/6/2026</span></h3>
+<ul>
+  <li>Resolved three crashes carried over from the recent Chromium 149 update, including an extension permissions issue, a browser teardown crash, and a password autofill crash</li>
+  <li>Fixed crashes in the app and Space pickers when opening tab and app options</li>
+  <li>Fixed an issue that could sign you out of Outlook shortly after a successful sign-in, with more resilient token handling and de-duplicated refreshes</li>
+  <li>Improved Outlook sign-in for people with multiple Microsoft accounts by always prompting for account selection, reducing cases where the wrong account was picked or no token was captured</li>
+  <li>Added a relaunch prompt on macOS when your profile data can't be unlocked at startup, so you can recover from rare sign-out-everywhere issues with one click</li>
+  <li>Added initial Welsh language support</li>
+  <li>Welsh translations are now available in the app</li>
+  <li>Dependency updates and security improvements</li>
+  <li>Various polish and behind-the-scenes fixes for the macOS updater and diagnostics page</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.66.3)
+
+---
+
 <h3>Version 149.2.63 beta <span class="date">3/6/2026</span></h3>
 <ul>
   <li>Speculative fix for hard crash reported on Linux, but potentially affecting all platforms</li>
@@ -107,25 +125,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.35.3)
-
----
-
-<h3>Version 149.2.34 beta <span class="date">22/5/2026</span></h3>
-<ul>
-  <li>Update to Chromium 149.0.7827.22</li>
-  <li>Groundwork for translating Wavebox into other languages</li>
-  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
-  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
-  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
-  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
-  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
-  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
-  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
-  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.34.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
