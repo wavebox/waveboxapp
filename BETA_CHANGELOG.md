@@ -1,3 +1,17 @@
+<h3>Version 149.2.67 beta <span class="date">8/6/2026</span></h3>
+<ul>
+  <li>Added translations for English (UK), Spanish, Spanish (Latin America), German, Italian, French, Danish, Dutch, Portuguese (Brazil), Portuguese (Portugal), Japanese, Korean, Chinese (Simplified), Polish, Swedish, Norwegian Bokmål, Finnish and Czech</li>
+  <li>Lock an app to its domain so navigations that try to leave are kept in the browser</li>
+  <li>Loading screens and window titles now appear in your chosen language right away, with no English flash</li>
+  <li>Fixed Microsoft Outlook sign-in asking you to pick your account twice</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.67.3)
+
+---
+
 <h3>Version 149.2.66 beta <span class="date">5/6/2026</span></h3>
 <ul>
   <li>Resolved three crashes carried over from the recent Chromium 149 update, including an extension permissions issue, a browser teardown crash, and a password autofill crash</li>
@@ -112,19 +126,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.38.3)
-
----
-
-<h3>Version 149.2.35 beta <span class="date">24/5/2026</span></h3>
-<ul>
-  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
-  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
-  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
-  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.35.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
