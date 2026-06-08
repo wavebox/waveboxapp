@@ -1,8 +1,7 @@
 <h3>Version 149.2.67 beta <span class="date">8/6/2026</span></h3>
 <ul>
   <li>Added translations for English (UK), Spanish, Spanish (Latin America), German, Italian, French, Danish, Dutch, Portuguese (Brazil), Portuguese (Portugal), Japanese, Korean, Chinese (Simplified), Polish, Swedish, Norwegian Bokmål, Finnish and Czech</li>
-  <li>Lock an app to its domain so navigations that try to leave are kept in the browser</li>
-  <li>Loading screens and window titles now appear in your chosen language right away, with no English flash</li>
+  <li>Add an option to lock an app to its domain so navigations that try to leave are kept in the browser</li>
   <li>Fixed Microsoft Outlook sign-in asking you to pick your account twice</li>
   <li>Various UI polish and visual fixes</li>
 </ul>
