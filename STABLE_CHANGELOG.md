@@ -1,3 +1,61 @@
+<h3>Version 149.2.69 <span class="date">9/6/2026</span></h3>
+<p>
+  We're now testing language support in Wavebox! If you're interested in trying it out,
+  you'll need to switch to the beta channel available at <b>https://wavebox.io/beta/</b>.
+</p>
+<p>
+  The current set of languages are
+  <ul>
+    <li>English (UK)</li>
+    <li>Spanish</li>
+    <li>Spanish (Latin America)</li>
+    <li>German</li>
+    <li>Italian</li>
+    <li>French</li>
+    <li>Danish</li>
+    <li>Dutch</li>
+    <li>Portuguese (Brazil)</li>
+    <li>Portuguese (Portugal)</li>
+    <li>Japanese</li>
+    <li>Korean</li>
+    <li>Chinese (Simplified)</li>
+    <li>Polish</li>
+    <li>Swedish</li>
+    <li>Norwegian Bokmål</li>
+    <li>Finnish</li>
+    <li>Czech</li>
+    <li>Welsh</li>
+  </ul>
+</p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Add an option to lock an app to its domain so navigations that try to leave are kept in the browser</li>
+  <li>Added a relaunch prompt on macOS when your profile data can't be unlocked at startup, so you can recover from rare sign-out-everywhere issues with one click</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 149.0.7827.103</li>
+  <li>Improved Outlook sign-in for people with multiple Microsoft accounts by always prompting for account selection, reducing cases where the wrong account was picked or no token was captured</li>
+  <li>Dependency updates and security improvements</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Resolved three crashes carried over from the recent Chromium 149 update, including an extension permissions issue, a browser teardown crash, and a password autofill crash</li>
+  <li>Fixed crashes in the app and Space pickers when opening tab and app options</li>
+  <li>Fixed an issue that could sign you out of Outlook shortly after a successful sign-in, with more resilient token handling and de-duplicated refreshes</li>
+  <li>Fixed Microsoft Outlook sign-in asking you to pick your account twice</li>
+  <li>Fixed Wavebox Chat showing team members as away when their system was idle, so presence now reflects active online status</li>
+  <li>Various polish and behind-the-scenes fixes for the macOS updater and diagnostics page</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.69.2)
+
+---
+
 <h3>Version 149.2.63 <span class="date">3/6/2026</span></h3>
 <p><em>This version is small patchfix over 149.2.58 that addresses some crashing issues seen by some users. Here's everything else that's new...</em></p>
 
@@ -435,23 +493,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.43.2)
-
----
-
-<h3>Version 10.146.26 <span class="date">16/3/2026</span></h3>
-<ul>
-  <li>Update to Chromium 146.0.7680.80</li>
-  <li>Fix recent tab ordering in the search popup</li>
-  <li>Fix an issue where Wavebox would sometimes take focus on macOS during a FedCM sign-in</li>
-  <li>Fix the current space not being used correctly during a FedCM sign-in</li>
-  <li>Fix a hard crash on launch</li>
-  <li>Fixes for the macOS updater on Tahoe</li>
-  <li>Speculative fixes for Wavebox stealing focus when it's not in the foreground</li>
-  <li>Stability fixes</li>
-  <li>Update dependencies</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.146.26.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
