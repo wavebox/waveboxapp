@@ -1,3 +1,14 @@
+<h3>Version 149.2.69 beta <span class="date">9/6/2026</span></h3>
+<ul>
+  <li>Update to Chromium 149.0.7827.103</li>
+  <li>Fixed Wavebox Chat showing team members as away when their system was idle, so presence now reflects active online status</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.69.3)
+
+---
+
 <h3>Version 149.2.67 beta <span class="date">8/6/2026</span></h3>
 <ul>
   <li>Added translations for English (UK), Spanish, Spanish (Latin America), German, Italian, French, Danish, Dutch, Portuguese (Brazil), Portuguese (Portugal), Japanese, Korean, Chinese (Simplified), Polish, Swedish, Norwegian Bokmål, Finnish and Czech</li>
@@ -110,21 +121,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.43.3)
-
----
-
-<h3>Version 149.2.38 beta <span class="date">27/5/2026</span></h3>
-<ul>
-  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
-  <li>Improved crash reporting</li>
-  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
-  <li>Fixed shadows and rounded corners on the side panel</li>
-  <li>Refreshed the Gmail app icon</li>
-  <li>Various stability and polish improvements</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.38.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
