@@ -1,3 +1,19 @@
+<h3>Version 149.2.92 beta <span class="date">12/6/2026</span></h3>
+<ul>
+  <li>Update to Chromium 149.0.7827.115</li>
+  <li>Fixed a Mac crash where restarting Wavebox during an update could leave it failing to load or signing you out of everything</li>
+  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
+  <li>Opening a link from an app's child tab no longer creates a bogus self-targeting rule or unexpectedly prompts to save the behaviour</li>
+  <li>Fixed some refresh state on the docked mini toolbar</li>
+  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.92.3)
+
+---
+
 <h3>Version 149.2.69 beta <span class="date">9/6/2026</span></h3>
 <ul>
   <li>Update to Chromium 149.0.7827.103</li>
@@ -110,17 +126,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.44.3)
-
----
-
-<h3>Version 149.2.43 beta <span class="date">28/5/2026</span></h3>
-<ul>
-  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
-  <li>Fixes for Windows installer packaging</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.43.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
