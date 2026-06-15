@@ -1,3 +1,23 @@
+<h3>Version 149.2.94 beta <span class="date">15/6/2026</span></h3>
+<ul>
+  <li>Manage your preferred languages directly in settings, with add, remove and reorder, per-language translate offers, and (on Windows) a browser interface language picker</li>
+  <li>Connect now remembers your last active team across restarts, so you no longer appear online in the wrong team after launch</li>
+  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
+  <li>Fixed a crash during session restore when saved tab groups got out of sync, now self-healing without losing tabs</li>
+  <li>Fixed a crash that could happen when dragging and dropping items in the webdock</li>
+  <li>Fixed sync getting stuck retrying when an app had a corrupt or empty asset reference</li>
+  <li>Fixed re-authenticating Outlook accounts wiping their sign-in tokens</li>
+  <li>Setting a default search engine now works reliably instead of failing with an error</li>
+  <li>Fixed a rare error when closing a window while its theme gradient was updating</li>
+  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.94.3)
+
+---
+
 <h3>Version 149.2.92 beta <span class="date">12/6/2026</span></h3>
 <ul>
   <li>Update to Chromium 149.0.7827.115</li>
@@ -114,18 +134,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.45.3)
-
----
-
-<h3>Version 149.2.44 beta <span class="date">28/5/2026</span></h3>
-<ul>
-  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
-  <li>Fixes for Windows installer packaging</li>
-  <li>Fixed an issue on Windows where crash reports were not being uploaded</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.44.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
