@@ -1,3 +1,31 @@
+<h3>Version 149.2.96 beta <span class="date">17/6/2026</span></h3>
+<ul>
+  <li>Update to Chromium 149.0.7827.156</li>
+  <li>Manage your preferred languages directly in settings, with add, remove and reorder, per-language translate offers, and (on Windows) a browser interface language picker</li>
+  <li>Connect now remembers your last active team across restarts, so you no longer appear online in the wrong team after launch</li>
+  <li>Per-space proxy now supports PAC file URLs alongside fixed-server addresses</li>
+  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
+  <li>More reliable window restoring when a saved window or dragged tab lands off-screen or on a disconnected display</li>
+  <li>More resilient cross-device tab restore when the sync connection drops</li>
+  <li>Fixed a crash during session restore when saved tab groups got out of sync, now self-healing without losing tabs</li>
+  <li>Fixed a crash in the built-in AI features that could occur when a background worker shut down</li>
+  <li>Fixed a crash that could happen when dragging and dropping items in the webdock</li>
+  <li>Fixed re-authenticating Outlook accounts wiping their sign-in tokens</li>
+  <li>Fixed sync getting stuck retrying when an app had a corrupt or empty asset reference</li>
+  <li>Setting a default search engine now works reliably instead of failing with an error</li>
+  <li>Web search suggestions now fail gracefully when offline or behind a captive portal</li>
+  <li>Fixed picture-in-picture and fullscreen glitches when sharing video in Wavebox Connect</li>
+  <li>Restored windows on macOS now appear in the Finder window picker</li>
+  <li>Fixed a rare error when closing a window while its theme gradient was updating</li>
+  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
+  <li>Various UI polish, visual fixes and stability and performance fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.96.3)
+
+---
+
 <h3>Version 149.2.94 beta <span class="date">15/6/2026</span></h3>
 <ul>
   <li>Manage your preferred languages directly in settings, with add, remove and reorder, per-language translate offers, and (on Windows) a browser interface language picker</li>
@@ -123,17 +151,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.48.3)
-
----
-
-<h3>Version 149.2.45 beta <span class="date">29/5/2026</span></h3>
-<ul>
-  <li>Fixed crash report auto-upload not being enabled on Linux and Mac</li>
-  <li>Ctrl+click and middle-click on bookmarks now open them in a new tab within the same space</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.45.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
