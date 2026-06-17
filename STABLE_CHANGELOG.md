@@ -1,3 +1,42 @@
+<h3>Version 149.2.96 <span class="date">17/6/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Manage your preferred languages directly in settings, with add, remove and reorder, per-language translate offers, and (on Windows) a browser interface language picker</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 149.0.7827.156</li>
+  <li>Per-space proxy now supports PAC file URLs alongside fixed-server addresses</li>
+  <li>More reliable window restoring when a saved window or dragged tab lands off-screen or on a disconnected display</li>
+  <li>More resilient cross-device tab restore when the sync connection drops</li>
+  <li>Connect now remembers your last active team across restarts, so you no longer appear online in the wrong team after launch</li>
+  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
+  <li>Web search suggestions now fail gracefully when offline or behind a captive portal</li>
+  <li>Restored windows on macOS now appear in the Finder window picker</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a crash during session restore when saved tab groups got out of sync, now self-healing without losing tabs</li>
+  <li>Fixed a crash in the built-in AI features that could occur when a background worker shut down</li>
+  <li>Fixed a crash that could happen when dragging and dropping items in the webdock</li>
+  <li>Fixed sync getting stuck retrying when an app had a corrupt or empty asset reference</li>
+  <li>Fixed re-authenticating Outlook accounts wiping their sign-in tokens</li>
+  <li>Setting a default search engine now works reliably instead of failing with an error</li>
+  <li>Fixed picture-in-picture and fullscreen glitches when sharing video in Wavebox Connect</li>
+  <li>Fixed a rare error when closing a window while its theme gradient was updating</li>
+  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
+  <li>Various UI polish and visual fixes</li>
+  <li>Various UI polish, visual fixes and stability and performance fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.96.2)
+
+---
+
 <h3>Version 149.2.92 <span class="date">12/6/2026</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
@@ -451,38 +490,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/10.147.47.2)
-
----
-
-<h3>Version 10.147.44 <span class="date">8/4/2026</span></h3>
-
-<ul>
-  <li>UI refresh</li>
-  <li>Update to Chromium 147.0.7727.56</li>
-  <li>Add an option to disable tab tooltips</li>
-  <li>Add new springtime wallpapers to the wallpaper gallery</li>
-  <li>Add an option to disable search customization</li>
-  <li>Add right-click > create link rule in all tabs</li>
-  <li>Add a capture tool to the link opener to help creating new rules</li>
-  <li>Add options to customize the height of the title bar in the main Wavebox window</li>
-  <li>Less intrusive update notifications</li>
-  <li>Stability fixes</li>
-  <li>Speculative fix for crash on launch under certain configurations</li>
-  <li>Fix a crash on launch that could affect certain configs</li>
-  <li>Fixed pinned tabs not showing their favicon</li>
-  <li>Fix tab cycling when all group tabs are docked</li>
-  <li>Fix the docked alert state not showing on apps</li>
-  <li>Fix an issue where some windows could infinitely resize</li>
-  <li>Fixes to make tab groups play nicer with Wavebox groups</li>
-  <li>Speculative fix for macOS where you could see white flashing</li>
-  <li>Fix a crash when the vertical tabs flag is enabled</li>
-  <li>Fix extensions failed to show inactive for the current space</li>
-  <li>UI fixes</li>
-  <li>Update dependencies</li>
-  <li>Crash fix for certain locales</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.44.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
