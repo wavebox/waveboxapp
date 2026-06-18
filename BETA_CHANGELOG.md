@@ -1,3 +1,20 @@
+<h3>Version 150.2.99 beta <span class="date">18/6/2026</span></h3>
+<ul>
+  <li>Update to Chromium 150.0.7871.25</li>
+  <li>Fixed a batch of background crashes affecting tab reloading, account authentication, RSS widgets, importing data, and integrations like Freshdesk</li>
+  <li>Fixed a crash during password import that could occur with invalid saved logins</li>
+  <li>Resolved a crash on Linux that could happen when closing browser windows</li>
+  <li>Fixed a crash on Windows when using speech recognition more than once in a session</li>
+  <li>More reliable syncing of tabs across devices when the network is briefly unresponsive</li>
+  <li>Fixed an issue that could cause excessive re-rendering across the main panel, webdock, tabs and workspaces</li>
+  <li>Language settings now correctly prompt for a restart when needed</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.99.3)
+
+---
+
 <h3>Version 149.2.96 beta <span class="date">17/6/2026</span></h3>
 <ul>
   <li>Update to Chromium 149.0.7827.156</li>
@@ -139,18 +156,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.53.3)
-
----
-
-<h3>Version 149.2.48 beta <span class="date">1/6/2026</span></h3>
-<ul>
-  <li>Update to Chromium 149.0.7827.53</li>
-  <li>Closing a backgrounded child tab now advances to the next tab like Chrome, instead of jumping back to the tab that opened it</li>
-  <li>Updated bundled dependencies</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.48.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
