@@ -1,3 +1,33 @@
+<h3>Version 149.2.103 <span class="date">24/6/2026</span></h3>
+
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 149.0.7827.197</li>
+  <li>Detached apps now stay detached after a restart</li>
+  <li>More reliable syncing of tabs across devices when the network is briefly unresponsive</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a batch of background crashes affecting tab reloading, account authentication, RSS widgets, importing data, and integrations like Freshdesk</li>
+  <li>Fixed a crash during password import that could occur with invalid saved logins</li>
+  <li>Fixed two browser crashes involving the address bar and saved tab groups</li>
+  <li>Fixed a browser crash in split screen when dragging a tab</li>
+  <li>Fixed a crash when dragging text or other non-link content onto your tabs</li>
+  <li>Fixed a crash on Windows when using speech recognition more than once in a session</li>
+  <li>Fixed a crash that could occur when entering fullscreen on macOS</li>
+  <li>Fixed a crash in the extension menu</li>
+  <li>Fixed an issue that could cause excessive re-rendering across the main panel, webdock, tabs and workspaces</li>
+  <li>Language settings now correctly prompt for a restart when needed</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/149.2.103.2)
+
+---
+
 <h3>Version 149.2.96 <span class="date">17/6/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -479,17 +509,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.4.2)
-
----
-
-<h3>Version 10.147.47 <span class="date">16/4/2026</span></h3>
-<ul>
-  <li>Update to Chromium 147.0.7727.102</li>
-  <li>Update dependencies</li>
-  <li>UI fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/10.147.47.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
