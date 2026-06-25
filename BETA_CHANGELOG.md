@@ -1,3 +1,18 @@
+<h3>Version 150.2.103 beta <span class="date">25/6/2026</span></h3>
+<ul>
+  <li>Detached apps now stay detached after a restart instead of collapsing back into the main window</li>
+  <li>Fixed several browser crashes including dragging tabs in split-screen view, dropping non-link content onto the tab strip, the address bar during shutdown, and saved tab group changes</li>
+  <li>Fixed a crash in the extension menu while it closes</li>
+  <li>The always-on scrollbar in the webdock stays grabbable next to the resize handle</li>
+  <li>Improved text alignment within tabs</li>
+  <li>Numerous stability and crash-reporting fixes across syncing, backup and restore, and integrated apps</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.103.3)
+
+---
+
 <h3>Version 150.2.100 beta <span class="date">18/6/2026</span></h3>
 <ul>
   <li>Fixed a crash that could occur when entering fullscreen on macOS</li>
@@ -150,18 +165,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.63.3)
-
----
-
-<h3>Version 149.2.58 beta <span class="date">3/6/2026</span></h3>
-<ul>
-  <li>Update to Chromium 149.0.7827.54</li>
-  <li>Added support for our first test language (British English). More to come!</li>
-  <li>Upgraded the underlying Material UI library to version 9 for a more consistent and polished look across settings and dialogs</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.58.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
