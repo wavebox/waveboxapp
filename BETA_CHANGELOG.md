@@ -1,3 +1,19 @@
+<h3>Version 150.2.112 beta <span class="date">1/7/2026</span></h3>
+<ul>
+  <li>Update to Chromium 150.0.7871.47</li>
+  <li>New on-device AI in Wavebox that runs language models locally on your computer, powering grammar help and the browser's built-in AI features without sending your text to the cloud</li>
+  <li>New on-device grammar assistant that checks your writing as you type, with inline underlines, a click-to-fix popover, a status indicator, and a Check grammar option in the right-click menu, plus a new Spelling &amp; grammar settings section to turn checking on or off per site (experimental, off by default)</li>
+  <li>Connect your own AI models from Ollama, OpenAI or Anthropic to power Wavebox's web AI features</li>
+  <li>Fixed several crashes, including disabling an extension with an open side panel, applying themes, and omnibox and network-request edge cases</li>
+  <li>Fixed detached apps collapsing back into the main window after quitting and relaunching Wavebox</li>
+  <li>Fixed a range of background errors caused by closing tabs, windows and dialogs while they were still updating</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.112.3)
+
+---
+
 <h3>Version 150.2.103 beta <span class="date">25/6/2026</span></h3>
 <ul>
   <li>Detached apps now stay detached after a restart instead of collapsing back into the main window</li>
@@ -151,20 +167,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.66.3)
-
----
-
-<h3>Version 149.2.63 beta <span class="date">3/6/2026</span></h3>
-<ul>
-  <li>Speculative fix for hard crash reported on Linux, but potentially affecting all platforms</li>
-  <li>Split-view tabs now stay paired correctly when the main window reorders them</li>
-  <li>Removed a stray focus outline on dialog windows</li>
-  <li>UI tweaks</li>
-  <li>Dependency updates and under-the-hood improvements</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.63.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
