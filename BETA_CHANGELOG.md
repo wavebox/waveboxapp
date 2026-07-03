@@ -1,3 +1,26 @@
+<h3>Version 150.2.117 beta <span class="date">3/7/2026</span></h3>
+<ul>
+  <li>New option on a group's menu to move all of its apps out into their own window as pinned tabs with their app icons, with a one-click way to bring them all back</li>
+  <li>The Brainbox assistant has been rebuilt to help you with your Wavebox setup, so you can ask it things like "Move my tabs into a new group"</li>
+  <li>The grammar assistant now matches a model to your device language and steps up to a stronger model on capable machines</li>
+  <li>On-device grammar checking now uses less than half the memory it did, with a new setting to control how quickly idle models are unloaded</li>
+  <li>Added search and keyboard navigation to the "Open in app or webdock group" picker, so you can filter by app or group name and choose with the arrow keys</li>
+  <li>Right-click a spelling or grammar underline to open its suggestions popover directly</li>
+  <li>New advanced settings to reduce GPU memory usage on some setups</li>
+  <li>Fixed a crash that could occur when dragging a group in the webdock</li>
+  <li>Fixed crashes that could occur while profile sync was applying changes from another device</li>
+  <li>Fixed the grammar status badge spinner freezing or getting stuck showing busy, and it now shows a pointer cursor on hover</li>
+  <li>The delete-space dialog no longer shows an empty bordered box when nothing is using the space</li>
+  <li>Fixes and UI improvements for the new grammar checker</li>
+  <li>Various UI polish and visual fixes on Windows</li>
+  <li>Various stability improvements and minor UI fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.117.3)
+
+---
+
 <h3>Version 150.2.112 beta <span class="date">1/7/2026</span></h3>
 <ul>
   <li>Update to Chromium 150.0.7871.47</li>
@@ -149,24 +172,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.67.3)
-
----
-
-<h3>Version 149.2.66 beta <span class="date">5/6/2026</span></h3>
-<ul>
-  <li>Resolved three crashes carried over from the recent Chromium 149 update, including an extension permissions issue, a browser teardown crash, and a password autofill crash</li>
-  <li>Fixed crashes in the app and Space pickers when opening tab and app options</li>
-  <li>Fixed an issue that could sign you out of Outlook shortly after a successful sign-in, with more resilient token handling and de-duplicated refreshes</li>
-  <li>Improved Outlook sign-in for people with multiple Microsoft accounts by always prompting for account selection, reducing cases where the wrong account was picked or no token was captured</li>
-  <li>Added a relaunch prompt on macOS when your profile data can't be unlocked at startup, so you can recover from rare sign-out-everywhere issues with one click</li>
-  <li>Added initial Welsh language support</li>
-  <li>Welsh translations are now available in the app</li>
-  <li>Dependency updates and security improvements</li>
-  <li>Various polish and behind-the-scenes fixes for the macOS updater and diagnostics page</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.66.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
