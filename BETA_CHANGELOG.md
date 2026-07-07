@@ -1,3 +1,19 @@
+<h3>Version 150.2.119 beta <span class="date">7/7/2026</span></h3>
+<ul>
+  <li>Set a file:// address as your new tab page</li>
+  <li>Report a poor spelling or grammar suggestion right from the suggestion popup or the indicator badge menu with the new Help us improve feedback option</li>
+  <li>Spelling and grammar checking is now more responsive</li>
+  <li>Fixed legacy Manifest V2 extensions being automatically disabled</li>
+  <li>Fixed moving a widget to another dashboard leaving it behind on the original as well</li>
+  <li>Fixed misspelled words being underlined and counted twice by the spelling and grammar checker, and stale issue counts on emptied fields</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.119.3)
+
+---
+
 <h3>Version 150.2.117 beta <span class="date">3/7/2026</span></h3>
 <ul>
   <li>New option on a group's menu to move all of its apps out into their own window as pinned tabs with their app icons, with a one-click way to bring them all back</li>
@@ -159,19 +175,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.69.3)
-
----
-
-<h3>Version 149.2.67 beta <span class="date">8/6/2026</span></h3>
-<ul>
-  <li>Added translations for English (UK), Spanish, Spanish (Latin America), German, Italian, French, Danish, Dutch, Portuguese (Brazil), Portuguese (Portugal), Japanese, Korean, Chinese (Simplified), Polish, Swedish, Norwegian Bokmål, Finnish and Czech</li>
-  <li>Add an option to lock an app to its domain so navigations that try to leave are kept in the browser</li>
-  <li>Fixed Microsoft Outlook sign-in asking you to pick your account twice</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.67.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
