@@ -1,3 +1,16 @@
+<h3>Version 150.2.121 beta <span class="date">8/7/2026</span></h3>
+<ul>
+  <li>Update to Chromium 150.0.7871.101</li>
+  <li>Fixed a crash that could occur when clicking a word with spelling suggestions in a text field</li>
+  <li>Fixed a crash affecting some Linux users</li>
+  <li>Fixed an issue where an external link could fail to open if its target window closed at the same moment, it now opens in a new window instead</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.121.3)
+
+---
+
 <h3>Version 150.2.119 beta <span class="date">7/7/2026</span></h3>
 <ul>
   <li>Set a file:// address as your new tab page</li>
@@ -164,17 +177,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.92.3)
-
----
-
-<h3>Version 149.2.69 beta <span class="date">9/6/2026</span></h3>
-<ul>
-  <li>Update to Chromium 149.0.7827.103</li>
-  <li>Fixed Wavebox Chat showing team members as away when their system was idle, so presence now reflects active online status</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.69.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
