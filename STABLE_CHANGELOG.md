@@ -1,3 +1,33 @@
+<h3>Version 150.2.121 <span class="date">8/7/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Set a file:// address as your new tab page</li>
+  <li>Report a poor spelling or grammar suggestion right from the suggestion popup or the indicator badge menu with the new Help us improve feedback option</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 150.0.7871.101</li>
+  <li>Spelling and grammar checking is now more responsive</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a crash that could occur when clicking a word with spelling suggestions in a text field</li>
+  <li>Fixed a crash affecting some Linux users</li>
+  <li>Fixed legacy Manifest V2 extensions being automatically disabled</li>
+  <li>Fixed an issue where an external link could fail to open if its target window closed at the same moment, it now opens in a new window instead</li>
+  <li>Fixed moving a widget to another dashboard leaving it behind on the original as well</li>
+  <li>Fixed misspelled words being underlined and counted twice by the spelling and grammar checker, and stale issue counts on emptied fields</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.121.2)
+
+---
+
 <h3>Version 150.2.118 <span class="date">6/7/2026</span></h3>
 <p>This patchfix includes a fix for manifest 2 extensions. Here's everything else that's new...</p>
 <h4>🆕 New!</h4>
@@ -409,47 +439,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/148.2.44.2)
-
----
-
-<h3>Version 148.2.43 <span class="date">28/5/2026</span></h3>
-<p></p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Groundwork for translating Wavebox into other languages</li>
-  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 148.0.7778.217</li>
-  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
-  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
-  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
-  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
-  <li>Improved crash reporting</li>
-  <li>Refreshed the Gmail app icon</li>
-  <li>Various stability and polish improvements</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
-  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
-  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
-  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
-  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
-  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
-  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
-  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
-  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
-  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
-  <li>Fixed shadows and rounded corners on the side panel</li>
-  <li>Fixes for Windows installer packaging</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.43.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
