@@ -1,3 +1,16 @@
+<h3>Version 150.2.123 beta <span class="date">10/7/2026</span></h3>
+<ul>
+  <li>Update to Chromium 150.0.7871.115</li>
+  <li>Fixed the app occasionally getting stuck on the 'Wavebox is starting' splash screen when the background was restarted or updated</li>
+  <li>Fixed several crashes and background errors, including tabs closing or being dragged during a sync and using a docked tab's menu while the tabs changed underneath it</li>
+  <li>Fixed on-device AI being reported as unavailable inside Brainbox</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.123.3)
+
+---
+
 <h3>Version 150.2.121 beta <span class="date">8/7/2026</span></h3>
 <ul>
   <li>Update to Chromium 150.0.7871.101</li>
@@ -161,22 +174,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.94.3)
-
----
-
-<h3>Version 149.2.92 beta <span class="date">12/6/2026</span></h3>
-<ul>
-  <li>Update to Chromium 149.0.7827.115</li>
-  <li>Fixed a Mac crash where restarting Wavebox during an update could leave it failing to load or signing you out of everything</li>
-  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
-  <li>Opening a link from an app's child tab no longer creates a bogus self-targeting rule or unexpectedly prompts to save the behaviour</li>
-  <li>Fixed some refresh state on the docked mini toolbar</li>
-  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.92.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
