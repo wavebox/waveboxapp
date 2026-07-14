@@ -1,3 +1,23 @@
+<h3>Version 151.2.129 beta <span class="date">14/7/2026</span></h3>
+<ul>
+  <li>Guided grammar review now wraps around and waits for the checker to finish, so suggestions that appear while you're part-way through a review are no longer skipped</li>
+  <li>Hovering a tab that belongs to another space now shows a tooltip naming that space and explaining why the tab is marked</li>
+  <li>Fixed a crash when choosing one of the Wavebox profile pictures in settings</li>
+  <li>Fixed a startup crash when restoring a session that contained a docked tab</li>
+  <li>Fixed crashes when opening a saved tab group from a menu, or when a group had been created with invalid links</li>
+  <li>Fixed a crash on macOS when a window was changed from being the main Wavebox window</li>
+  <li>Sleeping and waking docked and split tabs is now more reliable, and sleeping one no longer leaves a blank pane behind</li>
+  <li>Restoring a session now docks the tab you actually had docked instead of a different one</li>
+  <li>The space icon picker now shows six distinct icons instead of repeating the same few</li>
+  <li>Several further stability fixes for split tabs, docked tabs and profile creation</li>
+  <li>Various UI copy and polish fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/151.2.129.3)
+
+---
+
 <h3>Version 151.2.128 beta <span class="date">13/7/2026</span></h3>
 <ul>
   <li>Update to Chromium 151.0.7922.19</li>
@@ -148,34 +168,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.99.3)
-
----
-
-<h3>Version 149.2.96 beta <span class="date">17/6/2026</span></h3>
-<ul>
-  <li>Update to Chromium 149.0.7827.156</li>
-  <li>Manage your preferred languages directly in settings, with add, remove and reorder, per-language translate offers, and (on Windows) a browser interface language picker</li>
-  <li>Connect now remembers your last active team across restarts, so you no longer appear online in the wrong team after launch</li>
-  <li>Per-space proxy now supports PAC file URLs alongside fixed-server addresses</li>
-  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
-  <li>More reliable window restoring when a saved window or dragged tab lands off-screen or on a disconnected display</li>
-  <li>More resilient cross-device tab restore when the sync connection drops</li>
-  <li>Fixed a crash during session restore when saved tab groups got out of sync, now self-healing without losing tabs</li>
-  <li>Fixed a crash in the built-in AI features that could occur when a background worker shut down</li>
-  <li>Fixed a crash that could happen when dragging and dropping items in the webdock</li>
-  <li>Fixed re-authenticating Outlook accounts wiping their sign-in tokens</li>
-  <li>Fixed sync getting stuck retrying when an app had a corrupt or empty asset reference</li>
-  <li>Setting a default search engine now works reliably instead of failing with an error</li>
-  <li>Web search suggestions now fail gracefully when offline or behind a captive portal</li>
-  <li>Fixed picture-in-picture and fullscreen glitches when sharing video in Wavebox Connect</li>
-  <li>Restored windows on macOS now appear in the Finder window picker</li>
-  <li>Fixed a rare error when closing a window while its theme gradient was updating</li>
-  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
-  <li>Various UI polish, visual fixes and stability and performance fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.96.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
