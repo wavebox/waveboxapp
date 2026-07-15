@@ -1,3 +1,16 @@
+<h3>Version 151.2.131 beta <span class="date">15/7/2026</span></h3>
+<ul>
+  <li>Grammar checking no longer gives up on long text — a full blog post or long message is now proofread sentence by sentence as you write</li>
+  <li>Check spelling and grammar in the right-click menu now walks you through the suggestions one by one, and now sits with the other language and spelling options</li>
+  <li>The grammar status badge now follows your cursor as you move between writing areas, and hides itself where grammar isn't checked</li>
+  <li>Fixed the guided grammar review quietly stopping after you accepted the second suggestion</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/151.2.131.3)
+
+---
+
 <h3>Version 151.2.129 beta <span class="date">14/7/2026</span></h3>
 <ul>
   <li>Guided grammar review now wraps around and waits for the checker to finish, so suggestions that appear while you're part-way through a review are no longer skipped</li>
@@ -151,23 +164,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.100.3)
-
----
-
-<h3>Version 150.2.99 beta <span class="date">18/6/2026</span></h3>
-<ul>
-  <li>Update to Chromium 150.0.7871.25</li>
-  <li>Fixed a batch of background crashes affecting tab reloading, account authentication, RSS widgets, importing data, and integrations like Freshdesk</li>
-  <li>Fixed a crash during password import that could occur with invalid saved logins</li>
-  <li>Resolved a crash on Linux that could happen when closing browser windows</li>
-  <li>Fixed a crash on Windows when using speech recognition more than once in a session</li>
-  <li>More reliable syncing of tabs across devices when the network is briefly unresponsive</li>
-  <li>Fixed an issue that could cause excessive re-rendering across the main panel, webdock, tabs and workspaces</li>
-  <li>Language settings now correctly prompt for a restart when needed</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.99.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)

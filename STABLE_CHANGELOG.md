@@ -1,3 +1,46 @@
+<h3>Version 150.2.131 <span class="date">15/7/2026</span></h3>
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 150.0.7871.125</li>
+  <li>Grammar checking no longer gives up on long text — a full blog post or long message is now proofread sentence by sentence as you write</li>
+  <li>The spelling suggestion popover can now add words straight to your dictionary, and repositions itself so it's no longer clipped near the bottom of the screen</li>
+  <li>Check spelling and grammar in the right-click menu now walks you through the suggestions one by one, and now sits with the other language and spelling options</li>
+  <li>The grammar status badge now follows your cursor as you move between writing areas, and hides itself where grammar isn't checked</li>
+  <li>Hovering a tab that belongs to another space now shows a tooltip naming that space and explaining why the tab is marked</li>
+  <li>Add custom App dialog now uses floating labels on the URL and name fields so they stay visible once you start typing</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed the app occasionally getting stuck on the 'Wavebox is starting' splash screen when the background was restarted or updated</li>
+  <li>Fixed several crashes and background errors, including tabs closing or being dragged during a sync and using a docked tab's menu while the tabs changed underneath it</li>
+  <li>Fixed a startup crash on macOS that could be triggered by apps opening tabs while Wavebox was launching</li>
+  <li>Fixed a startup crash when restoring a session that contained a docked tab</li>
+  <li>Fixed a crash when opening an incognito window after Wavebox had restarted following a crash</li>
+  <li>Fixed crashes when opening a saved tab group from a menu, or when a group had been created with invalid links</li>
+  <li>Fixed a crash when choosing one of the Wavebox profile pictures in settings</li>
+  <li>Fixed a crash on macOS when a window was changed from being the main Wavebox window</li>
+  <li>Fixed a crash in grammar checking while editing text</li>
+  <li>Sleeping and waking docked and split tabs is now more reliable, and sleeping one no longer leaves a blank pane behind</li>
+  <li>Fixed on-device AI being reported as unavailable inside Brainbox</li>
+  <li>Unread badges on a space now only count unread from apps in that space, so an emptied space no longer keeps a stale count</li>
+  <li>Fixed the Smartnote panel sometimes opening blank</li>
+  <li>Fixed the guided grammar review quietly stopping after you accepted the second suggestion</li>
+  <li>Fixed an error when quickly clicking the audio, video or screen-share buttons twice during a chat call</li>
+  <li>Fixed an error when opening options for an app whose profile had already been deleted</li>
+  <li>Fixed an error when using the Brainbox right-click menu on a tab that had already closed</li>
+  <li>Fixed a transient error that could occur while dragging tabs</li>
+  <li>The space icon picker now shows six distinct icons instead of repeating the same few</li>
+  <li>Several stability fixes for side panels, the tab strip, cloud sync and the app setup dialog</li>
+  <li>Several further stability fixes for split tabs, docked tabs and profile creation</li>
+  <li>Various UI copy and polish fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/150.2.131.2)
+
+---
+
 <h3>Version 150.2.121 <span class="date">8/7/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -396,49 +439,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.58.2)
-
----
-
-<h3>Version 148.2.44 <span class="date">28/5/2026</span></h3>
-<p>
-  This patch-release over 148.2.43 contains some fixes for crash reporting. Here's everything else that's new!
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Groundwork for translating Wavebox into other languages</li>
-  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 148.0.7778.217</li>
-  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
-  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
-  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
-  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
-  <li>Improved crash reporting</li>
-  <li>Refreshed the Gmail app icon</li>
-  <li>Various stability and polish improvements</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
-  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
-  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
-  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
-  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
-  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
-  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
-  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
-  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
-  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
-  <li>Fixed shadows and rounded corners on the side panel</li>
-  <li>Fixes for Windows installer packaging</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/148.2.44.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
