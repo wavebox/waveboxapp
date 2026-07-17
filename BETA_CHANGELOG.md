@@ -1,3 +1,22 @@
+<h3>Version 151.2.135 beta <span class="date">17/7/2026</span></h3>
+<ul>
+  <li>Update to Chromium 151.0.7922.34</li>
+  <li>Browser import now shows browsers that macOS is blocking, with step-by-step guidance and a button that opens the right System Settings pane</li>
+  <li>Fixed a crash on launch on macOS Golden Gate during startup</li>
+  <li>Space, group and app default icons now follow the light and dark theme instead of showing a white tile in dark mode</li>
+  <li>A group dashboard can now be set to a chrome-extension:// address</li>
+  <li>Added a dark grey sticky note colour for darker backgrounds</li>
+  <li>Fixed background errors that could interrupt tab reordering, cloud sync setup during onboarding restore, and app URL changes</li>
+  <li>The grammar checker no longer runs on devtools pages</li>
+  <li>Improved translations across several languages</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/151.2.135.3)
+
+---
+
 <h3>Version 151.2.131 beta <span class="date">15/7/2026</span></h3>
 <ul>
   <li>Grammar checking no longer gives up on long text — a full blog post or long message is now proofread sentence by sentence as you write</li>
@@ -146,24 +165,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.103.3)
-
----
-
-<h3>Version 150.2.100 beta <span class="date">18/6/2026</span></h3>
-<ul>
-  <li>Fixed a crash that could occur when entering fullscreen on macOS</li>
-  <li>Update to Chromium 150.0.7871.25</li>
-  <li>Fixed a batch of background crashes affecting tab reloading, account authentication, RSS widgets, importing data, and integrations like Freshdesk</li>
-  <li>Fixed a crash during password import that could occur with invalid saved logins</li>
-  <li>Resolved a crash on Linux that could happen when closing browser windows</li>
-  <li>Fixed a crash on Windows when using speech recognition more than once in a session</li>
-  <li>More reliable syncing of tabs across devices when the network is briefly unresponsive</li>
-  <li>Fixed an issue that could cause excessive re-rendering across the main panel, webdock, tabs and workspaces</li>
-  <li>Language settings now correctly prompt for a restart when needed</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.100.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
