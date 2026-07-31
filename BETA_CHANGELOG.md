@@ -1,3 +1,20 @@
+<h3>Version 151.2.140 beta <span class="date">31/7/2026</span></h3>
+<ul>
+  <li>Update to Chromium 151.0.7922.72</li>
+  <li>Made account setup more resilient to brief network drops so onboarding no longer fails after a momentary connection loss</li>
+  <li>Fixed a crash loop in on-device AI so a failing GPU reliably falls back to CPU, along with a related Linux crash in the AI text sampler</li>
+  <li>Fixed crashes during session restore involving saved tab groups and split tabs</li>
+  <li>Fixed a macOS crash when dismissing notifications and another in the app menu</li>
+  <li>Fixed a crash in Smartnotes when a note was updated from another device while open</li>
+  <li>Fixed a crash when clearing a Space's colour and when opening the account setup dialog</li>
+  <li>Various stability fixes across tabs, workspaces, app updates and syncing</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/151.2.140.3)
+
+---
+
 <h3>Version 151.2.135 beta <span class="date">17/7/2026</span></h3>
 <ul>
   <li>Update to Chromium 151.0.7922.34</li>
@@ -150,21 +167,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.112.3)
-
----
-
-<h3>Version 150.2.103 beta <span class="date">25/6/2026</span></h3>
-<ul>
-  <li>Detached apps now stay detached after a restart instead of collapsing back into the main window</li>
-  <li>Fixed several browser crashes including dragging tabs in split-screen view, dropping non-link content onto the tab strip, the address bar during shutdown, and saved tab group changes</li>
-  <li>Fixed a crash in the extension menu while it closes</li>
-  <li>The always-on scrollbar in the webdock stays grabbable next to the resize handle</li>
-  <li>Improved text alignment within tabs</li>
-  <li>Numerous stability and crash-reporting fixes across syncing, backup and restore, and integrated apps</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.103.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
