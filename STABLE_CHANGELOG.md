@@ -1,3 +1,43 @@
+<h3>Version 151.2.141 <span class="date">3/8/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>You can now pick a space when creating a new Webdock group in the List and Explorer layouts</li>
+  <li>A group dashboard can now be set to a chrome-extension:// address</li>
+  <li>Added a dark grey sticky note colour for darker backgrounds</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 151.0.7922.72</li>
+  <li>Browser import now shows browsers that macOS is blocking, with step-by-step guidance and a button that opens the right System Settings pane</li>
+  <li>The assistant can now tell which group, app, tab and space you are actually looking at, so it acts on the right one</li>
+  <li>Asking the assistant to remove a group or a space now opens the usual confirmation dialog instead of deleting it straight away</li>
+  <li>Made account setup more resilient to brief network drops so onboarding no longer fails after a momentary connection loss</li>
+  <li>Space, group and app default icons now follow the light and dark theme instead of showing a white tile in dark mode</li>
+  <li>The grammar checker no longer runs on devtools pages</li>
+  <li>Improved translations across several languages</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a crash on launch on macOS Golden Gate during startup</li>
+  <li>Fixed crashes during session restore involving saved tab groups and split tabs</li>
+  <li>Fixed a crash loop in on-device AI so a failing GPU reliably falls back to CPU, along with a related Linux crash in the AI text sampler</li>
+  <li>Fixed a crash in Smartnotes when a note was updated from another device while open</li>
+  <li>Fixed a macOS crash when dismissing notifications and another in the app menu</li>
+  <li>Fixed a crash when clearing a Space's colour and when opening the account setup dialog</li>
+  <li>Grammar suggestions no longer delete your quotation marks or brackets, and no longer offer wording taken from a different line</li>
+  <li>Fixed background errors that could interrupt tab reordering, cloud sync setup during onboarding restore, and app URL changes</li>
+  <li>Various stability fixes across tabs, workspaces, app updates and syncing</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/151.2.141.2)
+
+---
+
 <h3>Version 150.2.131 <span class="date">15/7/2026</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
@@ -386,59 +426,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.63.2)
-
----
-
-<h3>Version 149.2.58 <span class="date">3/6/2026</span></h3>
-<p>
-  We're working on bringing Wavebox to a language near you! If you'd like to help
-  us test Wavebox in your language, please reach out to support!
-</p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Groundwork for translating Wavebox into other languages.</li>
-  <li>Ctrl+click and middle-click on bookmarks now open them in a new tab within the same space</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 149.0.7827.54</li>
-  <li>Connect has been rebuilt to run natively inside Wavebox, for faster startup and a smoother, more reliable experience across calls, notifications and messaging</li>
-  <li>Improved tab grouping in the tabstrip so branches across different apps render correctly as pills, drag and drop lands where you expect, and joining tabs into a branch happens in a single smooth step</li>
-  <li>Tab groups now work in the tabstrip when tabs are grouped by app</li>
-  <li>Removing a tab from a tab group in the tabstrip now keeps the tab in place next to its original group instead of jumping to the start of the strip</li>
-  <li>Fixed dragging a tab between two adjacent tab groups in the horizontal tabstrip so it lands in the group your cursor is closest to instead of always joining the left group</li>
-  <li>Closing a backgrounded child tab now advances to the next tab like Chrome, instead of jumping back to the tab that opened it</li>
-  <li>External links opened into an existing Wavebox window now properly raise and focus that window on Windows, instead of leaving Wavebox behind the other app</li>
-  <li>External links that focus an existing window now preserve its fullscreen or maximized state</li>
-  <li>Improved reliability when reordering tabs if one is closed mid-operation</li>
-  <li>Recovers spaces affected by an earlier sync bug that could collapse multiple spaces into one — click Resync on an affected device to heal the data</li>
-  <li>Upgraded the underlying Material UI library to version 9 for a more consistent and polished look across settings and dialogs</li>
-  <li>Refreshed the Gmail app icon</li>
-  <li>UI tweaks to the Windows installer</li>
-  <li>Improved crash reporting</li>
-  <li>Updated bundled dependencies</li>
-  <li>Various stability and polish improvements</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a startup crash caused by a cookie setting that could leave the browser unable to launch</li>
-  <li>Fixed a long-standing sync issue where on some setups, spaces could go missing or leave stale data behind when restoring or removing them</li>
-  <li>More resilient sync, search and app integrations, with several crashes around Gmail, identity lookups, suggestion fetches and settings panels now handled gracefully</li>
-  <li>Fullscreen windows on macOS now restore correctly on relaunch, with no leftover floating toolbar</li>
-  <li>Speculative fix for glitchy fullscreen rendering on macOS</li>
-  <li>Fixed a macOS issue where titlebar buttons could be positioned incorrectly</li>
-  <li>Fixed an issue on Windows where crash reports were not being uploaded</li>
-  <li>Fixed crash report auto-upload not being enabled on Linux and Mac</li>
-  <li>Collapsing a nested tab pill no longer also collapses its parent</li>
-  <li>Keyboard shortcut settings now show proper localized labels instead of raw placeholder text</li>
-  <li>Fixed shadows and rounded corners on the side panel</li>
-  <li>Fixes for Windows installer packaging</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.58.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
