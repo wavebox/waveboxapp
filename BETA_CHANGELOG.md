@@ -1,3 +1,18 @@
+<h3>Version 151.2.148 beta <span class="date">5/8/2026</span></h3>
+<ul>
+  <li>Update to Chromium 151.0.7922.76</li>
+  <li>Linux AppImage builds can now update themselves in place, downloading only the parts that changed</li>
+  <li>Grammar suggestions are now switched on by default for new users</li>
+  <li>Fixed tabs sometimes failing to close while another tab is being dragged</li>
+  <li>Fixed an error that could be reported when closing a tab that had already closed</li>
+  <li>Release test</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/151.2.148.3)
+
+---
+
 <h3>Version 151.2.141 beta <span class="date">3/8/2026</span></h3>
 <ul>
   <li>You can now pick a space when creating a new Webdock group in the List and Explorer layouts</li>
@@ -142,29 +157,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.119.3)
-
----
-
-<h3>Version 150.2.117 beta <span class="date">3/7/2026</span></h3>
-<ul>
-  <li>New option on a group's menu to move all of its apps out into their own window as pinned tabs with their app icons, with a one-click way to bring them all back</li>
-  <li>The Brainbox assistant has been rebuilt to help you with your Wavebox setup, so you can ask it things like "Move my tabs into a new group"</li>
-  <li>The grammar assistant now matches a model to your device language and steps up to a stronger model on capable machines</li>
-  <li>On-device grammar checking now uses less than half the memory it did, with a new setting to control how quickly idle models are unloaded</li>
-  <li>Added search and keyboard navigation to the "Open in app or webdock group" picker, so you can filter by app or group name and choose with the arrow keys</li>
-  <li>Right-click a spelling or grammar underline to open its suggestions popover directly</li>
-  <li>New advanced settings to reduce GPU memory usage on some setups</li>
-  <li>Fixed a crash that could occur when dragging a group in the webdock</li>
-  <li>Fixed crashes that could occur while profile sync was applying changes from another device</li>
-  <li>Fixed the grammar status badge spinner freezing or getting stuck showing busy, and it now shows a pointer cursor on hover</li>
-  <li>The delete-space dialog no longer shows an empty bordered box when nothing is using the space</li>
-  <li>Fixes and UI improvements for the new grammar checker</li>
-  <li>Various UI polish and visual fixes on Windows</li>
-  <li>Various stability improvements and minor UI fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.117.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
