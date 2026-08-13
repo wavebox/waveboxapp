@@ -1,3 +1,18 @@
+<h3>Version 152.2.159 beta <span class="date">13/8/2026</span></h3>
+<ul>
+  <li>Update to Chromium 152.0.7977.42</li>
+  <li>Optional Spaces and Groups headings in the webdock, switched on from the webdock right-click menu</li>
+  <li>Fix a browser crash when splitting a tab that was already part of a split</li>
+  <li>Fix a stray error when renaming a tab that is closed or dragged while the rename is landing</li>
+  <li>Translation fixes and clearer wording across several languages</li>
+  <li>Various webdock polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/152.2.159.3)
+
+---
+
 <h3>Version 151.2.154 beta <span class="date">12/8/2026</span></h3>
 <ul>
   <li>Update to Chromium 151.0.7922.138</li>
@@ -156,19 +171,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.123.3)
-
----
-
-<h3>Version 150.2.121 beta <span class="date">8/7/2026</span></h3>
-<ul>
-  <li>Update to Chromium 150.0.7871.101</li>
-  <li>Fixed a crash that could occur when clicking a word with spelling suggestions in a text field</li>
-  <li>Fixed a crash affecting some Linux users</li>
-  <li>Fixed an issue where an external link could fail to open if its target window closed at the same moment, it now opens in a new window instead</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.121.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
