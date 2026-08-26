@@ -1,3 +1,33 @@
+<h3>Version 152.2.168 beta <span class="date">26/8/2026</span></h3>
+<ul>
+  <li>Update to Chromium 152.0.7977.65</li>
+  <li>
+    New: Additional Webdock windows!
+    <ul>
+      <li>Open additional Webdock windows from the app menu or any Webdock context menu</li>
+      <li>Move a group into its own window from the sidebar right-click menu</li>
+      <li>Move individual apps, tabs or entire groups between Webdock windows</li>
+      <li>Apps stay in the window you place them in, and &amp;ldquo;Bring it here&amp;rdquo; summons an app into the window you're working in</li>
+      <li>Windows keep their identity across closing, reopening and restarting, so apps land back where you left them</li>
+      <li>Additional Webdock windows now restore their tabs and active app after restarts or reopening</li>
+      <li>Each window remembers its active app and collapsed sidebar dividers, including across restarts</li>
+      <li>Search, the Tab Manager and keyboard shortcuts now jump to the window that owns an app</li>
+      <li>Links, search results and keyboard commands now stay with their originating Webdock</li>
+      <li>Sign-in prompts and Space controls now open in the Webdock where they are needed</li>
+      <li>Connect now opens its side panel in the Webdock window you're using</li>
+    </ul>
+  </li>
+  <li>Privacy Lock now reliably restores every window after unlocking</li>
+  <li>Fixed a crash when extensions move tabs out of split view</li>
+  <li>Several stability and navigation fixes for tabs across multiple Webdock windows</li>
+  <li>Space icons are clearer and expand on hover for easier identification</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/152.2.168.3)
+
+---
+
 <h3>Version 152.2.159 beta <span class="date">13/8/2026</span></h3>
 <ul>
   <li>Update to Chromium 152.0.7977.42</li>
@@ -158,19 +188,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.128.3)
-
----
-
-<h3>Version 150.2.123 beta <span class="date">10/7/2026</span></h3>
-<ul>
-  <li>Update to Chromium 150.0.7871.115</li>
-  <li>Fixed the app occasionally getting stuck on the 'Wavebox is starting' splash screen when the background was restarted or updated</li>
-  <li>Fixed several crashes and background errors, including tabs closing or being dragged during a sync and using a docked tab's menu while the tabs changed underneath it</li>
-  <li>Fixed on-device AI being reported as unavailable inside Brainbox</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.123.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
