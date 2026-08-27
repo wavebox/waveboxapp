@@ -1,3 +1,17 @@
+<h3>Version 152.2.173 beta <span class="date">27/8/2026</span></h3>
+<ul>
+  <li>Auto-reload now waits until apps are idle, protecting calls and active work</li>
+  <li>Apps now stay awake when Wavebox cannot safely confirm their visibility</li>
+  <li>Connect panel sizes are now remembered separately for each window</li>
+  <li>Fixed white backgrounds appearing in the Webdock and top strip on macOS</li>
+  <li>Various Webdock menu wording, ordering and icon improvements</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/152.2.173.3)
+
+---
+
 <h3>Version 152.2.168 beta <span class="date">26/8/2026</span></h3>
 <ul>
   <li>Update to Chromium 152.0.7977.65</li>
@@ -166,28 +180,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.129.3)
-
----
-
-<h3>Version 151.2.128 beta <span class="date">13/7/2026</span></h3>
-<ul>
-  <li>Update to Chromium 151.0.7922.19</li>
-  <li>The spelling suggestion popover can now add words straight to your dictionary, and repositions itself so it's no longer clipped near the bottom of the screen</li>
-  <li>Add custom App dialog now uses floating labels on the URL and name fields so they stay visible once you start typing</li>
-  <li>Fixed a startup crash on macOS that could be triggered by apps opening tabs while Wavebox was launching</li>
-  <li>Fixed a crash when opening an incognito window after Wavebox had restarted following a crash</li>
-  <li>Fixed a crash in grammar checking while editing text</li>
-  <li>Unread badges on a space now only count unread from apps in that space, so an emptied space no longer keeps a stale count</li>
-  <li>Fixed the Smartnote panel sometimes opening blank</li>
-  <li>Fixed a transient error that could occur while dragging tabs</li>
-  <li>Fixed an error when quickly clicking the audio, video or screen-share buttons twice during a chat call</li>
-  <li>Fixed an error when opening options for an app whose profile had already been deleted</li>
-  <li>Fixed an error when using the Brainbox right-click menu on a tab that had already closed</li>
-  <li>Several stability fixes for side panels, the tab strip, cloud sync and the app setup dialog</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.128.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
