@@ -1,3 +1,53 @@
+<h3>Version 152.2.174 <span class="date">1/9/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    New: Additional Webdock windows!
+    <ul>
+      <li>Open additional Webdock windows from the app menu or any Webdock context menu</li>
+      <li>Move a group into its own window from the sidebar right-click menu</li>
+      <li>Move individual apps, tabs or entire groups between Webdock windows</li>
+      <li>Apps stay in the window you place them in, and &amp;ldquo;Bring it here&amp;rdquo; summons an app into the window you're working in</li>
+      <li>Windows keep their identity across closing, reopening and restarting, so apps land back where you left them</li>
+      <li>Additional Webdock windows now restore their tabs and active app after restarts or reopening</li>
+      <li>Each window remembers its active app and collapsed sidebar dividers, including across restarts</li>
+      <li>Search, the Tab Manager and keyboard shortcuts now jump to the window that owns an app</li>
+      <li>Links, search results and keyboard commands now stay with their originating Webdock</li>
+      <li>Sign-in prompts and Space controls now open in the Webdock where they are needed</li>
+      <li>Connect now opens its side panel in the Webdock window you're using</li>
+    </ul>
+  </li>
+  <li>Optional Spaces and Groups headings in the webdock, switched on from the webdock right-click menu</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 152.0.7977.65</li>
+  <li>Auto-reload now waits until apps are idle, protecting calls and active work</li>
+  <li>Apps now stay awake when Wavebox cannot safely confirm their visibility</li>
+  <li>Connect panel sizes are now remembered separately for each window</li>
+  <li>Space icons are clearer and expand on hover for easier identification</li>
+  <li>Various Webdock menu wording, ordering and icon improvements</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fix a browser crash when splitting a tab that was already part of a split</li>
+  <li>Fixed a crash when extensions move tabs out of split view</li>
+  <li>Privacy Lock now reliably restores every window after unlocking</li>
+  <li>Fix a stray error when renaming a tab that is closed or dragged while the rename is landing</li>
+  <li>Fixed white backgrounds appearing in the Webdock and top strip on macOS</li>
+  <li>Translation fixes and clearer wording across several languages</li>
+  <li>Several stability and navigation fixes for tabs across multiple Webdock windows</li>
+  <li>Various webdock polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/152.2.174.2)
+
+---
+
 <h3>Version 152.2.173 <span class="date">1/9/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -328,45 +378,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/149.2.103.2)
-
----
-
-<h3>Version 149.2.96 <span class="date">17/6/2026</span></h3>
-<p></p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Manage your preferred languages directly in settings, with add, remove and reorder, per-language translate offers, and (on Windows) a browser interface language picker</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 149.0.7827.156</li>
-  <li>Per-space proxy now supports PAC file URLs alongside fixed-server addresses</li>
-  <li>More reliable window restoring when a saved window or dragged tab lands off-screen or on a disconnected display</li>
-  <li>More resilient cross-device tab restore when the sync connection drops</li>
-  <li>Connect now remembers your last active team across restarts, so you no longer appear online in the wrong team after launch</li>
-  <li>Update fixes on macOS to make app restarts and updates more reliable</li>
-  <li>Web search suggestions now fail gracefully when offline or behind a captive portal</li>
-  <li>Restored windows on macOS now appear in the Finder window picker</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a crash during session restore when saved tab groups got out of sync, now self-healing without losing tabs</li>
-  <li>Fixed a crash in the built-in AI features that could occur when a background worker shut down</li>
-  <li>Fixed a crash that could happen when dragging and dropping items in the webdock</li>
-  <li>Fixed sync getting stuck retrying when an app had a corrupt or empty asset reference</li>
-  <li>Fixed re-authenticating Outlook accounts wiping their sign-in tokens</li>
-  <li>Setting a default search engine now works reliably instead of failing with an error</li>
-  <li>Fixed picture-in-picture and fullscreen glitches when sharing video in Wavebox Connect</li>
-  <li>Fixed a rare error when closing a window while its theme gradient was updating</li>
-  <li>Fixed the titlebar arrow anchor in appearance settings for secondary windows</li>
-  <li>Various UI polish and visual fixes</li>
-  <li>Various UI polish, visual fixes and stability and performance fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.96.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
