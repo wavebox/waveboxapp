@@ -1,3 +1,19 @@
+<h3>Version 153.2.190 beta <span class="date">3/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 153.0.8010.16</li>
+  <li>Added a toolbar switcher for finding, focusing and closing open Wavebox windows</li>
+  <li>Fixed a potential crash while browser interface pages were loading</li>
+  <li>Fix crash with grammar checking</li>
+  <li>Fullscreen pages now respond to clicks along the top and left edges</li>
+  <li>Fixes for Windows spelling suggestions</li>
+  <li>UI fixes when creating a new profile</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/153.2.190.3)
+
+---
+
 <h3>Version 152.2.173 beta <span class="date">27/8/2026</span></h3>
 <ul>
   <li>Auto-reload now waits until apps are idle, protecting calls and active work</li>
@@ -160,26 +176,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.131.3)
-
----
-
-<h3>Version 151.2.129 beta <span class="date">14/7/2026</span></h3>
-<ul>
-  <li>Guided grammar review now wraps around and waits for the checker to finish, so suggestions that appear while you're part-way through a review are no longer skipped</li>
-  <li>Hovering a tab that belongs to another space now shows a tooltip naming that space and explaining why the tab is marked</li>
-  <li>Fixed a crash when choosing one of the Wavebox profile pictures in settings</li>
-  <li>Fixed a startup crash when restoring a session that contained a docked tab</li>
-  <li>Fixed crashes when opening a saved tab group from a menu, or when a group had been created with invalid links</li>
-  <li>Fixed a crash on macOS when a window was changed from being the main Wavebox window</li>
-  <li>Sleeping and waking docked and split tabs is now more reliable, and sleeping one no longer leaves a blank pane behind</li>
-  <li>Restoring a session now docks the tab you actually had docked instead of a different one</li>
-  <li>The space icon picker now shows six distinct icons instead of repeating the same few</li>
-  <li>Several further stability fixes for split tabs, docked tabs and profile creation</li>
-  <li>Various UI copy and polish fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.129.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
