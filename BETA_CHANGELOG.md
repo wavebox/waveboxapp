@@ -1,3 +1,16 @@
+<h3>Version 153.2.193 beta <span class="date">6/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 153.0.8010.28</li>
+  <li>Empty custom Secure DNS addresses no longer prevent websites from loading</li>
+  <li>Group titles remain visible in the Webdock when using shorter windows</li>
+  <li>Various visual improvements across Settings and the Webdock</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/153.2.193.3)
+
+---
+
 <h3>Version 153.2.190 beta <span class="date">3/9/2026</span></h3>
 <ul>
   <li>Update to Chromium 153.0.8010.16</li>
@@ -163,19 +176,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.135.3)
-
----
-
-<h3>Version 151.2.131 beta <span class="date">15/7/2026</span></h3>
-<ul>
-  <li>Grammar checking no longer gives up on long text — a full blog post or long message is now proofread sentence by sentence as you write</li>
-  <li>Check spelling and grammar in the right-click menu now walks you through the suggestions one by one, and now sits with the other language and spelling options</li>
-  <li>The grammar status badge now follows your cursor as you move between writing areas, and hides itself where grammar isn't checked</li>
-  <li>Fixed the guided grammar review quietly stopping after you accepted the second suggestion</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.131.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
