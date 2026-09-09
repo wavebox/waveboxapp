@@ -1,3 +1,21 @@
+<h3>Version 152.2.193 <span class="date">7/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 152.0.7977.83</li>
+  <li>Various visual improvements across Settings and the Webdock</li>
+  <li>Fixed a potential crash while browser interface pages were loading</li>
+  <li>Fix crash with grammar checking</li>
+  <li>Empty custom Secure DNS addresses no longer prevent websites from loading</li>
+  <li>Fullscreen pages now respond to clicks along the top and left edges</li>
+  <li>Fixes for Windows spelling suggestions</li>
+  <li>Group titles remain visible in the Webdock when using shorter windows</li>
+  <li>UI fixes when creating a new profile</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/152.2.193.2)
+
+---
+
 <h3>Version 152.2.174 <span class="date">1/9/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -348,36 +366,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.117.2)
-
----
-
-<h3>Version 149.2.103 <span class="date">24/6/2026</span></h3>
-
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 149.0.7827.197</li>
-  <li>Detached apps now stay detached after a restart</li>
-  <li>More reliable syncing of tabs across devices when the network is briefly unresponsive</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a batch of background crashes affecting tab reloading, account authentication, RSS widgets, importing data, and integrations like Freshdesk</li>
-  <li>Fixed a crash during password import that could occur with invalid saved logins</li>
-  <li>Fixed two browser crashes involving the address bar and saved tab groups</li>
-  <li>Fixed a browser crash in split screen when dragging a tab</li>
-  <li>Fixed a crash when dragging text or other non-link content onto your tabs</li>
-  <li>Fixed a crash on Windows when using speech recognition more than once in a session</li>
-  <li>Fixed a crash that could occur when entering fullscreen on macOS</li>
-  <li>Fixed a crash in the extension menu</li>
-  <li>Fixed an issue that could cause excessive re-rendering across the main panel, webdock, tabs and workspaces</li>
-  <li>Language settings now correctly prompt for a restart when needed</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/149.2.103.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)

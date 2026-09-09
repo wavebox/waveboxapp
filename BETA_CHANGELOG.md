@@ -1,3 +1,18 @@
+<h3>Version 153.2.196 beta <span class="date">9/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 153.0.8010.37</li>
+  <li>Unify the positioning of the search button in the toolbar across all Wavebox windows</li>
+  <li>Fix browser crashes when using extensions and when quitting Wavebox on macOS</li>
+  <li>Prevent invalid Secure DNS settings from blocking browsing and restore connections affected by previous settings</li>
+  <li>Switch webdock layouts without adding unwanted dividers or leaving spaces looking empty</li>
+  <li>Various UI polish and visual fixes across the webdock, titlebar and app icons</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/153.2.196.3)
+
+---
+
 <h3>Version 153.2.193 beta <span class="date">6/9/2026</span></h3>
 <ul>
   <li>Update to Chromium 153.0.8010.28</li>
@@ -157,25 +172,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.140.3)
-
----
-
-<h3>Version 151.2.135 beta <span class="date">17/7/2026</span></h3>
-<ul>
-  <li>Update to Chromium 151.0.7922.34</li>
-  <li>Browser import now shows browsers that macOS is blocking, with step-by-step guidance and a button that opens the right System Settings pane</li>
-  <li>Fixed a crash on launch on macOS Golden Gate during startup</li>
-  <li>Space, group and app default icons now follow the light and dark theme instead of showing a white tile in dark mode</li>
-  <li>A group dashboard can now be set to a chrome-extension:// address</li>
-  <li>Added a dark grey sticky note colour for darker backgrounds</li>
-  <li>Fixed background errors that could interrupt tab reordering, cloud sync setup during onboarding restore, and app URL changes</li>
-  <li>The grammar checker no longer runs on devtools pages</li>
-  <li>Improved translations across several languages</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.135.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
