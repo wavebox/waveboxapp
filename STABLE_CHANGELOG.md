@@ -1,3 +1,18 @@
+<h3>Version 153.2.196 <span class="date">9/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 153.0.8010.37</li>
+  <li>Unify the positioning of the search button in the toolbar across all Wavebox windows</li>
+  <li>Fix browser crashes when using extensions and when quitting Wavebox on macOS</li>
+  <li>Prevent invalid Secure DNS settings from blocking browsing and restore connections affected by previous settings</li>
+  <li>Switch webdock layouts without adding unwanted dividers or leaving spaces looking empty</li>
+  <li>Various UI polish and visual fixes across the webdock, titlebar and app icons</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/153.2.196.2)
+
+---
+
 <h3>Version 152.2.193 <span class="date">7/9/2026</span></h3>
 <ul>
   <li>Update to Chromium 152.0.7977.83</li>
@@ -320,52 +335,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.118.2)
-
----
-
-<h3>Version 150.2.117 <span class="date">6/7/2026</span></h3>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    New on-device grammar assistant that checks your writing as you type, with inline
-    underlines, a click-to-fix popover, a status indicator, and a Check grammar
-    option in the right-click menu. This is turned off by default but can be enabled
-    under Settings > Language.
-  </li>
-  <li>
-    New on-device AI in Wavebox that runs language models locally on your computer,
-    for websites that request it. This brings Wavebox into spec with other browsers
-    for these new capabilities.
-  </li>
-  <li>Connect your own AI models from Ollama, OpenAI or Anthropic to power Wavebox's web AI features</li>
-  <li>
-    New option on a group's menu to move all of its apps out into their own window
-    as pinned tabs with their app icons, with a one-click way to bring them all back.
-  </li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 150.0.7871.47</li>
-  <li>The Brainbox assistant has been rebuilt to help you with your Wavebox setup, so you can ask it things like "Move my tabs into a new group"</li>
-  <li>Added search and keyboard navigation to the "Open in app or webdock group" picker, so you can filter by app or group name and choose with the arrow keys</li>
-  <li>New advanced settings to reduce GPU memory usage on some setups</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed several crashes, including disabling an extension with an open side panel, applying themes, and omnibox and network-request edge cases</li>
-  <li>Fixed a crash that could occur when dragging a group in the webdock</li>
-  <li>Fixed crashes that could occur while profile sync was applying changes from another device</li>
-  <li>Fixed detached apps collapsing back into the main window after quitting and relaunching Wavebox</li>
-  <li>Fixed a range of background errors caused by closing tabs, windows and dialogs while they were still updating</li>
-  <li>The delete-space dialog no longer shows an empty bordered box when nothing is using the space</li>
-  <li>Fixes and UI improvements for the new grammar checker</li>
-  <li>Various stability improvements, UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.117.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
