@@ -1,3 +1,19 @@
+<h3>Version 154.2.203 beta <span class="date">11/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 154.0.8037.18</li>
+  <li>Show memory saved by sleeping tabs and keep active tab memory figures current</li>
+  <li>Fix a crash when adding a tab to a split after its state changes</li>
+  <li>Fix tabs appearing blank when switching tabs or opening the panel on Linux</li>
+  <li>Fix errors when closing newly opened app tabs before they finish processing</li>
+  <li>Fix secondary windows switching apps unexpectedly when moving an app to another window</li>
+  <li>Keep the typing cursor in place when hovering over spelling and grammar suggestions</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/154.2.203.3)
+
+---
+
 <h3>Version 153.2.196 beta <span class="date">9/9/2026</span></h3>
 <ul>
   <li>Update to Chromium 153.0.8010.37</li>
@@ -155,23 +171,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.141.3)
-
----
-
-<h3>Version 151.2.140 beta <span class="date">31/7/2026</span></h3>
-<ul>
-  <li>Update to Chromium 151.0.7922.72</li>
-  <li>Made account setup more resilient to brief network drops so onboarding no longer fails after a momentary connection loss</li>
-  <li>Fixed a crash loop in on-device AI so a failing GPU reliably falls back to CPU, along with a related Linux crash in the AI text sampler</li>
-  <li>Fixed crashes during session restore involving saved tab groups and split tabs</li>
-  <li>Fixed a macOS crash when dismissing notifications and another in the app menu</li>
-  <li>Fixed a crash in Smartnotes when a note was updated from another device while open</li>
-  <li>Fixed a crash when clearing a Space's colour and when opening the account setup dialog</li>
-  <li>Various stability fixes across tabs, workspaces, app updates and syncing</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.140.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
