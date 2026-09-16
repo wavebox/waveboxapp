@@ -1,3 +1,17 @@
+<h3>Version 154.2.204 beta <span class="date">16/9/2026</span></h3>
+<ul>
+  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
+  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
+  <li>Fix a crash when an extension side panel updates after moving between windows</li>
+  <li>Preserve the shared order of spaces and apps when importing templates</li>
+  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/154.2.204.3)
+
+---
+
 <h3>Version 154.2.203 beta <span class="date">11/9/2026</span></h3>
 <ul>
   <li>Update to Chromium 154.0.8037.18</li>
@@ -157,20 +171,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.148.3)
-
----
-
-<h3>Version 151.2.141 beta <span class="date">3/8/2026</span></h3>
-<ul>
-  <li>You can now pick a space when creating a new Webdock group in the List and Explorer layouts</li>
-  <li>The assistant can now tell which group, app, tab and space you are actually looking at, so it acts on the right one</li>
-  <li>Asking the assistant to remove a group or a space now opens the usual confirmation dialog instead of deleting it straight away</li>
-  <li>Grammar suggestions no longer delete your quotation marks or brackets, and no longer offer wording taken from a different line</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.141.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
