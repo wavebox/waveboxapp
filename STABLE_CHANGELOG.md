@@ -1,4 +1,4 @@
-<h3>Version 154.2.204 <span class="date">16/9/2026</span></h3>
+<h3>Version 153.2.204 <span class="date">16/9/2026</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
   <li>Update to Chromium 153.0.8010.48</li>
@@ -20,7 +20,7 @@
 </ul>
 
 
-[Downloads](https://wavebox.io/download/release/154.2.204.2)
+[Downloads](https://wavebox.io/download/release/153.2.204.2)
 
 ---
 
