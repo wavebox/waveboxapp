@@ -1,3 +1,28 @@
+<h3>Version 154.2.208 beta <span class="date">18/9/2026</span></h3>
+<ul>
+  <li>Update to Chromium 154.0.8037.45</li>
+  <li>Show warnings and one-click fixes when app settings prevent link opening rules from running</li>
+  <li>Improve browser imports with recent browsers first and clearer macOS permission prompts and guidance</li>
+  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
+  <li>Fix crashes when using Apple Intelligence writing tools or moving extension side panels between windows</li>
+  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
+  <li>Fix a crash when an extension side panel updates after moving between windows</li>
+  <li>Fix a browser crash when closing tabs that belong to a split view</li>
+  <li>Preserve space and app ordering when importing shared templates and switching webdock layouts</li>
+  <li>Preserve the shared order of spaces and apps when importing templates</li>
+  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
+  <li>Fix the webdock showing an error screen when dragging certain items</li>
+  <li>Fix selected tabs reopening after closing several at once</li>
+  <li>Fix split view app switching failing or leaving the picker stuck</li>
+  <li>Various UI polish and visual fixes</li>
+  <li>Various stability improvements and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/154.2.208.3)
+
+---
+
 <h3>Version 154.2.204 beta <span class="date">16/9/2026</span></h3>
 <ul>
   <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
@@ -156,21 +181,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.154.3)
-
----
-
-<h3>Version 151.2.148 beta <span class="date">5/8/2026</span></h3>
-<ul>
-  <li>Update to Chromium 151.0.7922.76</li>
-  <li>Linux AppImage builds can now update themselves in place, downloading only the parts that changed</li>
-  <li>Grammar suggestions are now switched on by default for new users</li>
-  <li>Fixed tabs sometimes failing to close while another tab is being dragged</li>
-  <li>Fixed an error that could be reported when closing a tab that had already closed</li>
-  <li>Release test</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.148.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
