@@ -1,3 +1,39 @@
+<h3>Version 154.3.2 <span class="date">23/9/2026</span></h3>
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 154.0.8037.58</li>
+  <li>Bring active Connect calls between windows and keep calls in the selected conversation</li>
+  <li>Show warnings and one-click fixes when app settings prevent link opening rules from running</li>
+  <li>Improve browser imports with recent browsers first and clearer macOS permission prompts and guidance</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Keep tabs intact when moving between windows or recovering from interrupted tab operations</li>
+  <li>Fix crashes when preloading pages, checking translation, opening site permissions, and closing Wavebox</li>
+  <li>Fix crashes when using Apple Intelligence writing tools or moving extension side panels between windows</li>
+  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
+  <li>Fix a crash when an extension side panel updates after moving between windows</li>
+  <li>Fix a browser crash when closing tabs that belong to a split view</li>
+  <li>Fix selected tabs reopening after closing several at once</li>
+  <li>Restore ClickUp unread counts and recognize more Outlook addresses when boosting tabs</li>
+  <li>Fix split view app switching failing or leaving the picker stuck</li>
+  <li>Preserve space and app ordering when importing shared templates and switching webdock layouts</li>
+  <li>Preserve the shared order of spaces and apps when importing templates</li>
+  <li>Use the selected Space consistently when adding duplicate apps</li>
+  <li>Keep the RSS widget working when a feed contains malformed content</li>
+  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
+  <li>Fix the webdock showing an error screen when dragging certain items</li>
+  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
+  <li>Various stability improvements and visual fixes</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/154.3.2.2)
+
+---
+
 <h3>Version 153.2.204 <span class="date">16/9/2026</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
@@ -284,36 +320,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/150.2.131.2)
-
----
-
-<h3>Version 150.2.121 <span class="date">8/7/2026</span></h3>
-<p></p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>Set a file:// address as your new tab page</li>
-  <li>Report a poor spelling or grammar suggestion right from the suggestion popup or the indicator badge menu with the new Help us improve feedback option</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 150.0.7871.101</li>
-  <li>Spelling and grammar checking is now more responsive</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a crash that could occur when clicking a word with spelling suggestions in a text field</li>
-  <li>Fixed a crash affecting some Linux users</li>
-  <li>Fixed legacy Manifest V2 extensions being automatically disabled</li>
-  <li>Fixed an issue where an external link could fail to open if its target window closed at the same moment, it now opens in a new window instead</li>
-  <li>Fixed moving a widget to another dashboard leaving it behind on the original as well</li>
-  <li>Fixed misspelled words being underlined and counted twice by the spelling and grammar checker, and stale issue counts on emptied fields</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.121.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
