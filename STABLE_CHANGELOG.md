@@ -1,3 +1,41 @@
+<h3>Version 154.3.5 <span class="date">24/9/2026</span></h3>
+<p>This patchfix release fixes a crash issue reported by some users in version 154.3.2. Here's everything else that's new:</p>
+<ul>
+  <li>Update to Chromium 154.0.8037.58</li>
+  <li>Added support for links that open websites directly in Wavebox</li>
+  <li>Collapse or expand all webdock groups using a keyboard shortcut or the divider menu</li>
+  <li>Bring active Connect calls between windows and keep calls in the selected conversation</li>
+  <li>Show warnings and one-click fixes when app settings prevent link opening rules from running</li>
+  <li>Improve browser imports with recent browsers first and clearer macOS permission prompts and guidance</li>
+  <li>Keep tabs intact when moving between windows or recovering from interrupted tab operations</li>
+  <li>Fix crashes when preloading pages, checking translation, opening site permissions, and closing Wavebox</li>
+  <li>Fix crashes when using Apple Intelligence writing tools or moving extension side panels between windows</li>
+  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
+  <li>Fix a crash when an extension side panel updates after moving between windows</li>
+  <li>Fix a browser crash when closing tabs that belong to a split view</li>
+  <li>Fix selected tabs reopening after closing several at once</li>
+  <li>Restore ClickUp unread counts and recognize more Outlook addresses when boosting tabs</li>
+  <li>Fix split view app switching failing or leaving the picker stuck</li>
+  <li>Preserve space and app ordering when importing shared templates and switching webdock layouts</li>
+  <li>Preserve the shared order of spaces and apps when importing templates</li>
+  <li>Use the selected Space consistently when adding duplicate apps</li>
+  <li>Keep the RSS widget working when a feed contains malformed content</li>
+  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
+  <li>Fix the webdock showing an error screen when dragging certain items</li>
+  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
+  <li>Various stability improvements and visual fixes</li>
+  <li>Various UI polish and visual fixes</li>
+  <li>Fix a potential crash when extensions stop running in separate spaces</li>
+  <li>Fix undo and redo errors after a note is updated in another editor</li>
+  <li>Fix the RSS widget failing when a feed contains malformed content</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/154.3.5.2)
+
+---
+
 <h3>Version 154.3.2 <span class="date">23/9/2026</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
@@ -277,49 +315,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.141.2)
-
----
-
-<h3>Version 150.2.131 <span class="date">15/7/2026</span></h3>
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 150.0.7871.125</li>
-  <li>Grammar checking no longer gives up on long text — a full blog post or long message is now proofread sentence by sentence as you write</li>
-  <li>The spelling suggestion popover can now add words straight to your dictionary, and repositions itself so it's no longer clipped near the bottom of the screen</li>
-  <li>Check spelling and grammar in the right-click menu now walks you through the suggestions one by one, and now sits with the other language and spelling options</li>
-  <li>The grammar status badge now follows your cursor as you move between writing areas, and hides itself where grammar isn't checked</li>
-  <li>Hovering a tab that belongs to another space now shows a tooltip naming that space and explaining why the tab is marked</li>
-  <li>Add custom App dialog now uses floating labels on the URL and name fields so they stay visible once you start typing</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed the app occasionally getting stuck on the 'Wavebox is starting' splash screen when the background was restarted or updated</li>
-  <li>Fixed several crashes and background errors, including tabs closing or being dragged during a sync and using a docked tab's menu while the tabs changed underneath it</li>
-  <li>Fixed a startup crash on macOS that could be triggered by apps opening tabs while Wavebox was launching</li>
-  <li>Fixed a startup crash when restoring a session that contained a docked tab</li>
-  <li>Fixed a crash when opening an incognito window after Wavebox had restarted following a crash</li>
-  <li>Fixed crashes when opening a saved tab group from a menu, or when a group had been created with invalid links</li>
-  <li>Fixed a crash when choosing one of the Wavebox profile pictures in settings</li>
-  <li>Fixed a crash on macOS when a window was changed from being the main Wavebox window</li>
-  <li>Fixed a crash in grammar checking while editing text</li>
-  <li>Sleeping and waking docked and split tabs is now more reliable, and sleeping one no longer leaves a blank pane behind</li>
-  <li>Fixed on-device AI being reported as unavailable inside Brainbox</li>
-  <li>Unread badges on a space now only count unread from apps in that space, so an emptied space no longer keeps a stale count</li>
-  <li>Fixed the Smartnote panel sometimes opening blank</li>
-  <li>Fixed the guided grammar review quietly stopping after you accepted the second suggestion</li>
-  <li>Fixed an error when quickly clicking the audio, video or screen-share buttons twice during a chat call</li>
-  <li>Fixed an error when opening options for an app whose profile had already been deleted</li>
-  <li>Fixed an error when using the Brainbox right-click menu on a tab that had already closed</li>
-  <li>Fixed a transient error that could occur while dragging tabs</li>
-  <li>The space icon picker now shows six distinct icons instead of repeating the same few</li>
-  <li>Several stability fixes for side panels, the tab strip, cloud sync and the app setup dialog</li>
-  <li>Several further stability fixes for split tabs, docked tabs and profile creation</li>
-  <li>Various UI copy and polish fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/150.2.131.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
