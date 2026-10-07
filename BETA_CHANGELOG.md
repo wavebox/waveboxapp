@@ -1,4 +1,4 @@
-<h3>Version 156.3.12 beta <span class="date">7/10/2026</span></h3>
+<h3>Version 155.3.12 beta <span class="date">7/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 155.0.8059.40</li>
   <li>Create checklists in Smart Notes and keep their checked state when exporting</li>
@@ -30,7 +30,7 @@
 </ul>
 
 
-[Downloads](https://wavebox.io/download/release/156.3.12.3)
+[Downloads](https://wavebox.io/download/release/155.3.12.3)
 
 ---
 
