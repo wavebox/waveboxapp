@@ -1,3 +1,39 @@
+<h3>Version 156.3.12 beta <span class="date">7/10/2026</span></h3>
+<ul>
+  <li>Update to Chromium 155.0.8059.40</li>
+  <li>Create checklists in Smart Notes and keep their checked state when exporting</li>
+  <li>Use Chat with Settings inside Settings to adjust your setup</li>
+  <li>Add a dashboard Clock widget with custom time zones and optional seconds</li>
+  <li>Redesign the Navigator with Spaces, List and Map views, usage insights and extension memory tracking</li>
+  <li>Find dashboard shortcuts and tasks in search, and start dashboard searches just by typing</li>
+  <li>New Gmail and Outlook apps automatically follow your inbox preferences for unread counts</li>
+  <li>Add two and three minute options for automatically putting tabs to sleep</li>
+  <li>Add a 15-second inactivity option for Privacy Lock alongside simpler settings</li>
+  <li>Prevent cloud sync from losing offline edits, deleting extensions, or losing and duplicating bookmarks</li>
+  <li>Retry backup restores after incorrect passwords without disabling cloud sync or losing the restore session</li>
+  <li>Fix a crash when deleting a space or clearing its browsing data</li>
+  <li>Fix crashes when restoring saved tab groups and failures when syncing newly installed extensions</li>
+  <li>Fix crashes involving saved tab groups, incognito settings, and older cookie settings</li>
+  <li>Fix startup failures and crashes involving saved tab groups, incognito settings and older cookie preferences</li>
+  <li>Keep Wavebox signed in and able to start on networks requiring a Wi-Fi sign-in</li>
+  <li>Improve tab reliability when dragging, closing, or changing split tabs</li>
+  <li>Improve tab and split view reliability when dragging, closing or replacing tabs</li>
+  <li>Fix password imports from Chrome-family browsers on macOS and Windows</li>
+  <li>Keep pinned tabs pinned when restoring tabs from another updated device</li>
+  <li>Restore maximized and fullscreen windows correctly when unlocking after another profile</li>
+  <li>Restore maximized and fullscreen windows correctly when unlocking multiple profiles</li>
+  <li>Fix the app store becoming unresponsive after refreshing while offline</li>
+  <li>Automatically resync spaces when changes conflict with newer updates</li>
+  <li>Keep toolbar popups open when moving the pointer away on Linux</li>
+  <li>Hide the incognito option when unavailable while opening external links</li>
+  <li>Various UI polish and visual fixes across dashboards, search and Focus Mode</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/156.3.12.3)
+
+---
+
 <h3>Version 155.3.5 beta <span class="date">24/9/2026</span></h3>
 <ul>
   <li>Update to Chromium 155.0.8059.13</li>
@@ -141,36 +177,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/152.2.173.3)
-
----
-
-<h3>Version 152.2.168 beta <span class="date">26/8/2026</span></h3>
-<ul>
-  <li>Update to Chromium 152.0.7977.65</li>
-  <li>
-    New: Additional Webdock windows!
-    <ul>
-      <li>Open additional Webdock windows from the app menu or any Webdock context menu</li>
-      <li>Move a group into its own window from the sidebar right-click menu</li>
-      <li>Move individual apps, tabs or entire groups between Webdock windows</li>
-      <li>Apps stay in the window you place them in, and &amp;ldquo;Bring it here&amp;rdquo; summons an app into the window you're working in</li>
-      <li>Windows keep their identity across closing, reopening and restarting, so apps land back where you left them</li>
-      <li>Additional Webdock windows now restore their tabs and active app after restarts or reopening</li>
-      <li>Each window remembers its active app and collapsed sidebar dividers, including across restarts</li>
-      <li>Search, the Tab Manager and keyboard shortcuts now jump to the window that owns an app</li>
-      <li>Links, search results and keyboard commands now stay with their originating Webdock</li>
-      <li>Sign-in prompts and Space controls now open in the Webdock where they are needed</li>
-      <li>Connect now opens its side panel in the Webdock window you're using</li>
-    </ul>
-  </li>
-  <li>Privacy Lock now reliably restores every window after unlocking</li>
-  <li>Fixed a crash when extensions move tabs out of split view</li>
-  <li>Several stability and navigation fixes for tabs across multiple Webdock windows</li>
-  <li>Space icons are clearer and expand on hover for easier identification</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/152.2.168.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
