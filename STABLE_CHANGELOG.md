@@ -1,3 +1,49 @@
+<h3>Version 155.3.12 <span class="date">7/10/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Create checklists in Smart Notes and keep their checked state when exporting</li>
+  <li>Use Chat with Settings inside Settings to adjust your setup</li>
+  <li>Add a dashboard Clock widget with custom time zones and optional seconds</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 155.0.8059.40</li>
+  <li>Redesign the Navigator with Spaces, List and Map views, usage insights and extension memory tracking</li>
+  <li>Find dashboard shortcuts and tasks in search, and start dashboard searches just by typing</li>
+  <li>New Gmail and Outlook apps automatically follow your inbox preferences for unread counts</li>
+  <li>Add two and three minute options for automatically putting tabs to sleep</li>
+  <li>Add a 15-second inactivity option for Privacy Lock alongside simpler settings</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Prevent cloud sync from losing offline edits, deleting extensions, or losing and duplicating bookmarks</li>
+  <li>Fix startup failures and crashes involving saved tab groups, incognito settings and older cookie preferences</li>
+  <li>Fix a crash when deleting a space or clearing its browsing data</li>
+  <li>Fix crashes when restoring saved tab groups and failures when syncing newly installed extensions</li>
+  <li>Fix crashes involving saved tab groups, incognito settings, and older cookie settings</li>
+  <li>Retry backup restores after incorrect passwords without disabling cloud sync or losing the restore session</li>
+  <li>Keep Wavebox signed in and able to start on networks requiring a Wi-Fi sign-in</li>
+  <li>Improve tab reliability when dragging, closing, or changing split tabs</li>
+  <li>Improve tab and split view reliability when dragging, closing or replacing tabs</li>
+  <li>Fix password imports from Chrome-family browsers on macOS and Windows</li>
+  <li>Keep pinned tabs pinned when restoring tabs from another updated device</li>
+  <li>Automatically resync spaces when changes conflict with newer updates</li>
+  <li>Restore maximized and fullscreen windows correctly when unlocking after another profile</li>
+  <li>Restore maximized and fullscreen windows correctly when unlocking multiple profiles</li>
+  <li>Fix the app store becoming unresponsive after refreshing while offline</li>
+  <li>Keep toolbar popups open when moving the pointer away on Linux</li>
+  <li>Hide the incognito option when unavailable while opening external links</li>
+  <li>Various UI polish and visual fixes across dashboards, search and Focus Mode</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/155.3.12.2)
+
+---
+
 <h3>Version 154.3.5 <span class="date">24/9/2026</span></h3>
 <p>This patchfix release fixes a crash issue reported by some users in version 154.3.2. Here's everything else that's new:</p>
 <ul>
@@ -275,46 +321,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.148.2)
-
----
-
-<h3>Version 151.2.141 <span class="date">3/8/2026</span></h3>
-<p></p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>You can now pick a space when creating a new Webdock group in the List and Explorer layouts</li>
-  <li>A group dashboard can now be set to a chrome-extension:// address</li>
-  <li>Added a dark grey sticky note colour for darker backgrounds</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 151.0.7922.72</li>
-  <li>Browser import now shows browsers that macOS is blocking, with step-by-step guidance and a button that opens the right System Settings pane</li>
-  <li>The assistant can now tell which group, app, tab and space you are actually looking at, so it acts on the right one</li>
-  <li>Asking the assistant to remove a group or a space now opens the usual confirmation dialog instead of deleting it straight away</li>
-  <li>Made account setup more resilient to brief network drops so onboarding no longer fails after a momentary connection loss</li>
-  <li>Space, group and app default icons now follow the light and dark theme instead of showing a white tile in dark mode</li>
-  <li>The grammar checker no longer runs on devtools pages</li>
-  <li>Improved translations across several languages</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a crash on launch on macOS Golden Gate during startup</li>
-  <li>Fixed crashes during session restore involving saved tab groups and split tabs</li>
-  <li>Fixed a crash loop in on-device AI so a failing GPU reliably falls back to CPU, along with a related Linux crash in the AI text sampler</li>
-  <li>Fixed a crash in Smartnotes when a note was updated from another device while open</li>
-  <li>Fixed a macOS crash when dismissing notifications and another in the app menu</li>
-  <li>Fixed a crash when clearing a Space's colour and when opening the account setup dialog</li>
-  <li>Grammar suggestions no longer delete your quotation marks or brackets, and no longer offer wording taken from a different line</li>
-  <li>Fixed background errors that could interrupt tab reordering, cloud sync setup during onboarding restore, and app URL changes</li>
-  <li>Various stability fixes across tabs, workspaces, app updates and syncing</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.141.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
