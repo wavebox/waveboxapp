@@ -1,3 +1,23 @@
+<h3>Version 156.3.14 beta <span class="date">9/10/2026</span></h3>
+<ul>
+  <li>Update to Chromium 156.0.8078.17</li>
+  <li>Group desktop web apps by Space and identify each copy with Space icons</li>
+  <li>Keep tabs awake from the tab menu in every window</li>
+  <li>Tabs controlled by AI agents or open developer tools now stay awake automatically</li>
+  <li>Quickly find and open an existing app when adding another copy creates a new Space</li>
+  <li>Fixed a crash when updating a window with no tabs</li>
+  <li>Dashboards now recover automatically when an update interrupts loading</li>
+  <li>Fixed misplaced popups on Linux Wayland and windows staying dimmed after closing dialogs on macOS</li>
+  <li>Fixed special characters appearing incorrectly in Gmail recipients and subjects when composing from links</li>
+  <li>Several fixes for app lists, Chat with Settings and diagnostic reports</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/156.3.14.3)
+
+---
+
 <h3>Version 155.3.12 beta <span class="date">7/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 155.0.8059.40</li>
@@ -163,20 +183,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/153.2.190.3)
-
----
-
-<h3>Version 152.2.173 beta <span class="date">27/8/2026</span></h3>
-<ul>
-  <li>Auto-reload now waits until apps are idle, protecting calls and active work</li>
-  <li>Apps now stay awake when Wavebox cannot safely confirm their visibility</li>
-  <li>Connect panel sizes are now remembered separately for each window</li>
-  <li>Fixed white backgrounds appearing in the Webdock and top strip on macOS</li>
-  <li>Various Webdock menu wording, ordering and icon improvements</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/152.2.173.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
