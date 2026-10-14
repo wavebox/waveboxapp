@@ -1,3 +1,39 @@
+<h3>Version 155.3.17 <span class="date">14/10/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Group desktop web apps by Space and identify each copy with Space icons</li>
+  <li>Keep tabs awake from the tab menu in every window</li>
+  <li>Added an option to show group names beneath their icons in the webdock</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 155.0.8059.80</li>
+  <li>Reduce graphics memory use and prevent toolbar and webdock flashing on large, high-resolution displays</li>
+  <li>Keep bookmark folders organised as Groups when importing from another browser</li>
+  <li>Improve automatic Gmail unread counts for more inbox layouts, with clearer guidance for custom setups</li>
+  <li>Tabs controlled by AI agents or open developer tools now stay awake automatically</li>
+  <li>Quickly find and open an existing app when adding another copy creates a new Space</li>
+  <li>Choose where to open external links when the selected profile fails to respond</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a crash when updating a window with no tabs</li>
+  <li>Fixed a crash when extensions install while a profile is closing</li>
+  <li>Dashboards now recover automatically when an update interrupts loading</li>
+  <li>Fixed misplaced popups on Linux Wayland and windows staying dimmed after closing dialogs on macOS</li>
+  <li>Fixed special characters appearing incorrectly in Gmail recipients and subjects when composing from links</li>
+  <li>Several fixes for app lists, Chat with Settings and diagnostic reports</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/155.3.17.2)
+
+---
+
 <h3>Version 155.3.12 <span class="date">7/10/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -307,20 +343,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/151.2.154.2)
-
----
-
-<h3>Version 151.2.148 <span class="date">5/8/2026</span></h3>
-<ul>
-  <li>Update to Chromium 151.0.7922.76</li>
-  <li>Linux AppImage builds can now update themselves in place, downloading only the parts that changed</li>
-  <li>Grammar suggestions are now switched on by default for new users</li>
-  <li>Fixed tabs sometimes failing to close while another tab is being dragged</li>
-  <li>Fixed an error that could be reported when closing a tab that had already closed</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.148.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
