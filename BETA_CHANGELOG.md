@@ -1,3 +1,19 @@
+<h3>Version 156.3.17 beta <span class="date">14/10/2026</span></h3>
+<ul>
+  <li>Added an option to show group names beneath their icons in the webdock</li>
+  <li>Keep bookmark folders organised as Groups when importing from another browser</li>
+  <li>Reduce graphics memory use and prevent toolbar and webdock flashing on large, high-resolution displays</li>
+  <li>Improve automatic Gmail unread counts for more inbox layouts, with clearer guidance for custom setups</li>
+  <li>Fixed a crash when extensions install while a profile is closing</li>
+  <li>Choose where to open external links when the selected profile fails to respond</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/156.3.17.3)
+
+---
+
 <h3>Version 156.3.14 beta <span class="date">9/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 156.0.8078.17</li>
@@ -167,22 +183,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/153.2.193.3)
-
----
-
-<h3>Version 153.2.190 beta <span class="date">3/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 153.0.8010.16</li>
-  <li>Added a toolbar switcher for finding, focusing and closing open Wavebox windows</li>
-  <li>Fixed a potential crash while browser interface pages were loading</li>
-  <li>Fix crash with grammar checking</li>
-  <li>Fullscreen pages now respond to clicks along the top and left edges</li>
-  <li>Fixes for Windows spelling suggestions</li>
-  <li>UI fixes when creating a new profile</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/153.2.190.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
