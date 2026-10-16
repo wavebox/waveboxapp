@@ -1,3 +1,22 @@
+<h3>Version 156.3.18 beta <span class="date">16/10/2026</span></h3>
+<ul>
+  <li>Update to Chromium 156.0.8078.36</li>
+  <li>Use link opening rules to send links to other browsers and desktop apps</li>
+  <li>Connect adds message formatting controls, room drafts, file sharing through drag and drop or paste, file previews, clearer call controls and microphone muting without leaving your call</li>
+  <li>Fix a crash when dragging a tab to create a top and bottom split</li>
+  <li>Fix rapid app and group switching jumping back to an earlier selection</li>
+  <li>Keep Connect calls muted when moving between windows, and keep the camera off when joining by voice</li>
+  <li>Fix Beam transfers getting stuck downloading or stopping prematurely on slow connections</li>
+  <li>Fix sleeping apps staying covered by a dark overlay after waking</li>
+  <li>Keep app popup dialogs within the visible screen area</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/156.3.18.3)
+
+---
+
 <h3>Version 156.3.17 beta <span class="date">14/10/2026</span></h3>
 <ul>
   <li>Added an option to show group names beneath their icons in the webdock</li>
@@ -170,19 +189,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/153.2.196.3)
-
----
-
-<h3>Version 153.2.193 beta <span class="date">6/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 153.0.8010.28</li>
-  <li>Empty custom Secure DNS addresses no longer prevent websites from loading</li>
-  <li>Group titles remain visible in the Webdock when using shorter windows</li>
-  <li>Various visual improvements across Settings and the Webdock</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/153.2.193.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
