@@ -1,3 +1,22 @@
+<h3>Version 155.3.18 <span class="date">19/10/2026</span></h3>
+<ul>
+  <li>Update to Chromium 155.0.8059.85</li>
+  <li>Use link opening rules to send links to other browsers and desktop apps</li>
+  <li>Connect adds message formatting controls, room drafts, file sharing through drag and drop or paste, file previews, clearer call controls and microphone muting without leaving your call</li>
+  <li>Fix a crash when dragging a tab to create a top and bottom split</li>
+  <li>Fix rapid app and group switching jumping back to an earlier selection</li>
+  <li>Keep Connect calls muted when moving between windows, and keep the camera off when joining by voice</li>
+  <li>Fix Beam transfers getting stuck downloading or stopping prematurely on slow connections</li>
+  <li>Fix sleeping apps staying covered by a dark overlay after waking</li>
+  <li>Keep app popup dialogs within the visible screen area</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/155.3.18.2)
+
+---
+
 <h3>Version 155.3.17 <span class="date">14/10/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -310,39 +329,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/152.2.173.2)
-
----
-
-<h3>Version 151.2.154 <span class="date">12/8/2026</span></h3>
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 151.0.7922.138</li>
-  <li>Existing users are now invited to try the grammar checker from the settings menu, with a short preview of it at work</li>
-  <li>The navigator now always opens in its own window, including from the webdock button, and defaults to list view</li>
-  <li>Deleting an empty group that's the last one in its space now offers to delete the space, and is disabled when that space can't be deleted</li>
-  <li>Brainbox updates and fixes</li>
-  <li>Various build and code-quality improvements behind the scenes</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fixed a crash that could take down the whole browser when theme colours were requested in the background</li>
-  <li>Fixed a browser crash when extensions listed tabs belonging to partitioned apps</li>
-  <li>Fixed crashes when using native menus on Mac and Windows</li>
-  <li>Fixed a crash when dragging a tab over the split-view drop area as it was closing</li>
-  <li>Fixed removing a group, app or space icon breaking cloud sync, which stopped icons saving and kept sending the webdock back to the first group</li>
-  <li>Fixed removing the last group from a space leaving that space stuck in the webdock and impossible to open</li>
-  <li>Clicking a Slack notification now opens the right channel again, switching in place without a full reload</li>
-  <li>Fixed the mini window not reopening from its shortcut once the previous one had gone stale, along with several related window and tab errors</li>
-  <li>The grammar suggestion popover no longer opens on its own while you type, and the cursor now lands at the end of the corrected word</li>
-  <li>Fixed the Outlook unread badge sticking at an old count when the window is narrow</li>
-  <li>Fixed the Linux menubar icon rendering as a blank, unclickable gap</li>
-  <li>Fixed the Windows IME candidate window staying in the corner instead of following the cursor after a drag and drop</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/151.2.154.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
