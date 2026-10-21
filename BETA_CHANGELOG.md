@@ -1,3 +1,22 @@
+<h3>Version 156.3.20 beta <span class="date">21/10/2026</span></h3>
+<ul>
+  <li>Update to Chromium 156.0.8078.48</li>
+  <li>Bookmarks can now follow your link opening rules when enabled in Settings</li>
+  <li>Brainbox can now use bookmarks, manage link opening rules and look up your keyboard shortcuts</li>
+  <li>Ask Brainbox to start Focus Mode or open a new webdock window</li>
+  <li>Find recent Brainbox chats in webdock Group and App tooltips and reopen them in one click</li>
+  <li>Brainbox chats now show their starting Space, Group and App, with a shortcut back</li>
+  <li>Fixed Wavebox unexpectedly quitting at launch on macOS</li>
+  <li>Fixed Evernote Web Clipper failing to clip pages in other spaces</li>
+  <li>On large Mac displays, the toolbar and webdock should no longer flash white during animations</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/156.3.20.3)
+
+---
+
 <h3>Version 156.3.18 beta <span class="date">16/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 156.0.8078.36</li>
@@ -174,21 +193,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/154.2.203.3)
-
----
-
-<h3>Version 153.2.196 beta <span class="date">9/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 153.0.8010.37</li>
-  <li>Unify the positioning of the search button in the toolbar across all Wavebox windows</li>
-  <li>Fix browser crashes when using extensions and when quitting Wavebox on macOS</li>
-  <li>Prevent invalid Secure DNS settings from blocking browsing and restore connections affected by previous settings</li>
-  <li>Switch webdock layouts without adding unwanted dividers or leaving spaces looking empty</li>
-  <li>Various UI polish and visual fixes across the webdock, titlebar and app icons</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/153.2.196.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
