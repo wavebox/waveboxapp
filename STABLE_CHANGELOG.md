@@ -1,3 +1,32 @@
+<h3>Version 156.3.20 <span class="date">21/10/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Brainbox can now use bookmarks, manage link opening rules and look up your keyboard shortcuts</li>
+  <li>Ask Brainbox to start Focus Mode or open a new webdock window</li>
+  <li>Find recent Brainbox chats in webdock Group and App tooltips and reopen them in one click</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 156.0.8078.48</li>
+  <li>Bookmarks can now follow your link opening rules when enabled in Settings</li>
+  <li>Brainbox chats now show their starting Space, Group and App, with a shortcut back</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed Wavebox unexpectedly quitting at launch on macOS</li>
+  <li>Fixed Evernote Web Clipper failing to clip pages in other spaces</li>
+  <li>On large Mac displays, the toolbar and webdock should no longer flash white during animations</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/156.3.20.2)
+
+---
+
 <h3>Version 155.3.18 <span class="date">19/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 155.0.8059.85</li>
@@ -279,56 +308,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/152.2.174.2)
-
----
-
-<h3>Version 152.2.173 <span class="date">1/9/2026</span></h3>
-<p></p>
-<h4>🆕 New!</h4>
-<ul>
-  <li>
-    New: Additional Webdock windows!
-    <ul>
-      <li>Open additional Webdock windows from the app menu or any Webdock context menu</li>
-      <li>Move a group into its own window from the sidebar right-click menu</li>
-      <li>Move individual apps, tabs or entire groups between Webdock windows</li>
-      <li>Apps stay in the window you place them in, and &amp;ldquo;Bring it here&amp;rdquo; summons an app into the window you're working in</li>
-      <li>Windows keep their identity across closing, reopening and restarting, so apps land back where you left them</li>
-      <li>Additional Webdock windows now restore their tabs and active app after restarts or reopening</li>
-      <li>Each window remembers its active app and collapsed sidebar dividers, including across restarts</li>
-      <li>Search, the Tab Manager and keyboard shortcuts now jump to the window that owns an app</li>
-      <li>Links, search results and keyboard commands now stay with their originating Webdock</li>
-      <li>Sign-in prompts and Space controls now open in the Webdock where they are needed</li>
-      <li>Connect now opens its side panel in the Webdock window you're using</li>
-    </ul>
-  </li>
-  <li>Optional Spaces and Groups headings in the webdock, switched on from the webdock right-click menu</li>
-</ul>
-
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 152.0.7977.65</li>
-  <li>Auto-reload now waits until apps are idle, protecting calls and active work</li>
-  <li>Apps now stay awake when Wavebox cannot safely confirm their visibility</li>
-  <li>Connect panel sizes are now remembered separately for each window</li>
-  <li>Space icons are clearer and expand on hover for easier identification</li>
-  <li>Various Webdock menu wording, ordering and icon improvements</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix a browser crash when splitting a tab that was already part of a split</li>
-  <li>Fixed a crash when extensions move tabs out of split view</li>
-  <li>Privacy Lock now reliably restores every window after unlocking</li>
-  <li>Fix a stray error when renaming a tab that is closed or dragged while the rename is landing</li>
-  <li>Fixed white backgrounds appearing in the Webdock and top strip on macOS</li>
-  <li>Translation fixes and clearer wording across several languages</li>
-  <li>Several stability and navigation fixes for tabs across multiple Webdock windows</li>
-  <li>Various webdock polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/152.2.173.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
