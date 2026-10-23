@@ -1,3 +1,40 @@
+<h3>Version 157.3.21 beta <span class="date">23/10/2026</span></h3>
+<ul>
+  <li>Update to Chromium 157.0.8103.16</li>
+  <li>
+    New Focus Mode
+    <ul>
+      <li>Start a timed session from the webdock bell, the menubar icon, Mini, Quick Switch or a keyboard shortcut</li>
+      <li>Pick 25 or 50 minutes, 1 or 2 hours, a set time or until turned off, then add time or stop as it runs</li>
+      <li>Focus zones can now quiet whole Spaces as well as Groups, and the bell and menubar icon show a countdown ring</li>
+      <li>Quiet hours for Spaces and Groups on the days and times you choose, with an Open Anyway option when you need an app</li>
+      <li>Calls and media keep their sound, and any app or Group can be let through from its right-click menu</li>
+      <li>Mini's new Missed tab shows what arrived while you were focused, with Mark done and Summarize with Brainbox</li>
+      <li>Chat with Settings can start, stop and extend focus, and set up zones and quiet hours for you</li>
+      <li>Eligible plans add Pomodoro cycles, full-window focus and ten mixable focus sounds you can also play on demand</li>
+    </ul>
+  </li>
+  <li>
+    Brainbox chats can be scoped to a tab, app, Group or Space
+    <ul>
+      <li>Choose what Brainbox can see when you start a chat, and it only looks through what you shared</li>
+      <li>Brainbox lists, searches and opens tabs in scope itself, including sleeping tabs, instead of pasting page text into the prompt</li>
+      <li>A chat's scope follows renames, moves and restarts, and apps from another Space stay hidden</li>
+      <li>Asking Brainbox about a sleeping tab now wakes it instead of timing out</li>
+      <li>Space and Group icons in Brainbox carry their webdock colour ring, and Groups are rounded squares</li>
+    </ul>
+  </li>
+  <li>Creating a new profile now offers a Space for another account in the same window</li>
+  <li>Fixes for an edge case where tabs could be lost during a restart</li>
+  <li>Password changes from another device now sync reliably when saved credentials change mid-update</li>
+  <li>Profile and Space popups stay on screen, including in fullscreen on Mac</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/157.3.21.3)
+
+---
+
 <h3>Version 156.3.20 beta <span class="date">21/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 156.0.8078.48</li>
@@ -177,22 +214,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/154.2.204.3)
-
----
-
-<h3>Version 154.2.203 beta <span class="date">11/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 154.0.8037.18</li>
-  <li>Show memory saved by sleeping tabs and keep active tab memory figures current</li>
-  <li>Fix a crash when adding a tab to a split after its state changes</li>
-  <li>Fix tabs appearing blank when switching tabs or opening the panel on Linux</li>
-  <li>Fix errors when closing newly opened app tabs before they finish processing</li>
-  <li>Fix secondary windows switching apps unexpectedly when moving an app to another window</li>
-  <li>Keep the typing cursor in place when hovering over spelling and grammar suggestions</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/154.2.203.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
