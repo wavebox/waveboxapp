@@ -1,3 +1,20 @@
+<h3>Version 157.3.22 beta <span class="date">28/10/2026</span></h3>
+<ul>
+  <li>Open links in other browsers and desktop apps using rules or right-click menus</li>
+  <li>Select, export, or delete multiple Smart Notes with confirmation before permanent deletion</li>
+  <li>Collection shortcuts and folders now open in their chosen group and Space</li>
+  <li>Links sent to another profile can be retried if that profile does not respond</li>
+  <li>Closing a split view no longer crashes Wavebox, and its tabs remain individually restorable</li>
+  <li>Fix a crash with context menus and tabbed app windows</li>
+  <li>Fix a bug where Wavebox would fail to set itself as the default mail app</li>
+  <li>Various small stability improvements and visual fixes across Wavebox</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/157.3.22.3)
+
+---
+
 <h3>Version 157.3.21 beta <span class="date">23/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 157.0.8103.16</li>
@@ -200,20 +217,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/154.2.208.3)
-
----
-
-<h3>Version 154.2.204 beta <span class="date">16/9/2026</span></h3>
-<ul>
-  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
-  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
-  <li>Fix a crash when an extension side panel updates after moving between windows</li>
-  <li>Preserve the shared order of spaces and apps when importing templates</li>
-  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/154.2.204.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
