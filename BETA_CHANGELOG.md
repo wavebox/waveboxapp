@@ -1,3 +1,26 @@
+<h3>Version 157.3.25 beta <span class="date">4/11/2026</span></h3>
+<ul>
+  <li>Update to Chromium 157.0.8103.39</li>
+  <li>Clear browsing data from a chosen Space and time range</li>
+  <li>Open an entire collection from search results in a new window as tab groups</li>
+  <li>Change group and app colours separately across a Space, with previews before applying them</li>
+  <li>Sort link opening rules by column to find and review them more easily</li>
+  <li>Focus sounds now have their own tab, animated indicators, and continue playing after closing the panel</li>
+  <li>Tabs now stay with moved apps across devices, preserving their order and opening the correct Space</li>
+  <li>Moving a tab to another Space now keeps the page open until its replacement is ready</li>
+  <li>Fixed crashes when opening Wavebox panels or closing dialogs on macOS</li>
+  <li>Your first bookmark edit after joining sync now uploads instead of being replaced</li>
+  <li>Repairing app data no longer leaves apps with blank tabs</li>
+  <li>Automatic sign-in now works for profiles launched without an open window</li>
+  <li>Remember my choice now works for links opened from tabs within apps</li>
+  <li>Reopen closed tab now tracks the latest closed tab while its menu remains open</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/157.3.25.3)
+
+---
+
 <h3>Version 157.3.23 beta <span class="date">29/10/2026</span></h3>
 <ul>
   <li>Update to Chromium 157.0.8103.27</li>
@@ -186,23 +209,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/155.3.5.3)
-
----
-
-<h3>Version 154.3.2 beta <span class="date">23/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 154.0.8037.58</li>
-  <li>Bring active Connect calls between windows and keep calls in the selected conversation</li>
-  <li>Keep tabs intact when moving between windows or recovering from interrupted tab operations</li>
-  <li>Fix crashes when preloading pages, checking translation, opening site permissions, and closing Wavebox</li>
-  <li>Restore ClickUp unread counts and recognize more Outlook addresses when boosting tabs</li>
-  <li>Use the selected Space consistently when adding duplicate apps</li>
-  <li>Keep the RSS widget working when a feed contains malformed content</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/154.3.2.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)

@@ -1,3 +1,61 @@
+<h3>Version 157.3.25 <span class="date">4/11/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>
+    New Focus Mode
+    <ul>
+      <li>Start a timed session from the webdock bell, the menubar icon, Mini, Quick Switch or a keyboard shortcut</li>
+      <li>Pick 25 or 50 minutes, 1 or 2 hours, a set time or until turned off, then add time or stop as it runs</li>
+      <li>Focus zones can now quiet whole Spaces as well as Groups, and the bell and menubar icon show a countdown ring</li>
+      <li>Quiet hours for Spaces and Groups on the days and times you choose, with an Open Anyway option when you need an app</li>
+      <li>Calls and media keep their sound, and any app or Group can be let through from its right-click menu</li>
+      <li>Mini's new Missed tab shows what arrived while you were focused, with Mark done and Summarize with Brainbox</li>
+      <li>Chat with Settings can start, stop and extend focus, and set up zones and quiet hours for you</li>
+      <li>Pomodoro cycles, full-window focus and ten mixable focus sounds you can also play on demand</li>
+      <li>Focus sounds have their own Sounds tab with mixes that keep playing after closing the panel</li>
+    </ul>
+  </li>
+  <li>
+    Brainbox chats can be scoped to a tab, app, Group or Space
+    <ul>
+      <li>Choose what Brainbox can see when you start a chat, and it only looks through what you shared</li>
+      <li>Brainbox lists, searches and opens tabs in scope itself, including sleeping tabs, instead of pasting page text into the prompt</li>
+      <li>A chat's scope follows renames, moves and restarts, and apps from another Space stay hidden</li>
+    </ul>
+  </li>
+  <li>AI-guided setup now builds Spaces around your accounts and helps you sign in</li>
+  <li>Chat with Settings can create and organize multiple Groups and their tabs at once</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 157.0.8103.39</li>
+  <li>Wavebox now runs on its new tab manager, which keeps apps and tabs intact when moving them between windows, closing several at once, or recovering from interrupted tab operations</li>
+  <li>Wavebox's popups and dialogs, including profile, Space, search and webdock switcher popups, now open as lightweight native windows that stay on screen and close when you click away</li>
+  <li>Choose a time range and Space when clearing browsing data, including from Space settings</li>
+  <li>Open entire collections or individual folders directly from search results</li>
+  <li>Change group and app colours separately across a Space in any webdock layout</li>
+  <li>Sort link opening rules by column to find the rules you need</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Sync now preserves your first bookmark edit and keeps app tabs together across devices</li>
+  <li>Moving a tab to another Space no longer risks losing the page</li>
+  <li>Repairing app data no longer disconnects apps from their tabs</li>
+  <li>Closing a tab dialog while it opens no longer crashes Wavebox on macOS</li>
+  <li>Clearing site data now removes site storage without clearing other extensions data</li>
+  <li>Clicking a Space or group now opens its own tabs instead of jumping elsewhere</li>
+  <li>Remembered link choices now work for links opened from tabs within apps</li>
+  <li>Automatic sign-in now starts for profiles loaded without an open window</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/157.3.25.2)
+
+---
+
 <h3>Version 156.3.22 <span class="date">28/10/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -274,24 +332,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/153.2.196.2)
-
----
-
-<h3>Version 152.2.193 <span class="date">7/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 152.0.7977.83</li>
-  <li>Various visual improvements across Settings and the Webdock</li>
-  <li>Fixed a potential crash while browser interface pages were loading</li>
-  <li>Fix crash with grammar checking</li>
-  <li>Empty custom Secure DNS addresses no longer prevent websites from loading</li>
-  <li>Fullscreen pages now respond to clicks along the top and left edges</li>
-  <li>Fixes for Windows spelling suggestions</li>
-  <li>Group titles remain visible in the Webdock when using shorter windows</li>
-  <li>UI fixes when creating a new profile</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/152.2.193.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
