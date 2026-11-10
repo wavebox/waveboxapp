@@ -1,3 +1,26 @@
+<h3>Version 158.3.32 beta <span class="date">10/11/2026</span></h3>
+<ul>
+  <li>Update to Chromium 158.0.8127.19</li>
+  <li>UI tweaks and fixes the desktop web apps library to make it easier to use</li>
+  <li>Browser imports on Mac now offer clearer access steps and explain what happened when you return</li>
+  <li>Wavebox now installs on RHEL, AlmaLinux and Rocky Linux 9 without extra Qt packages</li>
+  <li>Linux screen sharing and shortcuts now use Wavebox's own desktop permissions</li>
+  <li>Focus mode settings now fit without scrolling, with clearer space controls and a tidier sounds list</li>
+  <li>Damaged widgets no longer block startup or backups, and recoverable data stays in an archive</li>
+  <li>Web pages with certain WebSocket links no longer crash their tabs</li>
+  <li>Fixes for the Linux, Windows and macOS installers and update flows</li>
+  <li>Wavebox now recovers duplicate main windows on Windows and avoids opening more</li>
+  <li>Confirmation dialogs now block attempts to delete protected spaces</li>
+  <li>Gmail, Outlook, Slack and ClickUp integrations keep updating when a script briefly fails to load</li>
+  <li>Sign-in prompts appear promptly when a password manager fails to answer, instead of leaving apps blank</li>
+  <li>Temporary browser import errors no longer reselect profiles you previously unticked</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/158.3.32.3)
+
+---
+
 <h3>Version 157.3.25 beta <span class="date">4/11/2026</span></h3>
 <ul>
   <li>Update to Chromium 157.0.8103.39</li>
@@ -193,22 +216,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/155.3.12.3)
-
----
-
-<h3>Version 155.3.5 beta <span class="date">24/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 155.0.8059.13</li>
-  <li>Added support for links that open websites directly in Wavebox</li>
-  <li>Collapse or expand all webdock groups using a keyboard shortcut or the divider menu</li>
-  <li>Fix a potential crash when extensions stop running in separate spaces</li>
-  <li>Fix undo and redo errors after a note is updated in another editor</li>
-  <li>Fix the RSS widget failing when a feed contains malformed content</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/155.3.5.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
