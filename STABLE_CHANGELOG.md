@@ -1,3 +1,31 @@
+<h3>Version 157.3.32 <span class="date">10/11/2026</span></h3>
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 157.0.8103.51</li>
+  <li>Wavebox now installs on RHEL, AlmaLinux and Rocky Linux 9 without extra Qt packages</li>
+  <li>Linux screen sharing and shortcuts now use Wavebox's own desktop permissions</li>
+  <li>Browser imports on Mac now offer clearer access steps and explain what happened when you return</li>
+  <li>Focus mode settings now fit without scrolling, with clearer space controls and a tidier sounds list</li>
+  <li>UI tweaks and fixes the desktop web apps library to make it easier to use</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Damaged widgets no longer block startup or backups, and recoverable data stays in an archive</li>
+  <li>Web pages with certain WebSocket links no longer crash their tabs</li>
+  <li>Wavebox now recovers duplicate main windows on Windows and avoids opening more</li>
+  <li>Gmail, Outlook, Slack and ClickUp integrations keep updating when a script briefly fails to load</li>
+  <li>Sign-in prompts appear promptly when a password manager fails to answer, instead of leaving apps blank</li>
+  <li>Temporary browser import errors no longer reselect profiles you previously unticked</li>
+  <li>Confirmation dialogs now block attempts to delete protected spaces</li>
+  <li>Fixes for the Linux, Windows and macOS installers and update flows</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/157.3.32.2)
+
+---
+
 <h3>Version 157.3.25 <span class="date">4/11/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -317,21 +345,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/153.2.204.2)
-
----
-
-<h3>Version 153.2.196 <span class="date">9/9/2026</span></h3>
-<ul>
-  <li>Update to Chromium 153.0.8010.37</li>
-  <li>Unify the positioning of the search button in the toolbar across all Wavebox windows</li>
-  <li>Fix browser crashes when using extensions and when quitting Wavebox on macOS</li>
-  <li>Prevent invalid Secure DNS settings from blocking browsing and restore connections affected by previous settings</li>
-  <li>Switch webdock layouts without adding unwanted dividers or leaving spaces looking empty</li>
-  <li>Various UI polish and visual fixes across the webdock, titlebar and app icons</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/153.2.196.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
