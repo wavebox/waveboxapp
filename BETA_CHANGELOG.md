@@ -1,3 +1,32 @@
+<h3>Version 158.3.35 beta <span class="date">17/11/2026</span></h3>
+<ul>
+  <li>Update to Chromium 158.0.8127.37</li>
+  <li>Experimental: floating windows. Open a tab, or just part of a page, in a small window that stays above your other windows. Try it out in Settings → General → Advanced → Floating windows, then right-click any tab.</li>
+  <li>Open tabs or selected page sections in floating windows that stay above your other windows</li>
+  <li>Turn on floating windows in Advanced settings to keep tabs or page sections above other windows</li>
+  <li>Close unused tabs automatically after a chosen time, then reopen them from Tab Manager</li>
+  <li>Move tabs directly into another open window from the tab menu</li>
+  <li>Choose whether Ctrl+Tab shows five, ten, fifteen or twenty recent tabs</li>
+  <li>Choose how many recent tabs appear when you press Ctrl+Tab</li>
+  <li>Bookmarks bar settings now stick and show the bar only on the pages you choose</li>
+  <li>Choose when the bookmarks bar appears, including only on the dashboard</li>
+  <li>Open a widget’s dashboard directly from its popout menu</li>
+  <li>Upgrade screens now explain your current limit and show Basic and Pro allowances</li>
+  <li>Focus Mode badges are smaller, and quiet hours clocks can be set per schedule</li>
+  <li>Fixed a Mac crash when a former Wavebox window enters fullscreen</li>
+  <li>Fixed a macOS crash when certain Wavebox windows enter fullscreen</li>
+  <li>On-device AI responds again after the browser engine update</li>
+  <li>First-run setup now recovers from network failures and shows a retry option instead of hanging</li>
+  <li>Setup now shows every browser profile for import and recovers from temporary connection errors</li>
+  <li>Fixed new tabs opening outside their app and unmute actions affecting the wrong app</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/158.3.35.3)
+
+---
+
 <h3>Version 158.3.32 beta <span class="date">10/11/2026</span></h3>
 <ul>
   <li>Update to Chromium 158.0.8127.19</li>
@@ -180,42 +209,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/156.3.14.3)
-
----
-
-<h3>Version 155.3.12 beta <span class="date">7/10/2026</span></h3>
-<ul>
-  <li>Update to Chromium 155.0.8059.40</li>
-  <li>Create checklists in Smart Notes and keep their checked state when exporting</li>
-  <li>Use Chat with Settings inside Settings to adjust your setup</li>
-  <li>Add a dashboard Clock widget with custom time zones and optional seconds</li>
-  <li>Redesign the Navigator with Spaces, List and Map views, usage insights and extension memory tracking</li>
-  <li>Find dashboard shortcuts and tasks in search, and start dashboard searches just by typing</li>
-  <li>New Gmail and Outlook apps automatically follow your inbox preferences for unread counts</li>
-  <li>Add two and three minute options for automatically putting tabs to sleep</li>
-  <li>Add a 15-second inactivity option for Privacy Lock alongside simpler settings</li>
-  <li>Prevent cloud sync from losing offline edits, deleting extensions, or losing and duplicating bookmarks</li>
-  <li>Retry backup restores after incorrect passwords without disabling cloud sync or losing the restore session</li>
-  <li>Fix a crash when deleting a space or clearing its browsing data</li>
-  <li>Fix crashes when restoring saved tab groups and failures when syncing newly installed extensions</li>
-  <li>Fix crashes involving saved tab groups, incognito settings, and older cookie settings</li>
-  <li>Fix startup failures and crashes involving saved tab groups, incognito settings and older cookie preferences</li>
-  <li>Keep Wavebox signed in and able to start on networks requiring a Wi-Fi sign-in</li>
-  <li>Improve tab reliability when dragging, closing, or changing split tabs</li>
-  <li>Improve tab and split view reliability when dragging, closing or replacing tabs</li>
-  <li>Fix password imports from Chrome-family browsers on macOS and Windows</li>
-  <li>Keep pinned tabs pinned when restoring tabs from another updated device</li>
-  <li>Restore maximized and fullscreen windows correctly when unlocking after another profile</li>
-  <li>Restore maximized and fullscreen windows correctly when unlocking multiple profiles</li>
-  <li>Fix the app store becoming unresponsive after refreshing while offline</li>
-  <li>Automatically resync spaces when changes conflict with newer updates</li>
-  <li>Keep toolbar popups open when moving the pointer away on Linux</li>
-  <li>Hide the incognito option when unavailable while opening external links</li>
-  <li>Various UI polish and visual fixes across dashboards, search and Focus Mode</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/155.3.12.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
