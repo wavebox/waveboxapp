@@ -1,3 +1,13 @@
+<h3>Version 158.3.36 beta <span class="date">18/11/2026</span></h3>
+<ul>
+  <li>Floating pop-out windows using a new Mini Window are available through the tab right-click menus</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/158.3.36.3)
+
+---
+
 <h3>Version 158.3.35 beta <span class="date">17/11/2026</span></h3>
 <ul>
   <li>Update to Chromium 158.0.8127.37</li>
@@ -189,26 +199,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/156.3.17.3)
-
----
-
-<h3>Version 156.3.14 beta <span class="date">9/10/2026</span></h3>
-<ul>
-  <li>Update to Chromium 156.0.8078.17</li>
-  <li>Group desktop web apps by Space and identify each copy with Space icons</li>
-  <li>Keep tabs awake from the tab menu in every window</li>
-  <li>Tabs controlled by AI agents or open developer tools now stay awake automatically</li>
-  <li>Quickly find and open an existing app when adding another copy creates a new Space</li>
-  <li>Fixed a crash when updating a window with no tabs</li>
-  <li>Dashboards now recover automatically when an update interrupts loading</li>
-  <li>Fixed misplaced popups on Linux Wayland and windows staying dimmed after closing dialogs on macOS</li>
-  <li>Fixed special characters appearing incorrectly in Gmail recipients and subjects when composing from links</li>
-  <li>Several fixes for app lists, Chat with Settings and diagnostic reports</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/156.3.14.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
