@@ -1,3 +1,36 @@
+<h3>Version 158.3.36 <span class="date">18/11/2026</span></h3>
+<p></p>
+<h4>🆕 New!</h4>
+<ul>
+  <li>Floating pop-out windows using a new Mini Window are available through the tab right-click menus</li>
+  <li>Close unused tabs automatically after a chosen time, then reopen them from Tab Manager</li>
+  <li>Move tabs directly into another open window from the tab menu</li>
+</ul>
+
+<h4>🔧 Updates & improvements</h4>
+<ul>
+  <li>Update to Chromium 158.0.8127.37</li>
+  <li>Choose whether Ctrl+Tab shows five, ten, fifteen or twenty recent tabs</li>
+  <li>Choose when the bookmarks bar appears, including only on the dashboard</li>
+  <li>Open a widget’s dashboard directly from its popout menu</li>
+  <li>Focus Mode badges are smaller, and quiet hours clocks can be set per schedule</li>
+  <li>Various UI polish and visual fixes</li>
+</ul>
+
+<h4>🐛 Fixes</h4>
+<ul>
+  <li>Fixed a Mac crash when a former Wavebox window enters fullscreen</li>
+  <li>Fixed a macOS crash when certain Wavebox windows enter fullscreen</li>
+  <li>Setup now shows every browser profile for import and recovers from temporary connection errors</li>
+  <li>Fixed new tabs opening outside their app and unmute actions affecting the wrong app</li>
+  <li>Bookmarks bar settings now stick and show the bar only on the pages you choose</li>
+</ul>
+
+
+[Downloads](https://wavebox.io/download/release/158.3.36.2)
+
+---
+
 <h3>Version 157.3.32 <span class="date">10/11/2026</span></h3>
 <h4>🔧 Updates & improvements</h4>
 <ul>
@@ -319,32 +352,6 @@
 
 
 [Downloads](https://wavebox.io/download/release/154.3.2.2)
-
----
-
-<h3>Version 153.2.204 <span class="date">16/9/2026</span></h3>
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 153.0.8010.48</li>
-  <li>Show memory saved by sleeping tabs and keep active tab memory figures current</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
-  <li>Fix a crash when adding a tab to a split after its state changes</li>
-  <li>Fix a crash when an extension side panel updates after moving between windows</li>
-  <li>Fix tabs appearing blank when switching tabs or opening the panel on Linux</li>
-  <li>Fix errors when closing newly opened app tabs before they finish processing</li>
-  <li>Fix secondary windows switching apps unexpectedly when moving an app to another window</li>
-  <li>Preserve the shared order of spaces and apps when importing templates</li>
-  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
-  <li>Keep the typing cursor in place when hovering over spelling and grammar suggestions</li>
-  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/153.2.204.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
