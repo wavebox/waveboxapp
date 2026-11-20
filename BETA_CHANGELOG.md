@@ -1,8 +1,20 @@
+<h3>Version 159.3.38 beta <span class="date">20/11/2026</span></h3>
+<ul>
+  <li>Update to Chromium 159.0.8154.14</li>
+  <li>Automatic sleep and tab closing now leave pages with unsaved changes open</li>
+  <li>Sleeping apps now retain their page history when Restore last page is enabled</li>
+  <li>Webdock windows now resize independently and keep their Space and display settings after restart</li>
+  <li>Pinned Group tabs now stay open when Close unused tabs is enabled</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/159.3.38.3)
+
+---
+
 <h3>Version 158.3.36 beta <span class="date">18/11/2026</span></h3>
 <ul>
   <li>Floating pop-out windows using a new Mini Window are available through the tab right-click menus</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/158.3.36.3)
 
@@ -32,7 +44,6 @@
   <li>Various UI polish and visual fixes</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/158.3.35.3)
 
 ---
@@ -54,7 +65,6 @@
   <li>Sign-in prompts appear promptly when a password manager fails to answer, instead of leaving apps blank</li>
   <li>Temporary browser import errors no longer reselect profiles you previously unticked</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/158.3.32.3)
 
@@ -78,7 +88,6 @@
   <li>Reopen closed tab now tracks the latest closed tab while its menu remains open</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/157.3.25.3)
 
 ---
@@ -88,7 +97,6 @@
   <li>Update to Chromium 157.0.8103.27</li>
   <li>Chat with Settings can create and organize multiple Groups and their tabs at once</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/157.3.23.3)
 
@@ -105,7 +113,6 @@
   <li>Fix a bug where Wavebox would fail to set itself as the default mail app</li>
   <li>Various small stability improvements and visual fixes across Wavebox</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/157.3.22.3)
 
@@ -143,7 +150,6 @@
   <li>Profile and Space popups stay on screen, including in fullscreen on Mac</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/157.3.21.3)
 
 ---
@@ -161,7 +167,6 @@
   <li>On large Mac displays, the toolbar and webdock should no longer flash white during animations</li>
   <li>Various UI polish and visual fixes</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/156.3.20.3)
 
@@ -181,24 +186,7 @@
   <li>Various UI polish and visual fixes</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/156.3.18.3)
-
----
-
-<h3>Version 156.3.17 beta <span class="date">14/10/2026</span></h3>
-<ul>
-  <li>Added an option to show group names beneath their icons in the webdock</li>
-  <li>Keep bookmark folders organised as Groups when importing from another browser</li>
-  <li>Reduce graphics memory use and prevent toolbar and webdock flashing on large, high-resolution displays</li>
-  <li>Improve automatic Gmail unread counts for more inbox layouts, with clearer guidance for custom setups</li>
-  <li>Fixed a crash when extensions install while a profile is closing</li>
-  <li>Choose where to open external links when the selected profile fails to respond</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/156.3.17.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
