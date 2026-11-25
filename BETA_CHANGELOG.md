@@ -1,3 +1,12 @@
+<h3>Version 159.3.39 beta <span class="date">25/11/2026</span></h3>
+<ul>
+  <li>Update to Chromium 159.0.8154.34</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/159.3.39.3)
+
+---
+
 <h3>Version 159.3.38 beta <span class="date">20/11/2026</span></h3>
 <ul>
   <li>Update to Chromium 159.0.8154.14</li>
@@ -169,24 +178,6 @@
 </ul>
 
 [Downloads](https://wavebox.io/download/release/156.3.20.3)
-
----
-
-<h3>Version 156.3.18 beta <span class="date">16/10/2026</span></h3>
-<ul>
-  <li>Update to Chromium 156.0.8078.36</li>
-  <li>Use link opening rules to send links to other browsers and desktop apps</li>
-  <li>Connect adds message formatting controls, room drafts, file sharing through drag and drop or paste, file previews, clearer call controls and microphone muting without leaving your call</li>
-  <li>Fix a crash when dragging a tab to create a top and bottom split</li>
-  <li>Fix rapid app and group switching jumping back to an earlier selection</li>
-  <li>Keep Connect calls muted when moving between windows, and keep the camera off when joining by voice</li>
-  <li>Fix Beam transfers getting stuck downloading or stopping prematurely on slow connections</li>
-  <li>Fix sleeping apps staying covered by a dark overlay after waking</li>
-  <li>Keep app popup dialogs within the visible screen area</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-[Downloads](https://wavebox.io/download/release/156.3.18.3)
 
 ---
 [More versions](https://wavebox.io/changelog/beta/)
