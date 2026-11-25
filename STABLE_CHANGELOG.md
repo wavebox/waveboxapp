@@ -1,3 +1,16 @@
+<h3>Version 158.3.39 <span class="date">25/11/2026</span></h3>
+<ul>
+  <li>Update to Chromium 158.0.8127.89</li>
+  <li>Automatic sleep and tab closing now leave pages with unsaved changes open</li>
+  <li>Sleeping apps now retain their page history when Restore last page is enabled</li>
+  <li>Pinned Group tabs now stay open when Close unused tabs is enabled</li>
+  <li>Webdock windows now resize independently and keep their Space and display settings after restart</li>
+</ul>
+
+[Downloads](https://wavebox.io/download/release/158.3.39.2)
+
+---
+
 <h3>Version 158.3.36 <span class="date">18/11/2026</span></h3>
 <p></p>
 <h4>🆕 New!</h4>
@@ -26,7 +39,6 @@
   <li>Bookmarks bar settings now stick and show the bar only on the pages you choose</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/158.3.36.2)
 
 ---
@@ -53,7 +65,6 @@
   <li>Confirmation dialogs now block attempts to delete protected spaces</li>
   <li>Fixes for the Linux, Windows and macOS installers and update flows</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/157.3.32.2)
 
@@ -112,7 +123,6 @@
   <li>Automatic sign-in now starts for profiles loaded without an open window</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/157.3.25.2)
 
 ---
@@ -146,7 +156,6 @@
   <li>Various small stability improvements and visual fixes across Wavebox</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/156.3.22.2)
 
 ---
@@ -175,7 +184,6 @@
   <li>Various UI polish and visual fixes</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/156.3.20.2)
 
 ---
@@ -193,7 +201,6 @@
   <li>Keep app popup dialogs within the visible screen area</li>
   <li>Various UI polish and visual fixes</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/155.3.18.2)
 
@@ -229,7 +236,6 @@
   <li>Several fixes for app lists, Chat with Settings and diagnostic reports</li>
   <li>Various UI polish and visual fixes</li>
 </ul>
-
 
 [Downloads](https://wavebox.io/download/release/155.3.17.2)
 
@@ -276,7 +282,6 @@
   <li>Various UI polish and visual fixes across dashboards, search and Focus Mode</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/155.3.12.2)
 
 ---
@@ -314,44 +319,7 @@
   <li>Various UI polish and visual fixes</li>
 </ul>
 
-
 [Downloads](https://wavebox.io/download/release/154.3.5.2)
-
----
-
-<h3>Version 154.3.2 <span class="date">23/9/2026</span></h3>
-<h4>🔧 Updates & improvements</h4>
-<ul>
-  <li>Update to Chromium 154.0.8037.58</li>
-  <li>Bring active Connect calls between windows and keep calls in the selected conversation</li>
-  <li>Show warnings and one-click fixes when app settings prevent link opening rules from running</li>
-  <li>Improve browser imports with recent browsers first and clearer macOS permission prompts and guidance</li>
-</ul>
-
-<h4>🐛 Fixes</h4>
-<ul>
-  <li>Keep tabs intact when moving between windows or recovering from interrupted tab operations</li>
-  <li>Fix crashes when preloading pages, checking translation, opening site permissions, and closing Wavebox</li>
-  <li>Fix crashes when using Apple Intelligence writing tools or moving extension side panels between windows</li>
-  <li>Fix a macOS crash when replacing text with Apple Intelligence writing tools</li>
-  <li>Fix a crash when an extension side panel updates after moving between windows</li>
-  <li>Fix a browser crash when closing tabs that belong to a split view</li>
-  <li>Fix selected tabs reopening after closing several at once</li>
-  <li>Restore ClickUp unread counts and recognize more Outlook addresses when boosting tabs</li>
-  <li>Fix split view app switching failing or leaving the picker stuck</li>
-  <li>Preserve space and app ordering when importing shared templates and switching webdock layouts</li>
-  <li>Preserve the shared order of spaces and apps when importing templates</li>
-  <li>Use the selected Space consistently when adding duplicate apps</li>
-  <li>Keep the RSS widget working when a feed contains malformed content</li>
-  <li>Prevent errors when a tab drag from the webdock is cancelled</li>
-  <li>Fix the webdock showing an error screen when dragging certain items</li>
-  <li>Usability fixes for macOS Golden Gate when importing browser profiles</li>
-  <li>Various stability improvements and visual fixes</li>
-  <li>Various UI polish and visual fixes</li>
-</ul>
-
-
-[Downloads](https://wavebox.io/download/release/154.3.2.2)
 
 ---
 [More versions](https://wavebox.io/changelog/stable/)
